@@ -1,6 +1,6 @@
 function batchReadPRN2(folder, id_list, snapshot_col, probe_col)
 
-% DEPRECATED. Replaced by analyzePRN. j
+% DEPRECATED. Replaced by analyzePRN.
 
 % batchReadPRN(folder, id_list, snapshot_col, probe_col)
 % ex: batchReadPRN2('pillar_M2754_0_10', [62,71,80,89], 3, 2)
