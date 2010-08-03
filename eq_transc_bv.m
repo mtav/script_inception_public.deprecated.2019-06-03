@@ -1,0 +1,5 @@
+% function eq_transc_bv.m
+function output = eq_transc_bv(u, v, L)
+ w = sqrt(v^2 - u^2);
+ output = (besselj(L-1,u)/besselj(L,u)) + (w/u)*(besselk(L-1,w)/besselk(L,w));
+end

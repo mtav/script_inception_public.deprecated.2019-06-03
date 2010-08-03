@@ -1,0 +1,3 @@
+function r = reflection(x, wc, wqd, Gamma, Ktot, alpha, g)
+
+end

@@ -1,0 +1,10 @@
+clear all
+clc
+wqd=1378
+wc = 1323
+Gamma= 74*10^(-3)
+Ktot = 182*10^(-3)
+g = 81*10^(-3)
+x=-0.2:0.01:0.2
+plot(x,abs(reflection(x, wc, wqd, Gamma, Ktot, 3, g)))
+plot(x,arg(reflection(x, wc, wqd, Gamma, Ktot, 3, g)))

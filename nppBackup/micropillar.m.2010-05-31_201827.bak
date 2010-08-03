@@ -1,0 +1,517 @@
+function micropillar(RADIUS, BASENAME, N_TYPE, BOTTOM_N, TOP_N)
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%description
+	%function micropillar(RADIUS, BASENAME, N_TYPE, BOTTOM_N, TOP_N)
+	%This file creates a .geo file with micro-pillar microcavity.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%misc values
+	c0=299792458;%mum/mus
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%arguments
+	'Reading input parameters...'
+
+	%radius
+	radius=RADIUS;%mum
+
+	%wavelength
+	lambda=900*10^-3;%mum
+
+	%helpers
+	h_GaAs=64*10^-3;%mum
+	h_AlGaAs=81*10^-3;%mum
+
+	if N_TYPE == 0
+		n_GaAs=3.521;%no unit
+		n_AlGaAs=2.973;%no unit
+	else
+		n_GaAs=lambda/(4*h_GaAs);%no unit
+		n_AlGaAs=lambda/(4*h_AlGaAs);%no unit
+	end
+
+	%IMPORTANT: We enter the layers from bottom to top. h1/h2 and n1/n2 correspond to this order.
+
+	%bottom square thickness
+	h_bottom_square=0.2;%mum
+	n_bottom_square=3.5214;%no unit
+
+	%bottom DBR
+	bottom_N=BOTTOM_N;%no unit
+	bottom_h1=h_GaAs;%mum
+	bottom_n1=n_GaAs;%no unit
+	bottom_h2=h_AlGaAs;%mum
+	bottom_n2=n_AlGaAs;%no unit
+
+	%cavity
+	cavity_h=253*10^-3;%mum
+	cavity_n=n_GaAs;%no unit
+
+	%top DBR
+	top_N=TOP_N;%no unit
+	top_h1=h_AlGaAs;%mum
+	top_n1=n_AlGaAs;%no unit
+	top_h2=h_GaAs;%mum
+	top_n2=n_GaAs;%no unit
+
+	%space dimensions
+	top_box_offset=1;%mum
+
+	%filename
+	filename = strcat(BASENAME,'\\',BASENAME);%string
+	mkdir(BASENAME);
+	copyfile('Entity.lst',BASENAME)
+
+	ITERATIONS=32000;%no unit
+	TIMESTEP=0.9;%mus
+	TIME_CONSTANT=4.000000E-09;%mus
+	AMPLITUDE=1.000000E+01;%V/mum???
+	TIME_OFFSET=2.700000E-08;%mus
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%additional calculations
+
+	%buffers (area outside pillar where mesh is fine)
+	y_buffer = 32*lambda/(16*top_n2);%mum
+
+	Xmax = (2+2/5)*radius;%mum
+	pillar_height = bottom_N*(bottom_h1+bottom_h2) + cavity_h + top_N*(top_h1+top_h2);
+	Ymax = h_bottom_square + pillar_height + y_buffer + top_box_offset;%mum
+	Zmax = (2+2/5)*radius;%mum
+	
+	pillar_centre_X = Xmax/2;
+	pillar_centre_Y = h_bottom_square + bottom_N*(bottom_h1+bottom_h2) + cavity_h/2;
+	pillar_centre_Z = Zmax/2;
+
+	FREQUENCY=c0/lambda;
+
+	% max mesh intervals
+	delta_bottom_square = lambda/(10*n_bottom_square);
+	delta_bottom_1 = lambda/(10*bottom_n1);
+	delta_bottom_2 = lambda/(10*bottom_n2);
+	delta_cavity = lambda/(10*cavity_n);
+	delta_top_1 = lambda/(10*top_n1);
+	delta_top_2 = lambda/(10*top_n2);
+	delta_air = lambda/3;
+	delta_center = lambda/(15*cavity_n);
+	delta_boundary = delta_cavity;
+	
+	thicknessVector_Y = [ h_bottom_square ];
+	max_delta_Vector_Y = [ delta_bottom_square ];
+	for i=1:bottom_N
+		thicknessVector_Y = [thicknessVector_Y, bottom_h1, bottom_h2];
+		max_delta_Vector_Y = [max_delta_Vector_Y, delta_bottom_1, delta_bottom_2];
+	end
+	thicknessVector_Y = [thicknessVector_Y, cavity_h];
+	max_delta_Vector_Y = [max_delta_Vector_Y, delta_cavity];
+	for i=1:top_N
+		thicknessVector_Y = [thicknessVector_Y, top_h1, top_h2];
+		max_delta_Vector_Y = [max_delta_Vector_Y, delta_top_1, delta_top_2];
+	end
+	thicknessVector_Y = [ thicknessVector_Y, y_buffer, top_box_offset ];
+	
+	n_min = 0.1;
+	
+	max_delta_Vector_Y = [ max_delta_Vector_Y, delta_top_2, delta_air ];
+
+	delta_min = min(max_delta_Vector_Y);
+
+	x_buffer = 4*delta_min;%mum
+	z_buffer = 4*delta_min;%mum
+
+	thicknessVector_X = [ Xmax/2-radius-x_buffer, x_buffer, radius-4*delta_center, 2*delta_center ];
+	thicknessVector_Z = [ Zmax/2-radius-z_buffer, z_buffer, radius-4*delta_center, 2*delta_center, 2*delta_center, radius-4*delta_center, z_buffer, Zmax/2-radius-z_buffer ];
+
+	max_delta_Vector_X = [ delta_air, delta_min, delta_min, delta_center ];
+	max_delta_Vector_Z = [ delta_air, delta_min, delta_min, delta_center, delta_center, delta_min, delta_min, delta_air ];
+	
+	[ delta_X, local_delta_X ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X);
+	[ delta_Y, local_delta_Y ] = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y);
+	[ delta_Z, local_delta_Z ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
+
+	Xplanes = [ 0,
+	Xmax/2-radius-x_buffer,
+	Xmax/2-radius,
+	Xmax/2-2*local_delta_X(3),
+	Xmax/2-local_delta_X(3),
+	Xmax/2 ];
+	
+	y_buffer_delta = local_delta_Y(length(local_delta_Y)-1);
+	
+	Yplanes = [ 0,
+	h_bottom_square,
+	h_bottom_square + ceil(bottom_N/2)*bottom_h1 + floor(bottom_N/2)*bottom_h2,
+	pillar_centre_Y-local_delta_Y(1+2*bottom_N+1),
+	pillar_centre_Y,
+	pillar_centre_Y+local_delta_Y(1+2*bottom_N+1),
+	h_bottom_square + bottom_N*(bottom_h1+bottom_h2) + cavity_h + ceil(top_N/2)*top_h1 + floor(top_N/2)*top_h2,
+	h_bottom_square + pillar_height,
+	h_bottom_square + pillar_height+1*y_buffer_delta,
+	h_bottom_square + pillar_height+8*y_buffer_delta,
+	h_bottom_square + pillar_height+32*y_buffer_delta,
+	Ymax ];
+	
+	Zplanes = [ 0,
+	Zmax/2-radius-z_buffer,
+	Zmax/2-radius,
+	Zmax/2-2*local_delta_Z(3),
+	Zmax/2-local_delta_Z(3),
+	Zmax/2,
+	Zmax/2+local_delta_Z(3),
+	Zmax/2+2*local_delta_Z(3),
+	Zmax/2+radius,
+	Zmax/2+radius+z_buffer,
+	Zmax ];
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%GEO file generation
+	'Writing GEO file...'
+
+	%open file
+	out = fopen(strcat(filename,'.geo'),'wt');
+
+	%write header
+	fprintf(out,'**GEOMETRY FILE\n');
+	fprintf(out,'\n');
+
+	%initialize current y
+	y_current=0;
+
+	%write block
+	fprintf(out,'BLOCK **Block Definition (XL,YL,ZL,XU,YU,ZU)\n');
+	fprintf(out,'{\n');
+	fprintf(out,'%f **XL\n', 0);
+	fprintf(out,'%f **YL\n', 0);
+	fprintf(out,'%f **ZL\n', 0);
+	fprintf(out,'%f **XU\n', Xmax);
+	fprintf(out,'%f **YU\n', h_bottom_square);
+	fprintf(out,'%f **ZU\n', Zmax);
+	fprintf(out,'%f **relative Permittivity\n', n_bottom_square^2);
+	fprintf(out,'%f **Conductivity\n', 0);
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+	y_current = y_current + h_bottom_square;
+
+	%write bottom cylinders
+	%Bottom DBR ( from Layer2 of AlGaAs)
+	for i=1:bottom_N
+
+	  %Layer 1
+	  fprintf(out,'CYLINDER **Cylinder Definition (XL,YL,ZL,XU,YU,ZU,R1,R2)\n');
+	  fprintf(out,'{\n');
+	  fprintf(out,'%f **X CENTRE\n', Xmax/2);
+	  fprintf(out,'%f **Y CENTRE\n', y_current + bottom_h1/2);
+	  fprintf(out,'%f **Z CENTRE\n', Zmax/2);
+	  fprintf(out,'%f **RADIUS 1\n', 0);
+	  fprintf(out,'%f **RADIUS 2\n', radius);
+	  fprintf(out,'%f **HEIGHT\n', bottom_h1);
+	  fprintf(out,'%f **Permittivity\n', bottom_n1^2);
+	  fprintf(out,'%f **Conductivity\n', 0);
+	  fprintf(out,'}\n');
+	  fprintf(out,'\n');
+	  y_current = y_current + bottom_h1;
+
+	  %Layer 2
+	  fprintf(out,'CYLINDER **Cylinder Definition (XL,YL,ZL,XU,YU,ZU,R1,R2)\n');
+	  fprintf(out,'{\n');
+	  fprintf(out,'%f **X CENTRE\n', Xmax/2);
+	  fprintf(out,'%f **Y CENTRE\n', y_current + bottom_h2/2);
+	  fprintf(out,'%f **Z CENTRE\n', Zmax/2);
+	  fprintf(out,'%f **RADIUS 1\n', 0);
+	  fprintf(out,'%f **RADIUS 2\n', radius);
+	  fprintf(out,'%f **HEIGHT\n', bottom_h2);
+	  fprintf(out,'%f **Permittivity\n', bottom_n2^2);
+	  fprintf(out,'%f **Conductivity\n', 0);
+	  fprintf(out,'}\n');
+	  fprintf(out,'\n');
+	  y_current = y_current + bottom_h2;
+
+	end
+
+	%write middle cylinder
+	fprintf(out,'CYLINDER **Cylinder Definition (XL,YL,ZL,XU,YU,ZU,R1,R2)\n');
+	fprintf(out,'{\n');
+	fprintf(out,'%f **X CENTRE\n', Xmax/2);
+	fprintf(out,'%f **Y CENTRE\n', y_current + cavity_h/2);
+	fprintf(out,'%f **Z CENTRE\n', Zmax/2);
+	fprintf(out,'%f **RADIUS 1\n', 0);
+	fprintf(out,'%f **RADIUS 2\n', radius);
+	fprintf(out,'%f **HEIGHT\n', cavity_h);
+	fprintf(out,'%f **Permittivity\n', cavity_n^2);
+	fprintf(out,'%f **Conductivity\n', 0);
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+	y_current = y_current + cavity_h;
+
+	%write top cylinders
+	for i=1:top_N
+
+	  %Layer 1
+	  fprintf(out,'CYLINDER **Cylinder Definition (XL,YL,ZL,XU,YU,ZU,R1,R2)\n');
+	  fprintf(out,'{\n');
+	  fprintf(out,'%f **X CENTRE\n', Xmax/2);
+	  fprintf(out,'%f **Y CENTRE\n', y_current + top_h1/2);
+	  fprintf(out,'%f **Z CENTRE\n', Zmax/2);
+	  fprintf(out,'%f **RADIUS 1\n', 0);
+	  fprintf(out,'%f **RADIUS 2\n', radius);
+	  fprintf(out,'%f **HEIGHT\n', top_h1);
+	  fprintf(out,'%f **Permittivity\n', top_n1^2);
+	  fprintf(out,'%f **Conductivity\n', 0);
+	  fprintf(out,'}\n');
+	  fprintf(out,'\n');
+	  y_current = y_current + top_h1;
+
+	  %Layer 2
+	  fprintf(out,'CYLINDER **Cylinder Definition (XL,YL,ZL,XU,YU,ZU,R1,R2)\n');
+	  fprintf(out,'{\n');
+	  fprintf(out,'%f **X CENTRE\n', Xmax/2);
+	  fprintf(out,'%f **Y CENTRE\n', y_current + top_h2/2);
+	  fprintf(out,'%f **Z CENTRE\n', Zmax/2);
+	  fprintf(out,'%f **RADIUS 1\n', 0);
+	  fprintf(out,'%f **RADIUS 2\n', radius);
+	  fprintf(out,'%f **HEIGHT\n', top_h2);
+	  fprintf(out,'%f **Permittivity\n', top_n2^2);
+	  fprintf(out,'%f **Conductivity\n', 0);
+	  fprintf(out,'}\n');
+	  fprintf(out,'\n');
+	  y_current = y_current + top_h2;
+
+	end
+
+	%write box
+	fprintf(out,'BOX  **BOX DEFINITION\n');
+	fprintf(out,'{\n');
+	fprintf(out,'%f **XL\n', 0);
+	fprintf(out,'%f **YL\n', 0);
+	fprintf(out,'%f **ZL\n', 0);
+	fprintf(out,'%f **XU\n', Xmax/2);
+	fprintf(out,'%f **YU\n', Ymax);
+	fprintf(out,'%f **ZU\n', Zmax);
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	%write footer
+	fprintf(out,'end'); %end the file
+
+	%close file
+	fclose(out);
+	'...done'
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%IN file generation
+	'Writing IN file...'
+
+	%open file
+	out = fopen(strcat(filename,'.in'),'wt');
+
+	%write file
+	fprintf(out,'%s\n',filename);
+	fprintf(out,'%s\n',filename);
+
+	%close file
+	fclose(out);
+	'...done'
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%CMD file generation
+	'Writing CMD file...'
+
+	%open file
+	out = fopen(strcat(filename,'.cmd'),'wt');
+
+	%write file
+	fprintf(out,'Executable = D:\\fdtd\\source\\latestfdtd02_03\\subgrid\\Fdtd32.exe\n');
+	fprintf(out,'\n');
+	fprintf(out,'input = %s.in\n', BASENAME);
+	fprintf(out,'\n');
+	fprintf(out,'output = fdtd.out\n');
+	fprintf(out,'\n');
+	fprintf(out,'error = error.log\n');
+	fprintf(out,'\n');
+	fprintf(out,'Universe = vanilla\n');
+	fprintf(out,'\n');
+	fprintf(out,'transfer_files = ALWAYS\n');
+	fprintf(out,'\n');
+	fprintf(out,'transfer_input_files = entity.lst, %s.geo, %s.inp\n', BASENAME, BASENAME);
+	fprintf(out,'\n');
+	fprintf(out,'Log = foo.log\n');
+	fprintf(out,'\n');
+	fprintf(out,'Rank = Memory >= 1000\n');
+	fprintf(out,'\n');
+	fprintf(out,'LongRunJob = TRUE\n');
+	fprintf(out,'\n');
+	fprintf(out,'###Requirements = (LongRunMachine =?= TRUE)\n');
+	fprintf(out,'\n');
+	fprintf(out,'queue\n');
+
+	%close file
+	fclose(out);
+	'...done'
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%INP file generation
+	'Writing INP file...'
+
+	%open file
+	out = fopen(strcat(filename,'.inp'),'wt');
+
+	% excitation
+	fprintf(out,'EXCITATION **EXCITATION DEFINITION\n');
+	fprintf(out,'{\n');
+	fprintf(out,'%d ** CURRENT SOURCE \n', 7);
+	fprintf(out,'%E **X\n', pillar_centre_X-2*delta_center);
+	fprintf(out,'%E **Y\n', pillar_centre_Y);
+	fprintf(out,'%E **Z\n', pillar_centre_Z);
+	fprintf(out,'%E **X\n', pillar_centre_X);
+	fprintf(out,'%E **Y\n', pillar_centre_Y);
+	fprintf(out,'%E **Z\n', pillar_centre_Z);
+	fprintf(out,'%d **EX\n', 1);
+	fprintf(out,'%d **EY\n', 0);
+	fprintf(out,'%d **EZ\n', 0);
+	fprintf(out,'%d **HX\n', 0);
+	fprintf(out,'%d **HY\n', 0);
+	fprintf(out,'%d **HZ\n', 0);
+	fprintf(out,'%d **GAUSSIAN MODULATED SINUSOID\n', 10);
+	fprintf(out,'%E **TIME CONSTANT\n', TIME_CONSTANT);
+	fprintf(out,'%E **AMPLITUDE\n', AMPLITUDE);
+	fprintf(out,'%E **TIME OFFSET\n', TIME_OFFSET);
+	fprintf(out,'%E **FREQ (HZ)\n', FREQUENCY);
+	fprintf(out,'%d **UNUSED PARAMETER\n', 0);
+	fprintf(out,'%d **UNUSED PARAMETER\n', 0);
+	fprintf(out,'%d **UNUSED PARAMETER\n', 0);
+	fprintf(out,'%d **UNUSED PARAMETER\n', 0);
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	% boundary
+	fprintf(out,'BOUNDARY  **BOUNDARY DEFINITION\n');
+	fprintf(out,'{\n');
+	fprintf(out,'1 1 1 0 **X+ \n');
+	fprintf(out,'2 1 1 0 **Y+ \n');
+	fprintf(out,'2 1 1 0 **Z+ \n');
+	fprintf(out,'2 1 1 0 **X- \n');
+	fprintf(out,'2 1 1 0 **Y- \n');
+	fprintf(out,'2 1 1 0 **Z- \n');
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	% flag
+	fprintf(out,'FLAG  **PROGRAM CONTROL OPTIONS\n');
+	fprintf(out,'{\n');
+	fprintf(out,'%d **ITERATION METHOD\n', 5);
+	fprintf(out,'%d **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n', 0);
+	fprintf(out,'%d **FLAG ONE\n', 0);
+	fprintf(out,'%d **FLAG TWO\n', 0);
+	fprintf(out,'%f **ITERATIONS\n', ITERATIONS);
+	fprintf(out,'%E **TIMESTEP\n', TIMESTEP);
+	fprintf(out,'"id" **ID CHARACTER (ALWAYS USE QUOTES) \n');
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	% mesh X
+	fprintf(out,'XMESH **XMESH DEFINITION\n');
+	fprintf(out,'{\n');
+	for i=1:length(delta_X)
+	  fprintf(out,'%f\n', delta_X(i));
+	end
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	% mesh Y
+	fprintf(out,'YMESH **YMESH DEFINITION\n');
+	fprintf(out,'{\n');
+	for i=1:length(delta_Y)
+	  fprintf(out,'%f\n', delta_Y(i));
+	end
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	% mesh Z
+	fprintf(out,'ZMESH **ZMESH DEFINITION\n');
+	fprintf(out,'{\n');
+	for i=1:length(delta_Z)
+	  fprintf(out,'%f\n', delta_Z(i));
+	end
+	fprintf(out,'}\n');
+	fprintf(out,'\n');
+
+	% frequency snapshots
+	function frequency_snapshot(PLANE,P1,P2)
+		if PLANE == 1
+			plane_name='X';
+		elseif PLANE == 2
+			plane_name='Y';
+		else PLANE == 3
+			plane_name='Z';
+		end
+
+		fprintf(out,strcat('FREQUENCY_SNAPSHOT **SNAPSHOT DEFINITION ',plane_name,'\n'));
+		fprintf(out,'{\n');
+		fprintf(out,'%f **FIRST\n', ITERATIONS);
+		fprintf(out,'%f **REPETITION\n', ITERATIONS);
+		fprintf(out,'%f **interpolate?\n', 1);
+		fprintf(out,'%f **REAL DFT\n', 0);
+		fprintf(out,'%f **MOD ONLY\n', 0);
+		fprintf(out,'%f **MOD ALL\n', 1);
+		fprintf(out,'%f **PLANE\n', PLANE);
+		fprintf(out,'%f **X1\n', P1(1));
+		fprintf(out,'%f **Y1\n', P1(2));
+		fprintf(out,'%f **Z1\n', P1(3));
+		fprintf(out,'%f **X2\n', P2(1));
+		fprintf(out,'%f **Y2\n', P2(2));
+		fprintf(out,'%f **Z2\n', P2(3));
+		fprintf(out,'%f **FREQUENCY (HZ)\n', FREQUENCY);
+		fprintf(out,'%f **STARTING SAMPLE\n', 0);
+		fprintf(out,'%f **EX\n', 1);
+		fprintf(out,'%f **EY\n', 1);
+		fprintf(out,'%f **EZ\n', 1);
+		fprintf(out,'%f **HX\n', 1);
+		fprintf(out,'%f **HY\n', 1);
+		fprintf(out,'%f **HZ\n', 1);
+		fprintf(out,'%f **JX\n', 0);
+		fprintf(out,'%f **JY\n', 0);
+		fprintf(out,'%f **JZ\n', 0);
+		fprintf(out,'}\n');
+		fprintf(out,'\n');
+	end
+	
+	% probe
+	function probe(P)
+		fprintf(out,'PROBE **PROBE DEFINITION\n');
+		fprintf(out,'{\n');
+		fprintf(out,'%f **X\n', P(1));
+		fprintf(out,'%f **Y\n', P(2));
+		fprintf(out,'%f **Z\n', P(3));
+		fprintf(out,'%f **STEP\n', 10);
+		fprintf(out,'%f **EX\n', 1);
+		fprintf(out,'%f **EY\n', 1);
+		fprintf(out,'%f **EZ\n', 1);
+		fprintf(out,'%f **HX\n', 1);
+		fprintf(out,'%f **HY\n', 1);
+		fprintf(out,'%f **HZ\n', 1);
+		fprintf(out,'%f **JX\n', 0);
+		fprintf(out,'%f **JY\n', 0);
+		fprintf(out,'%f **JZ\n', 0);
+		fprintf(out,'%f **POW\n', 0);
+		fprintf(out,'}\n');
+		fprintf(out,'\n');
+	end
+	
+	for iX = 1:length(Xplanes)
+		frequency_snapshot(1,[Xplanes(iX),0,0],[Xplanes(iX),Ymax,Zmax]);
+		for iY = 1:length(Yplanes)
+			frequency_snapshot(1,[0,Yplanes(iY),0],[Xmax/2,Yplanes(iY),Zmax]);
+			for iZ = 1:length(Zplanes)
+				frequency_snapshot(1,[0,0,Zplanes(iZ)],[Xmax/2,Ymax,Zplanes(iZ)]);
+				% probe( [Xplanes(iX), Yplanes(iY), Zplanes(iZ)] );
+			end
+		end
+	end
+	
+	%write footer
+	fprintf(out,'end'); %end the file
+
+	%close file
+	fclose(out);
+	'...done'
+end

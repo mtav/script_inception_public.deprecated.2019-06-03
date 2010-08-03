@@ -1,0 +1,1 @@
+function reflection=subGridMultiLayer(max_delta_Vector,thicknessVector)

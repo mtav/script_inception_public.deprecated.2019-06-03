@@ -1,0 +1,10 @@
+function frequency_snapshot_op(PLANE)
+	'hello'
+	if PLANE == 1
+		plane_name='X';
+	elseif PLANE == 2
+		plane_name='Y';
+	else PLANE == 3
+		plane_name='Z';
+	end
+end
