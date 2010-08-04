@@ -1,6 +1,4 @@
 function [sigma,mu,A] = mygaussfit(x,y,h)
-	% error('mooo');
-	%
 	% [sigma,mu,A]=mygaussfit(x,y)
 	% [sigma,mu,A]=mygaussfit(x,y,h)
 	%

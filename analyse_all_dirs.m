@@ -4,7 +4,7 @@ function analyse_all_dirs(SRCDIR, DSTDIR)
 	
 	if exist('SRCDIR','var')==0
 		disp('SRCDIR not given');
-	    SRCDIR = uigetdir('D:\Simulations\BFDTD','SRCDIR');
+	    SRCDIR = uigetdir(getuserdir(),'SRCDIR');
 	end
 	if ~(exist(SRCDIR,'dir'))
 		disp('dir not found');
@@ -13,7 +13,7 @@ function analyse_all_dirs(SRCDIR, DSTDIR)
 
 	if exist('DSTDIR','var')==0
 		disp('DSTDIR not given');
-	    DSTDIR = uigetdir('D:\Simulations\BFDTD','DSTDIR');
+	    DSTDIR = uigetdir(getuserdir(),'DSTDIR');
 	end
 	if ~(exist(DSTDIR,'dir'))
 		disp('dir not found');

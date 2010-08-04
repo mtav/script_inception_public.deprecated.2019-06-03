@@ -1,6 +1,6 @@
 function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 	% calculates the numerical aperture
-	% format long e
+	% function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 
 	%arguments
 	if exist('INP_FILE','var')==0
