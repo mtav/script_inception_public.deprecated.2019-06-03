@@ -1,5 +1,4 @@
-function [header, data] = hdrload2(file)
-% format long e
+function [header, data] = hdrload(file)
 
 % HDRLOAD Load data from an ASCII file containing a text header.
 %     [header, data] = HDRLOAD('filename.ext') reads a data file
