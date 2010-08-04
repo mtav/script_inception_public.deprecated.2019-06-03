@@ -90,6 +90,6 @@ function micropillar_NA(caseID, INP_FILE)
 	
 	PRN_FILE
 	
-	NA = calculateNA(INP_FILE, PRN_FILE, 50)
+	NA = calculateNA(INP_FILE, PRN_FILE, 1)
 	
 end

@@ -27,16 +27,21 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 
 	if exist('center_offset','var')==0
 		disp('center_offset not given');
-		center_offset = 50;
+		center_offset = 1;
 	end
 
 	[ entries, structured_entries ] = GEO_INP_reader(INP_FILE);
 	frequency = structured_entries.excitations(1).frequency;
-	Nx = length(structured_entries.xmesh);
-	Ny = length(structured_entries.ymesh);
-	Nz = length(structured_entries.zmesh);
+	Nx = length(structured_entries.xmesh); % number of X cells in mesh
+	Ny = length(structured_entries.ymesh); % number of Y cells in mesh
+	Nz = length(structured_entries.zmesh); % number of Z cells in mesh
 	
-	x_index = Nx-center_offset; % we take the X line slightly off the middle
+	x_index = (Nx-1)-center_offset; % we take the X line slightly off the middle
+	if ( x_index<0 | x_index>Nx-1 )
+		x_index
+		Nx
+		error('index out of range');
+	end
 	lambda = getC0()/frequency; % mum
 
 	%read file
@@ -48,8 +53,13 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 	% mat(ind,:)
 
 	%take line at index x_index
-	first = 1+x_index*Nz;
-	last = (1+(x_index+1)*Nz)-1;
+	first = 1 + x_index*Nz;
+	last = 1 + x_index*Nz + (Nz-1);
+	Nx
+	Ny
+	Nz
+	first
+	last
 	data = data_orig(first:last,:);
 
 	% get columns
