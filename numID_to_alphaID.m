@@ -43,4 +43,6 @@ function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe
 	% disp(filename);
 	% disp(alphaID);
 	% disp(pair);
+	
+	filename = char(filename);
 end
