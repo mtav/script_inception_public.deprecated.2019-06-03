@@ -1,11 +1,12 @@
 function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 	% calculates the numerical aperture
-	format long e
+	% format long e
 
 	%arguments
 	if exist('INP_FILE','var')==0
 		disp('INP_FILE not given');
-		INP_FILE = uigetfile('*.inp','Select the INP file');
+		[FileName,PathName] = uigetfile('*.inp','Select the INP file');
+		INP_FILE = [PathName, filesep, FileName];
 	end
 
 	if ~(exist(INP_FILE,'file'))
@@ -15,7 +16,8 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 
 	if exist('PRN_FILE','var')==0
 		disp('PRN_FILE not given');
-		PRN_FILE = uigetfile('*.prn','Select the PRN file');
+		[FileName,PathName] = uigetfile('*.prn','Select the PRN file');
+		PRN_FILE = [PathName, filesep, FileName];
 	end
 
 	if ~(exist(PRN_FILE,'file'))
@@ -73,7 +75,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 	Hzim = data(:,20);
 
 	% power density 
-	for n= 1:Nz
+	for n = 1:Nz
 		powerXYZ(n,:) = sqrt(Exmod(n,1)^2+Eymod(n,1)^2+Ezmod(n,1)^2);
 		powerX(n,:) = Exmod(n,1)^2;
 		powerY(n,:) = Eymod(n,1)^2;
@@ -88,27 +90,28 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 
 	% fit_input = poynting
 	% fit_input = powerXYZ
-	fit_input = powerX
-
-	plot(z,fit_input);
+	fit_input = powerX;
 
 	%% fitting
 	[sigma,mu,A] = mygaussfit(z,fit_input);
-	y = A*exp(-(z-mu).^2/(2*sigma^2));
-	hold on; plot(z,y,'.r');
-
-	disp(['sigma = ',sigma]);
-	disp(['mu = ',mu]);
-	disp(['A = ',A]);
+	fit_output = A*exp(-(z-mu).^2/(2*sigma^2));
+	
+	disp(['sigma = ',num2str(sigma)]);
+	disp(['mu = ',num2str(mu)]);
+	disp(['A = ',num2str(A)]);
 
 	w0 = sqrt(4*sigma^2);
-	disp(['w0 = ',w0]);
+	disp(['w0 = ',num2str(w0)]);
 
 	NA = lambda/(pi*w0);
 
+	disp(['NA = ',num2str(NA)]);
+
+	% plotting
+	plot(z,fit_input);
+	hold on;
+	plot(z,fit_output,'.r');
 	xlabel('Z (\mum)');
 	ylabel('power (W*\mum^(-2))');
 	legend('data','fit');
-	
-	disp(['NA = ',NA]);
 end
