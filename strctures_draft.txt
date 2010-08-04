@@ -41,3 +41,19 @@ all_snapshots = struct(
 	'H', {}, 
 	'J', {}, 
 	'power', {})
+
+EXCITATIONS:
+	'current_source', {},
+	'P1(1)', {},
+	'P2(1)', {},
+	'E(1)', {},
+	'H(1)', {},
+	'type', {},
+	'time_constant', {},
+	'amplitude', {},
+	'time_offset', {},
+	'frequency', {},
+	'param1', {},
+	'param2', {},
+	'param3', {},
+	'param4', {},

@@ -21,6 +21,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	time_snapshots=struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
 	frequency_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
 	all_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
+	excitations=struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
 
 	entries={};
 	% process blocks
@@ -78,6 +79,9 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 				else
 					error('Sense, it makes none.');
 				end
+			case {'EXCITATION'}
+				current_excitation = add_excitation(entry);
+				excitations = [ excitations current_excitation ];
 			otherwise
 				% disp('Unknown type.');
 		end % end of switch
@@ -87,6 +91,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	structured_entries.all_snapshots = all_snapshots;
 	structured_entries.time_snapshots = time_snapshots;
 	structured_entries.frequency_snapshots = frequency_snapshots;
+	structured_entries.excitations = excitations;
 
 end % end of function
 
@@ -159,4 +164,22 @@ function snapshot = add_snapshot(entry)
 	else
 		error('Sense, it makes none.');
 	end
+end
+
+function current_excitation = add_excitation(entry)
+	idx = 1;
+	current_excitation.current_source = entry.data(idx); idx = idx+1;
+	current_excitation.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+	current_excitation.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+	current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+	current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+	current_excitation.type = entry.data(idx); idx = idx+1;
+	current_excitation.time_constant = entry.data(idx); idx = idx+1;
+	current_excitation.amplitude = entry.data(idx); idx = idx+1;
+	current_excitation.time_offset = entry.data(idx); idx = idx+1;
+	current_excitation.frequency = entry.data(idx); idx = idx+1;
+	current_excitation.param1 = entry.data(idx); idx = idx+1;
+	current_excitation.param2 = entry.data(idx); idx = idx+1;
+	current_excitation.param3 = entry.data(idx); idx = idx+1;
+	current_excitation.param4 = entry.data(idx); idx = idx+1;
 end

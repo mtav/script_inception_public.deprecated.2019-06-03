@@ -1,7 +1,8 @@
-function NA = calculateNA(filename)
-	%clean up and set number format
-	clear all
-	clc
+function NA = calculateNA(PRN_file)
+	% calculates the numerical aperture based on the data from PRN_file
+	% clean up and set number format
+	% clear all
+	% clc
 	format long e
 
 	%arguments
