@@ -82,6 +82,8 @@ function micropillar_NA(caseID, INP_FILE)
 	snap_time_number = 0;
 	[ PRN_FILE, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
 
+	PRN_FILE = fullfile(folder, PRN_FILE);
+	
 	if ~(exist(PRN_FILE,'file'))
 		error([PRN_FILE, ' not found']);
 	end
