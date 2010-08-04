@@ -22,7 +22,10 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	frequency_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
 	all_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
 	excitations=struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
-
+	xmesh = [];
+	ymesh = [];
+	zmesh = [];
+	
 	entries={};
 	% process blocks
 	for i=1:length(names_blocks)
@@ -82,6 +85,12 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 			case {'EXCITATION'}
 				current_excitation = add_excitation(entry);
 				excitations = [ excitations current_excitation ];
+			case {'XMESH'}
+				xmesh = entry.data;
+			case {'YMESH'}
+				ymesh = entry.data;
+			case {'ZMESH'}
+				zmesh = entry.data;
 			otherwise
 				% disp('Unknown type.');
 		end % end of switch
@@ -92,6 +101,9 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	structured_entries.time_snapshots = time_snapshots;
 	structured_entries.frequency_snapshots = frequency_snapshots;
 	structured_entries.excitations = excitations;
+	structured_entries.xmesh = xmesh;
+	structured_entries.ymesh = ymesh;
+	structured_entries.zmesh = zmesh;
 
 end % end of function
 

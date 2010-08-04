@@ -1,20 +1,44 @@
-function NA = calculateNA(PRN_file)
-	% calculates the numerical aperture based on the data from PRN_file
-	% clean up and set number format
-	% clear all
-	% clc
+function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
+	% calculates the numerical aperture
 	format long e
 
 	%arguments
-	Nz = 194;
-	Nx = 97;
-	x_index = Nx-50;
-	epsilon_r = 1.240000E+01;%no unit
-	permittivity = epsilon_r*epsilon_0;
-	lambda = 0.940; %micrometers
+	if exist('INP_FILE','var')==0
+		disp('INP_FILE not given');
+		INP_FILE = uigetfile('*.inp','Select the INP file');
+	end
+
+	if ~(exist(INP_FILE,'file'))
+		error( ['File not found: ',INP_FILE] );
+		return;
+	end
+
+	if exist('PRN_FILE','var')==0
+		disp('PRN_FILE not given');
+		PRN_FILE = uigetfile('*.prn','Select the PRN file');
+	end
+
+	if ~(exist(PRN_FILE,'file'))
+		error( ['File not found: ',PRN_FILE] );
+		return;
+	end
+
+	if exist('center_offset','var')==0
+		disp('center_offset not given');
+		center_offset = 50;
+	end
+
+	[ entries, structured_entries ] = GEO_INP_reader(INP_FILE);
+	frequency = structured_entries.excitations(1).frequency;
+	Nx = length(structured_entries.xmesh);
+	Ny = length(structured_entries.ymesh);
+	Nz = length(structured_entries.zmesh);
+	
+	x_index = Nx-center_offset; % we take the X line slightly off the middle
+	lambda = getC0()/frequency; % mum
 
 	%read file
-	[header, data_orig] = HDRLOAD(FILE);
+	[header, data_orig] = hdrload(PRN_FILE);
 
 	% extract all lines starting with 1
 	% mat = [1,2,3;,1,5,6;7,8,9;1,4,5]
@@ -50,10 +74,10 @@ function NA = calculateNA(PRN_file)
 
 	% power density 
 	for n= 1:Nz
-		powerXYZ(n,:) = permittivity*sqrt(Exmod(n,1)^2+Eymod(n,1)^2+Ezmod(n,1)^2);
-		powerX(n,:) = epsilon_0*c/2*Exmod(n,1)^2;
-		powerY(n,:) = epsilon_0*c/2*Eymod(n,1)^2;
-		powerZ(n,:) = epsilon_0*c/2*Ezmod(n,1)^2;
+		powerXYZ(n,:) = sqrt(Exmod(n,1)^2+Eymod(n,1)^2+Ezmod(n,1)^2);
+		powerX(n,:) = Exmod(n,1)^2;
+		powerY(n,:) = Eymod(n,1)^2;
+		powerZ(n,:) = Ezmod(n,1)^2;
 		poynting(n,:) = 0.5*real((Exre(n,1)+i*Exim(n,1)).*conj(Hzre(n,1)+i*Hzim(n,1))-(Ezre(n,1)+i*Ezim(n,1)).*conj(Hxre(n,1)+i*Hxim(n,1)));
 	end
 
