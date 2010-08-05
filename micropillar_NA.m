@@ -70,17 +70,24 @@ function micropillar_NA(caseID, INP_FILE)
 		error('Nts incorrect');
 	end
 	
+	Xplane_index = 6:6;
 	Yplane_index = 8:12;
+	Zplane_index = 6:6;
 	frequency_index = 1:(Nfreq+1);
-
-	numID_min = Nx*(Nfreq+1+1) + (Yplane_index(1)-1)*(Nfreq+1+1) + frequency_index(1)
-	numID_max = Nx*(Nfreq+1+1) + (Yplane_index(length(Yplane_index))-1)*(Nfreq+1+1) + frequency_index(length(frequency_index))
-	numID = Nx*(Nfreq+1+1) + (Yplane_index(1)-1)*(Nfreq+1+1) + frequency_index(length(frequency_index))
-		
+	resonance_frequency_index = Nfreq+1
+	
+	% calculate NA
+	Yplane_numID_min = Nx*(Nfreq+1+1) + (Yplane_index(1)-1)*(Nfreq+1+1) + frequency_index(1);
+	Yplane_numID_max = Nx*(Nfreq+1+1) + (Yplane_index(length(Yplane_index))-1)*(Nfreq+1+1) + frequency_index(length(frequency_index));
+	Yplane_numID = Nx*(Nfreq+1+1) + (Yplane_index(1)-1)*(Nfreq+1+1) + frequency_index(length(frequency_index));
+	
+	Xplane_numID = (Xplane_index(1)-1)*(Nfreq+1+1) + frequency_index(length(frequency_index));
+	Zplane_numID = (Nx+Ny)*(Nfreq+1+1) + (Zplane_index(1)-1)*(Nfreq+1+1) + frequency_index(length(frequency_index));
+	
 	snap_plane = 'y';
 	probe_ident = 'id';
 	snap_time_number = 0;
-	[ PRN_FILE, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
+	[ PRN_FILE, alphaID, pair ] = numID_to_alphaID(Yplane_numID, snap_plane, probe_ident, snap_time_number)
 
 	PRN_FILE = fullfile(folder, PRN_FILE);
 	
@@ -90,6 +97,11 @@ function micropillar_NA(caseID, INP_FILE)
 	
 	PRN_FILE
 	
-	NA = calculateNA(INP_FILE, PRN_FILE, 1)
+	[ PRN_FILE_folder, PRN_FILE_basename, PRN_FILE_ext ] = fileparts(PRN_FILE);
+	close all;
+	NA = calculateNA(INP_FILE, PRN_FILE, 1, [PRN_FILE,'_center.png'])
+	close all;
+	
+	% create 3D snapshot of plane
 	
 end

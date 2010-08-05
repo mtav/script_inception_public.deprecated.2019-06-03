@@ -1,4 +1,4 @@
-function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
+function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 	% calculates the numerical aperture
 	% function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 
@@ -28,6 +28,11 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 	if exist('center_offset','var')==0
 		disp('center_offset not given');
 		center_offset = 1;
+	end
+
+	if exist('save_as_filename','var')==0
+		disp('save_as_filename not given');
+		save_as_filename = 0;
 	end
 
 	[ entries, structured_entries ] = GEO_INP_reader(INP_FILE);
@@ -118,10 +123,17 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
 	disp(['NA = ',num2str(NA)]);
 
 	% plotting
+	fig = figure();
 	plot(z,fit_input);
 	hold on;
 	plot(z,fit_output,'.r');
 	xlabel('Z (\mum)');
-	ylabel('power (W*\mum^(-2))');
+	% ylabel('power (W*\mum^(-2))');
+	ylabel('Exmod^2;');
 	legend('data','fit');
+	title(['NA = ',num2str(NA)]);
+	
+	if save_as_filename
+		saveas(fig,save_as_filename,'png');
+	end
 end
