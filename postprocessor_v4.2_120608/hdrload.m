@@ -56,7 +56,7 @@ line = fgetl(fid);
 if ~isstr(line)
 disp('Warning: file contains no header and no data')
 end;
-[data, ncols, errmsg, nxtindex] = sscanf(line, '%f');
+[data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
 
 % One slight problem, pointed out by Peter vanderWal: If the 
 % first character of the line is 'e', then this will scan as 
@@ -80,13 +80,13 @@ if ~isstr(line)
  disp('Warning: file contains no data')
  break
  end;
-[data, ncols, errmsg, nxtindex] = sscanf(line, '%f');
+[data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
 end % while
 
 % Now that we have read in the first line of data, we can skip 
 % the processing that stores header information, and just read 
 % in the rest of the data. 
-data = [data; fscanf(fid, '%f')];
+data = [data; fscanf(fid, '%E')];
 fclose(fid);
 
 % Create header output from line information. The number of lines
