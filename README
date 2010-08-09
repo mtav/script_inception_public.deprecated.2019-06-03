@@ -1,4 +1,9 @@
 useful scripts for MEEP and Bristol FDTD and maybe other stuff :)
 
 License:
-Unless otherwise specified inside a file, everything is under GPLv3 (cf COPYING.txt).
+Unless otherwise specified inside a file or folder, everything is under GPLv3 (cf COPYING.txt).
+
+The following are under the LGPL:
+-Bris2Meep
+-Postprocessor
+-Geo2Str
