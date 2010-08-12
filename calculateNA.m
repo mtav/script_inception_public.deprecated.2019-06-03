@@ -1,6 +1,21 @@
 function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 	% calculates the numerical aperture
-	% function NA = calculateNA(INP_FILE, PRN_FILE, center_offset)
+	%
+	% function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
+	%
+	% INP_FILE (default=GUI): Path to the .inp file
+	% PRN_FILE (default=GUI): Path to the .prn file
+	% center_offset (default=0): offset in "mesh units" from the center (TODO: add full (2D/3D) plot of the snapshot plane)
+	% save_as_filename (default=0=no saving): "basename" under which to save the plots.
+	%
+	% ex: calculateNA('H:\DATA\qedc_2.0\qedc3_2_05.inp','H:\DATA\qedc_2.0\yda00.prn',1,'H:\DATA\qedc_2.0\yda00');
+	% This will calculate the NA based on the given .inp and .prn files by plotting the power in the line 1 grid unit away from the center line of the snapshot plane.
+	% The following images will be created:
+	% H:\DATA\qedc_2.0\yda00_powerXYZ.png
+	% H:\DATA\qedc_2.0\yda00_powerX.png
+	% H:\DATA\qedc_2.0\yda00_powerY.png
+	% H:\DATA\qedc_2.0\yda00_powerZ.png
+	% H:\DATA\qedc_2.0\yda00_poynting.png
 
 	%arguments
 	if exist('INP_FILE','var')==0
@@ -27,7 +42,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 
 	if exist('center_offset','var')==0
 		disp('center_offset not given');
-		center_offset = 1;
+		center_offset = 0;
 	end
 
 	if exist('save_as_filename','var')==0
@@ -60,11 +75,11 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 	%take line at index x_index
 	first = 1 + x_index*Nz;
 	last = 1 + x_index*Nz + (Nz-1);
-	Nx
-	Ny
-	Nz
-	first
-	last
+	% Nx
+	% Ny
+	% Nz
+	% first
+	% last
 	data = data_orig(first:last,:);
 
 	% get columns
@@ -95,7 +110,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 		powerX(n,:) = Exmod(n,1)^2;
 		powerY(n,:) = Eymod(n,1)^2;
 		powerZ(n,:) = Ezmod(n,1)^2;
-		poynting(n,:) = 0.5*real((Exre(n,1)+i*Exim(n,1)).*conj(Hzre(n,1)+i*Hzim(n,1))-(Ezre(n,1)+i*Ezim(n,1)).*conj(Hxre(n,1)+i*Hxim(n,1)));
+		poynting(n,:) = abs(0.5*real((Exre(n,1)+i*Exim(n,1)).*conj(Hzre(n,1)+i*Hzim(n,1))-(Ezre(n,1)+i*Ezim(n,1)).*conj(Hxre(n,1)+i*Hxim(n,1))));
 	end
 
 	% plot(z,powerXYZ,z,powerX,z,powerY,z,powerZ),
@@ -103,37 +118,44 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 	% ylabel('power'),
 	% legend('powerXYZ','powerX','powerY','powerZ')
 
-	% fit_input = poynting
-	% fit_input = powerXYZ
-	fit_input = powerX;
+	function gaussian_fit(fit_input, type, legend_txt)
+		%% fitting
+		disp(['=== Using ',type,' ===']);
+		[sigma,mu,A] = mygaussfit(z,fit_input);
+		fit_output = A*exp(-(z-mu).^2/(2*sigma^2));
+		
+		disp(['sigma = ',num2str(sigma)]);
+		disp(['mu = ',num2str(mu)]);
+		disp(['A = ',num2str(A)]);
 
-	%% fitting
-	[sigma,mu,A] = mygaussfit(z,fit_input);
-	fit_output = A*exp(-(z-mu).^2/(2*sigma^2));
-	
-	disp(['sigma = ',num2str(sigma)]);
-	disp(['mu = ',num2str(mu)]);
-	disp(['A = ',num2str(A)]);
+		w0 = sqrt(4*sigma^2);
+		disp(['w0 = ',num2str(w0)]);
 
-	w0 = sqrt(4*sigma^2);
-	disp(['w0 = ',num2str(w0)]);
+		NA = lambda/(pi*w0);
 
-	NA = lambda/(pi*w0);
+		disp(['NA = ',num2str(NA)]);
 
-	disp(['NA = ',num2str(NA)]);
-
-	% plotting
-	fig = figure();
-	plot(z,fit_input);
-	hold on;
-	plot(z,fit_output,'.r');
-	xlabel('Z (\mum)');
-	% ylabel('power (W*\mum^(-2))');
-	ylabel('Exmod^2;');
-	legend('data','fit');
-	title(['NA = ',num2str(NA)]);
-	
-	if save_as_filename
-		saveas(fig,save_as_filename,'png');
+		% plotting
+		figure_handle = figure();
+		plot(z,fit_input);
+		hold on;
+		plot(z,fit_output,'.r');
+		xlabel('Z (\mum)');
+		% ylabel('power (W*\mum^(-2))');
+		ylabel(legend_txt);
+		% axeshandle = axes();
+		legend('data','fit');
+		title(['NA = ',num2str(NA)]);
+		
+		if save_as_filename
+			saveas(figure_handle,[save_as_filename,'_',type,'.png'],'png');
+		end
 	end
+	
+	gaussian_fit(powerXYZ,'powerXYZ','sqrt(Exmod^2+Eymod^2+Ezmod^2');
+	gaussian_fit(powerX,'powerX','Exmod^2');
+	gaussian_fit(powerY,'powerY','Eymod^2');
+	gaussian_fit(powerZ,'powerZ','Ezmod^2');
+	gaussian_fit(poynting,'poynting','abs(1/2*Re(ExH*))');
+	
 end

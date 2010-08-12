@@ -54,15 +54,16 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	hole_radius_y = (lambda/(4*n_Air))/2;%mum
 	hole_radius_z = pillar_radius - (d_holes-2*hole_radius_y);%mum
 	% number of holes on bottom
-	bottom_N = 6;%no unit
+	bottom_N = 6; %no unit
 	% number of holes on top
-	top_N = 3;%no unit
+	top_N = 3; %no unit
 	% distance between 2 holes around cavity
 	d_holes_cavity = lambda/n_Diamond + 2*hole_radius_y;%mum
 	Lcav = d_holes_cavity - d_holes; % mum
 	% d_holes_cavity = Lcav + d_holes;
 	% top box offset
 	top_box_offset=1;%mum
+	
 	%bottom square thickness
 	h_bottom_square=0.5;%mum
 	
@@ -97,12 +98,16 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	y_buffer = 32*delta_diamond;%mum
 	z_buffer = 4*delta_diamond;%mum
 
-	% dimension and position parameters
-	Xmax = 2*(pillar_radius + 4*delta_diamond + 4*delta_outside);%mum
 	pillar_height = (bottom_N+top_N)*d_holes + Lcav;
+	dome_radius = 3*pillar_height;
+
+	% dimension and position parameters
+	Xmax = 2*(dome_radius + 4*delta_diamond + 4*delta_outside);%mum
 	Ymax = h_bottom_square + pillar_height + y_buffer + top_box_offset;%mum
 	Zmax = Xmax;%mum
 	
+	center = [Xmax/2, h_bottom_square, Zmax/2];
+
 	pillar_centre_X = Xmax/2;
 	pillar_centre_Y = h_bottom_square + bottom_N*d_holes + Lcav/2;
 	pillar_centre_Z = Zmax/2;
@@ -222,17 +227,20 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	% initialize current y
 	y_current=0;
 
+	% create dome
+	GEOsphere(out, center, dome_radius, 0, n_Diamond^2, 0)
+
 	% create bottom block
 	L = [ 0, 0, 0 ];
 	U = [ Xmax, y_current + h_bottom_square, Zmax ];
-	GEOblock(out, L, U, n_bottom_square^2, 0);
+	GEOblock(out, L, U, n_Diamond^2, 0);
 	y_current = y_current + h_bottom_square;
 
 	% create main pillar
 	L = [ Xmax/2 - pillar_radius, y_current, Zmax/2 - pillar_radius ];
 	U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
-	GEOblock(out, L, U, n_Diamond^2, 0)
-
+	% GEOblock(out, L, U, n_Diamond^2, 0)
+	
 	y_current = y_current + d_holes/2;
 
 	% hole settings
@@ -242,15 +250,15 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	for i=1:bottom_N
 	  centre = [ Xmax/2, y_current, Zmax/2 ];
  	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
+		% GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
-		GEOblock(out, lower, upper, permittivity, conductivity);
+		% GEOblock(out, lower, upper, permittivity, conductivity);
 	  else
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_z];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_z];
-		GEOblock(out, lower, upper, permittivity, conductivity);
+		% GEOblock(out, lower, upper, permittivity, conductivity);
 	  end
 	  y_current = y_current + d_holes;
 	end
@@ -261,15 +269,15 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	for i=1:top_N
       centre = [ Xmax/2, y_current, Zmax/2 ];
 	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
+		% GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
-		GEOblock(out, lower, upper, permittivity, conductivity);
+		% GEOblock(out, lower, upper, permittivity, conductivity);
 	  else
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_z];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_z];
-		GEOblock(out, lower, upper, permittivity, conductivity);
+		% GEOblock(out, lower, upper, permittivity, conductivity);
 	  end
 	  y_current = y_current + d_holes;
 	end
