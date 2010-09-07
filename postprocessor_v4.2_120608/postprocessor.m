@@ -27,7 +27,7 @@ function varargout = postprocessor(varargin)
 
 % Edit the above text to modify the response to help postprocessor
 
-% Last Modified by GUIDE v2.5 03-Oct-2007 17:55:46
+% Last Modified by GUIDE v2.5 07-Sep-2010 14:50:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -80,19 +80,19 @@ function varargout = postprocessor_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+% --- Executes on selection change in popupmenu_inputsnapshot.
+function popupmenu_inputsnapshot_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_inputsnapshot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = get(hObject,'String') returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+% Hints: contents = get(hObject,'String') returns popupmenu_inputsnapshot contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_inputsnapshot
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+function popupmenu_inputsnapshot_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_inputsnapshot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -104,19 +104,19 @@ end
 
 
 
-% --- Executes on selection change in popupmenu3.
-function popupmenu3_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu3 (see GCBO)
+% --- Executes on selection change in popupmenu_inputfile.
+function popupmenu_inputfile_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_inputfile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = get(hObject,'String') returns popupmenu3 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu3
+% Hints: contents = get(hObject,'String') returns popupmenu_inputfile contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_inputfile
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu3 (see GCBO)
+function popupmenu_inputfile_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_inputfile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -127,19 +127,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+% --- Executes on button press in pushbutton_load_data.
+function pushbutton_load_data_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_load_data (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-val = get(handles.popupmenu1,'Value');
+val = get(handles.popupmenu_inputsnapshot,'Value');
 snapfile = handles.snaplist{val};
 handles.snapfile = [handles.workdir '\' snapfile];
-val = get(handles.popupmenu2,'Value');
+val = get(handles.popupmenu_geometryfile,'Value');
 geofile = handles.geolist{val};
 handles.geofile = [handles.workdir '\' geofile];
-val = get(handles.popupmenu3,'Value');
+val = get(handles.popupmenu_inputfile,'Value');
 inpfile = handles.inplist{val};
 handles.inpfile = [handles.workdir '\' inpfile];
 
@@ -166,23 +166,23 @@ end
 handles.colplot = columns;
 columns = columns(3:length(columns));
 columns = char(columns);
-set(handles.popupmenu4,'String',columns);
+set(handles.popupmenu_plotcolumn,'String',columns);
 set(handles.text11,'String',['Loaded data: ',snapfile]);
 guidata(hObject,handles);
 
-% --- Executes on selection change in popupmenu2.
-function popupmenu2_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+% --- Executes on selection change in popupmenu_geometryfile.
+function popupmenu_geometryfile_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_geometryfile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = get(hObject,'String') returns popupmenu2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu2
+% Hints: contents = get(hObject,'String') returns popupmenu_geometryfile contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_geometryfile
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+function popupmenu_geometryfile_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_geometryfile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -193,19 +193,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in popupmenu4.
-function popupmenu4_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu4 (see GCBO)
+% --- Executes on selection change in popupmenu_plotcolumn.
+function popupmenu_plotcolumn_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_plotcolumn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = get(hObject,'String') returns popupmenu4 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu4
+% Hints: contents = get(hObject,'String') returns popupmenu_plotcolumn contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_plotcolumn
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu4_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu4 (see GCBO)
+function popupmenu_plotcolumn_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_plotcolumn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -217,18 +217,18 @@ end
 
 
 
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function edit_maxplotvalue_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_maxplotvalue (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+% Hints: get(hObject,'String') returns contents of edit_maxplotvalue as text
+%        str2double(get(hObject,'String')) returns contents of edit_maxplotvalue as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_maxplotvalue (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -257,16 +257,16 @@ function radiobutton8_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of radiobutton8
 
 
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on button press in pushbutton_generate_plot.
+function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_generate_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-col = get(handles.popupmenu4,'Value');
+col = get(handles.popupmenu_plotcolumn,'Value');
 col = col+2;
-handles.dataname = get(handles.popupmenu4,'String');
-max = get(handles.edit2,'String');
+handles.dataname = get(handles.popupmenu_plotcolumn,'String');
+max = get(handles.edit_maxplotvalue,'String');
 max = str2double(max);
 guidata(hObject,handles);
 
@@ -294,9 +294,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+% --- Executes on button press in pushbutton_browse.
+function pushbutton_browse_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_browse (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -324,9 +324,9 @@ handles.inplist = {inp_files.name}';
 inp_files = char(inp_files.name);
 
 
-set(handles.popupmenu1,'String',prn_files);
-set(handles.popupmenu2,'String',geo_files);
-set(handles.popupmenu3,'String',inp_files);
+set(handles.popupmenu_inputsnapshot,'String',prn_files);
+set(handles.popupmenu_geometryfile,'String',geo_files);
+set(handles.popupmenu_inputfile,'String',inp_files);
 
 clear prn_files geo_files inp_files
 
@@ -355,41 +355,41 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in checkbox1.
-function checkbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox1 (see GCBO)
+% --- Executes on button press in checkbox_interpolate.
+function checkbox_interpolate_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_interpolate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox1
+% Hint: get(hObject,'Value') returns toggle state of checkbox_interpolate
 
 
-% --- Executes on button press in checkbox2.
-function checkbox2_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox2 (see GCBO)
+% --- Executes on button press in checkbox_autosave.
+function checkbox_autosave_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_autosave (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox2
+% Hint: get(hObject,'Value') returns toggle state of checkbox_autosave
 
 
-% --- Executes on button press in checkbox3.
-function checkbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox3 (see GCBO)
+% --- Executes on button press in checkbox_geometry.
+function checkbox_geometry_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_geometry (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox3
+% Hint: get(hObject,'Value') returns toggle state of checkbox_geometry
 
 
 
 
-% --- Executes on button press in checkbox4.
-function checkbox4_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox4 (see GCBO)
+% --- Executes on button press in checkbox_modulus.
+function checkbox_modulus_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_modulus (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox4
+% Hint: get(hObject,'Value') returns toggle state of checkbox_modulus
 
 
