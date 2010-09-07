@@ -24,30 +24,31 @@ function simple_gui2
           'Position',[300,50,100,25],...
           'Callback',{@popup_menu_Callback});
    ha = axes('Units','Pixels','Position',[50,60,200,185]); 
-   align([hsurf,hmesh,hcontour,htext,hpopup],'Center','None');
+   % align([hsurf,hmesh,hcontour,htext,hpopup],'Center','None');
    
    % Create the data to plot.
    peaks_data = peaks(35);
-   membrane_data = membrane;
+   membrane_data = peaks();
    [x,y] = meshgrid(-8:.5:8);
    r = sqrt(x.^2+y.^2) + eps;
    sinc_data = sin(r)./r;
    
    % Initialize the GUI.
-   % Change units to normalized so components resize 
-   % automatically.
-   set([f,ha,hsurf,hmesh,hcontour,htext,hpopup],...
-   'Units','normalized');
    %Create a plot in the axes.
    current_data = peaks_data;
    surf(current_data);
    % Assign the GUI a name to appear in the window title.
    set(f,'Name','Simple GUI')
    % Move the GUI to the center of the screen.
-   movegui(f,'center')
+   % movegui(f,'center')
    % Make the GUI visible.
    set(f,'Visible','on');
- 
+
+   % Change units to normalized so components resize 
+   % automatically.
+   set([f,ha,hsurf,hmesh,hcontour,htext,hpopup],...
+   'Units','normalized');
+   
    %  Callbacks for simple_gui2. These callbacks automatically
    %  have access to component handles and initialized data 
    %  because they are nested at a lower level.

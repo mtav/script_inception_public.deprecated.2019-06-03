@@ -27,7 +27,7 @@ function varargout = postprocessor(varargin)
 
 % Edit the above text to modify the response to help postprocessor
 
-% Last Modified by GUIDE v2.5 07-Sep-2010 14:50:23
+% Last Modified by GUIDE v2.5 07-Sep-2010 15:52:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,13 +57,44 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to postprocessor (see VARARGIN)
 
+disp(['nargin=',num2str(nargin)]);
+disp(['nargout=',num2str(nargout)]);
+
+if nargin>4
+    disp('We have input');
+end
+
+% set default value
+handles.workdir = pwd();
+
+% CLI input arg handling
+if nargin > 3
+    for k = 1:length(varargin)
+        disp(varargin{k});
+    end
+
+    if exist(varargin{1}{1},'dir')
+        handles.workdir = varargin{1}{1};
+    else
+        errordlg({'Input argument must be a valid',...
+                 'folder'},'Input Argument Error!')
+        return
+    end
+end
+
+handles.toto='original text';
+disp(['before:',handles.toto]);
+setWorkDir(hObject, handles, 'new text');
+disp(['after:',handles.toto]);
+
 % Choose default command line output for postprocessor
 handles.output = hObject;
 
 % Update handles structure
-set(handles.text10,'String',pwd)
-handles.workdir = pwd;
+set(handles.label_working_directory,'String',handles.workdir)
 guidata(hObject, handles);
+
+setWorkDir(hObject, handles, 'new text');
 
 % UIWAIT makes postprocessor wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -280,6 +311,15 @@ function edit3_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit3 as text
 %        str2double(get(hObject,'String')) returns contents of edit3 as a double
 
+function setWorkDir(hObject,handles, str)
+    disp(handles.toto);
+    disp(str);    
+    handles.toto=str;
+    disp(handles.toto);
+    guidata(hObject, handles);
+    disp(handles.toto);
+    set(handles.label_working_directory,'String',str)
+
 
 % --- Executes during object creation, after setting all properties.
 function edit3_CreateFcn(hObject, eventdata, handles)
@@ -292,7 +332,6 @@ function edit3_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in pushbutton_browse.
 function pushbutton_browse_Callback(hObject, eventdata, handles)
@@ -307,7 +346,7 @@ end
 
 handles.workdir = new_dir;
 
-set(handles.text10,'String',new_dir);
+set(handles.label_working_directory,'String',new_dir);
 
 handles.snaplist = {};
 handles.geolist = {};
@@ -323,6 +362,10 @@ inp_files = dir(fullfile(new_dir,'*.inp'));
 handles.inplist = {inp_files.name}';
 inp_files = char(inp_files.name);
 
+disp(['prn_files=',prn_files]);
+if(prn_files=='')
+    disp('no .prn files found');
+end
 
 set(handles.popupmenu_inputsnapshot,'String',prn_files);
 set(handles.popupmenu_geometryfile,'String',geo_files);
@@ -391,5 +434,3 @@ function checkbox_modulus_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_modulus
-
-
