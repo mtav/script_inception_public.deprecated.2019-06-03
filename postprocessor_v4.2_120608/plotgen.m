@@ -45,7 +45,7 @@ end
 
 %% Load column of choice to data
 modu = 1;
-if get(handles.checkbox4,'Value') == 1
+if get(handles.checkbox_modulus,'Value') == 1
     data = abs(handles.fin1(:,column));
 else
     data = handles.fin1(:,column);
@@ -67,7 +67,7 @@ end
 %% Create figure and plot data
 figure
 grey = 0;
-if (get(handles.radiobutton9,'Value') > get(handles.radiobutton10,'Value'))
+if (get(handles.radiobutton_colour,'Value') > get(handles.radiobutton_greyscale,'Value'))
     colormap(jet(256));
     grey = 0;
 else
@@ -76,21 +76,21 @@ else
 end
 
 if handles.plane == 1
-    if (get(handles.radiobutton11,'Value') > get(handles.radiobutton12,'Value')) 
+    if (get(handles.radiobutton_surface,'Value') > get(handles.radiobutton_contour,'Value')) 
         %pcolor(i,j,k)
         surf(i,j,k)
     else
         contour(i,j,k)
     end
 elseif handles.plane == 2
-    if (get(handles.radiobutton11,'Value') > get(handles.radiobutton12,'Value')) 
+    if (get(handles.radiobutton_surface,'Value') > get(handles.radiobutton_contour,'Value')) 
         %pcolor(i,j,k)
         surf(i,j,k)
     else
         contour(i,j,k)
     end
 else
-    if (get(handles.radiobutton11,'Value') > get(handles.radiobutton12,'Value')) 
+    if (get(handles.radiobutton_surface,'Value') > get(handles.radiobutton_contour,'Value')) 
         %pcolor(j,i,k)
         surf(j,i,k)
     else
@@ -100,7 +100,7 @@ end
 
 %colave = max(fin1(:,column));
 colfig = handles.colplot{column};
-if modu == 1 || get(handles.checkbox4,'Value') == 1
+if modu == 1 || get(handles.checkbox_modulus,'Value') == 1
     caxis([0 maxval])
 else
     caxis([-maxval maxval])
@@ -109,7 +109,7 @@ colorbar
 AspectRatio = get(gca,'DataAspectRatio');
 AspectRatio(1) = AspectRatio(2);
 set(gca,'DataAspectRatio',AspectRatio);
-if get(handles.checkbox1,'Value') == 1
+if get(handles.checkbox_interpolate,'Value') == 1
     shading interp
 else
     shading flat
@@ -134,7 +134,7 @@ clear titlesnap
 hold on
 
 %% Plot Geometry Entities
-if get(handles.checkbox3,'Value') == 1
+if get(handles.checkbox_geometry,'Value') == 1
     switch handles.plane
         case 1
             %Blocks
@@ -208,7 +208,7 @@ if get(handles.checkbox3,'Value') == 1
     end
 end
 
-if get(handles.checkbox2,'Value') == 1
+if get(handles.checkbox_autosave,'Value') == 1
     dim = length(handles.snapfile);
     if grey == 1
         figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];

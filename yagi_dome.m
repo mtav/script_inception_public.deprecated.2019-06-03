@@ -1,6 +1,7 @@
 function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%description:
+	% function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	% dome with pillar inside and air tubes penetrating from the side at an angle
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -324,6 +325,13 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, ITERATIONS, TIMESTEP, id_character);
 
 	GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector);
+	
+	% EPS snapshots for controlling the geometry
+	first = ITERATIONS;
+	repetition = ITERATIONS;
+	GEOtime_snapshot(out, first, repetition, 1, [Xmax/2,0,0], [Xmax/2,Ymax,Zmax], [0,0,0], [0,0,0], [0,0,0], 0, 1);
+	GEOtime_snapshot(out, first, repetition, 2, [0,Ymax/2,0], [Xmax/2,Ymax/2,Zmax], [0,0,0], [0,0,0], [0,0,0], 0, 1);
+	GEOtime_snapshot(out, first, repetition, 3, P1, P2, [0,0,Zmax/2], [Xmax/2,Ymax,Zmax/2], [0,0,0], 0, 1);
 	
 	% frequency snapshots
 	first = ITERATIONS;

@@ -82,10 +82,10 @@ if nargin > 3
     end
 end
 
-handles.toto='original text';
-disp(['before:',handles.toto]);
-setWorkDir(hObject, handles, 'new text');
-disp(['after:',handles.toto]);
+% handles.toto='original text';
+% disp(['before:',handles.toto]);
+% setWorkDir(hObject, handles, 'new text');
+% disp(['after:',handles.toto]);
 
 % Choose default command line output for postprocessor
 handles.output = hObject;
@@ -94,7 +94,7 @@ handles.output = hObject;
 set(handles.label_working_directory,'String',handles.workdir)
 guidata(hObject, handles);
 
-setWorkDir(hObject, handles, 'new text');
+% setWorkDir(hObject, handles, 'new text');
 
 % UIWAIT makes postprocessor wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -362,10 +362,10 @@ inp_files = dir(fullfile(new_dir,'*.inp'));
 handles.inplist = {inp_files.name}';
 inp_files = char(inp_files.name);
 
-disp(['prn_files=',prn_files]);
-if(prn_files=='')
-    disp('no .prn files found');
-end
+% disp(['prn_files=',prn_files]);
+% if(prn_files=='')
+%     disp('no .prn files found');
+% end
 
 set(handles.popupmenu_inputsnapshot,'String',prn_files);
 set(handles.popupmenu_geometryfile,'String',geo_files);
