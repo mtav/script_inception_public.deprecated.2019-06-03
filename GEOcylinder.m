@@ -1,14 +1,14 @@
 function GEOcylinder(FILE, centre, R1, R2, H, permittivity, conductivity, angle)
-% cylinder
-% {
-% 1-7 Coordinates of the material volume ( xc yc zc r1 r2 h )
-% 7 permittivity
-% 8 conductivity
-% 9 angle of inclination
-% }
-% xc, yc and zc are the coordinates of the centre of the cylinder. r1 and r2 are the inner and outer
-% radius respectively, h is the cylinder height, is the angle of inclination. The cylinder is aligned
-% with the y direction if =0 and with the x direction if =90O
+	% cylinder
+	% {
+	% 1-7 Coordinates of the material volume ( xc yc zc r1 r2 h )
+	% 7 permittivity
+	% 8 conductivity
+	% 9 angle of inclination
+	% }
+	% xc, yc and zc are the coordinates of the centre of the cylinder. r1 and r2 are the inner and outer
+	% radius respectively, h is the cylinder height, is the angle of inclination. The cylinder is aligned
+	% with the y direction if =0 and with the x direction if =90O
 
 	fprintf(FILE,'CYLINDER **Cylinder Definition\n');
 	fprintf(FILE,'{\n');

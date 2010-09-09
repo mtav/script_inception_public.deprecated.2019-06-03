@@ -101,6 +101,7 @@ end
 %colave = max(fin1(:,column));
 colfig = handles.colplot{column};
 if modu == 1 || get(handles.checkbox_modulus,'Value') == 1
+    disp(['maxval=',num2str(maxval)]);
     caxis([0 maxval])
 else
     caxis([-maxval maxval])

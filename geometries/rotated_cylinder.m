@@ -1,4 +1,4 @@
-function rotated_cylinder(BASENAME, DSTDIR, angle)
+function rotated_cylinder(DSTDIR, BASENAME, angle)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%description:
 	% creates a rotated cylinder and makes EPS snapshots of it.
@@ -9,11 +9,6 @@ function rotated_cylinder(BASENAME, DSTDIR, angle)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	disp('Reading input parameters...');
 
-	if exist('BASENAME','var')==0
-		disp('BASENAME not given');
-	    BASENAME = 'minimum';
-	end
-	
 	if exist('DSTDIR','var')==0
 		disp('DSTDIR not given');
 	    DSTDIR = uigetdir(getuserdir());
@@ -23,7 +18,12 @@ function rotated_cylinder(BASENAME, DSTDIR, angle)
 		return;
 	end
 	mkdir([DSTDIR,filesep,BASENAME]);
-	
+
+	if exist('BASENAME','var')==0
+		disp('BASENAME not given');
+	    BASENAME = 'rotated_cylinder';
+	end
+		
 	Xmax=1;
 	Ymax=1;
 	Zmax=1;
@@ -65,11 +65,11 @@ function rotated_cylinder(BASENAME, DSTDIR, angle)
 
 	% create bottom block
 	L = [ 0, 0, 0 ];
-	U = [ Xmax/2, Ymax/2, Zmax/2 ];
+	U = [ Xmax, Ymax/4, Zmax ];
 	GEOblock(out, L, U, 1, 0);
 
 	% create cylinder
-	
+	GEOcylinder(out, [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2], 0, 1/4, 3/4, 2, 0, angle);	
 
 	%write box
 	L = [ 0, 0, 0 ];
@@ -138,26 +138,20 @@ function rotated_cylinder(BASENAME, DSTDIR, angle)
 	Pz2 = [Xmax  , Ymax   , Zmax/2];
 	
 	% frequency snapshots
-	for i = 1:Nx_frequency_snapshot
-		GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 1, Px1, Px2, FREQUENCY, starting_sample, E, H, J);
-	end
-	for i = 1:Ny_frequency_snapshot
-		GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 2, Py1, Py2, FREQUENCY, starting_sample, E, H, J);
-	end
-	for i = 1:Nz_frequency_snapshot
-		GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 3, Pz1, Pz2, FREQUENCY, starting_sample, E, H, J);
-	end
+	% for i = 1:Nx_frequency_snapshot
+		% GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 1, Px1, Px2, FREQUENCY, starting_sample, E, H, J);
+	% end
+	% for i = 1:Ny_frequency_snapshot
+		% GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 2, Py1, Py2, FREQUENCY, starting_sample, E, H, J);
+	% end
+	% for i = 1:Nz_frequency_snapshot
+		% GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 3, Pz1, Pz2, FREQUENCY, starting_sample, E, H, J);
+	% end
 
 	% time snapshots
-	for i = 1:Nx_time_snapshot
-		GEOtime_snapshot(out, first, repetition, 1, Px1, Px2, E, H, J, power,1);
-	end
-	for i = 1:Ny_time_snapshot
-		GEOtime_snapshot(out, first, repetition, 2, Py1, Py2, E, H, J, power,1);
-	end
-	for i = 1:Nz_time_snapshot
-		GEOtime_snapshot(out, first, repetition, 3, Pz1, Pz2, E, H, J, power,1);
-	end
+	GEOtime_snapshot(out, first, repetition, 1, Px1, Px2, E, H, J, power,1);
+	GEOtime_snapshot(out, first, repetition, 2, Py1, Py2, E, H, J, power,1);
+	GEOtime_snapshot(out, first, repetition, 3, Pz1, Pz2, E, H, J, power,1);
 	
 	% probes
 	step=1;
@@ -167,9 +161,9 @@ function rotated_cylinder(BASENAME, DSTDIR, angle)
 	power = 0;
 	
 	% probes
-	for i =1:N_probes
-		GEOprobe(out, [Xmax/2, Ymax/2, Zmax/2], step, E, H, J, power );
-	end
+	% for i =1:N_probes
+		% GEOprobe(out, [Xmax/2, Ymax/2, Zmax/2], step, E, H, J, power );
+	% end
 	
 	%write footer
 	fprintf(out,'end\n'); %end the file
