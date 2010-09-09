@@ -112,9 +112,9 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 	id_character = '_id_';
 	GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, ITERATIONS, TIMESTEP, id_character);
 
-	delta_X_vector=[Xmax/2,Xmax/2];
-	delta_Y_vector=[Ymax/2,Ymax/2];
-	delta_Z_vector=[Zmax/2,Zmax/2];
+	delta_X_vector = subGridMultiLayer(Xmax/50,[Xmax]);
+	delta_Y_vector = subGridMultiLayer(Ymax/50,[Ymax]);
+	delta_Z_vector = subGridMultiLayer(Zmax/50,[Zmax]);
 	GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector);
 		
 	% frequency snapshots
