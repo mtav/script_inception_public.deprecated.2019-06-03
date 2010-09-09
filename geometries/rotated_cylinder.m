@@ -66,10 +66,10 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 	% create bottom block
 	L = [ 0, 0, 0 ];
 	U = [ Xmax, Ymax/4, Zmax ];
-	GEOblock(out, L, U, 1, 0);
+	GEOblock(out, L, U, 2, 0);
 
 	% create cylinder
-	GEOcylinder(out, [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2], 0, 1/4, 3/4, 2, 0, angle);	
+	GEOcylinder(out, [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2], 0, 1/4, 3/4, 3, 0, angle);	
 
 	%write box
 	L = [ 0, 0, 0 ];
