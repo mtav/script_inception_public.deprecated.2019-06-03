@@ -251,7 +251,7 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	for i=1:bottom_N
 	  centre = [ Xmax/2, y_current, Zmax/2 ];
  	  if HOLE_TYPE == 1
-		% GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
+		GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
@@ -270,7 +270,7 @@ function yagi_dome(BASENAME, DSTDIR, theta, pillar_radius, FREQUENCY)
 	for i=1:top_N
       centre = [ Xmax/2, y_current, Zmax/2 ];
 	  if HOLE_TYPE == 1
-		% GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
+		GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];

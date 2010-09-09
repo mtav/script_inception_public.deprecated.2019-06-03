@@ -82,10 +82,10 @@ if nargin > 3
     end
 end
 
-% handles.toto='original text';
-% disp(['before:',handles.toto]);
-% setWorkDir(hObject, handles, 'new text');
-% disp(['after:',handles.toto]);
+handles.toto='original text';
+disp(['before:',handles.toto]);
+[handles] = setWorkDir(hObject, handles, 'new text');
+disp(['after:',handles.toto]);
 
 % Choose default command line output for postprocessor
 handles.output = hObject;
@@ -311,7 +311,7 @@ function edit3_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit3 as text
 %        str2double(get(hObject,'String')) returns contents of edit3 as a double
 
-function setWorkDir(hObject,handles, str)
+function [handles] = setWorkDir(hObject,handles, str)
     disp(handles.toto);
     disp(str);    
     handles.toto=str;

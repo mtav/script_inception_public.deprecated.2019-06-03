@@ -94,6 +94,9 @@ else
         %pcolor(j,i,k)
         surf(j,i,k)
     else
+        j
+        i
+        k
         contour(j,i,k)
     end
 end
