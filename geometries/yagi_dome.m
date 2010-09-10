@@ -153,7 +153,8 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	[ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
 
 	% regular grid of interval delta_regular
-	delta_regular = delta_hole;
+	% delta_regular = delta_hole;
+	delta_regular = delta_min;
 	delta_X_vector = subGridMultiLayer(delta_regular,[ Xmax/2 ]);
 	delta_Y_vector = subGridMultiLayer(delta_regular,[ Ymax ]);
 	delta_Z_vector = subGridMultiLayer(delta_regular,[ Zmax ]);
@@ -245,7 +246,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
 	GEOblock(out, L, U, n_Diamond^2, 0)
 	% create dome
-	GEOsphere(out, center_sphere, dome_radius, 0, n_Diamond^2, 0)
+	% GEOsphere(out, center_sphere, dome_radius, 0, n_Diamond^2, 0)
 	
 	y_current = y_current + d_holes/2;
 
