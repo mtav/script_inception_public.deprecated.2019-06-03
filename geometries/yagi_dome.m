@@ -260,9 +260,12 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	
 	% create bottom holes
 	for i=1:bottom_N
-	  centre = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
+	  A = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
+	  B = A + [hole_length/2, -hole_radius_y, 0];
+	  Ap = B(:) + rotation_matrix(0,0,radians(angle))*(A(:)-B(:));
+	  center = Ap';
  	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, hole_length, permittivity, conductivity, angle);
+		GEOcylinder(out, center, 0, hole_radius_y, hole_length, permittivity, conductivity, angle);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
@@ -279,9 +282,12 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 
 	% create top holes
 	for i=1:top_N
-      centre = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
+      A = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
+	  B = A + [hole_length/2, -hole_radius_y, 0];
+	  Ap = B(:) + rotation_matrix(0,0,radians(angle))*(A(:)-B(:));
+	  center = Ap';
 	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, hole_length, permittivity, conductivity, angle);
+		GEOcylinder(out, center, 0, hole_radius_y, hole_length, permittivity, conductivity, angle);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
