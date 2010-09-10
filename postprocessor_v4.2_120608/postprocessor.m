@@ -160,13 +160,13 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
 
 val = get(handles.popupmenu_inputsnapshot,'Value');
 snapfile = handles.snaplist{val};
-handles.snapfile = [handles.workdir '\' snapfile];
+handles.snapfile = [handles.workdir, filesep, snapfile];
 val = get(handles.popupmenu_geometryfile,'Value');
 geofile = handles.geolist{val};
-handles.geofile = [handles.workdir '\' geofile];
+handles.geofile = [handles.workdir, filesep, geofile];
 val = get(handles.popupmenu_inputfile,'Value');
 inpfile = handles.inplist{val};
-handles.inpfile = [handles.workdir '\' inpfile];
+handles.inpfile = [handles.workdir, filesep, inpfile];
 
 %load snapshot data
 [header, handles.fin1] = hdrload(handles.snapfile);
