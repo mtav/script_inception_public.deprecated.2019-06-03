@@ -236,7 +236,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	% create bottom block
 	L = [ 0, 0, 0 ];
 	U = [ Xmax, y_current + h_bottom_square, Zmax ];
-	% GEOblock(out, L, U, n_Diamond^2, 0);
+	GEOblock(out, L, U, n_Diamond^2, 0);
 	y_current = y_current + h_bottom_square;
 	
 	edge_thickness = Xmax/10;
@@ -251,17 +251,17 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	U3 = [0, h_bottom_square + h_edge, Zmax];
 	U4 = [0, h_bottom_square + h_edge, 0];
 	
-	% GEOblock(out, L1, U1, n_Diamond^2, 0);
-	% GEOblock(out, L2, U2, n_Diamond^2, 0);
-	% GEOblock(out, L3, U3, n_Diamond^2, 0);
-	% GEOblock(out, L4, U4, n_Diamond^2, 0);
+	GEOblock(out, L1, U1, n_Diamond^2, 0);
+	GEOblock(out, L2, U2, n_Diamond^2, 0);
+	GEOblock(out, L3, U3, n_Diamond^2, 0);
+	GEOblock(out, L4, U4, n_Diamond^2, 0);
 	
 	% create main pillar
 	L = [ Xmax/2 - pillar_radius, y_current, Zmax/2 - pillar_radius ];
 	U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
-	% GEOblock(out, L, U, n_Diamond^2, 0)
+	GEOblock(out, L, U, n_Diamond^2, 0)
 	% create dome
-	% GEOsphere(out, center, dome_radius, 0, n_Diamond^2, 0)
+	GEOsphere(out, center, dome_radius, 0, n_Diamond^2, 0)
 	
 	y_current = y_current + d_holes/2;
 
@@ -272,7 +272,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	for i=1:bottom_N
 	  centre = [ Xmax/2, y_current, Zmax/2 ];
  	  if HOLE_TYPE == 1
-		% GEOcylinder(out, centre, 0, hole_radius_y, dome_radius, permittivity, conductivity, angle);
+		GEOcylinder(out, centre, 0, hole_radius_y, dome_radius, permittivity, conductivity, angle);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
@@ -291,7 +291,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	for i=1:top_N
       centre = [ Xmax/2, y_current, Zmax/2 ];
 	  if HOLE_TYPE == 1
-		% GEOcylinder(out, centre, 0, hole_radius_y, dome_radius, permittivity, conductivity, angle);
+		GEOcylinder(out, centre, 0, hole_radius_y, dome_radius, permittivity, conductivity, angle);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
