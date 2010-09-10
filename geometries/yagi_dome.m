@@ -40,7 +40,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	
 	if exist('angle','var')==0
 		disp('angle not given');
-		angle = 90;
+		angle = -45;
 	end
 	
 	HOLE_TYPE = 1; % 1,2,3 = circle, square, rectangle
@@ -107,7 +107,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	Ymax = h_bottom_square + pillar_height + y_buffer + top_box_offset;%mum
 	Zmax = Xmax;%mum
 	
-	center = [Xmax/2, h_bottom_square, Zmax/2];
+	center_sphere = [Xmax/2, h_bottom_square, Zmax/2];
 
 	pillar_centre_X = Xmax/2;
 	pillar_centre_Y = h_bottom_square + bottom_N*d_holes + Lcav/2;
@@ -152,10 +152,11 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	[ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y);
 	[ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
 
-	% regular grid of interval max(max_delta_Vector_X)
-	delta_X_vector = subGridMultiLayer(max(max_delta_Vector_X),[ Xmax/2 ]);
-	delta_Y_vector = subGridMultiLayer(max(max_delta_Vector_X),[ Ymax ]);
-	delta_Z_vector = subGridMultiLayer(max(max_delta_Vector_X),[ Zmax ]);
+	% regular grid of interval delta_regular
+	delta_regular = delta_hole;
+	delta_X_vector = subGridMultiLayer(delta_regular,[ Xmax/2 ]);
+	delta_Y_vector = subGridMultiLayer(delta_regular,[ Ymax ]);
+	delta_Z_vector = subGridMultiLayer(delta_regular,[ Zmax ]);
 	
 	% for the frequency snapshots
 	Xplanes = [ 0,
@@ -238,41 +239,30 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	U = [ Xmax, y_current + h_bottom_square, Zmax ];
 	GEOblock(out, L, U, n_Diamond^2, 0);
 	y_current = y_current + h_bottom_square;
-	
-	edge_thickness = Xmax/10;
-	h_edge = h_bottom_square;
-	
-	L1 = [0, h_bottom_square, edge_thickness];
-	L2 = [Xmax-edge_thickness, h_bottom_square, 0];
-	L3 = [Xmax, h_bottom_square, Zmax-edge_thickness];
-	L4 = [edge_thickness, h_bottom_square, Zmax];
-	U1 = [Xmax, h_bottom_square + h_edge, 0];
-	U2 = [Xmax, h_bottom_square + h_edge, Zmax];
-	U3 = [0, h_bottom_square + h_edge, Zmax];
-	U4 = [0, h_bottom_square + h_edge, 0];
-	
-	GEOblock(out, L1, U1, n_Diamond^2, 0);
-	GEOblock(out, L2, U2, n_Diamond^2, 0);
-	GEOblock(out, L3, U3, n_Diamond^2, 0);
-	GEOblock(out, L4, U4, n_Diamond^2, 0);
-	
+		
 	% create main pillar
 	L = [ Xmax/2 - pillar_radius, y_current, Zmax/2 - pillar_radius ];
 	U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
 	GEOblock(out, L, U, n_Diamond^2, 0)
 	% create dome
-	GEOsphere(out, center, dome_radius, 0, n_Diamond^2, 0)
+	GEOsphere(out, center_sphere, dome_radius, 0, n_Diamond^2, 0)
 	
 	y_current = y_current + d_holes/2;
 
 	% hole settings
 	permittivity = n_Air^2;
 	conductivity = 0;
+	
+	% GEOcylinder(out, center_sphere, 0, dome_radius/4, dome_radius, permittivity, conductivity, angle);
+
+	solid_center_radius = pillar_radius/2;
+	hole_length = dome_radius;
+	
 	% create bottom holes
 	for i=1:bottom_N
-	  centre = [ Xmax/2, y_current, Zmax/2 ];
+	  centre = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
  	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, dome_radius, permittivity, conductivity, angle);
+		GEOcylinder(out, centre, 0, hole_radius_y, hole_length, permittivity, conductivity, angle);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
@@ -289,9 +279,9 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 
 	% create top holes
 	for i=1:top_N
-      centre = [ Xmax/2, y_current, Zmax/2 ];
+      centre = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
 	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, dome_radius, permittivity, conductivity, angle);
+		GEOcylinder(out, centre, 0, hole_radius_y, hole_length, permittivity, conductivity, angle);
 	  elseif HOLE_TYPE == 2
 		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
 		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
@@ -303,6 +293,24 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	  end
 	  y_current = y_current + d_holes;
 	end
+
+	% side walls
+	edge_thickness = Xmax/10;
+	h_edge = h_bottom_square;
+	
+	L1 = [0, h_bottom_square, edge_thickness];
+	L2 = [Xmax-edge_thickness, h_bottom_square, 0];
+	L3 = [Xmax, h_bottom_square, Zmax-edge_thickness];
+	L4 = [edge_thickness, h_bottom_square, Zmax];
+	U1 = [Xmax, h_bottom_square + h_edge, 0];
+	U2 = [Xmax, h_bottom_square + h_edge, Zmax];
+	U3 = [0, h_bottom_square + h_edge, Zmax];
+	U4 = [0, h_bottom_square + h_edge, 0];
+	
+	GEOblock(out, L1, U1, n_Diamond^2, 0);
+	GEOblock(out, L2, U2, n_Diamond^2, 0);
+	GEOblock(out, L3, U3, n_Diamond^2, 0);
+	GEOblock(out, L4, U4, n_Diamond^2, 0);
 
 	%write box
 	L = [ 0, 0, 0 ];
