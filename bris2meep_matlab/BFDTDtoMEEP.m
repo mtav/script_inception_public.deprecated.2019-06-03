@@ -130,6 +130,90 @@ function BFDTDtoMEEP(geofile, inpfile)
 	fprintf(fid,['(make pml (direction Z) (side High) (thickness ',num2str(pmlThickness,'%2.6f'),'))\r\n']);
 	fprintf(fid,'))\r\n');
 
+	%%%%%%%%%%%%%%%%%%%%%%
+	
+	abc=0;
+	mag=0;
+	elec=0;
+	boundary_types=zeros(1,6);
+	abc_pars=[8,2,0.001];
+
+	fprintf(fid,'\r\n;boundaries specification\r\n');
+
+
+	% Assign boundaries: 0 Mag, 1 Elec, 2 Absorbing (PML)
+	for i=1:6
+		if inpEntries.boundaries(i).type==10
+			boundary_types(i)=2;
+			if abc == 0
+				abc_pars(0)=inpEntries.boundaries(1).p(1);
+				abc_pars(1)=inpEntries.boundaries(2).p(2);
+				abc_pars(2)=inpEntries.boundaries(3).p(3);
+			end
+			abc = abc + 1;
+		elseif inpEntries.boundaries(i).type>1
+			boundary_types(i)=2;
+			abc = abc+1;
+		elseif inpEntries.boundaries(i).type==0
+			boundary_types(i)=0;
+			mag = mag+1;
+		elseif inpEntries.boundaries(i).type==1
+			boundary_types(i)=1;
+			elec = elec+1;
+		end
+	end
+	
+		% if (abc==6) {
+			% of << "(set! pml-layers (list (make pml (thickness " << abc_pars[0]*(1/trans->resolution) << "))))\n";
+		% }
+		% else {
+			% if (abc!=0) {
+				% of << "(set! pml-layers\n";
+				% of << "\t(list\n";
+				% for (int i=0;i<6;++i) {
+					% if (boundary_types[i]==2) {
+						% of << "\t\t(make pml (direction ";
+						% if ((i==0) || (i==3)) { of << "X"; }
+						% if ((i==1) || (i==4)) { of << "Y"; }
+						% if ((i==2) || (i==5)) { of << "Z"; }
+						% of << ") (side ";
+						% if (i<3) { of << "Low) (thickness "; }
+						% if (i>2) { of << "High) (thickness "; }
+
+						% for (int idx=0;idx<3;idx++) cout << "abc_pars["<<idx<<"] = " << abc_pars[idx] << endl;
+						% cout << "trans->resolution = " << trans->resolution <<endl;
+						% cout << "abc_pars[0]*(1/trans->resolution) = " << abc_pars[0]*(1/trans->resolution) << endl;
+
+						% of << abc_pars[0]*(1/trans->resolution) << "))\n";
+
+					% }
+				% }
+				% of << "\t))\n";
+			% }
+
+			fclose(fid);return;
+
+			% if ((elec>0) || (mag>0)) {
+				% of << "(init-fields)\n";
+				% if (bpars_[0].type==0) { of << "(meep-fields-set-boundary fields Low X Magnetic)\n"; }
+				% else if (bpars_[0].type==1) { of << "(meep-fields-set-boundary fields Low X Metallic)\n"; }
+				% if (bpars_[1].type==0) { of << "(meep-fields-set-boundary fields Low Y Magnetic)\n"; }
+				% else if (bpars_[1].type==1) { of << "(meep-fields-set-boundary fields Low Y Metallic)\n"; }
+				% if (bpars_[2].type==0) { of << "(meep-fields-set-boundary fields Low Z Magnetic)\n"; }
+				% else if (bpars_[2].type==1) { of << "(meep-fields-set-boundary fields Low Z Metallic)\n"; }
+				% if (bpars_[3].type==0) { of << "(meep-fields-set-boundary fields High X Magnetic)\n"; }
+				% else if (bpars_[3].type==1) { of << "(meep-fields-set-boundary fields High X Metallic)\n"; }
+				% if (bpars_[4].type==0) { of << "(meep-fields-set-boundary fields High Y Magnetic)\n"; }
+				% else if (bpars_[4].type==1) { of << "(meep-fields-set-boundary fields High Y Metallic)\n"; }
+				% if (bpars_[5].type==0) { of << "(meep-fields-set-boundary fields High Z Magnetic)\n"; }
+				% else if (bpars_[5].type==1) { of << "(meep-fields-set-boundary fields High Z Metallic)\n"; }
+			% }
+		% }
+
+		% cout << "===> print_boundaries done" << endl;
+
+	%%%%%%%%%%%%%%%%%%%%%%
+	
 	% Run Command
 	fprintf(fid,'(init-fields)\r\n');
 	runUntil=2*dxyz*numSteps;

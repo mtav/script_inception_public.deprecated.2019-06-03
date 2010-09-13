@@ -251,7 +251,9 @@ namespace fdtdutils {
 
 		for (int i=0;i<trans->sim_entities.size();++i) {
 			if (trans->sim_entities[i]->type()=="boundary") {
+			    cout << "CASTING BOUNDARIES" << endl;
 				boundaries(dynamic_cast<boundary*> (trans->sim_entities[i]), bpars_);
+				//for (int idx=0;idx<6;idx++) cout << "bpars_["<<idx<<"] = " << bpars_[idx] << endl;
 			}
 		}
 
