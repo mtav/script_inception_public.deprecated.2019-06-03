@@ -41,7 +41,20 @@ for m=1:length(geoEntries)
     end
 end
 
-geoCenter=[xu-xl yu-yl zu-zl]'/2;
+simSize=[xu-xl yu-yl zu-zl];
+geoCenter=simSize'/2;
+
+xmesh=inpEntries.xmesh; if ~length(xmesh); xmesh=-1; end
+ymesh=inpEntries.ymesh; if ~length(ymesh); ymesh=-1; end
+zmesh=inpEntries.zmesh; if ~length(zmesh); zmesh=-1; end
+
+dxyz=min([min(xmesh),min(ymesh),min(zmesh)]);
+resolution=1/dxyz;
+
+numSteps=inpEntries.flag.numSteps;
+fprintf(fid,'(set-param! resolution %2.6f )\r\n',resolution);
+fprintf(fid,['(set! geometry-lattice (make lattice (size ',num2str(simSize,'%2.5f '),')))\r\n\r\n;geometry specification\r\n(set! geometry\r\n(list\r\n']);
+fprintf(fid,'\r\n');
 
 for m=1:length(geoEntries)
    type=geoEntries{m}.type;
@@ -71,12 +84,6 @@ for m=1:length(geoEntries)
 end
 
 %% INP FILE
-xmesh=inpEntries.xmesh; if ~length(xmesh); xmesh=-1; end
-ymesh=inpEntries.ymesh; if ~length(ymesh); ymesh=-1; end
-zmesh=inpEntries.zmesh; if ~length(zmesh); zmesh=-1; end
-
-dxyz=min([min(xmesh),min(ymesh),min(zmesh)]);
-numSteps=inpEntries.flag.numSteps;
 
 % Excitations
 fields={'Ex','Ey','Ez','Hx','Hy','Hz'};
@@ -108,8 +115,8 @@ fprintf(fid,'(init-fields)\r\n');
 runUntil=2*dxyz*numSteps;
 fprintf(fid,['(run-until ',num2str(runUntil),'\r\n']);
 fprintf(fid,'(at-beginning output-epsilon)\r\n');
-for m=1:length(inpEntries.frequency_snapshots)
-    entry=inpEntries.frequency_snapshots(m);
+for m=1:length(inpEntries.all_snapshots)
+    entry=inpEntries.all_snapshots(m);
     sliceCenter=(entry.P1+entry.P2)/2-geoCenter';
     sliceSize=abs(entry.P1-entry.P2);
     atEverySlice=2*dxyz*entry.repetition;
