@@ -1,6 +1,5 @@
 function BFDTDtoMEEP(geofile, inpfile)
 	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 	% Written by Erman Engin, University of Bristol
 	% 
 	% NOTES:
@@ -8,10 +7,6 @@ function BFDTDtoMEEP(geofile, inpfile)
 	% Only one field in the excitation component defined in INP should be one.
 	% That is either Ex or Ey ... Hx...etc;  Otherwise the first nonzero
 	% component will be translated to ctl.
-
-	% PML Layer translation should be implemented using the data in
-	% inpEntries.boundaries
-
 	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	if exist('geofile','var') == 0
@@ -136,19 +131,18 @@ function BFDTDtoMEEP(geofile, inpfile)
 	mag=0;
 	elec=0;
 	boundary_types=zeros(1,6);
-	abc_pars=[8,2,0.001];
+	abc_pars=[ (1/excFrequency)/3,2,0.001];
 
 	fprintf(fid,'\r\n;boundaries specification\r\n');
-
 
 	% Assign boundaries: 0 Mag, 1 Elec, 2 Absorbing (PML)
 	for i=1:6
 		if inpEntries.boundaries(i).type==10
 			boundary_types(i)=2;
 			if abc == 0
-				abc_pars(0)=inpEntries.boundaries(1).p(1);
-				abc_pars(1)=inpEntries.boundaries(2).p(2);
-				abc_pars(2)=inpEntries.boundaries(3).p(3);
+				abc_pars(1)=inpEntries.boundaries(1).p(1);
+				abc_pars(2)=inpEntries.boundaries(2).p(2);
+				abc_pars(3)=inpEntries.boundaries(3).p(3);
 			end
 			abc = abc + 1;
 		elseif inpEntries.boundaries(i).type>1
