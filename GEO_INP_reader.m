@@ -25,7 +25,8 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	xmesh = [];
 	ymesh = [];
 	zmesh = [];
-	
+    flag=[];
+
 	entries={};
 	% process blocks
 	for i=1:length(names_blocks)
@@ -44,7 +45,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 			end
 
 			dd=str2num(lines{L});
-			
+
 			if cellFlag
 				if length(dd)  %% dd is num
 					dataV{length(dataV)+1}=dd;
@@ -61,11 +62,11 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 				end
 			end
 		end % end of loop through lines
-		
+
 		entry.type=type;
 		entry.data=dataV';
 		entries{length(entries)+1}=entry;
-			
+
 		% entry.type
 		% entry.data(1)
 		switch upper(entry.type)
@@ -78,7 +79,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 					frequency_snapshots = [ frequency_snapshots snapshot ];
 				elseif strcmpi(entry.type,'SNAPSHOT')
 					snapshot = add_time_snapshot(entry);
-					time_snapshots = [ time_snapshots snapshot ];
+					time_snapshots = [ time_snapshots snapshot ];                    
 				else
 					error('Sense, it makes none.');
 				end
@@ -91,10 +92,14 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 				ymesh = entry.data;
 			case {'ZMESH'}
 				zmesh = entry.data;
+            case {'FLAG'}
+				flag = add_flag(entry);
+            case {'BOUNDARY'}
+                boundaries=reshape(entry.data,4,length(entry.data)/4)';
 			otherwise
 				% disp('Unknown type.');
 		end % end of switch
-		
+
 	end %end of loop through blocks
 
 	structured_entries.all_snapshots = all_snapshots;
@@ -104,8 +109,20 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	structured_entries.xmesh = xmesh;
 	structured_entries.ymesh = ymesh;
 	structured_entries.zmesh = zmesh;
+    structured_entries.flag=flag;
+    structured_entries.boundaries=boundaries;
 
 end % end of function
+
+function flag = add_flag(entry)
+    flag.iMethod=entry.data{1};
+    flag.propCons=entry.data{2};
+    flag.flagOne=entry.data{3};
+    flag.flagTwo=entry.data{4};
+    flag.numSteps=entry.data{5};
+    flag.stabFactor=entry.data{6};
+    flag.id=entry.data{7};
+end
 
 function snapshot = add_frequency_snapshot(entry)
 	idx = 1;
