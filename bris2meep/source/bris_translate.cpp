@@ -7,6 +7,9 @@
  *
  */
 
+#include <iostream>
+using namespace std;
+
 #include "bris_translate.hpp"
 
 namespace fdtdutils {
@@ -15,10 +18,10 @@ namespace fdtdutils {
 		rank=3;
 		for (int i=0;i<3;++i) { dimensions[i]=0; }
 	}
-	
+
 	void sim_translation::translate(const std::string &fname, bool verbose) {
 		std::ofstream of;
-		
+
 		of.open(fname.c_str(), std::ios::out);
 		if (of.is_open()) {
 			// Write preamble to simulation
@@ -33,13 +36,13 @@ namespace fdtdutils {
 		}
 		of.close();
 	}
-	
+
 	void preamble(std::ofstream& of,bool verbose) {
 		of << ";preamble - some interesting settings" << std::endl;
 		of << "(set! filename-prefix false)\n";
 		of << "(set! output-single-precision? true)\n";
 	}
-	
+
 	void get_dimensions(sim_translation* trans,bool verbose) {
 		int i=0;
 		bool found=false;
@@ -54,13 +57,13 @@ namespace fdtdutils {
 			++i;
 		}
 	}
-	
+
 	void print_resolution(std::ofstream &of, sim_translation* trans,bool verbose) {
 		int i=0;
 		bool found=false;
 		float nxyz[3]={0,0,0};
 		float dx,dy,dz,d=0,dtmp;
-		
+
 		while (i<trans->sim_entities.size() && !found) {
 			// Get simulation resolution
 			if (trans->sim_entities[i]->type()=="nodes") {
@@ -82,10 +85,10 @@ namespace fdtdutils {
 			}
 			++i;
 		}
-		
+
 		if (!found && d!=0) { of << "(set-param! resolution " << 1/d << ")\n"; trans->resolution=1/d; }
 	}
-	
+
 	void print_geom_lattice(std::ofstream &of, sim_translation* trans,bool verbose) {
 		of << "\n;simulation size\n";
 		of << "(define-param sx " << trans->dimensions[0] << ") ; x size\n";
@@ -96,7 +99,7 @@ namespace fdtdutils {
 		if (verbose) { std::cout << "Sim dimensions: " << trans->dimensions[0] << "x" <<
 		trans->dimensions[1] << "x" << trans->dimensions[2] << std::endl; }
 	}
-	
+
 	void print_geometries(std::ofstream &of, sim_translation* trans,bool verbose) {
 		// To do
 		//		- double cylinder and spheres
@@ -160,14 +163,14 @@ namespace fdtdutils {
 			}
 		}
 		of << "\t)\n)\n";
-		
+
 		if (verbose) {
 			if (blocks>0) { std::cout << blocks << " blocks\n"; }
 			if (cyls>0) { std::cout << blocks << " cylinders\n"; }
 			if (spheres>0) { std::cout << blocks << " spheres\n"; }
 		}
 	}
-	
+
 	void print_sources(std::ofstream &of, sim_translation* trans,bool verbose) {
 		// To add:
 		//		- multiple components translated to multiple sources
@@ -203,7 +206,7 @@ namespace fdtdutils {
 				tc=ex_props_[1]*CSPEED;
 				amp=ex_props_[2];
 				offset=ex_props_[3]*CSPEED;
-				
+
 				switch (func_) {
 					case 10:
 						sourcet_=gaussian;
@@ -214,10 +217,10 @@ namespace fdtdutils {
 					default:
 						std::cerr << "Source type " << func_ << " not implemented in MEEP yet" << std::endl;
 				}
-				
+
 				of << "\t\t(make source\n";
 				of << "\t\t\t(src (make ";
-				if (sourcet_==gaussian) { 
+				if (sourcet_==gaussian) {
 					of << "gaussian-src (frequency " << freq << ") (width " << tc << ")\n";
 					of << "\t\t\t\t(start-time " << offset << ")))\n";
 				}
@@ -231,38 +234,44 @@ namespace fdtdutils {
 			}
 		}
 		of << "\t)\n)\n";
-		
+
 		if (verbose) { std::cout << sources << " excitations\n"; }
 	}
-	
+
 	void print_boundaries(std::ofstream &of, sim_translation* trans,bool verbose) {
+
+		cout << "===> print_boundaries called" << endl;
+
 		int abc=0,mag=0,elec=0;
 		boundary_param bpars_[6];
 		int boundary_types[6];
 		float abc_pars[3]={8,2,0.001};
-		
+
 		of << "\n;boundaries specification\n";
-		
+
 		for (int i=0;i<trans->sim_entities.size();++i) {
 			if (trans->sim_entities[i]->type()=="boundary") {
 				boundaries(dynamic_cast<boundary*> (trans->sim_entities[i]), bpars_);
 			}
 		}
-		
+
 		// Assign boundaries: 0 Mag, 1 Elec, 2 Absorbing (PML)
 		for (int i=0;i<6;++i) {
-			if (bpars_[i].type==10) { 
+			if (bpars_[i].type==10) {
 				boundary_types[i]=2;
 				if (abc==0) {
+				    cout << "WARNING: modifying abc_pars" << endl;
+                    for (int idx=0;idx<3;idx++) cout << "before: abc_pars["<<idx<<"] = " << abc_pars[idx] << endl;
 					abc_pars[0]=bpars_[0].p[0];
 					abc_pars[1]=bpars_[1].p[1];
 					abc_pars[2]=bpars_[2].p[2];
+                    for (int idx=0;idx<3;idx++) cout << "after: abc_pars["<<idx<<"] = " << abc_pars[idx] << endl;
 				}
 				++abc;
 			}
-			else if (bpars_[i].type>1) { 
+			else if (bpars_[i].type>1) {
 				boundary_types[i]=2;
-				++abc; 
+				++abc;
 			}
 			else if (bpars_[i].type==0) {
 				boundary_types[i]=0;
@@ -273,11 +282,11 @@ namespace fdtdutils {
 				++elec;
 			}
 		}
-		
+
 		if (abc==6) {
 			of << "(set! pml-layers (list (make pml (thickness " << abc_pars[0]*(1/trans->resolution) << "))))\n";
 		}
-		else { 
+		else {
 			if (abc!=0) {
 				of << "(set! pml-layers\n";
 				of << "\t(list\n";
@@ -290,12 +299,18 @@ namespace fdtdutils {
 						of << ") (side ";
 						if (i<3) { of << "Low) (thickness "; }
 						if (i>2) { of << "High) (thickness "; }
+
+						for (int idx=0;idx<3;idx++) cout << "abc_pars["<<idx<<"] = " << abc_pars[idx] << endl;
+						cout << "trans->resolution = " << trans->resolution <<endl;
+						cout << "abc_pars[0]*(1/trans->resolution) = " << abc_pars[0]*(1/trans->resolution) << endl;
+
 						of << abc_pars[0]*(1/trans->resolution) << "))\n";
+
 					}
 				}
 				of << "\t))\n";
 			}
-			
+
 			if ((elec>0) || (mag>0)) {
 				of << "(init-fields)\n";
 				if (bpars_[0].type==0) { of << "(meep-fields-set-boundary fields Low X Magnetic)\n"; }
@@ -312,15 +327,18 @@ namespace fdtdutils {
 				else if (bpars_[5].type==1) { of << "(meep-fields-set-boundary fields High Z Metallic)\n"; }
 			}
 		}
+
+		cout << "===> print_boundaries done" << endl;
+
 	}
-	
+
 	void print_run_info(std::ofstream &of, sim_translation* trans,bool verbose) {
 		std::string ident;
 		int niter;
-		
+
 		of << "\n;simulation run specification\n";
 		of << "(run-until ";
-		
+
 		// Calculate run time based on number of iterations x time step
 		for (int i=0;i<trans->sim_entities.size();++i) {
 			if (trans->sim_entities[i]->type()=="flag") {
@@ -328,14 +346,14 @@ namespace fdtdutils {
 			}
 		}
 		of << ceil(niter*(1/(2*trans->resolution))) << "\n";
-		
+
 		bool fields[6]={0,0,0,0,0,0};
 		float loc[3]={0,0,0};
 		float size[3]={0,0,0};
 		int step=1;
 		int pnum=0;
 		int snum=0;
-		
+
 		// Print probe and snapshot info
 		for (int i=0;i<trans->sim_entities.size();++i) {
 			if (trans->sim_entities[i]->type()=="probe") {
@@ -344,7 +362,7 @@ namespace fdtdutils {
 				loc[0]=loc[0]-(trans->dimensions[0]/2);
 				loc[1]=-1*(loc[1]-(trans->dimensions[1]/2));
 				loc[2]=loc[2]-(trans->dimensions[2]/2);
-				
+
 				of << "\t(to-appended \"p" << pnum/10 << pnum%10 << ident << "\" (at-every ";
 				of << step*(1/(2*trans->resolution)) << " (in-volume (volume (center ";
 				of << loc[0] << " " << loc[1] << " " << loc[2] << ") (size 0 0 0))\n\t\t";
@@ -364,7 +382,7 @@ namespace fdtdutils {
 				loc[0]=loc[0]-(trans->dimensions[0]/2);
 				loc[1]=-1*(loc[1]-(trans->dimensions[1]/2));
 				loc[2]=loc[2]-(trans->dimensions[2]/2);
-				
+
 				of << "\t(after-time " << first*(1/(2*trans->resolution));
 				of << " (to-appended \"" << plane << snum << ident << "\" (at-every ";
 				of << step*(1/(2*trans->resolution)) << " (in-volume (volume (center ";
@@ -379,10 +397,10 @@ namespace fdtdutils {
 				of << "))))\n";
 			}
 		}
-		
+
 		of << ")\n";
-		
-		if (verbose) { 
+
+		if (verbose) {
 			if (pnum>0) { std::cout << pnum << " probes\n"; }
 			if (snum>0) { std::cout << snum << " snapshots\n"; }
 		}
