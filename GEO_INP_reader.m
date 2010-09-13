@@ -26,6 +26,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	ymesh = [];
 	zmesh = [];
     flag=[];
+    boundaries=[];
 
 	entries={};
 	% process blocks
