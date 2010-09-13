@@ -181,7 +181,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 		lambda = peakdata_loc(i).vEnd(1);
 		lambda_idx = peakdata_loc(i).index;
 		
-		frequency = 10^3*getC0()/lambda;
+		frequency = 10^3*get_c0()/lambda;
 		peak_frequency_vector = [ peak_frequency_vector, frequency ];
 
 		amplitude = abs(cFFT_output(lambda_idx));
@@ -237,8 +237,8 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 	lambdamax = max(peakdata_all.Xzoom);
 	
 	% TODO: figure out where 10^-12 and 10^-2 factors come from!!!
-	fmin = 10^3*getC0()/lambdamax;
-	fmax = 10^3*getC0()/lambdamin;
+	fmin = 10^3*get_c0()/lambdamax;
+	fmax = 10^3*get_c0()/lambdamin;
 	fprintf('=>dt=%E fmin=%E fmax=%E\n', dt, fmin, fmax);
 	% vEnd = [x0, y0, A, FWHM];
 	% Q=x0/FWHM = vEnd(1)/vEnd(4)

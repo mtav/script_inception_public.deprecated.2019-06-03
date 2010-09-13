@@ -3,7 +3,7 @@ function micropillar(RADIUS, DSTDIR, BASENAME, N_TYPE, BOTTOM_N, TOP_N, FREQUENC
 	%description:
 	%This file creates a .geo file with micro-pillar microcavity.
 	% micropillar(RADIUS, DSTDIR, BASENAME, N_TYPE, BOTTOM_N, TOP_N, FREQUENCY, SNAPSHOTS_ON, ITERATIONS)
-	% micropillar(1, 'fullfile(getuserdir(),'DATA','test'), 'test', 0, 6, 3, [getC0()/0.7,getC0()/0.8,getC0()/0.9], 1, 32000)
+	% micropillar(1, 'fullfile(getuserdir(),'DATA','test'), 'test', 0, 6, 3, [get_c0()/0.7,get_c0()/0.8,get_c0()/0.9], 1, 32000)
 	% micropillar(1, 'fullfile(getuserdir(),'DATA','test'), 'test', 0, 33, 26, 3.331027E+008, 1, 32000)
 	%arguments
 	% RADIUS in mum
@@ -94,8 +94,8 @@ function micropillar(RADIUS, DSTDIR, BASENAME, N_TYPE, BOTTOM_N, TOP_N, FREQUENC
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%additional calculations
 	
-	% FREQUENCY=getC0()/lambda; % if lambda in mum, FREQUENCY will be in MHz
-	EXCITATION_FREQUENCY = getC0()/lambda;
+	% FREQUENCY=get_c0()/lambda; % if lambda in mum, FREQUENCY will be in MHz
+	EXCITATION_FREQUENCY = get_c0()/lambda;
 
 	% max mesh intervals
 	delta_bottom_square = lambda/(10*n_bottom_square);

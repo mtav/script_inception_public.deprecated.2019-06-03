@@ -31,7 +31,7 @@ function DFB_structure(BASENAME,DSTDIR,FREQUENCY)
 	
 	if exist('FREQUENCY','var')==0
 		disp('FREQUENCY not given');
-		FREQUENCY = getC0()/lambda;
+		FREQUENCY = get_c0()/lambda;
 	end
 	
 	% refractive indices

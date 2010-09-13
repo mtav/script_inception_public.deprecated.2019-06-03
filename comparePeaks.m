@@ -23,8 +23,8 @@ function comparePeaks(SRCDIR,X_AXIS_TYPE,probe_col)
 	lambda_min = 700;%nm
 	lambda_max = 950;%nm
 	
-	freq_min = 10^3*getC0()/lambda_max;%MHz
-	freq_max = 10^3*getC0()/lambda_min;%MHz
+	freq_min = 10^3*get_c0()/lambda_max;%MHz
+	freq_max = 10^3*get_c0()/lambda_min;%MHz
 
 	nGaAs=3.521;%no unit
 	nAlGaAs=2.973;%no unit
@@ -78,7 +78,7 @@ function comparePeaks(SRCDIR,X_AXIS_TYPE,probe_col)
 			text(900,(counter-1)+0.5,title);
 		else
 			xlabel('Frequency (MHz)');
-			text(getC0()/(900*10^(-3)),(counter-1)+0.5,title);
+			text(get_c0()/(900*10^(-3)),(counter-1)+0.5,title);
 		end
 		ylabel('Fourier transform (arbitrary units)');
 		hold on;

@@ -77,7 +77,7 @@ function create_harminv_input_files(SRCDIR, DSTDIR)
 
 		[ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy(n_GaAs, n_AlGaAs, n0, Lcav, radius);
 
-		peak_frequency_vector4 = [ peak_frequency_vector4, getC0()/(lambda*10^(-3)) ];
+		peak_frequency_vector4 = [ peak_frequency_vector4, get_c0()/(lambda*10^(-3)) ];
 		disp('=== peak_frequency_vector4 ===');
 		% length(peak_frequency_vector4)
 		% peak_frequency_vector4

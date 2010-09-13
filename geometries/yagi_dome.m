@@ -29,7 +29,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	
 	if exist('FREQUENCY','var')==0
 		disp('FREQUENCY not given');
-		FREQUENCY = getC0()/lambda;
+		FREQUENCY = get_c0()/lambda;
 	end
 
 	% pillar radius

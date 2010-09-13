@@ -62,7 +62,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 		Nx
 		error('index out of range');
 	end
-	lambda = getC0()/frequency; % mum
+	lambda = get_c0()/frequency; % mum
 
 	%read file
 	[header, data_orig] = hdrload(PRN_FILE);

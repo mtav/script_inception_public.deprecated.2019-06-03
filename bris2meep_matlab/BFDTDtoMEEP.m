@@ -89,11 +89,11 @@ end
 fields={'Ex','Ey','Ez','Hx','Hy','Hz'};
 for m=1:length(inpEntries.excitations)
     entry=inpEntries.excitations(m);
-    excFrequency=entry.frequency/getC0();
+    excFrequency=entry.frequency/get_c0();
     excComponent=fields{find([entry.E,entry.H]==1)};
     excSize=abs(entry.P1-entry.P2);
     excCenter=(entry.P1+entry.P2)/2-geoCenter';
-    excWidth=entry.time_constant*getC0();
+    excWidth=entry.time_constant*get_c0();
     fprintf(fid,[';;excitations specification\r\n(set! sources\r\n(list\r\n(make source\r\n(src (make gaussian-src (frequency ',num2str(excFrequency,'%2.7f'),') (width ',num2str(excWidth,'%2.7f'),')\r\n))\r\n(component ',excComponent,')\r\n(center ',num2str(excCenter,'%2.5f '),')\r\n(size ',num2str(excSize,'%2.5f '),'))\r\n)\r\n)\r\n']);
 
 end
