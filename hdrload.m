@@ -31,6 +31,7 @@ end
 
 % Open the file.  If this returns a -1, we did not open the file 
 % successfully.
+disp(['Opening file=',file]);
 fid = fopen(file);
 if fid==-1
 error('File not found or permission denied');
