@@ -1,5 +1,5 @@
 EXE=bris2meep
-SRCDIR='source'
+SRCDIR=source
 SRC=$(SRCDIR)/bris_sim.cpp $(SRCDIR)/bris_translate.cpp $(SRCDIR)/main.cpp
 
 all:
