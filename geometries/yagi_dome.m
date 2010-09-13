@@ -246,7 +246,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
 	GEOblock(out, L, U, n_Diamond^2, 0)
 	% create dome
-	% GEOsphere(out, center_sphere, dome_radius, 0, n_Diamond^2, 0)
+	GEOsphere(out, center_sphere, dome_radius, 0, n_Diamond^2, 0)
 	
 	y_current = y_current + d_holes/2;
 
