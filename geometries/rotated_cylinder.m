@@ -17,12 +17,18 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 		error('dir not found');
 		return;
 	end
-	mkdir([DSTDIR,filesep,BASENAME]);
-
+	
 	if exist('BASENAME','var')==0
 		disp('BASENAME not given');
 	    BASENAME = 'rotated_cylinder';
 	end
+
+	if exist('angle','var')==0
+		disp('angle not given');
+		angle = 45;
+	end
+
+	mkdir([DSTDIR,filesep,BASENAME]);
 		
 	Xmax=1;
 	Ymax=1;
