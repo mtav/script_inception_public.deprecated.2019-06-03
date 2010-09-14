@@ -8,9 +8,11 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin\Debug\bris2meep" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="H:\DATA\yagi_dome" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="yagi_dome.inp yagi_dome.geo yagi_dome.ctl" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -32,7 +34,12 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="main.cpp" />
+		<Unit filename="source\bris_sim.cpp" />
+		<Unit filename="source\bris_sim.hpp" />
+		<Unit filename="source\bris_translate.cpp" />
+		<Unit filename="source\bris_translate.hpp" />
+		<Unit filename="source\fdtdutils.hpp" />
+		<Unit filename="source\main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
