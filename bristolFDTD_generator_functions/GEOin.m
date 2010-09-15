@@ -1,4 +1,6 @@
 function GEOin(filename, BASENAME)
+    %TODO: input should be a list of files instead of just BASENAME
+
 	%IN file generation
 	disp('Writing IN file...');
 
