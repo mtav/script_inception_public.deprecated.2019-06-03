@@ -13,12 +13,20 @@ import BPyAddMesh
 import math
 
 material_dict={};
+frequency_snapshot_material = Blender.Material.New('frequency_snapshot');
+frequency_snapshot_material.rgbCol = 1,0,0;
+time_snapshot_material = Blender.Material.New('time_snapshot');
+time_snapshot_material.rgbCol = 1,1,0;
+eps_snapshot_material = Blender.Material.New('eps_snapshot');
+eps_snapshot_material.rgbCol = 1,0,1;
+
+snapshot_materials = [ frequency_snapshot_material, time_snapshot_material, eps_snapshot_material ];
 
 def materials(permittivity, conductivity):
     if permittivity not in material_dict:
         n = math.sqrt(permittivity)
         
-        permittivity_material = Blender.Material.New('permittivity')
+        permittivity_material = Blender.Material.New('permittivity');
         permittivity_material.rgbCol = 0,permittivity/100.0,1.0-permittivity/100.0;
 
         # conductivity_material = Blender.Material.New('conductivity')
@@ -89,46 +97,116 @@ def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
     obj.setLocation(center[0],center[1],center[2]);
     return
     
+def grid_index(Nx,Ny,Nz,i,j,k):
+    return (Ny*Nz*i + Nz*j + k);
+    
 def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
     verts = [];
     edges = [];
     faces = [];
     
+    Nx = len(delta_X_vector)+1;
+    Ny = len(delta_Y_vector)+1;
+    Nz = len(delta_Z_vector)+1;
+    
     x=0;
     y=0;
     z=0;
-    for i in range(len(delta_X_vector)+1):
+    for i in range(Nx):
         if i>0:
             x+=delta_X_vector[i-1];
         y=0;
-        for j in range(len(delta_Y_vector)+1):
+        for j in range(Ny):
             if j>0:
                 y+=delta_Y_vector[j-1];
             z=0;
-            for k in range(len(delta_Z_vector)+1):
+            for k in range(Nz):
                 if k>0:
                     z+=delta_Z_vector[k-1];
                 print i,j,k,'->',x,y,z;
                 verts.append(Vector(x,y,z));
     
+    for i in range(Nx):
+        for j in range(Ny):
+            A = grid_index(Nx,Ny,Nz,i,j,0);
+            B = grid_index(Nx,Ny,Nz,i,j,Nz-1);
+            edges.append([A,B]);
+
+    for j in range(Ny):
+        for k in range(Nz):
+            A = grid_index(Nx,Ny,Nz,0,j,k);
+            B = grid_index(Nx,Ny,Nz,Nx-1,j,k);
+            edges.append([A,B]);
+
+    for k in range(Nz):
+        for i in range(Nx):
+            A = grid_index(Nx,Ny,Nz,i,0,k);
+            B = grid_index(Nx,Ny,Nz,i,Ny-1,k);
+            edges.append([A,B]);
+        
     # edges.append([0,1]);
     # faces.append([0,1,2,3]);
 
-    BPyAddMesh.add_mesh_simple('MyBlock', verts, edges, faces);
-    print 'Nverts=',len(verts);
-    print 'Nverts=',(len(delta_X_vector)+1)*(len(delta_Y_vector)+1)*(len(delta_Z_vector)+1);
+    BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
+    print 'Nverts=', len(verts);
+    print 'Nverts=', Nx*Ny*Nz;
+
+    print 'Nedges=', len(edges);
+    print 'Nedges=', Nx*Ny + Ny*Nz+Nz*Nx;
 
     return
     
 def GEOexcitation(current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
-    # TODO: arrow
+    # TODO: arrow = cylinder + cone
+    # BPy_Mesh  	Cone(verts, diameter, length)
+    # Construct a conic mesh (ends filled).
+    # BPy_Mesh  	Cylinder(verts, diameter, length)
+    # Construct a cylindrical mesh (ends filled).
+    return
+
+def snapshot(plane, P1, P2):
+    return
+
+def GEOfrequency_snapshot(plane, P1, P2,snapshot_type):
+    sc = Blender.Scene.GetCurrent();
+    mesh = Blender.Mesh.Primitives.Plane(1.0);
+    mesh.materials = snapshot_materials;
+    for f in mesh.faces:
+        f.mat = snapshot_type;
+
+    if snapshot_type == 0:
+        obj = sc.objects.new(mesh,'frequency_snapshot');
+    elif snapshot_type == 1:
+        obj = sc.objects.new(mesh,'frequency_snapshot');
+    elif snapshot_type == 2:
+        obj = sc.objects.new(mesh,'frequency_snapshot');
+    else:
+        Blender.Draw.PupMenu('Error: Unknown snapshot_type');
+        return;
+
+    # use plane primitive or build mesh manually (just 4 points + 4 edges)?
+    pos = 0.5*(P1+P2);
+    obj.setLocation(pos[0],pos[1],pos[2]);
+    diag = P2-P1;
+    if plane == 1:
+        #X
+        obj.SizeX = abs(diag[0]);
+        obj.SizeY = abs(diag[1]);
+        obj.SizeZ = abs(diag[2]);
+        obj.RotX = 0;
+        obj.RotY = math.radians(90);
+        obj.RotZ = 0;
+    elif plane == 2:
+        #Y
+    else:
+        #Z
     return
     
-def GEOfrequency_snapshot(first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J):
+def GEOtime_snapshot(plane, P1, P2):
     # TODO
     return
-    
-def GEOtime_snapshot(first, repetition, plane, P1, P2, E, H, J, power, eps):
+
+def GEOtime_snapshot(plane, P1, P2):
     # TODO
     return
 
@@ -141,6 +219,7 @@ def GEOprobe(position):
     return
 
 def readBristolFDTD(filename):
+# should read .in file to get all .inp + .geo
 
 # TODO:
 # cylinder
