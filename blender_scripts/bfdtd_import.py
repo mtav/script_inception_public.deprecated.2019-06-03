@@ -164,10 +164,7 @@ def GEOexcitation(current_source, P1, P2, E, H, type, time_constant, amplitude, 
     # Construct a cylindrical mesh (ends filled).
     return
 
-def snapshot(plane, P1, P2):
-    return
-
-def GEOfrequency_snapshot(plane, P1, P2,snapshot_type):
+def snapshot(plane, P1, P2, snapshot_type):
     sc = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Plane(1.0);
     mesh.materials = snapshot_materials;
@@ -177,9 +174,9 @@ def GEOfrequency_snapshot(plane, P1, P2,snapshot_type):
     if snapshot_type == 0:
         obj = sc.objects.new(mesh,'frequency_snapshot');
     elif snapshot_type == 1:
-        obj = sc.objects.new(mesh,'frequency_snapshot');
+        obj = sc.objects.new(mesh,'time_snapshot');
     elif snapshot_type == 2:
-        obj = sc.objects.new(mesh,'frequency_snapshot');
+        obj = sc.objects.new(mesh,'eps_snapshot');
     else:
         Blender.Draw.PupMenu('Error: Unknown snapshot_type');
         return;
@@ -198,16 +195,32 @@ def GEOfrequency_snapshot(plane, P1, P2,snapshot_type):
         obj.RotZ = 0;
     elif plane == 2:
         #Y
+        obj.SizeX = abs(diag[0]);
+        obj.SizeY = abs(diag[1]);
+        obj.SizeZ = abs(diag[2]);
+        obj.RotX = math.radians(-90);
+        obj.RotY = 0;
+        obj.RotZ = 0;
     else:
         #Z
+        obj.SizeX = abs(diag[0]);
+        obj.SizeY = abs(diag[1]);
+        obj.SizeZ = abs(diag[2]);
+        obj.RotX = 0;
+        obj.RotY = 0;
+        obj.RotZ = 0;
+    return
+
+def GEOfrequency_snapshot(plane, P1, P2):
+    snapshot(plane, P1, P2, 0);
     return
     
 def GEOtime_snapshot(plane, P1, P2):
-    # TODO
+    snapshot(plane, P1, P2, 1);
     return
 
-def GEOtime_snapshot(plane, P1, P2):
-    # TODO
+def GEOeps_snapshot(plane, P1, P2):
+    snapshot(plane, P1, P2, 2);
     return
 
 def GEOprobe(position):
@@ -379,7 +392,31 @@ def TestObjects():
 # TestObjects()
 Vector = Blender.Mathutils.Vector
 
-GEOmesh([1,1], [1,2,3], [4,3,2,1]);
+# GEOmesh([1,1], [1,2,3], [4,3,2,1]);
+
+GEOfrequency_snapshot(1, Vector(-1,-1,-1), Vector(1,1,1));
+GEOfrequency_snapshot(2, Vector(-1,-1,-1), Vector(1,1,1));
+GEOfrequency_snapshot(3, Vector(-1,-1,-1), Vector(1,1,1));
+
+GEOtime_snapshot(1, Vector(2,-1,-1), Vector(4,1,1));
+GEOtime_snapshot(2, Vector(2,-1,-1), Vector(4,1,1));
+GEOtime_snapshot(3, Vector(2,-1,-1), Vector(4,1,1));
+
+GEOeps_snapshot(1, Vector(5,-1,-1), Vector(7,1,1));
+GEOeps_snapshot(2, Vector(5,-1,-1), Vector(7,1,1));
+GEOeps_snapshot(3, Vector(5,-1,-1), Vector(7,1,1));
+
+GEOfrequency_snapshot(1, Vector(-1,-1,-1), Vector(-1,1,1));
+GEOfrequency_snapshot(2, Vector(-1,-1,-1), Vector(1,-1,1));
+GEOfrequency_snapshot(3, Vector(-1,-1,-1), Vector(1,1,-1));
+
+GEOtime_snapshot(1, Vector(2,-1,-1), Vector(2,1,1));
+GEOtime_snapshot(2, Vector(2,-1,-1), Vector(4,-1,1));
+GEOtime_snapshot(3, Vector(2,-1,-1), Vector(4,1,-1));
+
+GEOeps_snapshot(1, Vector(5,-1,-1), Vector(5,1,1));
+GEOeps_snapshot(2, Vector(5,-1,-1), Vector(7,-1,1));
+GEOeps_snapshot(3, Vector(5,-1,-1), Vector(7,1,-1));
 
 # for i in range(11):
     # GEOblock(Vector(0,0,i),Vector(1,1,i+1),10*i,0);
