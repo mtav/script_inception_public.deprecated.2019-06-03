@@ -177,6 +177,8 @@ def Orthogonal(vec):
             return Vector(vec.y,-vec.x,0);
 
 def GEOexcitation(P1, P2):
+    print "=== GEOexcitation:", P2-P1;
+
     # BPy_Mesh  	Cone(verts, diameter, length)
     # Construct a conic mesh (ends filled).
     # BPy_Mesh  	Cylinder(verts, diameter, length)
@@ -194,13 +196,29 @@ def GEOexcitation(P1, P2):
     print 'arrow_length=',arrow_length;
     print 'cylinder_length=',cylinder_length;
     
-    axisZ = P2-P1;
+    axisZ = -(P2-P1); # because the default primitive cone is oriented along -Z, unlike the one imported from Blender UI...
     axisX = Orthogonal(axisZ);
     axisY = axisZ.cross(axisX);
     axisX.normalize();
     axisY.normalize();
     axisZ.normalize();
     rotmat = Matrix(axisX,axisY,axisZ);
+    # rotmat = rotmat.invert();
+    # rotmat = rotmat.transpose();
+    print 'axisX=', axisX;
+    print 'axisY=', axisY;
+    print 'axisZ=', axisZ;
+    print 'rotmat=', rotmat;
+    print 'rotmat*axisX=', rotmat*axisX;
+    print 'rotmat*axisY=', rotmat*axisY;
+    print 'rotmat*axisZ=', rotmat*axisZ;
+    print 'rotmat*Vector(1,0,0)=', rotmat*Vector(1,0,0);
+    print 'rotmat*Vector(0,1,0)=', rotmat*Vector(0,1,0);
+    print 'rotmat*Vector(0,0,1)=', rotmat*Vector(0,0,1);
+    
+    print 'Rotation matrices from Blender.Mathutils.RotationMatrix:';
+    print Blender.Mathutils.RotationMatrix(90, 3, 'x');
+    # rotmat = Blender.Mathutils.RotationMatrix(-90, 3, 'x')*Blender.Mathutils.RotationMatrix(-90, 3, 'z');
     print rotmat;
     
     sc = Blender.Scene.GetCurrent();
@@ -210,19 +228,40 @@ def GEOexcitation(P1, P2):
     for f in mesh.faces:
         f.mat = 0;
 
-    obj = sc.objects.new(mesh, 'arrow_cylinder');
-    obj.setMatrix(rotmat);
-    obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
+    arrow_cylinder_obj = sc.objects.new(mesh, 'arrow_cylinder');
+    arrow_cylinder_obj.setMatrix(rotmat);
+    arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
 
     mesh = Blender.Mesh.Primitives.Cone(32, 2*cone_radius, cone_length);
     mesh.materials = [ excitation_material ];
     for f in mesh.faces:
         f.mat = 0;
 
-    obj = sc.objects.new(mesh, 'arrow_cone');
-    obj.setMatrix(rotmat);
-    obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
+    arrow_cone_obj = sc.objects.new(mesh, 'arrow_cone');
+    arrow_cone_obj.setMatrix(rotmat);
+    
+    # arrow_cone_obj.RotX = math.radians( -90 );
+    # arrow_cone_obj.RotY = math.radians( 0 );
+    # arrow_cone_obj.RotZ = math.radians( -90 );
 
+    arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
+
+    arrow_cylinder_obj.join([arrow_cone_obj]);
+    sc.unlink(arrow_cone_obj);
+# oblist = list(scene.objects)
+# print oblist
+# oblist = oblist[:-2]
+# print oblist
+
+# oblist[0].join(oblist[1:]) #join 1 cube to 1 other cube
+# for i in range(1, len(oblist)):
+    # scene.unlink(oblist[i])
+
+# scene.update(0)
+
+# Blender.Redraw()
+
+    
     return
 
 def snapshot2(plane, P1, P2, snapshot_type):
@@ -492,7 +531,8 @@ def TestObjects():
 	# faces.append([0, 1, 2, 3])
 	
 	# BPyAddMesh.add_mesh_simple('MyBlock', verts, [], faces)
-  
+    
+print '----->Importing bristol FDTD geometry...';
 # Blender.Window.FileSelector(readBristolFDTD, "Import", Blender.sys.makename(ext='.geo'))
 # TestObjects()
 
@@ -513,6 +553,15 @@ GEOexcitation(Vector(2,2,2), Vector(3,3,3));
 GEOexcitation(Vector(1,1,1), Vector(2,1,2));
 GEOexcitation(Vector(2,1,2), Vector(2,2,3));
 GEOexcitation(Vector(2,2,3), Vector(1,2,4));
+
+x1=0;y1=0;z1=0;
+x2=0;y2=0;z2=0;
+for i in range(10*36):
+    x2=math.cos(math.radians(10*i));
+    y2=math.sin(math.radians(10*i));
+    z2=(10.*i)/360.;
+    GEOexcitation(Vector(x1,y1,z1), Vector(x2,y2,z2));
+    x1=x2;y1=y2;z1=z2;
 
 # GEOfrequency_snapshot(1, Vector(-1, -1, -1), Vector(1, 1, 1));
 # GEOfrequency_snapshot(2, Vector(-1, -1, -1), Vector(1, 1, 1));
