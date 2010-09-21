@@ -177,7 +177,7 @@ def Orthogonal(vec):
             return Vector(vec.y,-vec.x,0);
 
 def GEOexcitation(P1, P2):
-    print "=== GEOexcitation:", P2-P1;
+    # print "=== GEOexcitation:", P2-P1;
 
     # BPy_Mesh  	Cone(verts, diameter, length)
     # Construct a conic mesh (ends filled).
@@ -193,8 +193,8 @@ def GEOexcitation(P1, P2):
     cylinder_center = P1+2./5.*(P2-P1);
     cone_center = P1+4.5/5.*(P2-P1);
     
-    print 'arrow_length=',arrow_length;
-    print 'cylinder_length=',cylinder_length;
+    # print 'arrow_length=',arrow_length;
+    # print 'cylinder_length=',cylinder_length;
     
     axisZ = -(P2-P1); # because the default primitive cone is oriented along -Z, unlike the one imported from Blender UI...
     axisX = Orthogonal(axisZ);
@@ -205,21 +205,21 @@ def GEOexcitation(P1, P2):
     rotmat = Matrix(axisX,axisY,axisZ);
     # rotmat = rotmat.invert();
     # rotmat = rotmat.transpose();
-    print 'axisX=', axisX;
-    print 'axisY=', axisY;
-    print 'axisZ=', axisZ;
-    print 'rotmat=', rotmat;
-    print 'rotmat*axisX=', rotmat*axisX;
-    print 'rotmat*axisY=', rotmat*axisY;
-    print 'rotmat*axisZ=', rotmat*axisZ;
-    print 'rotmat*Vector(1,0,0)=', rotmat*Vector(1,0,0);
-    print 'rotmat*Vector(0,1,0)=', rotmat*Vector(0,1,0);
-    print 'rotmat*Vector(0,0,1)=', rotmat*Vector(0,0,1);
+    # print 'axisX=', axisX;
+    # print 'axisY=', axisY;
+    # print 'axisZ=', axisZ;
+    # print 'rotmat=', rotmat;
+    # print 'rotmat*axisX=', rotmat*axisX;
+    # print 'rotmat*axisY=', rotmat*axisY;
+    # print 'rotmat*axisZ=', rotmat*axisZ;
+    # print 'rotmat*Vector(1,0,0)=', rotmat*Vector(1,0,0);
+    # print 'rotmat*Vector(0,1,0)=', rotmat*Vector(0,1,0);
+    # print 'rotmat*Vector(0,0,1)=', rotmat*Vector(0,0,1);
     
-    print 'Rotation matrices from Blender.Mathutils.RotationMatrix:';
-    print Blender.Mathutils.RotationMatrix(90, 3, 'x');
+    # print 'Rotation matrices from Blender.Mathutils.RotationMatrix:';
+    # print Blender.Mathutils.RotationMatrix(90, 3, 'x');
     # rotmat = Blender.Mathutils.RotationMatrix(-90, 3, 'x')*Blender.Mathutils.RotationMatrix(-90, 3, 'z');
-    print rotmat;
+    # print rotmat;
     
     sc = Blender.Scene.GetCurrent();
     
@@ -228,7 +228,7 @@ def GEOexcitation(P1, P2):
     for f in mesh.faces:
         f.mat = 0;
 
-    arrow_cylinder_obj = sc.objects.new(mesh, 'arrow_cylinder');
+    arrow_cylinder_obj = sc.objects.new(mesh, 'excitation');
     arrow_cylinder_obj.setMatrix(rotmat);
     arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
 
@@ -257,7 +257,7 @@ def GEOexcitation(P1, P2):
 # for i in range(1, len(oblist)):
     # scene.unlink(oblist[i])
 
-# scene.update(0)
+    # sc.update(0)
 
 # Blender.Redraw()
 
