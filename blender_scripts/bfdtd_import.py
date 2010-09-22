@@ -7,10 +7,11 @@ Group: 'Import'
 Tooltip: 'Import from Bristol FDTD'
 """
 
-import Blender
-import bpy
-import BPyAddMesh
-import math
+import Blender;
+import bpy;
+import BPyAddMesh;
+import math;
+import os;
 
 Vector = Blender.Mathutils.Vector;
 Matrix = Blender.Mathutils.Matrix;
@@ -343,6 +344,10 @@ def TestObjects():
         GEOsphere(Vector(5.5, 5.5, i+0.5), 0.5, 0, i, 0);
         GEOprobe(Vector(0, 0, i));
 
+def GEO_INP_reader(filename):
+    print 'Processing ',filename;
+    return;
+
 def getExtension(filename):
     return filename.split(".")[-1];
     
@@ -351,10 +356,17 @@ def readBristolFDTD(filename):
     extension = getExtension(filename);
     if extension == 'in':
         print '.in file detected';
+        f=open(filename, 'r');
+        for line in f:
+            subfile = os.path.join(os.path.dirname(filename),line);
+            GEO_INP_reader(subfile);
+        f.close();
     elif extension == 'inp':
         print '.inp file detected';
+        GEO_INP_reader(filename);
     elif extension == 'geo':
         print '.geo file detected';
+        GEO_INP_reader(filename);
     elif extension == 'prn':
         print '.prn file detected: Not supported yet';
     else:
@@ -366,8 +378,8 @@ def readBristolFDTD(filename):
     # if filename.split(".")[-1] == '.in'in extList: return True
     # else: return False
 
-    in_file = file(filename, "r");
-    line = in_file.readline();
+    # in_file = file(filename, "r");
+    # line = in_file.readline();
 
     # Nobjects = int(line)
     # #print "Nobjects=", Nobjects
@@ -376,11 +388,16 @@ def readBristolFDTD(filename):
         # line = in_file.readline()
         # object_names.append(line.strip())
 
-    in_file.close()
+    # in_file.close()
     
 print '----->Importing bristol FDTD geometry...';
 Blender.Window.WaitCursor(1);
-Blender.Window.FileSelector(readBristolFDTD, "Import", Blender.sys.makename(ext='.in'))
+# Blender.Window.FileSelector(readBristolFDTD, "Import", Blender.sys.makename(path='H:\\DATA\\foo',ext='.in'));
+
+# readBristolFDTD('rotated_cylinder.in');
+readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.in');
+# readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.inp');
+# readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.geo');
 
 # TestObjects();
 
