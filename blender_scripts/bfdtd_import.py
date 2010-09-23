@@ -344,10 +344,40 @@ def TestObjects():
         GEOsphere(Vector(5.5, 5.5, i+0.5), 0.5, 0, i, 0);
         GEOprobe(Vector(0, 0, i));
 
-def GEO_INP_reader(filename):
+def read_input_file(filename):
     print 'Processing ',filename;
-    return;
+    box_read=False;
+    xmesh_read=False;
+    
+    
+    
+    return [ xmesh_read, box_read ];
 
+def getname(filename, extension):
+    if getExtension(filename) == extension:
+        return filename;
+    else:
+        return filename + '.' + extension;
+    
+def read_inputs(filename):
+
+    box_read=False;
+    xmesh_read=False;
+    
+    f=open(filename, 'r');
+    for line in f:
+        subfile = os.path.join(os.path.dirname(filename),line);
+        if (not xmesh_read):
+            subfile = getname(subfile,'inp');
+        else:
+            subfile = getname(subfile,'geo');
+        [ xmesh_read, box_read ] = read_input_file(subfile);
+    f.close();
+    if (not xmesh_read):
+        print 'WARNING: mesh not found';
+    if (not box_read):
+        print 'WARNING: box not found';
+    
 def getExtension(filename):
     return filename.split(".")[-1];
     
@@ -356,17 +386,13 @@ def readBristolFDTD(filename):
     extension = getExtension(filename);
     if extension == 'in':
         print '.in file detected';
-        f=open(filename, 'r');
-        for line in f:
-            subfile = os.path.join(os.path.dirname(filename),line);
-            GEO_INP_reader(subfile);
-        f.close();
+        read_inputs(filename);
     elif extension == 'inp':
         print '.inp file detected';
-        GEO_INP_reader(filename);
+        read_input_file(filename);
     elif extension == 'geo':
         print '.geo file detected';
-        GEO_INP_reader(filename);
+        read_input_file(filename);
     elif extension == 'prn':
         print '.prn file detected: Not supported yet';
     else:
