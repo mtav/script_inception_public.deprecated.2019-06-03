@@ -345,7 +345,7 @@ def TestObjects():
         GEOprobe(Vector(0, 0, i));
 
 def read_input_file(filename):
-    print 'Processing ',filename;
+    print 'Processing ', filename;
     box_read=False;
     xmesh_read=False;
     
@@ -353,11 +353,13 @@ def read_input_file(filename):
     
     return [ xmesh_read, box_read ];
 
-def getname(filename, extension):
-    if getExtension(filename) == extension:
+def getname(filename, default_extension):
+    
+    extension = getExtension(filename);
+    if extension == 'geo' or extension == 'inp':
         return filename;
     else:
-        return filename + '.' + extension;
+        return filename + '.' + default_extension;
     
 def read_inputs(filename):
 
@@ -366,7 +368,7 @@ def read_inputs(filename):
     
     f=open(filename, 'r');
     for line in f:
-        subfile = os.path.join(os.path.dirname(filename),line);
+        subfile = os.path.join(os.path.dirname(filename),line.strip());
         if (not xmesh_read):
             subfile = getname(subfile,'inp');
         else:
@@ -421,6 +423,7 @@ Blender.Window.WaitCursor(1);
 # Blender.Window.FileSelector(readBristolFDTD, "Import", Blender.sys.makename(path='H:\\DATA\\foo',ext='.in'));
 
 # readBristolFDTD('rotated_cylinder.in');
+# getname('tettte.in','.in');
 readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.in');
 # readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.inp');
 # readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.geo');
