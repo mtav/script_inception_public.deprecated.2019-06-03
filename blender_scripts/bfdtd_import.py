@@ -12,6 +12,8 @@ import bpy;
 import BPyAddMesh;
 import math;
 import os;
+import sys;
+import re;
 
 Vector = Blender.Mathutils.Vector;
 Matrix = Blender.Mathutils.Matrix;
@@ -354,113 +356,115 @@ def read_input_file(filename):
     # read the whole file as one string
     fulltext = input.read();
 
-    # remove comments
-	pattern_stripcomments = '\*\*.*$';
-	cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
+    print fulltext;
 
+    
+    # remove comments
+    pattern_stripcomments = re.compile("\*\*.*\n")
+    cleantext = pattern_stripcomments.sub("\n", fulltext);
+
+    print cleantext;
+    
     # close file
     input.close();
 
-	# extract blocks
-	pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
-	[tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+	# # extract blocks
+	# pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
+	# [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
-	time_snapshots=struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
-	frequency_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-	all_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
-	excitations=struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
-	boundaries=struct('type',{},'p',{});
+	# time_snapshots=struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
+	# frequency_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+	# all_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
+	# excitations=struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
+	# boundaries=struct('type',{},'p',{});
 	
-	xmesh = [];
-	ymesh = [];
-	zmesh = [];
-    flag=[];
-    boundaries=[];
+	# xmesh = [];
+	# ymesh = [];
+	# zmesh = [];
+    # flag=[];
+    # boundaries=[];
 
-	entries={};
-	# process blocks
-	for i=1:length(names_blocks)
+	# entries={};
+	# # process blocks
+	# for i=1:length(names_blocks)
 
-		type = names_blocks(:,i).type;
-		data = names_blocks(:,i).data;
-		# disp(['===>type=',type]);
+		# type = names_blocks(:,i).type;
+		# data = names_blocks(:,i).data;
+		# # disp(['===>type=',type]);
 
-		dataV=[];
-		# remove empty lines
-		lines = strread(data,'%s','delimiter','\r');
-		cellFlag=0;
-		for L=1:length(lines)
-			if ~length(lines{L})
-				continue;
-			end
+		# dataV=[];
+		# # remove empty lines
+		# lines = strread(data,'%s','delimiter','\r');
+		# cellFlag=0;
+		# for L=1:length(lines)
+			# if ~length(lines{L})
+				# continue;
+			# end
 
-			dd=str2num(lines{L});
+			# dd=str2num(lines{L});
 
-			if cellFlag
-				if length(dd)  %% dd is num
-					dataV{length(dataV)+1}=dd;
-				else           %% dd is not num
-					dataV{length(dataV)+1}=lines{L};
-				end
-			else
-			   if length(dd)  %% dd is num
-					dataV=[dataV,dd];
-				else           %% dd is not num
-					cellFlag=1;
-					dataV=num2cell(dataV);
-					dataV{length(dataV)+1}=lines{L};
-				end
-			end
-		end % end of loop through lines
+			# if cellFlag
+				# if length(dd)  %% dd is num
+					# dataV{length(dataV)+1}=dd;
+				# else           %% dd is not num
+					# dataV{length(dataV)+1}=lines{L};
+				# end
+			# else
+			   # if length(dd)  %% dd is num
+					# dataV=[dataV,dd];
+				# else           %% dd is not num
+					# cellFlag=1;
+					# dataV=num2cell(dataV);
+					# dataV{length(dataV)+1}=lines{L};
+				# end
+			# end
+		# end % end of loop through lines
 
-		entry.type=type;
-		entry.data=dataV';
-		entries{length(entries)+1}=entry;
+		# entry.type=type;
+		# entry.data=dataV';
+		# entries{length(entries)+1}=entry;
 
-		switch upper(entry.type)
-			case {'FREQUENCY_SNAPSHOT','SNAPSHOT'}
-				snapshot = add_snapshot(entry);
-				all_snapshots = [ all_snapshots snapshot ];
-				if strcmpi(entry.type,'FREQUENCY_SNAPSHOT')
-					snapshot = add_frequency_snapshot(entry);
-					frequency_snapshots = [ frequency_snapshots snapshot ];
-				elseif strcmpi(entry.type,'SNAPSHOT')
-					snapshot = add_time_snapshot(entry);
-					time_snapshots = [ time_snapshots snapshot ];                    
-				else
-					error('Sense, it makes none.');
-				end
-			case {'EXCITATION'}
-				current_excitation = add_excitation(entry);
-				excitations = [ excitations current_excitation ];
-			case {'XMESH'}
-				xmesh = entry.data;
-			case {'YMESH'}
-				ymesh = entry.data;
-			case {'ZMESH'}
-				zmesh = entry.data;
-            case {'FLAG'}
-				flag = add_flag(entry);
-            case {'BOUNDARY'}
-                boundaries = add_boundary(entry);
-			otherwise
-				% disp('Unknown type.');
-		end # end of switch
+		# switch upper(entry.type)
+			# case {'FREQUENCY_SNAPSHOT','SNAPSHOT'}
+				# snapshot = add_snapshot(entry);
+				# all_snapshots = [ all_snapshots snapshot ];
+				# if strcmpi(entry.type,'FREQUENCY_SNAPSHOT')
+					# snapshot = add_frequency_snapshot(entry);
+					# frequency_snapshots = [ frequency_snapshots snapshot ];
+				# elseif strcmpi(entry.type,'SNAPSHOT')
+					# snapshot = add_time_snapshot(entry);
+					# time_snapshots = [ time_snapshots snapshot ];                    
+				# else
+					# error('Sense, it makes none.');
+				# end
+			# case {'EXCITATION'}
+				# current_excitation = add_excitation(entry);
+				# excitations = [ excitations current_excitation ];
+			# case {'XMESH'}
+				# xmesh = entry.data;
+			# case {'YMESH'}
+				# ymesh = entry.data;
+			# case {'ZMESH'}
+				# zmesh = entry.data;
+            # case {'FLAG'}
+				# flag = add_flag(entry);
+            # case {'BOUNDARY'}
+                # boundaries = add_boundary(entry);
+			# otherwise
+				# % disp('Unknown type.');
+		# end # end of switch
 
-	end #end of loop through blocks
+	# end #end of loop through blocks
 
-	structured_entries.all_snapshots = all_snapshots;
-	structured_entries.time_snapshots = time_snapshots;
-	structured_entries.frequency_snapshots = frequency_snapshots;
-	structured_entries.excitations = excitations;
-	structured_entries.xmesh = xmesh;
-	structured_entries.ymesh = ymesh;
-	structured_entries.zmesh = zmesh;
-    structured_entries.flag=flag;
-    structured_entries.boundaries=boundaries;
-
-end % end of function
-
+	# structured_entries.all_snapshots = all_snapshots;
+	# structured_entries.time_snapshots = time_snapshots;
+	# structured_entries.frequency_snapshots = frequency_snapshots;
+	# structured_entries.excitations = excitations;
+	# structured_entries.xmesh = xmesh;
+	# structured_entries.ymesh = ymesh;
+	# structured_entries.zmesh = zmesh;
+    # structured_entries.flag=flag;
+    # structured_entries.boundaries=boundaries;
     
     return [ xmesh_read, box_read ];
 
