@@ -12,6 +12,75 @@ import os;
 import sys;
 import re;
 
+class Time_snapshots:
+    def __init__(self):
+        self.first = 0;
+        self.repetition = 0;
+        self.plane = 0;
+        self.P1 = 0;
+        self.P2 = 0;
+        self.E = 0;
+        self.H = 0;
+        self.J = 0;
+        self.power = 0;
+
+class Frequency_snapshots:
+    def __init__(self):
+        self.first = 0;
+        self.repetition = 0;
+        self.interpolate = 0;
+        self.real_dft = 0;
+        self.mod_only = 0;
+        self.mod_all = 0;
+        self.plane = 0;
+        self.P1 = 0;
+        self.P2 = 0;
+        self.frequency = 0;
+        self.starting_sample = 0;
+        self.E = 0;
+        self.H = 0;
+        self.J = 0;
+
+class All_snapshots:
+    def __init__(self):
+        self.first = 0;
+        self.repetition = 0;
+        self.interpolate = 0;
+        self.real_dft = 0;
+        self.mod_only = 0;
+        self.mod_all = 0;
+        self.plane = 0;
+        self.P1 = 0;
+        self.P2 = 0;
+        self.frequency = 0;
+        self.starting_sample = 0;
+        self.E = 0;
+        self.H = 0;
+        self.J = 0;
+        self.power = 0;
+
+class Excitations:
+    def __init__(self):
+        self.current_source = 0;
+        self.P1 = 0;
+        self.P2 = 0;
+        self.E = 0;
+        self.H = 0;
+        self.type = 0;
+        self.time_constant = 0;
+        self.amplitude = 0;
+        self.time_offset = 0;
+        self.frequency = 0;
+        self.param1 = 0;
+        self.param2 = 0;
+        self.param3 = 0;
+        self.param4 = 0;
+
+class Boundaries:
+    def __init__(self):
+        self.type = 0;
+        self.p = 0;
+
 def read_input_file(filename):
     print 'Processing ', filename;
     box_read=False;
@@ -21,6 +90,8 @@ def read_input_file(filename):
     input = open(filename);
     # read the whole file as one string
     fulltext = input.read();
+    # close file
+    input.close();
 
     print fulltext;
 
@@ -30,96 +101,96 @@ def read_input_file(filename):
 
     print cleantext;
     
-    # close file
-    input.close();
+	# extract blocks
+    # pattern_blocks = re.compile("^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}");
+    pattern_blocks = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
+    blocks = [m.groupdict() for m in pattern_blocks.finditer(cleantext)]
 
-	# # extract blocks
-	# pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
-	# [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+    # [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
-	# time_snapshots=struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
-	# frequency_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-	# all_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
-	# excitations=struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
-	# boundaries=struct('type',{},'p',{});
+    # blocks =  pattern_blocks.findall(cleantext);
+    
+    print blocks;
 	
-	# xmesh = [];
-	# ymesh = [];
-	# zmesh = [];
-    # flag=[];
-    # boundaries=[];
+    time_snapshots = Time_snapshots();
+    frequency_snapshots = Frequency_snapshots();
+    all_snapshots = All_snapshots();
+    excitations = Excitations();
+    boundaries = Boundaries();
 
-	# entries={};
-	# # process blocks
-	# for i=1:length(names_blocks)
+    xmesh = [];
+    ymesh = [];
+    zmesh = [];
+    flag=[];
+    boundaries=[];
 
-		# type = names_blocks(:,i).type;
-		# data = names_blocks(:,i).data;
-		# # disp(['===>type=',type]);
+    entries={};
+	# process blocks
+    for i in range(len(blocks)):
+        type = blocks[i]['type'];
+        data = blocks[i]['data'];
+        data = re.split('\s+',data);
+        data = filter(None, data);
+        
+        print 'type=',type;
+        print 'data=',data;
+        
+        dataV=[];
+        # remove empty lines
+        lines = strread(data,'%s','delimiter','\r');
+        cellFlag=0;
+        for L=1:length(lines)
+            if ~length(lines{L})
+                continue;
 
-		# dataV=[];
-		# # remove empty lines
-		# lines = strread(data,'%s','delimiter','\r');
-		# cellFlag=0;
-		# for L=1:length(lines)
-			# if ~length(lines{L})
-				# continue;
-			# end
+            dd=str2num(lines{L});
 
-			# dd=str2num(lines{L});
+            if cellFlag:
+                if length(dd)  # dd is num
+                    dataV{length(dataV)+1}=dd;
+                else           # dd is not num
+                    dataV{length(dataV)+1}=lines{L};
+                end
+            else:
+               if length(dd):  # dd is num
+                    dataV=[dataV,dd];
+                else:           # dd is not num
+                    cellFlag=1;
+                    dataV=num2cell(dataV);
+                    dataV{length(dataV)+1}=lines{L};
 
-			# if cellFlag
-				# if length(dd)  %% dd is num
-					# dataV{length(dataV)+1}=dd;
-				# else           %% dd is not num
-					# dataV{length(dataV)+1}=lines{L};
-				# end
-			# else
-			   # if length(dd)  %% dd is num
-					# dataV=[dataV,dd];
-				# else           %% dd is not num
-					# cellFlag=1;
-					# dataV=num2cell(dataV);
-					# dataV{length(dataV)+1}=lines{L};
-				# end
-			# end
-		# end % end of loop through lines
+        entry.type=type;
+        entry.data=dataV';
+        entries{length(entries)+1}=entry;
 
-		# entry.type=type;
-		# entry.data=dataV';
-		# entries{length(entries)+1}=entry;
-
-		# switch upper(entry.type)
-			# case {'FREQUENCY_SNAPSHOT','SNAPSHOT'}
-				# snapshot = add_snapshot(entry);
-				# all_snapshots = [ all_snapshots snapshot ];
-				# if strcmpi(entry.type,'FREQUENCY_SNAPSHOT')
-					# snapshot = add_frequency_snapshot(entry);
-					# frequency_snapshots = [ frequency_snapshots snapshot ];
-				# elseif strcmpi(entry.type,'SNAPSHOT')
-					# snapshot = add_time_snapshot(entry);
-					# time_snapshots = [ time_snapshots snapshot ];                    
-				# else
-					# error('Sense, it makes none.');
-				# end
-			# case {'EXCITATION'}
-				# current_excitation = add_excitation(entry);
-				# excitations = [ excitations current_excitation ];
-			# case {'XMESH'}
-				# xmesh = entry.data;
-			# case {'YMESH'}
-				# ymesh = entry.data;
-			# case {'ZMESH'}
-				# zmesh = entry.data;
-            # case {'FLAG'}
-				# flag = add_flag(entry);
-            # case {'BOUNDARY'}
-                # boundaries = add_boundary(entry);
-			# otherwise
-				# % disp('Unknown type.');
-		# end # end of switch
-
-	# end #end of loop through blocks
+        switch upper(entry.type)
+            case {'FREQUENCY_SNAPSHOT','SNAPSHOT'}
+                snapshot = add_snapshot(entry);
+                all_snapshots = [ all_snapshots snapshot ];
+                if strcmpi(entry.type,'FREQUENCY_SNAPSHOT')
+                    snapshot = add_frequency_snapshot(entry);
+                    frequency_snapshots = [ frequency_snapshots snapshot ];
+                elseif strcmpi(entry.type,'SNAPSHOT')
+                    snapshot = add_time_snapshot(entry);
+                    time_snapshots = [ time_snapshots snapshot ];                    
+                else
+                    print('Sense, it makes none.'); exit(-1);
+                end
+            case {'EXCITATION'}
+                current_excitation = add_excitation(entry);
+                excitations = [ excitations current_excitation ];
+            case {'XMESH'}
+                xmesh = entry.data;
+            case {'YMESH'}
+                ymesh = entry.data;
+            case {'ZMESH'}
+                zmesh = entry.data;
+            case {'FLAG'}
+                flag = add_flag(entry);
+            case {'BOUNDARY'}
+                boundaries = add_boundary(entry);
+            otherwise
+                print('Unknown type.');
 
 	# structured_entries.all_snapshots = all_snapshots;
 	# structured_entries.time_snapshots = time_snapshots;
