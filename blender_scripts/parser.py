@@ -28,7 +28,18 @@ class Time_snapshots:
         self.H = 0;
         self.J = 0;
         self.power = 0;
-
+    def __str__(self):
+        str = 'first = ' + str(self.first) + '\n' +\
+        'repetition = ' + str(self.repetition) + '\n' +\
+        'plane = ' + str(self.plane) + '\n' +\
+        'P1 = ' + str(self.P1) + '\n' +\
+        'P2 = ' + str(self.P2) + '\n' +\
+        'E = ' + str(self.E) + '\n' +\
+        'H = ' + str(self.H) + '\n' +\
+        'J = ' + str(self.J) + '\n' +\
+        'power = ' + str(self.power);
+        return str;
+        
 class Frequency_snapshots:
     def __init__(self):
         self.first = 0;
@@ -45,6 +56,22 @@ class Frequency_snapshots:
         self.E = 0;
         self.H = 0;
         self.J = 0;
+    def __str__(self):
+        str = 'first = ' + str(self.first) + '\n' +\
+        'repetition = ' + str(self.repetition) + '\n' +\
+        'interpolate = ' + str(self.interpolate) + '\n' +\
+        'real_dft = ' + str(self.real_dft) + '\n' +\
+        'mod_only = ' + str(self.mod_only) + '\n' +\
+        'mod_all = ' + str(self.mod_all) + '\n' +\
+        'plane = ' + str(self.plane) + '\n' +\
+        'P1 = ' + str(self.P1) + '\n' +\
+        'P2 = ' + str(self.P2) + '\n' +\
+        'frequency = ' + str(self.frequency) + '\n' +\
+        'starting_sample = ' + str(self.starting_sample) + '\n' +\
+        'E = ' + str(self.E) + '\n' +\
+        'H = ' + str(self.H) + '\n' +\
+        'J = ' + str(self.J);
+        return str;
 
 class All_snapshots:
     def __init__(self):
@@ -63,6 +90,23 @@ class All_snapshots:
         self.H = 0;
         self.J = 0;
         self.power = 0;
+    def __str__(self):
+        str = 'first = ' + str(self.first) + '\n' +\
+        'repetition = ' + str(self.repetition) + '\n' +\
+        'interpolate = ' + str(self.interpolate) + '\n' +\
+        'real_dft = ' + str(self.real_dft) + '\n' +\
+        'mod_only = ' + str(self.mod_only) + '\n' +\
+        'mod_all = ' + str(self.mod_all) + '\n' +\
+        'plane = ' + str(self.plane) + '\n' +\
+        'P1 = ' + str(self.P1) + '\n' +\
+        'P2 = ' + str(self.P2) + '\n' +\
+        'frequency = ' + str(self.frequency) + '\n' +\
+        'starting_sample = ' + str(self.starting_sample) + '\n' +\
+        'E = ' + str(self.E) + '\n' +\
+        'H = ' + str(self.H) + '\n' +\
+        'J = ' + str(self.J) + '\n' +\
+        'power = ' + str(self.power);
+        return str;
 
 class Excitations:
     def __init__(self):
@@ -80,11 +124,40 @@ class Excitations:
         self.param2 = 0;
         self.param3 = 0;
         self.param4 = 0;
+    def __str__(self):
+        str = 'current_source = ' + str(self.current_source) + '\n' +\
+        'P1 = ' + str(self.P1) + '\n' +\
+        'P2 = ' + str(self.P2) + '\n' +\
+        'E = ' + str(self.E) + '\n' +\
+        'H = ' + str(self.H) + '\n' +\
+        'type = ' + str(self.type) + '\n' +\
+        'time_constant = ' + str(self.time_constant) + '\n' +\
+        'amplitude = ' + str(self.amplitude) + '\n' +\
+        'time_offset = ' + str(self.time_offset) + '\n' +\
+        'frequency = ' + str(self.frequency) + '\n' +\
+        'param1 = ' + str(self.param1) + '\n' +\
+        'param2 = ' + str(self.param2) + '\n' +\
+        'param3 = ' + str(self.param3) + '\n' +\
+        'param4 = ' + str(self.param4);
+        return str;
 
 class Boundaries:
     def __init__(self):
-        self.type = 0;
-        self.p = 0;
+        self.type = [0,0,0,0,0,0];
+        self.p = [0,0,0,0,0,0];
+    def __str__(self):
+        ret = 'type = ' + str(self.type) + '\n' +\
+        'p = ' + str(self.p);
+        return ret;
+    def read_entry(self,entry):
+        print '===entry_to_boundary==='
+        print entry.type;
+        print entry.data;
+        # M = reshape(entry.data,4,length(entry.data)/4)';
+        # for i in range(6):
+            # boundaries[i].type = entry.data[4*i];
+            # boundaries[i].p = entry.data[2+4*i:4+4*i];
+        return(0);
 
 class Flag:
     def __init__(self):
@@ -94,8 +167,17 @@ class Flag:
         self.flagTwo = 0;
         self.numSteps = 0;
         self.stabFactor = 0;
-        self.id = 0;
-    def entry_to_flag(self, entry):
+        self.id = '_id_';
+    def __str__(self):
+        ret = 'iMethod = ' + str(self.iMethod) + '\n' +\
+        'propCons = ' + str(self.propCons) + '\n' +\
+        'flagOne = ' + str(self.flagOne) + '\n' +\
+        'flagTwo = ' + str(self.flagTwo) + '\n' +\
+        'numSteps = ' + str(self.numSteps) + '\n' +\
+        'stabFactor = ' + str(self.stabFactor) + '\n' +\
+        'id = ' + self.id;
+        return ret;
+    def read_entry(self, entry):
         self.iMethod = entry.data[0];
         self.propCons = entry.data[1];
         self.flagOne = entry.data[2];
@@ -116,6 +198,18 @@ class Structured_entries:
         self.flag = Flag();
         self.boundaries = [];
         self.box = [];
+    def __str__(self):
+        ret = '--->all_snapshots\n'+self.all_snapshots.__str__()+'\n'+\
+        '--->time_snapshots\n'+self.time_snapshots.__str__()+'\n'+\
+        '--->frequency_snapshots\n'+self.frequency_snapshots.__str__()+'\n'+\
+        '--->excitations\n'+self.excitations.__str__()+'\n'+\
+        '--->xmesh\n'+self.xmesh.__str__()+'\n'+\
+        '--->ymesh\n'+self.ymesh.__str__()+'\n'+\
+        '--->zmesh\n'+self.zmesh.__str__()+'\n'+\
+        '--->flag\n'+self.flag.__str__()+'\n'+\
+        '--->boundaries\n'+self.boundaries.__str__()+'\n'+\
+        '--->box\n'+self.box.__str__();
+        return ret;
 
 def is_number(s):
     try:
@@ -124,22 +218,22 @@ def is_number(s):
     except ValueError:
         return False
 
-def add_flag(entry):
-    # flag.iMethod = entry.data{1};
-    # flag.propCons = entry.data{2};
-    # flag.flagOne = entry.data{3};
-    # flag.flagTwo = entry.data{4};
-    # flag.numSteps = entry.data{5};
-    # flag.stabFactor = entry.data{6};
-    # flag.id = entry.data{7};
-    return(0);
+# def add_flag(entry):
+    # # flag.iMethod = entry.data{1};
+    # # flag.propCons = entry.data{2};
+    # # flag.flagOne = entry.data{3};
+    # # flag.flagTwo = entry.data{4};
+    # # flag.numSteps = entry.data{5};
+    # # flag.stabFactor = entry.data{6};
+    # # flag.id = entry.data{7};
+    # return(0);
 
-def add_boundary(entry):
-	# M = reshape(entry.data,4,length(entry.data)/4)';
-	# for i in range(6):
-		# boundaries[i].type = M(i,1);
-		# boundaries[i].p = M(i,2:4);
-    return(0);
+# def add_boundary(entry):
+	# # M = reshape(entry.data,4,length(entry.data)/4)';
+	# # for i in range(6):
+		# # boundaries[i].type = M(i,1);
+		# # boundaries[i].p = M(i,2:4);
+    # return(0);
 
 def add_frequency_snapshot(entry):
 	# idx = 1;
@@ -269,8 +363,8 @@ def read_input_file(filename, structured_entries):
     xmesh = [];
     ymesh = [];
     zmesh = [];
-    flag = [];
-    boundaries = [];
+    flag = Flag();
+    boundaries = Boundaries();
 
     entries = [];
 	# process blocks
@@ -352,10 +446,10 @@ def read_input_file(filename, structured_entries):
             zmesh = entry.data;
         elif entry.type == 'FLAG':
             print 'FLAG';
-            flag = add_flag(entry);
+            flag.read_entry(entry);
         elif entry.type == 'BOUNDARY':
             print 'BOUNDARY';
-            boundaries = add_boundary(entry);
+            boundaries.read_entry(entry);
         elif entry.type == 'BOX':
             box = entry.data;
             box_read = True;
@@ -428,7 +522,11 @@ def readBristolFDTD(filename):
     else:
         print 'Unknown file format:', extension;
     
-    structured_entries.print();
+    print '================';
+    print structured_entries;
+    print '================';
+    print Boundaries();
+    print '================';
     
     # extList = ["swf", "html", "exe"]
     # filename = "python.exe"
