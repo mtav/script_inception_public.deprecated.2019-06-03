@@ -17,7 +17,7 @@ class Entry:
         self.type = '';
         self.data = [];
 
-class Time_snapshots:
+class Time_snapshot:
     def __init__(self):
         self.first = 0;
         self.repetition = 0;
@@ -29,7 +29,7 @@ class Time_snapshots:
         self.J = 0;
         self.power = 0;
     def __str__(self):
-        str = 'first = ' + str(self.first) + '\n' +\
+        ret = 'first = ' + str(self.first) + '\n' +\
         'repetition = ' + str(self.repetition) + '\n' +\
         'plane = ' + str(self.plane) + '\n' +\
         'P1 = ' + str(self.P1) + '\n' +\
@@ -38,9 +38,21 @@ class Time_snapshots:
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J) + '\n' +\
         'power = ' + str(self.power);
-        return str;
-        
-class Frequency_snapshots:
+        return ret;
+    def read_entry(self,entry):
+        idx = 0;
+        self.first = entry.data[idx]; idx = idx+1;
+        self.repetition = entry.data[idx]; idx = idx+1;
+        self.plane = entry.data[idx]; idx = idx+1;
+        self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.power = entry.data[idx]; idx = idx+1;
+        return(0);
+
+class Frequency_snapshot:
     def __init__(self):
         self.first = 0;
         self.repetition = 0;
@@ -57,7 +69,7 @@ class Frequency_snapshots:
         self.H = 0;
         self.J = 0;
     def __str__(self):
-        str = 'first = ' + str(self.first) + '\n' +\
+        ret = 'first = ' + str(self.first) + '\n' +\
         'repetition = ' + str(self.repetition) + '\n' +\
         'interpolate = ' + str(self.interpolate) + '\n' +\
         'real_dft = ' + str(self.real_dft) + '\n' +\
@@ -71,9 +83,26 @@ class Frequency_snapshots:
         'E = ' + str(self.E) + '\n' +\
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J);
-        return str;
+        return ret;
+    def read_entry(self,entry):
+        idx = 0;
+        self.first = entry.data[idx]; idx = idx+1;
+        self.repetition = entry.data[idx]; idx = idx+1;
+        self.interpolate = entry.data[idx]; idx = idx+1;
+        self.real_dft = entry.data[idx]; idx = idx+1;
+        self.mod_only = entry.data[idx]; idx = idx+1;
+        self.mod_all = entry.data[idx]; idx = idx+1;
+        self.plane = entry.data[idx]; idx = idx+1;
+        self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.frequency = entry.data[idx]; idx = idx+1;
+        self.starting_sample = entry.data[idx]; idx = idx+1;
+        self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        return(0);
 
-class All_snapshots:
+class Snapshot:
     def __init__(self):
         self.first = 0;
         self.repetition = 0;
@@ -91,7 +120,7 @@ class All_snapshots:
         self.J = 0;
         self.power = 0;
     def __str__(self):
-        str = 'first = ' + str(self.first) + '\n' +\
+        ret = 'first = ' + str(self.first) + '\n' +\
         'repetition = ' + str(self.repetition) + '\n' +\
         'interpolate = ' + str(self.interpolate) + '\n' +\
         'real_dft = ' + str(self.real_dft) + '\n' +\
@@ -106,9 +135,47 @@ class All_snapshots:
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J) + '\n' +\
         'power = ' + str(self.power);
-        return str;
+        return ret;
+    def read_entry(self,entry):
+        if entry.type == 'FREQUENCY_SNAPSHOT':
+            idx = 0;
+            self.first = entry.data[idx]; idx = idx+1;
+            self.repetition = entry.data[idx]; idx = idx+1;
+            self.interpolate = entry.data[idx]; idx = idx+1;
+            self.real_dft = entry.data[idx]; idx = idx+1;
+            self.mod_only = entry.data[idx]; idx = idx+1;
+            self.mod_all = entry.data[idx]; idx = idx+1;
+            self.plane = entry.data[idx]; idx = idx+1;
+            self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.frequency = entry.data[idx]; idx = idx+1;
+            self.starting_sample = entry.data[idx]; idx = idx+1;
+            self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.power = -1;
+        elif entry.type == 'SNAPSHOT':
+            idx = 0;
+            self.first = entry.data[idx]; idx = idx+1;
+            self.repetition = entry.data[idx]; idx = idx+1;
+            self.interpolate = -1;
+            self.real_dft = -1;
+            self.mod_only = -1;
+            self.mod_all = -1;
+            self.plane = entry.data[idx]; idx = idx+1;
+            self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.frequency = -1;
+            self.starting_sample = -1;
+            self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            self.power = entry.data[idx]; idx = idx+1;
+        else:
+            print 'Sense, it makes none.'; sys.exit(-1);
+        return(0);
 
-class Excitations:
+class Excitation:
     def __init__(self):
         self.current_source = 0;
         self.P1 = 0;
@@ -125,7 +192,7 @@ class Excitations:
         self.param3 = 0;
         self.param4 = 0;
     def __str__(self):
-        str = 'current_source = ' + str(self.current_source) + '\n' +\
+        ret = 'current_source = ' + str(self.current_source) + '\n' +\
         'P1 = ' + str(self.P1) + '\n' +\
         'P2 = ' + str(self.P2) + '\n' +\
         'E = ' + str(self.E) + '\n' +\
@@ -139,24 +206,47 @@ class Excitations:
         'param2 = ' + str(self.param2) + '\n' +\
         'param3 = ' + str(self.param3) + '\n' +\
         'param4 = ' + str(self.param4);
-        return str;
+        return ret;
+    def read_entry(self,entry):
+        idx = 0;
+        self.current_source = entry.data[idx]; idx = idx+1;
+        self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.type = entry.data[idx]; idx = idx+1;
+        self.time_constant = entry.data[idx]; idx = idx+1;
+        self.amplitude = entry.data[idx]; idx = idx+1;
+        self.time_offset = entry.data[idx]; idx = idx+1;
+        self.frequency = entry.data[idx]; idx = idx+1;
+        self.param1 = entry.data[idx]; idx = idx+1;
+        self.param2 = entry.data[idx]; idx = idx+1;
+        self.param3 = entry.data[idx]; idx = idx+1;
+        self.param4 = entry.data[idx]; idx = idx+1;
+        return(0);
 
 class Boundaries:
     def __init__(self):
         self.type = [0,0,0,0,0,0];
         self.p = [0,0,0,0,0,0];
     def __str__(self):
-        ret = 'type = ' + str(self.type) + '\n' +\
-        'p = ' + str(self.p);
+        ret  = 'X+: type = '+str(self.type[0])+' p = '+str(self.p[0])+'\n';
+        ret += 'Y+: type = '+str(self.type[1])+' p = '+str(self.p[1])+'\n';
+        ret += 'Z+: type = '+str(self.type[2])+' p = '+str(self.p[2])+'\n';
+        ret += 'X-: type = '+str(self.type[3])+' p = '+str(self.p[3])+'\n';
+        ret += 'Y-: type = '+str(self.type[4])+' p = '+str(self.p[4])+'\n';
+        ret += 'Z-: type = '+str(self.type[5])+' p = '+str(self.p[5]);
         return ret;
     def read_entry(self,entry):
-        print '===entry_to_boundary==='
+        print '===entry_to_boundary START==='
         print entry.type;
         print entry.data;
-        # M = reshape(entry.data,4,length(entry.data)/4)';
-        # for i in range(6):
-            # boundaries[i].type = entry.data[4*i];
-            # boundaries[i].p = entry.data[2+4*i:4+4*i];
+        for i in range(6):
+            self.type[i] = entry.data[4*i];
+            self.p[i] = entry.data[1+4*i:4+4*i];
+        print self.type[i];
+        print self.p[i];
+        print '===entry_to_boundary END==='
         return(0);
 
 class Flag:
@@ -185,25 +275,53 @@ class Flag:
         self.numSteps = entry.data[4];
         self.stabFactor = entry.data[5];
         self.id = entry.data[6];
-        
+
+class Box:
+    def __init__(self):
+        self.lower = [0,0,0];
+        self.upper = [0,0,0];
+    def __str__(self):
+        ret  = 'lower = '+str(self.lower)+'\n';
+        ret += 'upper = '+str(self.upper);
+        return ret;
+    def read_entry(self,entry):
+        self.lower = entry.data[0:3];
+        self.upper = entry.data[3:6];
+    
 class Structured_entries:
     def __init__(self):
-        self.all_snapshots = [];
-        self.time_snapshots = [];
-        self.frequency_snapshots = [];
-        self.excitations = [];
+        self.snapshot_list = [];
+        self.time_snapshot_list = [];
+        self.frequency_snapshot_list = [];
+        self.excitation_list = [];
         self.xmesh = [];
         self.ymesh = [];
         self.zmesh = [];
         self.flag = Flag();
-        self.boundaries = [];
+        self.boundaries = Boundaries();
         self.box = [];
     def __str__(self):
-        ret = '--->all_snapshots\n'+self.all_snapshots.__str__()+'\n'+\
-        '--->time_snapshots\n'+self.time_snapshots.__str__()+'\n'+\
-        '--->frequency_snapshots\n'+self.frequency_snapshots.__str__()+'\n'+\
-        '--->excitations\n'+self.excitations.__str__()+'\n'+\
-        '--->xmesh\n'+self.xmesh.__str__()+'\n'+\
+        ret = '--->snapshot_list\n';
+        for i in range(len(self.snapshot_list)):
+            ret += '-->snapshot '+str(i)+':\n';
+            ret += self.snapshot_list[i].__str__()+'\n';
+
+        ret += '--->time_snapshot_list\n';
+        for i in range(len(self.time_snapshot_list)):
+            ret += '-->time_snapshot '+str(i)+':\n';
+            ret += self.time_snapshot_list[i].__str__()+'\n';
+
+        ret += '--->frequency_snapshot_list\n';
+        for i in range(len(self.frequency_snapshot_list)):
+            ret += '-->frequency_snapshot '+str(i)+':\n';
+            ret += self.frequency_snapshot_list[i].__str__()+'\n';
+
+        ret += '--->excitation_list\n';
+        for i in range(len(self.excitation_list)):
+            ret += '-->excitation '+str(i)+':\n';
+            ret += self.excitation_list[i].__str__()+'\n';
+        
+        ret += '--->xmesh\n'+self.xmesh.__str__()+'\n'+\
         '--->ymesh\n'+self.ymesh.__str__()+'\n'+\
         '--->zmesh\n'+self.zmesh.__str__()+'\n'+\
         '--->flag\n'+self.flag.__str__()+'\n'+\
@@ -218,111 +336,6 @@ def is_number(s):
     except ValueError:
         return False
 
-# def add_flag(entry):
-    # # flag.iMethod = entry.data{1};
-    # # flag.propCons = entry.data{2};
-    # # flag.flagOne = entry.data{3};
-    # # flag.flagTwo = entry.data{4};
-    # # flag.numSteps = entry.data{5};
-    # # flag.stabFactor = entry.data{6};
-    # # flag.id = entry.data{7};
-    # return(0);
-
-# def add_boundary(entry):
-	# # M = reshape(entry.data,4,length(entry.data)/4)';
-	# # for i in range(6):
-		# # boundaries[i].type = M(i,1);
-		# # boundaries[i].p = M(i,2:4);
-    # return(0);
-
-def add_frequency_snapshot(entry):
-	# idx = 1;
-	# snapshot.first = entry.data(idx); idx = idx+1;
-	# snapshot.repetition = entry.data(idx); idx = idx+1;
-	# snapshot.interpolate = entry.data(idx); idx = idx+1;
-	# snapshot.real_dft = entry.data(idx); idx = idx+1;
-	# snapshot.mod_only = entry.data(idx); idx = idx+1;
-	# snapshot.mod_all = entry.data(idx); idx = idx+1;
-	# snapshot.plane = entry.data(idx); idx = idx+1;
-	# snapshot.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.frequency = entry.data(idx); idx = idx+1;
-	# snapshot.starting_sample = entry.data(idx); idx = idx+1;
-	# snapshot.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.J = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-    return(0);
-
-def add_time_snapshot(entry):
-	# idx = 1;
-	# snapshot.first = entry.data(idx); idx = idx+1;
-	# snapshot.repetition = entry.data(idx); idx = idx+1;
-	# snapshot.plane = entry.data(idx); idx = idx+1;
-	# snapshot.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.J = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# snapshot.power = entry.data(idx); idx = idx+1;
-    return(0);
-
-def add_snapshot(entry):
-	# if entry.type == 'FREQUENCY_SNAPSHOT':
-		# idx = 1;
-		# snapshot.first = entry.data(idx); idx = idx+1;
-		# snapshot.repetition = entry.data(idx); idx = idx+1;
-		# snapshot.interpolate = entry.data(idx); idx = idx+1;
-		# snapshot.real_dft = entry.data(idx); idx = idx+1;
-		# snapshot.mod_only = entry.data(idx); idx = idx+1;
-		# snapshot.mod_all = entry.data(idx); idx = idx+1;
-		# snapshot.plane = entry.data(idx); idx = idx+1;
-		# snapshot.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.frequency = entry.data(idx); idx = idx+1;
-		# snapshot.starting_sample = entry.data(idx); idx = idx+1;
-		# snapshot.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.J = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.power = -1;
-	# elif entry.type == 'SNAPSHOT':
-		# idx = 1;
-		# snapshot.first = entry.data(idx); idx = idx+1;
-		# snapshot.repetition = entry.data(idx); idx = idx+1;
-		# snapshot.interpolate = -1;
-		# snapshot.real_dft = -1;
-		# snapshot.mod_only = -1;
-		# snapshot.mod_all = -1;
-		# snapshot.plane = entry.data(idx); idx = idx+1;
-		# snapshot.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.frequency = -1;
-		# snapshot.starting_sample = -1;
-		# snapshot.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.J = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-		# snapshot.power = entry.data(idx); idx = idx+1;
-	# else:
-		# error('Sense, it makes none.');
-    return(0);
-
-def add_excitation(entry):
-	# idx = 1;
-	# current_excitation.current_source = entry.data(idx); idx = idx+1;
-	# current_excitation.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# current_excitation.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-	# current_excitation.type = entry.data(idx); idx = idx+1;
-	# current_excitation.time_constant = entry.data(idx); idx = idx+1;
-	# current_excitation.amplitude = entry.data(idx); idx = idx+1;
-	# current_excitation.time_offset = entry.data(idx); idx = idx+1;
-	# current_excitation.frequency = entry.data(idx); idx = idx+1;
-	# current_excitation.param1 = entry.data(idx); idx = idx+1;
-	# current_excitation.param2 = entry.data(idx); idx = idx+1;
-	# current_excitation.param3 = entry.data(idx); idx = idx+1;
-	# current_excitation.param4 = entry.data(idx); idx = idx+1;
-    return(0);
-        
 def read_input_file(filename, structured_entries):
     print 'Processing ', filename;
     box_read = False;
@@ -354,17 +367,17 @@ def read_input_file(filename, structured_entries):
     
     print blocks;
 	
-    time_snapshots = [];
-    frequency_snapshots = [];
-    all_snapshots = [];
-    excitations = [];
-    boundaries = [];
+    time_snapshot_list = [];
+    frequency_snapshot_list = [];
+    snapshot_list = [];
+    excitation_list = [];
 
     xmesh = [];
     ymesh = [];
     zmesh = [];
     flag = Flag();
     boundaries = Boundaries();
+    box = Box();
 
     entries = [];
 	# process blocks
@@ -418,22 +431,26 @@ def read_input_file(filename, structured_entries):
         entries.append(entry);
 
         if entry.type in ['FREQUENCY_SNAPSHOT','SNAPSHOT']:
-            snapshot = add_snapshot(entry);
-            all_snapshots.append(snapshot);
+            snapshot = Snapshot()
+            snapshot.read_entry(entry);
+            snapshot_list.append(snapshot);
             if entry.type == 'FREQUENCY_SNAPSHOT':
                 print 'FREQUENCY_SNAPSHOT';
-                snapshot = add_frequency_snapshot(entry);
-                frequency_snapshots.append(snapshot);
+                frequency_snapshot = Frequency_snapshot();
+                frequency_snapshot.read_entry(entry);
+                frequency_snapshot_list.append(frequency_snapshot);
             elif entry.type == 'SNAPSHOT':
                 print 'SNAPSHOT';
-                snapshot = add_time_snapshot(entry);
-                time_snapshots.append(snapshot);                    
+                time_snapshot = Time_snapshot()
+                time_snapshot.read_entry(entry);
+                time_snapshot_list.append(time_snapshot);
             else:
                 print('Sense, it makes none.'); sys.exit(-1);
         elif entry.type == 'EXCITATION':
             print 'EXCITATION';
-            current_excitation = add_excitation(entry);
-            excitations.append(current_excitation);
+            current_excitation = Excitation();
+            current_excitation.read_entry(entry);
+            excitation_list.append(current_excitation);
         elif entry.type == 'XMESH':
             print 'XMESH';
             xmesh = entry.data;
@@ -451,15 +468,15 @@ def read_input_file(filename, structured_entries):
             print 'BOUNDARY';
             boundaries.read_entry(entry);
         elif entry.type == 'BOX':
-            box = entry.data;
+            box.read_entry(entry);
             box_read = True;
         else:
             print('Unknown type.');
 
-    structured_entries.all_snapshots.append(all_snapshots);
-    structured_entries.time_snapshots.append(time_snapshots);
-    structured_entries.frequency_snapshots.append(frequency_snapshots);
-    structured_entries.excitations.append(excitations);
+    structured_entries.snapshot_list += snapshot_list;
+    structured_entries.time_snapshot_list += time_snapshot_list;
+    structured_entries.frequency_snapshot_list += frequency_snapshot_list;
+    structured_entries.excitation_list += excitation_list;
     structured_entries.xmesh = xmesh;
     structured_entries.ymesh = ymesh;
     structured_entries.zmesh = zmesh;
@@ -525,8 +542,14 @@ def readBristolFDTD(filename):
     print '================';
     print structured_entries;
     print '================';
-    print Boundaries();
-    print '================';
+    # a= Excitation();
+    # b= Excitation();
+    # c = [a,b]
+    # r='';
+    # for t in c:
+        # r+= t.__str__();
+    # print r;
+    # print '================';
     
     # extList = ["swf", "html", "exe"]
     # filename = "python.exe"
