@@ -12,11 +12,13 @@ import os;
 import sys;
 import re;
 
+# convert string array to float array
 def float_array(A):
     for i in range(len(A)):
         A[i]=float(A[i]);
     return(A);
-    
+  
+# convert string array to int array
 def int_array(A):
     for i in range(len(A)):
         A[i]=int(A[i]);
@@ -112,79 +114,6 @@ class Frequency_snapshot:
         self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         return(0);
 
-# class Snapshot:
-    # def __init__(self):
-        # self.first = 0;
-        # self.repetition = 0;
-        # self.interpolate = 0;
-        # self.real_dft = 0;
-        # self.mod_only = 0;
-        # self.mod_all = 0;
-        # self.plane = 0;
-        # self.P1 = 0;
-        # self.P2 = 0;
-        # self.frequency = 0;
-        # self.starting_sample = 0;
-        # self.E = 0;
-        # self.H = 0;
-        # self.J = 0;
-        # self.power = 0;
-    # def __str__(self):
-        # ret = 'first = ' + str(self.first) + '\n' +\
-        # 'repetition = ' + str(self.repetition) + '\n' +\
-        # 'interpolate = ' + str(self.interpolate) + '\n' +\
-        # 'real_dft = ' + str(self.real_dft) + '\n' +\
-        # 'mod_only = ' + str(self.mod_only) + '\n' +\
-        # 'mod_all = ' + str(self.mod_all) + '\n' +\
-        # 'plane = ' + str(self.plane) + '\n' +\
-        # 'P1 = ' + str(self.P1) + '\n' +\
-        # 'P2 = ' + str(self.P2) + '\n' +\
-        # 'frequency = ' + str(self.frequency) + '\n' +\
-        # 'starting_sample = ' + str(self.starting_sample) + '\n' +\
-        # 'E = ' + str(self.E) + '\n' +\
-        # 'H = ' + str(self.H) + '\n' +\
-        # 'J = ' + str(self.J) + '\n' +\
-        # 'power = ' + str(self.power);
-        # return ret;
-    # def read_entry(self,entry):
-        # if entry.type == 'FREQUENCY_SNAPSHOT':
-            # idx = 0;
-            # self.first = float(entry.data[idx]); idx = idx+1;
-            # self.repetition = float(entry.data[idx]); idx = idx+1;
-            # self.interpolate = float(entry.data[idx]); idx = idx+1;
-            # self.real_dft = float(entry.data[idx]); idx = idx+1;
-            # self.mod_only = float(entry.data[idx]); idx = idx+1;
-            # self.mod_all = float(entry.data[idx]); idx = idx+1;
-            # self.plane = float(entry.data[idx]); idx = idx+1;
-            # self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.frequency = float(entry.data[idx]); idx = idx+1;
-            # self.starting_sample = float(entry.data[idx]); idx = idx+1;
-            # self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.power = -1;
-        # elif entry.type == 'SNAPSHOT':
-            # idx = 0;
-            # self.first = float(entry.data[idx]); idx = idx+1;
-            # self.repetition = float(entry.data[idx]); idx = idx+1;
-            # self.interpolate = -1;
-            # self.real_dft = -1;
-            # self.mod_only = -1;
-            # self.mod_all = -1;
-            # self.plane = float(entry.data[idx]); idx = idx+1;
-            # self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.frequency = -1;
-            # self.starting_sample = -1;
-            # self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-            # self.power = float(entry.data[idx]); idx = idx+1;
-        # else:
-            # print 'Sense, it makes none.'; sys.exit(-1);
-        # return(0);
-
 class Excitation:
     def __init__(self):
         self.current_source = 0;
@@ -248,15 +177,9 @@ class Boundaries:
         ret += 'Z-: type = '+str(self.type[5])+' p = '+str(self.p[5]);
         return ret;
     def read_entry(self,entry):
-        # print '===entry_to_boundary START==='
-        # print entry.type;
-        # print entry.data;
         for i in range(6):
             self.type[i] = entry.data[4*i];
             self.p[i] = entry.data[1+4*i:4+4*i];
-        # print self.type[i];
-        # print self.p[i];
-        # print '===entry_to_boundary END==='
         return(0);
 
 class Flag:
@@ -515,13 +438,15 @@ class Structured_entries:
             
         return ret;
 
+# returns true if s can be converted to a float, otherwise false
 def is_number(s):
     try:
         float(s)
-        return True
+        return True;
     except ValueError:
-        return False
+        return False;
 
+# read GEO or INP file
 def read_input_file(filename, structured_entries):
     print 'Processing ', filename;
     box_read = False;
@@ -540,18 +465,9 @@ def read_input_file(filename, structured_entries):
     pattern_stripcomments = re.compile("\*\*.*\n")
     cleantext = pattern_stripcomments.sub("\n", fulltext);
 
-    # print cleantext;
-    
-	# extract objects
     # pattern_objects = re.compile("^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}");
     pattern_objects = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
     objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
-
-    # [tokens_objects match_objects names_objects] =  regexp(cleantext, pattern_objects, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
-
-    # objects =  pattern_objects.findall(cleantext);
-    
-    # print objects;
 	
     time_snapshot_list = [];
     frequency_snapshot_list = [];
@@ -583,82 +499,35 @@ def read_input_file(filename, structured_entries):
         # remove empty lines from data
         data = filter(None, data);
         
-        # print 'type = ',type;
-        # print 'data = ',data;
-
-        #################################################################
-        # # code to store the data in a cell array of strings and numbers
-        # dataV = [];
-        
-        # # split data by lines
-        # lines = strread(data,'%s','delimiter','\r');
-
-        # cellFlag = 0;
-        # for L in range(len(lines)):
-            # if ~len(lines{L}): #if line is empty
-                # continue;
-
-            # # Convert string to number
-            # dd = str2num(lines{L});
-
-            # if cellFlag:
-                # if len(dd):  # dd is num
-                    # dataV{len(dataV)+1} = dd; # store number
-                # else:           # dd is not num
-                    # dataV{len(dataV)+1} = lines{L}; # store string
-            # else:
-                # if len(dd):  # dd is num
-                    # dataV = [dataV,dd]; # store number
-                # else:           # dd is not num
-                    # # Convert numeric array to cell array
-                    # dataV = num2cell(dataV);
-                    # cellFlag = 1;
-                    # dataV{len(dataV)+1} = lines{L}; #store string
-        #################################################################
-
         entry = Entry();
         entry.type = type;
         entry.data = data;
         entries.append(entry);
 
-        # if entry.type in ['FREQUENCY_SNAPSHOT','SNAPSHOT']:
-            # snapshot = Snapshot()
-            # snapshot.read_entry(entry);
-            # snapshot_list.append(snapshot);
         if entry.type == 'FREQUENCY_SNAPSHOT':
-            # print 'FREQUENCY_SNAPSHOT';
             frequency_snapshot = Frequency_snapshot();
             frequency_snapshot.read_entry(entry);
             frequency_snapshot_list.append(frequency_snapshot);
             snapshot_list.append(frequency_snapshot);
         elif entry.type == 'SNAPSHOT':
-            # print 'SNAPSHOT';
             time_snapshot = Time_snapshot();
             time_snapshot.read_entry(entry);
             time_snapshot_list.append(time_snapshot);
             snapshot_list.append(time_snapshot);
-            # else:
-                # print('Sense, it makes none.'); sys.exit(-1);
         elif entry.type == 'EXCITATION':
-            # print 'EXCITATION';
             current_excitation = Excitation();
             current_excitation.read_entry(entry);
             excitation_list.append(current_excitation);
         elif entry.type == 'XMESH':
-            # print 'XMESH';
             xmesh = entry.data;
             xmesh_read = True;
         elif entry.type == 'YMESH':
-            # print 'YMESH';
             ymesh = entry.data;
         elif entry.type == 'ZMESH':
-            # print 'ZMESH';
             zmesh = entry.data;
         elif entry.type == 'FLAG':
-            # print 'FLAG';
             flag.read_entry(entry);
         elif entry.type == 'BOUNDARY':
-            # print 'BOUNDARY';
             boundaries.read_entry(entry);
         elif entry.type == 'BOX':
             box.read_entry(entry);
@@ -704,6 +573,7 @@ def read_input_file(filename, structured_entries):
     
     return [ xmesh_read, box_read ];
 
+# add default_extension if the file does not end in .geo or .inp
 def getname(filename, default_extension):
     
     extension = getExtension(filename);
@@ -711,7 +581,8 @@ def getname(filename, default_extension):
         return filename;
     else:
         return filename + '.' + default_extension;
-    
+
+# read .in file
 def read_inputs(filename,structured_entries):
 
     box_read = False;
@@ -719,10 +590,7 @@ def read_inputs(filename,structured_entries):
     
     f = open(filename, 'r');
     for line in f:
-        # print filename;
         subfile = os.path.join(os.path.dirname(filename),line.strip());
-        # print subfile;
-        # print os.path.dirname(filename);
         if (not xmesh_read):
             subfile = getname(subfile,'inp');
         else:
@@ -734,14 +602,15 @@ def read_inputs(filename,structured_entries):
     if (not box_read):
         print 'WARNING: box not found';
     
+# returns extension of filename
 def getExtension(filename):
     return filename.split(".")[-1];
     
+# reads .in (=>.inp+.geo), .geo or .inp
 def readBristolFDTD(filename):
 
     structured_entries = Structured_entries();
     
-    # should read .in (=>.inp+.geo), .geo or .inp
     extension = getExtension(filename);
     if extension == 'in':
         print '.in file detected';
@@ -760,42 +629,7 @@ def readBristolFDTD(filename):
     print '================';
     print structured_entries;
     print '================';
-    # a= Excitation();
-    # b= Excitation();
-    # c = [a,b]
-    # r='';
-    # for t in c:
-        # r+= t.__str__();
-    # print r;
-    # print '================';
-    
-    # extList = ["swf", "html", "exe"]
-    # filename = "python.exe"
-    # splitFilename = 
-    # if filename.split(".")[-1] == '.in'in extList: return True
-    # else: return False
-
-    # in_file = file(filename, "r");
-    # line = in_file.readline();
-
-    # Nobjects = int(line)
-    # #print "Nobjects = ", Nobjects
-    # object_names = []
-    # for i in range(0, Nobjects):
-        # line = in_file.readline()
-        # object_names.append(line.strip())
-
-    # in_file.close()
-    
+        
 print '----->Importing bristol FDTD geometry...';
-
-# readBristolFDTD('rotated_cylinder.in');
-# getname('tettte.in','.in');
 readBristolFDTD('rotated_cylinder.in');
-# readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.in');
-# readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.inp');
-# readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.geo');
-
-# TestObjects();
-
 print '...done';
