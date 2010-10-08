@@ -102,78 +102,78 @@ class Frequency_snapshot:
         self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
         return(0);
 
-class Snapshot:
-    def __init__(self):
-        self.first = 0;
-        self.repetition = 0;
-        self.interpolate = 0;
-        self.real_dft = 0;
-        self.mod_only = 0;
-        self.mod_all = 0;
-        self.plane = 0;
-        self.P1 = 0;
-        self.P2 = 0;
-        self.frequency = 0;
-        self.starting_sample = 0;
-        self.E = 0;
-        self.H = 0;
-        self.J = 0;
-        self.power = 0;
-    def __str__(self):
-        ret = 'first = ' + str(self.first) + '\n' +\
-        'repetition = ' + str(self.repetition) + '\n' +\
-        'interpolate = ' + str(self.interpolate) + '\n' +\
-        'real_dft = ' + str(self.real_dft) + '\n' +\
-        'mod_only = ' + str(self.mod_only) + '\n' +\
-        'mod_all = ' + str(self.mod_all) + '\n' +\
-        'plane = ' + str(self.plane) + '\n' +\
-        'P1 = ' + str(self.P1) + '\n' +\
-        'P2 = ' + str(self.P2) + '\n' +\
-        'frequency = ' + str(self.frequency) + '\n' +\
-        'starting_sample = ' + str(self.starting_sample) + '\n' +\
-        'E = ' + str(self.E) + '\n' +\
-        'H = ' + str(self.H) + '\n' +\
-        'J = ' + str(self.J) + '\n' +\
-        'power = ' + str(self.power);
-        return ret;
-    def read_entry(self,entry):
-        if entry.type == 'FREQUENCY_SNAPSHOT':
-            idx = 0;
-            self.first = entry.data[idx]; idx = idx+1;
-            self.repetition = entry.data[idx]; idx = idx+1;
-            self.interpolate = entry.data[idx]; idx = idx+1;
-            self.real_dft = entry.data[idx]; idx = idx+1;
-            self.mod_only = entry.data[idx]; idx = idx+1;
-            self.mod_all = entry.data[idx]; idx = idx+1;
-            self.plane = entry.data[idx]; idx = idx+1;
-            self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.frequency = entry.data[idx]; idx = idx+1;
-            self.starting_sample = entry.data[idx]; idx = idx+1;
-            self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.power = -1;
-        elif entry.type == 'SNAPSHOT':
-            idx = 0;
-            self.first = entry.data[idx]; idx = idx+1;
-            self.repetition = entry.data[idx]; idx = idx+1;
-            self.interpolate = -1;
-            self.real_dft = -1;
-            self.mod_only = -1;
-            self.mod_all = -1;
-            self.plane = entry.data[idx]; idx = idx+1;
-            self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.frequency = -1;
-            self.starting_sample = -1;
-            self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            self.power = entry.data[idx]; idx = idx+1;
-        else:
-            print 'Sense, it makes none.'; sys.exit(-1);
-        return(0);
+# class Snapshot:
+    # def __init__(self):
+        # self.first = 0;
+        # self.repetition = 0;
+        # self.interpolate = 0;
+        # self.real_dft = 0;
+        # self.mod_only = 0;
+        # self.mod_all = 0;
+        # self.plane = 0;
+        # self.P1 = 0;
+        # self.P2 = 0;
+        # self.frequency = 0;
+        # self.starting_sample = 0;
+        # self.E = 0;
+        # self.H = 0;
+        # self.J = 0;
+        # self.power = 0;
+    # def __str__(self):
+        # ret = 'first = ' + str(self.first) + '\n' +\
+        # 'repetition = ' + str(self.repetition) + '\n' +\
+        # 'interpolate = ' + str(self.interpolate) + '\n' +\
+        # 'real_dft = ' + str(self.real_dft) + '\n' +\
+        # 'mod_only = ' + str(self.mod_only) + '\n' +\
+        # 'mod_all = ' + str(self.mod_all) + '\n' +\
+        # 'plane = ' + str(self.plane) + '\n' +\
+        # 'P1 = ' + str(self.P1) + '\n' +\
+        # 'P2 = ' + str(self.P2) + '\n' +\
+        # 'frequency = ' + str(self.frequency) + '\n' +\
+        # 'starting_sample = ' + str(self.starting_sample) + '\n' +\
+        # 'E = ' + str(self.E) + '\n' +\
+        # 'H = ' + str(self.H) + '\n' +\
+        # 'J = ' + str(self.J) + '\n' +\
+        # 'power = ' + str(self.power);
+        # return ret;
+    # def read_entry(self,entry):
+        # if entry.type == 'FREQUENCY_SNAPSHOT':
+            # idx = 0;
+            # self.first = entry.data[idx]; idx = idx+1;
+            # self.repetition = entry.data[idx]; idx = idx+1;
+            # self.interpolate = entry.data[idx]; idx = idx+1;
+            # self.real_dft = entry.data[idx]; idx = idx+1;
+            # self.mod_only = entry.data[idx]; idx = idx+1;
+            # self.mod_all = entry.data[idx]; idx = idx+1;
+            # self.plane = entry.data[idx]; idx = idx+1;
+            # self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.frequency = entry.data[idx]; idx = idx+1;
+            # self.starting_sample = entry.data[idx]; idx = idx+1;
+            # self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.power = -1;
+        # elif entry.type == 'SNAPSHOT':
+            # idx = 0;
+            # self.first = entry.data[idx]; idx = idx+1;
+            # self.repetition = entry.data[idx]; idx = idx+1;
+            # self.interpolate = -1;
+            # self.real_dft = -1;
+            # self.mod_only = -1;
+            # self.mod_all = -1;
+            # self.plane = entry.data[idx]; idx = idx+1;
+            # self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.frequency = -1;
+            # self.starting_sample = -1;
+            # self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.power = entry.data[idx]; idx = idx+1;
+        # else:
+            # print 'Sense, it makes none.'; sys.exit(-1);
+        # return(0);
 
 class Excitation:
     def __init__(self):
@@ -238,15 +238,15 @@ class Boundaries:
         ret += 'Z-: type = '+str(self.type[5])+' p = '+str(self.p[5]);
         return ret;
     def read_entry(self,entry):
-        print '===entry_to_boundary START==='
-        print entry.type;
-        print entry.data;
+        # print '===entry_to_boundary START==='
+        # print entry.type;
+        # print entry.data;
         for i in range(6):
             self.type[i] = entry.data[4*i];
             self.p[i] = entry.data[1+4*i:4+4*i];
-        print self.type[i];
-        print self.p[i];
-        print '===entry_to_boundary END==='
+        # print self.type[i];
+        # print self.p[i];
+        # print '===entry_to_boundary END==='
         return(0);
 
 class Flag:
@@ -287,6 +287,150 @@ class Box:
     def read_entry(self,entry):
         self.lower = entry.data[0:3];
         self.upper = entry.data[3:6];
+
+class Block:
+    def __init__(self):
+        self.lower = [0,0,0];
+        self.upper = [0,0,0];
+        self.permittivity = 0;
+        self.conductivity = 0;
+    def __str__(self):
+        ret  = 'lower = '+str(self.lower)+'\n';
+        ret += 'upper = '+str(self.upper)+'\n';
+        ret += 'permittivity = '+str(self.permittivity)+'\n';
+        ret += 'conductivity = '+str(self.conductivity);
+        return ret;
+    def read_entry(self,entry):
+        self.lower = entry.data[0:3];
+        self.upper = entry.data[3:6];
+        self.permittivity = entry.data[6];
+        self.conductivity = entry.data[7];
+
+class Sphere:
+    def __init__(self):
+        self.XC = 0;
+        self.YC = 0;
+        self.ZC = 0;
+        self.R1 = 0;
+        self.R2 = 0;
+        self.permittivity = 0;
+        self.conductivity = 0;
+    def __str__(self):
+        ret = 'XC = ' + str(self.XC) + '\n' +\
+        'YC = ' + str(self.YC) + '\n' +\
+        'ZC = ' + str(self.ZC) + '\n' +\
+        'R1 = ' + str(self.R1) + '\n' +\
+        'R2 = ' + str(self.R2) + '\n' +\
+        'permittivity = ' + str(self.permittivity) + '\n' +\
+        'conductivity = ' + str(self.conductivity);
+        return ret;
+    def read_entry(self,entry):
+        self.XC = entry.data[0];
+        self.YC = entry.data[1];
+        self.ZC = entry.data[2];
+        self.R1 = entry.data[3];
+        self.R2 = entry.data[4];
+        self.permittivity = entry.data[5];
+        self.conductivity = entry.data[6];
+        return(0);
+
+class Cylinder:
+    def __init__(self):
+        self.Xc = 0;
+        self.Yc = 0;
+        self.Zc = 0;
+        self.R1 = 0;
+        self.R2 = 0;
+        self.height = 0;
+        self.permittivity = 0;
+        self.conductivity = 0;
+        self.angle = 0;
+    def __str__(self):
+        ret = 'Xc = ' + str(self.Xc) + '\n' +\
+        'Yc = ' + str(self.Yc) + '\n' +\
+        'Zc = ' + str(self.Zc) + '\n' +\
+        'R1 = ' + str(self.R1) + '\n' +\
+        'R2 = ' + str(self.R2) + '\n' +\
+        'height = ' + str(self.height) + '\n' +\
+        'permittivity = ' + str(self.permittivity) + '\n' +\
+        'conductivity = ' + str(self.conductivity) + '\n' +\
+        'angle = ' + str(self.angle);
+        return ret;
+    def read_entry(self,entry):
+        # print entry.data;
+        self.Xc = entry.data[0];
+        self.Yc = entry.data[1];
+        self.Zc = entry.data[2];
+        self.R1 = entry.data[3];
+        self.R2 = entry.data[4];
+        self.height = entry.data[5];
+        self.permittivity = entry.data[6];
+        self.conductivity = entry.data[7];
+        if(len(entry.data)>8): self.angle = entry.data[8];
+        return(0);
+
+class Probe:
+    def __init__(self):
+        self.X = 0;
+        self.Y = 0;
+        self.Z = 0;
+        self.step = 0;
+        self.Ex = 0;
+        self.Ey = 0;
+        self.Ez = 0;
+        self.Hx = 0;
+        self.Hy = 0;
+        self.Hz = 0;
+        self.Jx = 0;
+        self.Jy = 0;
+        self.Jz = 0;
+        self.pow = 0;
+    def __str__(self):
+        ret = 'X = ' + str(self.X) + '\n' +\
+        'Y = ' + str(self.Y) + '\n' +\
+        'Z = ' + str(self.Z) + '\n' +\
+        'step = ' + str(self.step) + '\n' +\
+        'Ex = ' + str(self.Ex) + '\n' +\
+        'Ey = ' + str(self.Ey) + '\n' +\
+        'Ez = ' + str(self.Ez) + '\n' +\
+        'Hx = ' + str(self.Hx) + '\n' +\
+        'Hy = ' + str(self.Hy) + '\n' +\
+        'Hz = ' + str(self.Hz) + '\n' +\
+        'Jx = ' + str(self.Jx) + '\n' +\
+        'Jy = ' + str(self.Jy) + '\n' +\
+        'Jz = ' + str(self.Jz) + '\n' +\
+        'pow = ' + str(self.pow);
+        return ret;
+    def read_entry(self,entry):
+        self.X = entry.data[0];
+        self.Y = entry.data[1];
+        self.Z = entry.data[2];
+        self.step = entry.data[3];
+        self.Ex = entry.data[4];
+        self.Ey = entry.data[5];
+        self.Ez = entry.data[6];
+        self.Hx = entry.data[7];
+        self.Hy = entry.data[8];
+        self.Hz = entry.data[9];
+        self.Jx = entry.data[10];
+        self.Jy = entry.data[11];
+        self.Jz = entry.data[12];
+        self.pow = entry.data[13];
+    
+class Rotation:
+    def __init__(self):
+        self.axis_point = [0,0,0];
+        self.axis_direction = [0,0,0];
+        self.angle_degrees = 0;
+    def __str__(self):
+        ret = 'axis_point = ' + str(self.axis_point) + '\n';
+        ret += 'axis_direction = ' + str(self.axis_direction) + '\n';
+        ret += 'angle_degrees = ' + str(self.angle_degrees);
+        return ret;
+    def read_entry(self,entry):
+        self.axis_point = entry.data[0:3];
+        self.axis_direction = entry.data[3:6];
+        self.angle_degrees = entry.data[6];
     
 class Structured_entries:
     def __init__(self):
@@ -300,6 +444,11 @@ class Structured_entries:
         self.flag = Flag();
         self.boundaries = Boundaries();
         self.box = [];
+        self.probe_list = [];
+        self.sphere_list = [];
+        self.block_list = [];
+        self.cylinder_list = [];
+        self.rotation_list = [];
     def __str__(self):
         ret = '--->snapshot_list\n';
         for i in range(len(self.snapshot_list)):
@@ -327,6 +476,32 @@ class Structured_entries:
         '--->flag\n'+self.flag.__str__()+'\n'+\
         '--->boundaries\n'+self.boundaries.__str__()+'\n'+\
         '--->box\n'+self.box.__str__();
+        
+        ret += '--->probe_list\n';
+        for i in range(len(self.probe_list)):
+            ret += '-->probe '+str(i)+':\n';
+            ret += self.probe_list[i].__str__()+'\n';
+
+        ret += '--->sphere_list\n';
+        for i in range(len(self.sphere_list)):
+            ret += '-->sphere '+str(i)+':\n';
+            ret += self.sphere_list[i].__str__()+'\n';
+        
+        ret += '--->block_list\n';
+        for i in range(len(self.block_list)):
+            ret += '-->block '+str(i)+':\n';
+            ret += self.block_list[i].__str__()+'\n';
+
+        ret += '--->cylinder_list\n';
+        for i in range(len(self.cylinder_list)):
+            ret += '-->cylinder '+str(i)+':\n';
+            ret += self.cylinder_list[i].__str__()+'\n';
+
+        ret += '--->rotation_list\n';
+        for i in range(len(self.rotation_list)):
+            ret += '-->rotation '+str(i)+':\n';
+            ret += self.rotation_list[i].__str__()+'\n';
+            
         return ret;
 
 def is_number(s):
@@ -348,29 +523,34 @@ def read_input_file(filename, structured_entries):
     # close file
     input.close();
 
-    print fulltext;
+    # print fulltext;
 
     # remove comments
     pattern_stripcomments = re.compile("\*\*.*\n")
     cleantext = pattern_stripcomments.sub("\n", fulltext);
 
-    print cleantext;
+    # print cleantext;
     
-	# extract blocks
-    # pattern_blocks = re.compile("^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}");
-    pattern_blocks = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
-    blocks = [m.groupdict() for m in pattern_blocks.finditer(cleantext)]
+	# extract objects
+    # pattern_objects = re.compile("^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}");
+    pattern_objects = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
+    objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
 
-    # [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+    # [tokens_objects match_objects names_objects] =  regexp(cleantext, pattern_objects, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
-    # blocks =  pattern_blocks.findall(cleantext);
+    # objects =  pattern_objects.findall(cleantext);
     
-    print blocks;
+    # print objects;
 	
     time_snapshot_list = [];
     frequency_snapshot_list = [];
     snapshot_list = [];
     excitation_list = [];
+    probe_list = [];
+    sphere_list = [];
+    block_list = [];
+    cylinder_list = [];
+    rotation_list = [];
 
     xmesh = [];
     ymesh = [];
@@ -380,10 +560,10 @@ def read_input_file(filename, structured_entries):
     box = Box();
 
     entries = [];
-	# process blocks
-    for i in range(len(blocks)):
-        type = blocks[i]['type'];
-        data = blocks[i]['data'];
+	# process objects
+    for i in range(len(objects)):
+        type = objects[i]['type'];
+        data = objects[i]['data'];
         
         # convert type to upper case and strip it
         type = type.upper().strip();
@@ -392,8 +572,8 @@ def read_input_file(filename, structured_entries):
         # remove empty lines from data
         data = filter(None, data);
         
-        print 'type = ',type;
-        print 'data = ',data;
+        # print 'type = ',type;
+        # print 'data = ',data;
 
         #################################################################
         # # code to store the data in a cell array of strings and numbers
@@ -430,48 +610,70 @@ def read_input_file(filename, structured_entries):
         entry.data = data;
         entries.append(entry);
 
-        if entry.type in ['FREQUENCY_SNAPSHOT','SNAPSHOT']:
-            snapshot = Snapshot()
-            snapshot.read_entry(entry);
-            snapshot_list.append(snapshot);
-            if entry.type == 'FREQUENCY_SNAPSHOT':
-                print 'FREQUENCY_SNAPSHOT';
-                frequency_snapshot = Frequency_snapshot();
-                frequency_snapshot.read_entry(entry);
-                frequency_snapshot_list.append(frequency_snapshot);
-            elif entry.type == 'SNAPSHOT':
-                print 'SNAPSHOT';
-                time_snapshot = Time_snapshot()
-                time_snapshot.read_entry(entry);
-                time_snapshot_list.append(time_snapshot);
-            else:
-                print('Sense, it makes none.'); sys.exit(-1);
+        # if entry.type in ['FREQUENCY_SNAPSHOT','SNAPSHOT']:
+            # snapshot = Snapshot()
+            # snapshot.read_entry(entry);
+            # snapshot_list.append(snapshot);
+        if entry.type == 'FREQUENCY_SNAPSHOT':
+            # print 'FREQUENCY_SNAPSHOT';
+            frequency_snapshot = Frequency_snapshot();
+            frequency_snapshot.read_entry(entry);
+            frequency_snapshot_list.append(frequency_snapshot);
+            snapshot_list.append(frequency_snapshot);
+        elif entry.type == 'SNAPSHOT':
+            # print 'SNAPSHOT';
+            time_snapshot = Time_snapshot();
+            time_snapshot.read_entry(entry);
+            time_snapshot_list.append(time_snapshot);
+            snapshot_list.append(time_snapshot);
+            # else:
+                # print('Sense, it makes none.'); sys.exit(-1);
         elif entry.type == 'EXCITATION':
-            print 'EXCITATION';
+            # print 'EXCITATION';
             current_excitation = Excitation();
             current_excitation.read_entry(entry);
             excitation_list.append(current_excitation);
         elif entry.type == 'XMESH':
-            print 'XMESH';
+            # print 'XMESH';
             xmesh = entry.data;
             xmesh_read = True;
         elif entry.type == 'YMESH':
-            print 'YMESH';
+            # print 'YMESH';
             ymesh = entry.data;
         elif entry.type == 'ZMESH':
-            print 'ZMESH';
+            # print 'ZMESH';
             zmesh = entry.data;
         elif entry.type == 'FLAG':
-            print 'FLAG';
+            # print 'FLAG';
             flag.read_entry(entry);
         elif entry.type == 'BOUNDARY':
-            print 'BOUNDARY';
+            # print 'BOUNDARY';
             boundaries.read_entry(entry);
         elif entry.type == 'BOX':
             box.read_entry(entry);
             box_read = True;
+        elif entry.type == 'PROBE':
+            probe = Probe();
+            probe.read_entry(entry);
+            probe_list.append(probe);
+        elif entry.type == 'SPHERE':
+            sphere = Sphere();
+            sphere.read_entry(entry);
+            sphere_list.append(sphere);
+        elif entry.type == 'BLOCK':
+            block = Block();
+            block.read_entry(entry);
+            block_list.append(block);
+        elif entry.type == 'CYLINDER':
+            cylinder = Cylinder();
+            cylinder.read_entry(entry);
+            cylinder_list.append(cylinder);
+        elif entry.type == 'ROTATION':
+            rotation = Rotation();
+            rotation.read_entry(entry);
+            rotation_list.append(rotation);
         else:
-            print('Unknown type.');
+            print 'Unknown type: ', entry.type;
 
     structured_entries.snapshot_list += snapshot_list;
     structured_entries.time_snapshot_list += time_snapshot_list;
@@ -483,6 +685,11 @@ def read_input_file(filename, structured_entries):
     structured_entries.flag = flag;
     structured_entries.boundaries = boundaries;
     structured_entries.box = box;
+    structured_entries.probe_list += probe_list;
+    structured_entries.sphere_list += sphere_list;
+    structured_entries.block_list += block_list;
+    structured_entries.cylinder_list += cylinder_list;
+    structured_entries.rotation_list += rotation_list;
     
     return [ xmesh_read, box_read ];
 
@@ -501,10 +708,10 @@ def read_inputs(filename,structured_entries):
     
     f = open(filename, 'r');
     for line in f:
-        print filename;
+        # print filename;
         subfile = os.path.join(os.path.dirname(filename),line.strip());
-        print subfile;
-        print os.path.dirname(filename);
+        # print subfile;
+        # print os.path.dirname(filename);
         if (not xmesh_read):
             subfile = getname(subfile,'inp');
         else:
