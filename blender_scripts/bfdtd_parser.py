@@ -1,12 +1,5 @@
 #!BPY
 
-"""
-Name: 'Bristol FDTD (*.geo)'
-Blender: 249
-Group: 'Import'
-Tooltip: 'Import from Bristol FDTD'
-"""
-
 import math;
 import os;
 import sys;
@@ -117,8 +110,8 @@ class Frequency_snapshot:
 class Excitation:
     def __init__(self):
         self.current_source = 0;
-        self.P1 = 0;
-        self.P2 = 0;
+        self.P1 = [0,0,0];
+        self.P2 = [0,0,0];
         self.E = 0;
         self.H = 0;
         self.type = 0;
@@ -241,26 +234,20 @@ class Block:
 
 class Sphere:
     def __init__(self):
-        self.XC = 0;
-        self.YC = 0;
-        self.ZC = 0;
+        self.center = [0,0,0];
         self.R1 = 0;
         self.R2 = 0;
         self.permittivity = 0;
         self.conductivity = 0;
     def __str__(self):
-        ret = 'XC = ' + str(self.XC) + '\n' +\
-        'YC = ' + str(self.YC) + '\n' +\
-        'ZC = ' + str(self.ZC) + '\n' +\
+        ret = 'center = ' + str(self.center) + '\n' +\
         'R1 = ' + str(self.R1) + '\n' +\
         'R2 = ' + str(self.R2) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
         'conductivity = ' + str(self.conductivity);
         return ret;
     def read_entry(self,entry):
-        self.XC = float(entry.data[0]);
-        self.YC = float(entry.data[1]);
-        self.ZC = float(entry.data[2]);
+        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
         self.R1 = float(entry.data[3]);
         self.R2 = float(entry.data[4]);
         self.permittivity = float(entry.data[5]);
@@ -269,9 +256,7 @@ class Sphere:
 
 class Cylinder:
     def __init__(self):
-        self.Xc = 0;
-        self.Yc = 0;
-        self.Zc = 0;
+        self.center = [0,0,0];
         self.R1 = 0;
         self.R2 = 0;
         self.height = 0;
@@ -279,9 +264,7 @@ class Cylinder:
         self.conductivity = 0;
         self.angle = 0;
     def __str__(self):
-        ret = 'Xc = ' + str(self.Xc) + '\n' +\
-        'Yc = ' + str(self.Yc) + '\n' +\
-        'Zc = ' + str(self.Zc) + '\n' +\
+        ret = 'center = ' + str(self.center) + '\n' +\
         'R1 = ' + str(self.R1) + '\n' +\
         'R2 = ' + str(self.R2) + '\n' +\
         'height = ' + str(self.height) + '\n' +\
@@ -290,10 +273,7 @@ class Cylinder:
         'angle = ' + str(self.angle);
         return ret;
     def read_entry(self,entry):
-        # print entry.data;
-        self.Xc = float(entry.data[0]);
-        self.Yc = float(entry.data[1]);
-        self.Zc = float(entry.data[2]);
+        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
         self.R1 = float(entry.data[3]);
         self.R2 = float(entry.data[4]);
         self.height = float(entry.data[5]);
@@ -304,9 +284,7 @@ class Cylinder:
 
 class Probe:
     def __init__(self):
-        self.X = 0;
-        self.Y = 0;
-        self.Z = 0;
+        self.position = [0,0,0];
         self.step = 0;
         self.Ex = 0;
         self.Ey = 0;
@@ -319,9 +297,7 @@ class Probe:
         self.Jz = 0;
         self.pow = 0;
     def __str__(self):
-        ret = 'X = ' + str(self.X) + '\n' +\
-        'Y = ' + str(self.Y) + '\n' +\
-        'Z = ' + str(self.Z) + '\n' +\
+        ret = 'position = ' + str(self.position) + '\n' +\
         'step = ' + str(self.step) + '\n' +\
         'Ex = ' + str(self.Ex) + '\n' +\
         'Ey = ' + str(self.Ey) + '\n' +\
@@ -335,9 +311,7 @@ class Probe:
         'pow = ' + str(self.pow);
         return ret;
     def read_entry(self,entry):
-        self.X = float(entry.data[0]);
-        self.Y = float(entry.data[1]);
-        self.Z = float(entry.data[2]);
+        self.position = float_array([entry.data[0],entry.data[1],entry.data[2]]);
         self.step = float(entry.data[3]);
         self.Ex = float(entry.data[4]);
         self.Ey = float(entry.data[5]);
@@ -376,7 +350,7 @@ class Structured_entries:
         self.zmesh = [];
         self.flag = Flag();
         self.boundaries = Boundaries();
-        self.box = [];
+        self.box = Box();
         self.probe_list = [];
         self.sphere_list = [];
         self.block_list = [];
@@ -408,7 +382,7 @@ class Structured_entries:
         '--->zmesh\n'+self.zmesh.__str__()+'\n'+\
         '--->flag\n'+self.flag.__str__()+'\n'+\
         '--->boundaries\n'+self.boundaries.__str__()+'\n'+\
-        '--->box\n'+self.box.__str__();
+        '--->box\n'+self.box.__str__()+'\n';
         
         ret += '--->probe_list\n';
         for i in range(len(self.probe_list)):
@@ -479,12 +453,12 @@ def read_input_file(filename, structured_entries):
     cylinder_list = [];
     rotation_list = [];
 
-    xmesh = [];
-    ymesh = [];
-    zmesh = [];
-    flag = Flag();
-    boundaries = Boundaries();
-    box = Box();
+    # xmesh = [];
+    # ymesh = [];
+    # zmesh = [];
+    # flag = Flag();
+    # boundaries = Boundaries();
+    # box = Box();
 
     entries = [];
 	# process objects
@@ -519,18 +493,18 @@ def read_input_file(filename, structured_entries):
             current_excitation.read_entry(entry);
             excitation_list.append(current_excitation);
         elif entry.type == 'XMESH':
-            xmesh = entry.data;
+            structured_entries.xmesh = float_array(entry.data);
             xmesh_read = True;
         elif entry.type == 'YMESH':
-            ymesh = entry.data;
+            structured_entries.ymesh = float_array(entry.data);
         elif entry.type == 'ZMESH':
-            zmesh = entry.data;
+            structured_entries.zmesh = float_array(entry.data);
         elif entry.type == 'FLAG':
-            flag.read_entry(entry);
+            structured_entries.flag.read_entry(entry);
         elif entry.type == 'BOUNDARY':
-            boundaries.read_entry(entry);
+            structured_entries.boundaries.read_entry(entry);
         elif entry.type == 'BOX':
-            box.read_entry(entry);
+            structured_entries.box.read_entry(entry);
             box_read = True;
         elif entry.type == 'PROBE':
             probe = Probe();
@@ -559,12 +533,6 @@ def read_input_file(filename, structured_entries):
     structured_entries.time_snapshot_list += time_snapshot_list;
     structured_entries.frequency_snapshot_list += frequency_snapshot_list;
     structured_entries.excitation_list += excitation_list;
-    structured_entries.xmesh = xmesh;
-    structured_entries.ymesh = ymesh;
-    structured_entries.zmesh = zmesh;
-    structured_entries.flag = flag;
-    structured_entries.boundaries = boundaries;
-    structured_entries.box = box;
     structured_entries.probe_list += probe_list;
     structured_entries.sphere_list += sphere_list;
     structured_entries.block_list += block_list;
@@ -584,13 +552,17 @@ def getname(filename, default_extension):
 
 # read .in file
 def read_inputs(filename,structured_entries):
+    print '->Processing .in file : ', filename;
 
     box_read = False;
     xmesh_read = False;
     
     f = open(filename, 'r');
     for line in f:
-        subfile = os.path.join(os.path.dirname(filename),line.strip());
+        print 'os.path.dirname(filename): ', os.path.dirname(filename);
+        print 'line.strip()=', line.strip();
+        subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()));
+        print 'subfile: ', subfile;
         if (not xmesh_read):
             subfile = getname(subfile,'inp');
         else:
@@ -608,6 +580,7 @@ def getExtension(filename):
     
 # reads .in (=>.inp+.geo), .geo or .inp
 def readBristolFDTD(filename):
+    print '->Processing generic file : ', filename;
 
     structured_entries = Structured_entries();
     
@@ -627,9 +600,10 @@ def readBristolFDTD(filename):
         print 'Unknown file format:', extension;
     
     print '================';
-    print structured_entries;
+    # print structured_entries;
     print '================';
-        
-print '----->Importing bristol FDTD geometry...';
-readBristolFDTD('rotated_cylinder.in');
-print '...done';
+    return structured_entries;
+    
+# print '----->Importing bristol FDTD geometry...';
+# structured_entries = readBristolFDTD('rotated_cylinder.in');
+# print '...done';
