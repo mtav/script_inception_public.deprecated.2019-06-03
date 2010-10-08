@@ -12,6 +12,16 @@ import os;
 import sys;
 import re;
 
+def float_array(A):
+    for i in range(len(A)):
+        A[i]=float(A[i]);
+    return(A);
+    
+def int_array(A):
+    for i in range(len(A)):
+        A[i]=int(A[i]);
+    return(A);
+
 class Entry:
     def __init__(self):
         self.type = '';
@@ -41,15 +51,15 @@ class Time_snapshot:
         return ret;
     def read_entry(self,entry):
         idx = 0;
-        self.first = entry.data[idx]; idx = idx+1;
-        self.repetition = entry.data[idx]; idx = idx+1;
-        self.plane = entry.data[idx]; idx = idx+1;
-        self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.power = entry.data[idx]; idx = idx+1;
+        self.first = float(entry.data[idx]); idx = idx+1;
+        self.repetition = float(entry.data[idx]); idx = idx+1;
+        self.plane = float(entry.data[idx]); idx = idx+1;
+        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.power = float(entry.data[idx]); idx = idx+1;
         return(0);
 
 class Frequency_snapshot:
@@ -86,20 +96,20 @@ class Frequency_snapshot:
         return ret;
     def read_entry(self,entry):
         idx = 0;
-        self.first = entry.data[idx]; idx = idx+1;
-        self.repetition = entry.data[idx]; idx = idx+1;
-        self.interpolate = entry.data[idx]; idx = idx+1;
-        self.real_dft = entry.data[idx]; idx = idx+1;
-        self.mod_only = entry.data[idx]; idx = idx+1;
-        self.mod_all = entry.data[idx]; idx = idx+1;
-        self.plane = entry.data[idx]; idx = idx+1;
-        self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.frequency = entry.data[idx]; idx = idx+1;
-        self.starting_sample = entry.data[idx]; idx = idx+1;
-        self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+        self.first = float(entry.data[idx]); idx = idx+1;
+        self.repetition = float(entry.data[idx]); idx = idx+1;
+        self.interpolate = float(entry.data[idx]); idx = idx+1;
+        self.real_dft = float(entry.data[idx]); idx = idx+1;
+        self.mod_only = float(entry.data[idx]); idx = idx+1;
+        self.mod_all = float(entry.data[idx]); idx = idx+1;
+        self.plane = float(entry.data[idx]); idx = idx+1;
+        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.frequency = float(entry.data[idx]); idx = idx+1;
+        self.starting_sample = float(entry.data[idx]); idx = idx+1;
+        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         return(0);
 
 # class Snapshot:
@@ -139,38 +149,38 @@ class Frequency_snapshot:
     # def read_entry(self,entry):
         # if entry.type == 'FREQUENCY_SNAPSHOT':
             # idx = 0;
-            # self.first = entry.data[idx]; idx = idx+1;
-            # self.repetition = entry.data[idx]; idx = idx+1;
-            # self.interpolate = entry.data[idx]; idx = idx+1;
-            # self.real_dft = entry.data[idx]; idx = idx+1;
-            # self.mod_only = entry.data[idx]; idx = idx+1;
-            # self.mod_all = entry.data[idx]; idx = idx+1;
-            # self.plane = entry.data[idx]; idx = idx+1;
-            # self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.frequency = entry.data[idx]; idx = idx+1;
-            # self.starting_sample = entry.data[idx]; idx = idx+1;
-            # self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.first = float(entry.data[idx]); idx = idx+1;
+            # self.repetition = float(entry.data[idx]); idx = idx+1;
+            # self.interpolate = float(entry.data[idx]); idx = idx+1;
+            # self.real_dft = float(entry.data[idx]); idx = idx+1;
+            # self.mod_only = float(entry.data[idx]); idx = idx+1;
+            # self.mod_all = float(entry.data[idx]); idx = idx+1;
+            # self.plane = float(entry.data[idx]); idx = idx+1;
+            # self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.frequency = float(entry.data[idx]); idx = idx+1;
+            # self.starting_sample = float(entry.data[idx]); idx = idx+1;
+            # self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
             # self.power = -1;
         # elif entry.type == 'SNAPSHOT':
             # idx = 0;
-            # self.first = entry.data[idx]; idx = idx+1;
-            # self.repetition = entry.data[idx]; idx = idx+1;
+            # self.first = float(entry.data[idx]); idx = idx+1;
+            # self.repetition = float(entry.data[idx]); idx = idx+1;
             # self.interpolate = -1;
             # self.real_dft = -1;
             # self.mod_only = -1;
             # self.mod_all = -1;
-            # self.plane = entry.data[idx]; idx = idx+1;
-            # self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
+            # self.plane = float(entry.data[idx]); idx = idx+1;
+            # self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
             # self.frequency = -1;
             # self.starting_sample = -1;
-            # self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.J = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-            # self.power = entry.data[idx]; idx = idx+1;
+            # self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+            # self.power = float(entry.data[idx]); idx = idx+1;
         # else:
             # print 'Sense, it makes none.'; sys.exit(-1);
         # return(0);
@@ -209,20 +219,20 @@ class Excitation:
         return ret;
     def read_entry(self,entry):
         idx = 0;
-        self.current_source = entry.data[idx]; idx = idx+1;
-        self.P1 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.P2 = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.E = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.H = [entry.data[idx], entry.data[idx+1], entry.data[idx+2]]; idx = idx+3;
-        self.type = entry.data[idx]; idx = idx+1;
-        self.time_constant = entry.data[idx]; idx = idx+1;
-        self.amplitude = entry.data[idx]; idx = idx+1;
-        self.time_offset = entry.data[idx]; idx = idx+1;
-        self.frequency = entry.data[idx]; idx = idx+1;
-        self.param1 = entry.data[idx]; idx = idx+1;
-        self.param2 = entry.data[idx]; idx = idx+1;
-        self.param3 = entry.data[idx]; idx = idx+1;
-        self.param4 = entry.data[idx]; idx = idx+1;
+        self.current_source = float(entry.data[idx]); idx = idx+1;
+        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+        self.type = float(entry.data[idx]); idx = idx+1;
+        self.time_constant = float(entry.data[idx]); idx = idx+1;
+        self.amplitude = float(entry.data[idx]); idx = idx+1;
+        self.time_offset = float(entry.data[idx]); idx = idx+1;
+        self.frequency = float(entry.data[idx]); idx = idx+1;
+        self.param1 = float(entry.data[idx]); idx = idx+1;
+        self.param2 = float(entry.data[idx]); idx = idx+1;
+        self.param3 = float(entry.data[idx]); idx = idx+1;
+        self.param4 = float(entry.data[idx]); idx = idx+1;
         return(0);
 
 class Boundaries:
@@ -268,12 +278,12 @@ class Flag:
         'id = ' + self.id;
         return ret;
     def read_entry(self, entry):
-        self.iMethod = entry.data[0];
-        self.propCons = entry.data[1];
-        self.flagOne = entry.data[2];
-        self.flagTwo = entry.data[3];
-        self.numSteps = entry.data[4];
-        self.stabFactor = entry.data[5];
+        self.iMethod = float(entry.data[0]);
+        self.propCons = float(entry.data[1]);
+        self.flagOne = float(entry.data[2]);
+        self.flagTwo = float(entry.data[3]);
+        self.numSteps = float(entry.data[4]);
+        self.stabFactor = float(entry.data[5]);
         self.id = entry.data[6];
 
 class Box:
@@ -285,8 +295,8 @@ class Box:
         ret += 'upper = '+str(self.upper);
         return ret;
     def read_entry(self,entry):
-        self.lower = entry.data[0:3];
-        self.upper = entry.data[3:6];
+        self.lower = float_array(entry.data[0:3]);
+        self.upper = float_array(entry.data[3:6]);
 
 class Block:
     def __init__(self):
@@ -301,10 +311,10 @@ class Block:
         ret += 'conductivity = '+str(self.conductivity);
         return ret;
     def read_entry(self,entry):
-        self.lower = entry.data[0:3];
-        self.upper = entry.data[3:6];
-        self.permittivity = entry.data[6];
-        self.conductivity = entry.data[7];
+        self.lower = float_array(entry.data[0:3]);
+        self.upper = float_array(entry.data[3:6]);
+        self.permittivity = float(entry.data[6]);
+        self.conductivity = float(entry.data[7]);
 
 class Sphere:
     def __init__(self):
@@ -325,13 +335,13 @@ class Sphere:
         'conductivity = ' + str(self.conductivity);
         return ret;
     def read_entry(self,entry):
-        self.XC = entry.data[0];
-        self.YC = entry.data[1];
-        self.ZC = entry.data[2];
-        self.R1 = entry.data[3];
-        self.R2 = entry.data[4];
-        self.permittivity = entry.data[5];
-        self.conductivity = entry.data[6];
+        self.XC = float(entry.data[0]);
+        self.YC = float(entry.data[1]);
+        self.ZC = float(entry.data[2]);
+        self.R1 = float(entry.data[3]);
+        self.R2 = float(entry.data[4]);
+        self.permittivity = float(entry.data[5]);
+        self.conductivity = float(entry.data[6]);
         return(0);
 
 class Cylinder:
@@ -358,15 +368,15 @@ class Cylinder:
         return ret;
     def read_entry(self,entry):
         # print entry.data;
-        self.Xc = entry.data[0];
-        self.Yc = entry.data[1];
-        self.Zc = entry.data[2];
-        self.R1 = entry.data[3];
-        self.R2 = entry.data[4];
-        self.height = entry.data[5];
-        self.permittivity = entry.data[6];
-        self.conductivity = entry.data[7];
-        if(len(entry.data)>8): self.angle = entry.data[8];
+        self.Xc = float(entry.data[0]);
+        self.Yc = float(entry.data[1]);
+        self.Zc = float(entry.data[2]);
+        self.R1 = float(entry.data[3]);
+        self.R2 = float(entry.data[4]);
+        self.height = float(entry.data[5]);
+        self.permittivity = float(entry.data[6]);
+        self.conductivity = float(entry.data[7]);
+        if(len(entry.data)>8): self.angle = float(entry.data[8]);
         return(0);
 
 class Probe:
@@ -402,20 +412,20 @@ class Probe:
         'pow = ' + str(self.pow);
         return ret;
     def read_entry(self,entry):
-        self.X = entry.data[0];
-        self.Y = entry.data[1];
-        self.Z = entry.data[2];
-        self.step = entry.data[3];
-        self.Ex = entry.data[4];
-        self.Ey = entry.data[5];
-        self.Ez = entry.data[6];
-        self.Hx = entry.data[7];
-        self.Hy = entry.data[8];
-        self.Hz = entry.data[9];
-        self.Jx = entry.data[10];
-        self.Jy = entry.data[11];
-        self.Jz = entry.data[12];
-        self.pow = entry.data[13];
+        self.X = float(entry.data[0]);
+        self.Y = float(entry.data[1]);
+        self.Z = float(entry.data[2]);
+        self.step = float(entry.data[3]);
+        self.Ex = float(entry.data[4]);
+        self.Ey = float(entry.data[5]);
+        self.Ez = float(entry.data[6]);
+        self.Hx = float(entry.data[7]);
+        self.Hy = float(entry.data[8]);
+        self.Hz = float(entry.data[9]);
+        self.Jx = float(entry.data[10]);
+        self.Jy = float(entry.data[11]);
+        self.Jz = float(entry.data[12]);
+        self.pow = float(entry.data[13]);
     
 class Rotation:
     def __init__(self):
@@ -428,9 +438,9 @@ class Rotation:
         ret += 'angle_degrees = ' + str(self.angle_degrees);
         return ret;
     def read_entry(self,entry):
-        self.axis_point = entry.data[0:3];
-        self.axis_direction = entry.data[3:6];
-        self.angle_degrees = entry.data[6];
+        self.axis_point = float_array(entry.data[0:3]);
+        self.axis_direction = float_array(entry.data[3:6]);
+        self.angle_degrees = float(entry.data[6]);
     
 class Structured_entries:
     def __init__(self):
