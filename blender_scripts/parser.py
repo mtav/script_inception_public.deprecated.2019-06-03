@@ -497,10 +497,11 @@ class Structured_entries:
             ret += '-->cylinder '+str(i)+':\n';
             ret += self.cylinder_list[i].__str__()+'\n';
 
-        ret += '--->rotation_list\n';
+        ret += '--->rotation_list';
         for i in range(len(self.rotation_list)):
+            ret += '\n';
             ret += '-->rotation '+str(i)+':\n';
-            ret += self.rotation_list[i].__str__()+'\n';
+            ret += self.rotation_list[i].__str__();
             
         return ret;
 

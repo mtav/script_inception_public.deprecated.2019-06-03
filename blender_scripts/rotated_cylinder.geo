@@ -461,4 +461,26 @@ SPHERE  **SPHERE DEFINITION
 0.000000E+000 **conductivity
 }
 
+rotation **rotation
+{
+1 **X CENTRE
+11 **Y CENTRE
+111 **Z CENTRE
+1
+0
+0
+90
+}
+
+rotation **rotation
+{
+2 **X CENTRE
+22 **Y CENTRE
+222 **Z CENTRE
+1
+0
+0
+100
+}
+
 end
