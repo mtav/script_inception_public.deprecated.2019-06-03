@@ -14,7 +14,7 @@ import math;
 import os;
 import sys;
 import re;
-# import bfdtd_parser;
+import array;
 from bfdtd_parser import *;
 
 Vector = Blender.Mathutils.Vector;
@@ -112,17 +112,19 @@ def grid_index(Nx, Ny, Nz, i, j, k):
     return (Ny*Nz*i + Nz*j + k);
     
 def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
-    verts = [];
-    edges = [];
-    faces = [];
-    
     Nx = len(delta_X_vector)+1;
     Ny = len(delta_Y_vector)+1;
     Nz = len(delta_Z_vector)+1;
     
+    # verts = array.array('d',range());
+    verts = range(Nx*Ny*Nz);
+    edges = range(Nx*Ny + Ny*Nz + Nz*Nx);
+    faces = [];
+    
     x=0;
     y=0;
     z=0;
+    vert_idx = 0;
     for i in range(Nx):
         if i>0:
             x+=delta_X_vector[i-1];
@@ -135,32 +137,34 @@ def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
                 if k>0:
                     z+=delta_Z_vector[k-1];
                 # print i, j, k, '->', x, y, z;
-                verts.append(Vector(x, y, z));
+                verts[vert_idx] = Vector(x, y, z); vert_idx+=1;
     
+    edge_idx = 0;
     for i in range(Nx):
         for j in range(Ny):
             A = grid_index(Nx, Ny, Nz, i, j, 0);
             B = grid_index(Nx, Ny, Nz, i, j, Nz-1);
-            edges.append([A, B]);
+            edges[edge_idx] = [A, B]; edge_idx+=1;
 
     for j in range(Ny):
         for k in range(Nz):
             A = grid_index(Nx, Ny, Nz, 0, j, k);
             B = grid_index(Nx, Ny, Nz, Nx-1, j, k);
-            edges.append([A, B]);
+            edges[edge_idx] = [A, B]; edge_idx+=1;
 
     for k in range(Nz):
         for i in range(Nx):
             A = grid_index(Nx, Ny, Nz, i, 0, k);
             B = grid_index(Nx, Ny, Nz, i, Ny-1, k);
-            edges.append([A, B]);
+            edges[edge_idx] = [A, B]; edge_idx+=1;
     
+    # print verts;
     BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
     # print 'Nverts=', len(verts);
     # print 'Nverts=', Nx*Ny*Nz;
 
     # print 'Nedges=', len(edges);
-    # print 'Nedges=', Nx*Ny + Ny*Nz+Nz*Nx;
+    # print 'Nedges=', Nx*Ny + Ny*Nz + Nz*Nx;
 
     return
     
@@ -224,7 +228,6 @@ def GEOexcitation(P1, P2):
     return
 
 def snapshot(plane, P1, P2, snapshot_type):
-    # print "snapshot 2 called"
 
     verts = [];
     if plane == 1:
@@ -353,55 +356,51 @@ def importBristolFDTD(filename):
     print '----->Importing bristol FDTD geometry...';
     Blender.Window.WaitCursor(1);
 
-    # readBristolFDTD('rotated_cylinder.in');
-    # getname('tettte.in','.in');
-    # readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.in');
-    # readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.inp');
-    # readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.geo');
-    # TestObjects();
-    # structured_entries = readBristolFDTD('H:\\DATA\\rotated_cylinder\\rotated_cylinder.in');
-    # structured_entries = readBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
     structured_entries = readBristolFDTD(filename);
     
+    # Box
     GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
     GEOmesh(structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
 
-    print structured_entries.xmesh;
-    print structured_entries.ymesh;
-    print structured_entries.zmesh;
+    # print structured_entries.xmesh;
+    # print structured_entries.ymesh;
+    # print structured_entries.zmesh;
     
-    # for snapshot in structured_entries.snapshot_list:
-    # for time_snapshot in structured_entries.time_snapshot_list:
-    # for frequency_snapshot in structured_entries.frequency_snapshot_list:
+    # Time_snapshot (time or EPS)
+    for time_snapshot in structured_entries.time_snapshot_list:
+        if time_snapshot.eps == 0:
+            GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+        else:
+            GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+    # Frequency_snapshot
+    for frequency_snapshot in structured_entries.frequency_snapshot_list:
+        GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+
+    # Excitation
     for excitation in structured_entries.excitation_list:
         GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
+    # Probe
     for probe in structured_entries.probe_list:
         GEOprobe(Vector(probe.position));
+    # Sphere
     for sphere in structured_entries.sphere_list:
         GEOsphere(Vector(sphere.center), sphere.R1, sphere.R2, sphere.permittivity, sphere.conductivity);
+    # Block
     for block in structured_entries.block_list:
         GEOblock(Vector(block.lower), Vector(block.upper), block.permittivity, block.conductivity);
+    # Cylinder
     for cylinder in structured_entries.cylinder_list:
         GEOcylinder(Vector(cylinder.center),cylinder.R1,cylinder.R2,cylinder.height,cylinder.permittivity,cylinder.conductivity,cylinder.angle);
 
     #########################
     # Not yet implemented:
+    # Rotation
     # for rotation in structured_entries.rotation_list:
+    # Flag
     # structured_entries.flag;
+    # Boundaries
     # structured_entries.boundaries;
     #########################
-    
-    # Time_snapshot
-    # Frequency_snapshot
-    # Excitation
-    # Boundaries
-    # Flag
-    # Box
-    # Block
-    # Sphere
-    # Cylinder
-    # Probe
-    # Rotation
 
     scene = Blender.Scene.GetCurrent();
     scene.update(0);
@@ -409,5 +408,5 @@ def importBristolFDTD(filename):
     Blender.Window.WaitCursor(0);
     print '...done';
 
-Blender.Window.FileSelector(importBristolFDTD, "Import", Blender.sys.makename(path='H:\\DATA\\foo',ext='.in'));
+Blender.Window.FileSelector(importBristolFDTD, "Import"); #, Blender.sys.makename(path='H:\\DATA\\foo',ext='.in'));
 # importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');

@@ -14,7 +14,7 @@ def float_array(A):
 # convert string array to int array
 def int_array(A):
     for i in range(len(A)):
-        A[i]=int(A[i]);
+        A[i]=int(float(A[i]));
     return(A);
 
 class Entry:
@@ -33,6 +33,7 @@ class Time_snapshot:
         self.H = 0;
         self.J = 0;
         self.power = 0;
+        self.eps = 0;
     def __str__(self):
         ret = 'first = ' + str(self.first) + '\n' +\
         'repetition = ' + str(self.repetition) + '\n' +\
@@ -42,7 +43,8 @@ class Time_snapshot:
         'E = ' + str(self.E) + '\n' +\
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J) + '\n' +\
-        'power = ' + str(self.power);
+        'power = ' + str(self.power) + '\n' +\
+        'eps = ' + str(self.eps);
         return ret;
     def read_entry(self,entry):
         idx = 0;
@@ -55,6 +57,7 @@ class Time_snapshot:
         self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.power = float(entry.data[idx]); idx = idx+1;
+        if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1;
         return(0);
 
 class Frequency_snapshot:
@@ -97,7 +100,7 @@ class Frequency_snapshot:
         self.real_dft = float(entry.data[idx]); idx = idx+1;
         self.mod_only = float(entry.data[idx]); idx = idx+1;
         self.mod_all = float(entry.data[idx]); idx = idx+1;
-        self.plane = float(entry.data[idx]); idx = idx+1;
+        self.plane = int(float(entry.data[idx])); idx = idx+1;
         self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.frequency = float(entry.data[idx]); idx = idx+1;
@@ -567,7 +570,11 @@ def read_inputs(filename,structured_entries):
             subfile = getname(subfile,'inp');
         else:
             subfile = getname(subfile,'geo');
-        [ xmesh_read, box_read ] = read_input_file(subfile, structured_entries);
+        [ xmesh_read_loc, box_read_loc ] = read_input_file(subfile, structured_entries);
+        if xmesh_read_loc:
+            xmesh_read = True;
+        if box_read_loc:
+            box_read = True;
     f.close();
     if (not xmesh_read):
         print 'WARNING: mesh not found';
@@ -599,9 +606,9 @@ def readBristolFDTD(filename):
     else:
         print 'Unknown file format:', extension;
     
-    print '================';
+    # print '================';
     # print structured_entries;
-    print '================';
+    # print '================';
     return structured_entries;
     
 # print '----->Importing bristol FDTD geometry...';
