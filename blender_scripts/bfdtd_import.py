@@ -115,49 +115,100 @@ def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
     Nx = len(delta_X_vector)+1;
     Ny = len(delta_Y_vector)+1;
     Nz = len(delta_Z_vector)+1;
+    xmax = sum(delta_X_vector);
+    ymax = sum(delta_Y_vector);
+    zmax = sum(delta_Z_vector);
     
     # verts = array.array('d',range());
-    verts = range(Nx*Ny*Nz);
+    # verts = range(Nx*Ny*Nz);
+    verts = range(2*(Nx*Ny + Ny*Nz + Nz*Nx));
     edges = range(Nx*Ny + Ny*Nz + Nz*Nx);
     faces = [];
     
-    x=0;
-    y=0;
-    z=0;
+    # x=0;
+    # y=0;
+    # z=0;
+    # vert_idx = 0;
+    # for i in range(Nx):
+        # if i>0:
+            # x+=delta_X_vector[i-1];
+        # y=0;
+        # for j in range(Ny):
+            # if j>0:
+                # y+=delta_Y_vector[j-1];
+            # z=0;
+            # for k in range(Nz):
+                # if k>0:
+                    # z+=delta_Z_vector[k-1];
+                # # print i, j, k, '->', x, y, z;
+                # verts[vert_idx] = Vector(x, y, z); vert_idx+=1;
+    
+    # edge_idx = 0;
+    # for i in range(Nx):
+        # for j in range(Ny):
+            # A = grid_index(Nx, Ny, Nz, i, j, 0);
+            # B = grid_index(Nx, Ny, Nz, i, j, Nz-1);
+            # edges[edge_idx] = [A, B]; edge_idx+=1;
+
+    # for j in range(Ny):
+        # for k in range(Nz):
+            # A = grid_index(Nx, Ny, Nz, 0, j, k);
+            # B = grid_index(Nx, Ny, Nz, Nx-1, j, k);
+            # edges[edge_idx] = [A, B]; edge_idx+=1;
+
+    # for k in range(Nz):
+        # for i in range(Nx):
+            # A = grid_index(Nx, Ny, Nz, i, 0, k);
+            # B = grid_index(Nx, Ny, Nz, i, Ny-1, k);
+            # edges[edge_idx] = [A, B]; edge_idx+=1;
+
     vert_idx = 0;
+    edge_idx = 0;
+    # Z edges
+    x = 0;
     for i in range(Nx):
         if i>0:
             x+=delta_X_vector[i-1];
-        y=0;
+        y = 0;
         for j in range(Ny):
             if j>0:
                 y+=delta_Y_vector[j-1];
-            z=0;
-            for k in range(Nz):
-                if k>0:
-                    z+=delta_Z_vector[k-1];
-                # print i, j, k, '->', x, y, z;
-                verts[vert_idx] = Vector(x, y, z); vert_idx+=1;
-    
-    edge_idx = 0;
-    for i in range(Nx):
-        for j in range(Ny):
-            A = grid_index(Nx, Ny, Nz, i, j, 0);
-            B = grid_index(Nx, Ny, Nz, i, j, Nz-1);
+            A = vert_idx;
+            verts[vert_idx] = Vector(x, y, 0); vert_idx+=1;
+            B = vert_idx;
+            verts[vert_idx] = Vector(x, y, zmax); vert_idx+=1;
             edges[edge_idx] = [A, B]; edge_idx+=1;
 
+    # X edges
+    y = 0;
     for j in range(Ny):
+        if j>0:
+            y+=delta_Y_vector[j-1];
+        z = 0;
         for k in range(Nz):
-            A = grid_index(Nx, Ny, Nz, 0, j, k);
-            B = grid_index(Nx, Ny, Nz, Nx-1, j, k);
+            if k>0:
+                z+=delta_Z_vector[k-1];
+            A = vert_idx;
+            verts[vert_idx] = Vector(0, y, z); vert_idx+=1;
+            B = vert_idx;
+            verts[vert_idx] = Vector(xmax, y, z); vert_idx+=1;
             edges[edge_idx] = [A, B]; edge_idx+=1;
 
+    # Y edges
+    z = 0;
     for k in range(Nz):
+        if k>0:
+            z+=delta_Z_vector[k-1];
+        x = 0;
         for i in range(Nx):
-            A = grid_index(Nx, Ny, Nz, i, 0, k);
-            B = grid_index(Nx, Ny, Nz, i, Ny-1, k);
+            if i>0:
+                x+=delta_X_vector[i-1];
+            A = vert_idx;
+            verts[vert_idx] = Vector(x, 0, z); vert_idx+=1;
+            B = vert_idx;
+            verts[vert_idx] = Vector(x, ymax, z); vert_idx+=1;
             edges[edge_idx] = [A, B]; edge_idx+=1;
-    
+            
     # print verts;
     BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
     # print 'Nverts=', len(verts);
@@ -356,6 +407,7 @@ def importBristolFDTD(filename):
     print '----->Importing bristol FDTD geometry...';
     Blender.Window.WaitCursor(1);
 
+    Blender.Set('tempdir',os.path.dirname(filename));
     structured_entries = readBristolFDTD(filename);
     
     # Box
@@ -408,5 +460,12 @@ def importBristolFDTD(filename):
     Blender.Window.WaitCursor(0);
     print '...done';
 
-Blender.Window.FileSelector(importBristolFDTD, "Import"); #, Blender.sys.makename(path='H:\\DATA\\foo',ext='.in'));
+print 'tempdir=',Blender.Get('tempdir');
+print 'soundsdir=',Blender.Get('soundsdir');
+
+default_path = Blender.Get('tempdir');
+if not default_path:
+    default_path = 'H:\DATA';
+    
+Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
 # importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
