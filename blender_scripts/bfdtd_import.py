@@ -211,6 +211,8 @@ def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
             
     # print verts;
     BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
+    obj = Blender.Object.GetSelected()[0];
+    # obj.layers = [ 2 ];
     # print 'Nverts=', len(verts);
     # print 'Nverts=', Nx*Ny*Nz;
 
@@ -274,6 +276,7 @@ def GEOexcitation(P1, P2):
     arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
 
     arrow_cylinder_obj.join([arrow_cone_obj]);
+    # arrow_cylinder_obj.layers = [ 5 ];
     scene.objects.unlink(arrow_cone_obj);
     
     return
@@ -316,6 +319,7 @@ def snapshot(plane, P1, P2, snapshot_type):
     # print "Adding plane at ", A, B, C, D;
     BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
     obj = Blender.Object.GetSelected()[0];
+    # obj.layers = [ 3 ];
     mesh = Blender.Mesh.Get( obj.data.name );
     mesh.materials = snapshot_materials;
     for f in mesh.faces:
@@ -339,6 +343,7 @@ def GEOprobe(position):
 
     obj = scene.objects.new(mesh, 'probe');
     obj.setLocation(position[0], position[1], position[2]);
+    # obj.layers = [ 4 ];
     return
 
 def TestObjects():
@@ -411,7 +416,9 @@ def importBristolFDTD(filename):
     structured_entries = readBristolFDTD(filename);
     
     # Box
+    Blender.Window.SetActiveLayer(1<<0);
     GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
+    Blender.Window.SetActiveLayer(1<<1);
     GEOmesh(structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
 
     # print structured_entries.xmesh;
@@ -421,26 +428,34 @@ def importBristolFDTD(filename):
     # Time_snapshot (time or EPS)
     for time_snapshot in structured_entries.time_snapshot_list:
         if time_snapshot.eps == 0:
+            Blender.Window.SetActiveLayer(1<<2);
             GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
         else:
+            Blender.Window.SetActiveLayer(1<<3);
             GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
     # Frequency_snapshot
+    Blender.Window.SetActiveLayer(1<<4);
     for frequency_snapshot in structured_entries.frequency_snapshot_list:
         GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
+    Blender.Window.SetActiveLayer(1<<5);
     for excitation in structured_entries.excitation_list:
         GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
     # Probe
+    Blender.Window.SetActiveLayer(1<<6);
     for probe in structured_entries.probe_list:
         GEOprobe(Vector(probe.position));
     # Sphere
+    Blender.Window.SetActiveLayer(1<<7);
     for sphere in structured_entries.sphere_list:
         GEOsphere(Vector(sphere.center), sphere.R1, sphere.R2, sphere.permittivity, sphere.conductivity);
     # Block
+    Blender.Window.SetActiveLayer(1<<8);
     for block in structured_entries.block_list:
         GEOblock(Vector(block.lower), Vector(block.upper), block.permittivity, block.conductivity);
     # Cylinder
+    Blender.Window.SetActiveLayer(1<<9);
     for cylinder in structured_entries.cylinder_list:
         GEOcylinder(Vector(cylinder.center),cylinder.R1,cylinder.R2,cylinder.height,cylinder.permittivity,cylinder.conductivity,cylinder.angle);
 
@@ -458,6 +473,7 @@ def importBristolFDTD(filename):
     scene.update(0);
     Blender.Window.RedrawAll();
     Blender.Window.WaitCursor(0);
+    Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print '...done';
 
 print 'tempdir=',Blender.Get('tempdir');
