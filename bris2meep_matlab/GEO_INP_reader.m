@@ -20,16 +20,17 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
 	[tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
-	time_snapshots = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
+	time_snapshots = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
 	frequency_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
 	all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
 	excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
-	boundaries = struct('type',{},'p',{});
+	boundaries = struct('type',{},'position',{});
 	box = struct('lower',{},'upper',{});
     sphere_list = struct('center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
     block_list = struct('lower',{},'upper',{},'permittivity',{},'conductivity',{});
     cylinder_list = struct('center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
     rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
+    probe_list = 
         
 	xmesh = [];
 	ymesh = [];
@@ -120,6 +121,9 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
             case {'ROTATION'}
 				rotation = add_rotation(entry);
 				rotation_list = [ rotation_list rotation ];
+            case {'PROBE'}
+				probe = add_probe(entry);
+				probe_list = [ probe_list probe ];
 			otherwise
 				% disp('Unknown type.');
 		end % end of switch
@@ -140,6 +144,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
     structured_entries.block_list = block_list;
     structured_entries.cylinder_list = cylinder_list;
     structured_entries.rotation_list = rotation_list;
+    structured_entries.probe_list = probe_list;
 
 end % end of function
 
@@ -157,7 +162,7 @@ function boundaries = add_boundary(entry)
 	M = reshape(entry.data,4,length(entry.data)/4)';
 	for i = 1:6
 		boundaries(i).type = M(i,1);
-		boundaries(i).p = M(i,2:4);
+		boundaries(i).position = M(i,2:4);
 	end
 end
 
@@ -191,11 +196,7 @@ function cylinder = add_cylinder(entry)
     cylinder.height = entry.data(idx); idx = idx+1;
     cylinder.permittivity = entry.data(idx); idx = idx+1;
     cylinder.conductivity = entry.data(idx); idx = idx+1;
-    if length(entry.data)>=idx
-        cylinder.angle = entry.data(idx); idx = idx+1;
-    else
-        cylinder.angle = 0; idx = idx+1;
-    end
+    if length(entry.data)>=idx; cylinder.angle = entry.data(idx); else cylinder.angle = 0; end; idx = idx+1;
 end
 
 function rotation = add_rotation(entry)
@@ -203,6 +204,13 @@ function rotation = add_rotation(entry)
     rotation.axis_point = entry.data(idx:idx+2); idx = idx+3;
     rotation.axis_direction = entry.data(idx:idx+2); idx = idx+3;
     rotation.angle_degrees = entry.data(idx); idx = idx+1;
+end
+
+function probe = add_probe(entry)
+    idx = 1;
+    probe.axis_point = entry.data(idx:idx+2); idx = idx+3;
+    probe.axis_direction = entry.data(idx:idx+2); idx = idx+3;
+    probe.angle_degrees = entry.data(idx); idx = idx+1;
 end
 
 function snapshot = add_frequency_snapshot(entry)
@@ -234,6 +242,7 @@ function snapshot = add_time_snapshot(entry)
 	snapshot.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
 	snapshot.J = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
 	snapshot.power = entry.data(idx); idx = idx+1;
+    if length(entry.data)>=idx; snapshot.eps = entry.data(idx); else snapshot.eps = 0; end; idx = idx+1;
 end
 
 function snapshot = add_snapshot(entry)

@@ -77,14 +77,24 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
     % Excitation
     for idx=1:length(structured_entries.excitations)
         excitation = structured_entries.excitations(idx);
-        GEOexcitation(FILE, excitation.P1, excitation.P2);
+        GEOexcitation(FILE, excitation.current_source, excitation.P1, excitation.P2,...
+        excitation.E, excitation.H, excitation.type, excitation.time_constant, excitation.amplitude,...
+        excitation.time_offset, excitation.frequency, excitation.param1, excitation.param2, excitation.param3, excitation.param4);
     end
 
+    % TODO: Make those functions also accept structures as entries to simplify code
     % Boundaries
-    % structured_entries.boundaries;
+    GEOboundary(FILE, structured_entries.boundaries(1).type, structured_entries.boundaries(1).position,...
+    structured_entries.boundaries(2).type, structured_entries.boundaries(2).position,...
+    structured_entries.boundaries(3).type, structured_entries.boundaries(3).position,...
+    structured_entries.boundaries(4).type, structured_entries.boundaries(4).position,...
+    structured_entries.boundaries(5).type, structured_entries.boundaries(5).position,...
+    structured_entries.boundaries(6).type, structured_entries.boundaries(6).position);
     
     % Flag
-    % structured_entries.flag;
+    GEOflag(FILE, structured_entries.flag.iMethod, structured_entries.flag.propCons,...
+    structured_entries.flag.flagOne, structured_entries.flag.flagTwo, structured_entries.flag.numSteps,...
+    structured_entries.flag.stabFactor, structured_entries.flag.id);
     
     % Mesh
     GEOmesh(FILE, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
@@ -92,17 +102,18 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
     % Time_snapshot (time or EPS)
     for idx=1:length(structured_entries.time_snapshots)
         time_snapshot = structured_entries.time_snapshots(idx);
-        if time_snapshot.eps == 0
-            GEOtime_snapshot(FILE, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-        else
-            GEOeps_snapshot(FILE, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-        end
+        GEOtime_snapshot(FILE, time_snapshot.first, time_snapshot.repetition,...
+        time_snapshot.plane, time_snapshot.P1, time_snapshot.P2, time_snapshot.E, time_snapshot.H, time_snapshot.J,...
+        time_snapshot.power, time_snapshot.eps);
     end
     
     % Frequency_snapshot
     for idx=1:length(structured_entries.frequency_snapshots)
         frequency_snapshot = structured_entries.frequency_snapshots(idx);
-        GEOfrequency_snapshot(FILE, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+        GEOfrequency_snapshot(FILE, frequency_snapshot.first, frequency_snapshot.repetition, frequency_snapshot.interpolate,...
+        frequency_snapshot.real_dft, frequency_snapshot.mod_only, frequency_snapshot.mod_all, frequency_snapshot.plane,...
+        frequency_snapshot.P1, frequency_snapshot.P2, frequency_snapshot.frequency, frequency_snapshot.starting_sample,...
+        frequency_snapshot.E, frequency_snapshot.H, frequency_snapshot.J);
     end
     
     % Probe

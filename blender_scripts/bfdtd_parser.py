@@ -164,19 +164,19 @@ class Excitation:
 class Boundaries:
     def __init__(self):
         self.type = [0,0,0,0,0,0];
-        self.p = [0,0,0,0,0,0];
+        self.position = [0,0,0,0,0,0];
     def __str__(self):
-        ret  = 'X+: type = '+str(self.type[0])+' p = '+str(self.p[0])+'\n';
-        ret += 'Y+: type = '+str(self.type[1])+' p = '+str(self.p[1])+'\n';
-        ret += 'Z+: type = '+str(self.type[2])+' p = '+str(self.p[2])+'\n';
-        ret += 'X-: type = '+str(self.type[3])+' p = '+str(self.p[3])+'\n';
-        ret += 'Y-: type = '+str(self.type[4])+' p = '+str(self.p[4])+'\n';
-        ret += 'Z-: type = '+str(self.type[5])+' p = '+str(self.p[5]);
+        ret  = 'X+: type = '+str(self.type[0])+' position = '+str(self.position[0])+'\n';
+        ret += 'Y+: type = '+str(self.type[1])+' position = '+str(self.position[1])+'\n';
+        ret += 'Z+: type = '+str(self.type[2])+' position = '+str(self.position[2])+'\n';
+        ret += 'X-: type = '+str(self.type[3])+' position = '+str(self.position[3])+'\n';
+        ret += 'Y-: type = '+str(self.type[4])+' position = '+str(self.position[4])+'\n';
+        ret += 'Z-: type = '+str(self.type[5])+' position = '+str(self.position[5]);
         return ret;
     def read_entry(self,entry):
         for i in range(6):
             self.type[i] = entry.data[4*i];
-            self.p[i] = entry.data[1+4*i:4+4*i];
+            self.position[i] = entry.data[1+4*i:4+4*i];
         return(0);
 
 class Flag:
