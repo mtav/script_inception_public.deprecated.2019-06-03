@@ -200,7 +200,7 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	% .lst file
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
-	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], [ [BASENAME,'.inp'],[BASENAME,'.geo'] ]);
 	% .sh file
 	%TODO: improve this
 	% WORKDIR = ['$HOME/loncar_structure','/',BASENAME];

@@ -1,7 +1,22 @@
-function writeBFDTD(structured_entries)
+function writeBFDTD(DSTDIR, BASENAME, structured_entries)
 	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % writes out BFDTD files based on structured_entries input
 	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    if exist('BASENAME','var')==0
+		disp('BASENAME not given');
+	    BASENAME = 'unknown';
+	end
+	
+	if exist('DSTDIR','var')==0
+		disp('DSTDIR not given');
+	    DSTDIR = uigetdir('H:\DATA','DSTDIR');
+	end
+	if ~(exist(DSTDIR,'dir'))
+		error(['dir ',DSTDIR,' not found']);
+	end
+	mkdir([DSTDIR,filesep,BASENAME]);
+
     disp('----->Writing bristol FDTD files...');
 
     % structured_entries = 
@@ -15,7 +30,20 @@ function writeBFDTD(structured_entries)
                       % zmesh: [2x1 double]
                        % flag: [1x1 struct]
                  % boundaries: [1x6 struct]
-                 
+    
+    
+    % .geo file
+	disp('Writing GEO file...');
+	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.geo'],'wt');
+
+    % .inp file
+	disp('Writing INP file...');
+	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
+
+    % .in file
+	disp('Writing IN file...');
+	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'],'wt');
+
     % Box
     GEObox(structured_entries.box.lower, structured_entries.box.upper);
     % Mesh

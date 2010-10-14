@@ -25,6 +25,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
 	excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
 	boundaries = struct('type',{},'p',{});
+	box = struct('lower',{},'upper',{});
 	
 	xmesh = [];
 	ymesh = [];
@@ -101,6 +102,8 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 				flag = add_flag(entry);
             case {'BOUNDARY'}
                 boundaries = add_boundary(entry);
+            case {'BOX'}
+                box = add_box(entry);
 			otherwise
 				% disp('Unknown type.');
 		end % end of switch
@@ -136,6 +139,11 @@ function boundaries = add_boundary(entry)
 		boundaries(i).type = M(i,1);
 		boundaries(i).p = M(i,2:4);
 	end
+end
+
+function box = add_box(entry)
+    box.lower = entry.data(1:3);
+    box.upper = entry.data(4:6);
 end
 
 function snapshot = add_frequency_snapshot(entry)

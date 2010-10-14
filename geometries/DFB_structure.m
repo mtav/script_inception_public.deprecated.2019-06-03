@@ -183,7 +183,7 @@ function DFB_structure(BASENAME,DSTDIR,FREQUENCY)
 	% .lst file
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
-	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], [ [BASENAME,'.inp'],[BASENAME,'.geo'] ]);
 	% .sh file
 	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	% .cmd file

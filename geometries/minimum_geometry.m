@@ -47,7 +47,7 @@ function minimum_geometry(BASENAME, DSTDIR, Nx_frequency_snapshot,Ny_frequency_s
 	% .lst file
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
-	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], [ [BASENAME,'.inp'],[BASENAME,'.geo'] ]);
 	% .sh file
 	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	% .cmd file

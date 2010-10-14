@@ -1,5 +1,4 @@
-function GEOin(filename, BASENAME)
-    %TODO: input should be a list of files instead of just BASENAME
+function GEOin(filename, file_list)
 
 	%IN file generation
 	disp('Writing IN file...');
@@ -8,8 +7,9 @@ function GEOin(filename, BASENAME)
 	out = fopen(strcat(filename,'.in'),'wt');
 
 	%write file
-	fprintf(out,'%s\n',BASENAME);
-	fprintf(out,'%s\n',BASENAME);
+    for idx = 1:length(file_list)
+        fprintf(out, '%s\n', file_list[idx]);
+    end
 
 	%close file
 	fclose(out);
