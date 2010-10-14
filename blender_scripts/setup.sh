@@ -30,6 +30,3 @@ case $ans in
   1) repo_to_BlenderScriptDir;;
   *) echo "Unknown option";;
 esac
-# echo "BLENDERSCRIPTDIR";
-# echo "BLENDERSCRIPTDIR=$BLENDERSCRIPTDIR";
-# ls "$BLENDERSCRIPTDIR";
