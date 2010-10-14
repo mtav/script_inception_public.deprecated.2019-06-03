@@ -1,4 +1,6 @@
 function [ entries, structured_entries ] = GEO_INP_reader(filename)
+    % function [ entries, structured_entries ] = GEO_INP_reader(filename)
+    % creates entries + structured_entries from filename
 
 	% ask for input file if not given
 	if exist('filename','var')==0
@@ -114,6 +116,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	structured_entries.zmesh = zmesh;
     structured_entries.flag=flag;
     structured_entries.boundaries=boundaries;
+    structured_entries.box = box;
 
 end % end of function
 
