@@ -67,6 +67,7 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
     end
         
 	fclose(FILE);
+    disp('...done');
     %%%%%%%%%%%%%%%%%%%%%%%
 
     %%%%%%%%%%%%%%%%%%%%%%%
@@ -119,17 +120,18 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
     % Probe
     for idx=1:length(structured_entries.probe_list)
         probe = structured_entries.probe_list(idx);
-        GEOprobe(FILE, probe.position);
+        GEOprobe(FILE, probe.position, probe.step, probe.E, probe.H, probe.J, probe.pow );
     end
 
 	fclose(FILE);
+    disp('...done');
     %%%%%%%%%%%%%%%%%%%%%%%
 
     %%%%%%%%%%%%%%%%%%%%%%%
     % .in file
-    GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], [ [BASENAME,'.inp'],[BASENAME,'.geo'] ]);
+    GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], { [BASENAME,'.inp'], [BASENAME,'.geo'] });
     %%%%%%%%%%%%%%%%%%%%%%%
     
-    disp('...done');
+    disp('...all done');
 
 end

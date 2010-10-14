@@ -290,42 +290,24 @@ class Probe:
     def __init__(self):
         self.position = [0,0,0];
         self.step = 0;
-        self.Ex = 0;
-        self.Ey = 0;
-        self.Ez = 0;
-        self.Hx = 0;
-        self.Hy = 0;
-        self.Hz = 0;
-        self.Jx = 0;
-        self.Jy = 0;
-        self.Jz = 0;
+        self.E = [0,0,0];
+        self.H = [0,0,0];
+        self.J = [0,0,0];
         self.pow = 0;
     def __str__(self):
         ret = 'position = ' + str(self.position) + '\n' +\
         'step = ' + str(self.step) + '\n' +\
-        'Ex = ' + str(self.Ex) + '\n' +\
-        'Ey = ' + str(self.Ey) + '\n' +\
-        'Ez = ' + str(self.Ez) + '\n' +\
-        'Hx = ' + str(self.Hx) + '\n' +\
-        'Hy = ' + str(self.Hy) + '\n' +\
-        'Hz = ' + str(self.Hz) + '\n' +\
-        'Jx = ' + str(self.Jx) + '\n' +\
-        'Jy = ' + str(self.Jy) + '\n' +\
-        'Jz = ' + str(self.Jz) + '\n' +\
+        'E = ' + str(self.E) + '\n' +\
+        'H = ' + str(self.H) + '\n' +\
+        'J = ' + str(self.J) + '\n' +\
         'pow = ' + str(self.pow);
         return ret;
     def read_entry(self,entry):
         self.position = float_array([entry.data[0],entry.data[1],entry.data[2]]);
         self.step = float(entry.data[3]);
-        self.Ex = float(entry.data[4]);
-        self.Ey = float(entry.data[5]);
-        self.Ez = float(entry.data[6]);
-        self.Hx = float(entry.data[7]);
-        self.Hy = float(entry.data[8]);
-        self.Hz = float(entry.data[9]);
-        self.Jx = float(entry.data[10]);
-        self.Jy = float(entry.data[11]);
-        self.Jz = float(entry.data[12]);
+        self.E = float_array([entry.data[4],entry.data[5],entry.data[6]]);
+        self.H = float_array([entry.data[7],entry.data[8],entry.data[9]]);
+        self.J = float_array([entry.data[10],entry.data[11],entry.data[12]]);
         self.pow = float(entry.data[13]);
     
 class Rotation:

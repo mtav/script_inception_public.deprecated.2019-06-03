@@ -30,8 +30,8 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
     block_list = struct('lower',{},'upper',{},'permittivity',{},'conductivity',{});
     cylinder_list = struct('center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
     rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
-    probe_list = 
-        
+    probe_list = struct('position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
+    
 	xmesh = [];
 	ymesh = [];
 	zmesh = [];
@@ -208,9 +208,12 @@ end
 
 function probe = add_probe(entry)
     idx = 1;
-    probe.axis_point = entry.data(idx:idx+2); idx = idx+3;
-    probe.axis_direction = entry.data(idx:idx+2); idx = idx+3;
-    probe.angle_degrees = entry.data(idx); idx = idx+1;
+    probe.position = entry.data(idx:idx+2); idx = idx+3;
+    probe.step = entry.data(idx); idx = idx+1;
+    probe.E = entry.data(idx:idx+2); idx = idx+3;
+    probe.H = entry.data(idx:idx+2); idx = idx+3;
+    probe.J = entry.data(idx:idx+2); idx = idx+3;
+    probe.pow = entry.data(idx); idx = idx+1;
 end
 
 function snapshot = add_frequency_snapshot(entry)

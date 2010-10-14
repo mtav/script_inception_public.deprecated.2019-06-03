@@ -4,11 +4,11 @@ function GEOin(filename, file_list)
 	disp('Writing IN file...');
 
 	%open file
-	out = fopen(strcat(filename,'.in'),'wt');
+	out = fopen(filename,'wt');
 
 	%write file
     for idx = 1:length(file_list)
-        fprintf(out, '%s\n', file_list[idx]);
+        fprintf(out, '%s\n', file_list{idx});
     end
 
 	%close file
