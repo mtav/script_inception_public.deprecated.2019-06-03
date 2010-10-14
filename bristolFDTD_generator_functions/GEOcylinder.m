@@ -1,4 +1,4 @@
-function GEOcylinder(FILE, centre, R1, R2, H, permittivity, conductivity, angle)
+function GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle)
 	% cylinder
 	% {
 	% 1-7 Coordinates of the material volume ( xc yc zc r1 r2 h )
@@ -15,8 +15,8 @@ function GEOcylinder(FILE, centre, R1, R2, H, permittivity, conductivity, angle)
 	fprintf(FILE,'%E **X CENTRE\n', centre(1));
 	fprintf(FILE,'%E **Y CENTRE\n', centre(2));
 	fprintf(FILE,'%E **Z CENTRE\n', centre(3));
-	fprintf(FILE,'%E **RADIUS 1\n', R1);
-	fprintf(FILE,'%E **RADIUS 2\n', R2);
+	fprintf(FILE,'%E **inner_radius\n', inner_radius);
+	fprintf(FILE,'%E **outer_radius\n', outer_radius);
 	fprintf(FILE,'%E **HEIGHT\n', H);
 	fprintf(FILE,'%E **Permittivity\n', permittivity);
 	fprintf(FILE,'%E **Conductivity\n', conductivity);

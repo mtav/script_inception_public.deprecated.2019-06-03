@@ -26,7 +26,11 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
 	boundaries = struct('type',{},'p',{});
 	box = struct('lower',{},'upper',{});
-	
+    sphere_list = struct('center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
+    block_list = struct('lower',{},'upper',{},'permittivity',{},'conductivity',{});
+    cylinder_list = struct('center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
+    rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
+        
 	xmesh = [];
 	ymesh = [];
 	zmesh = [];
@@ -104,6 +108,18 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
                 boundaries = add_boundary(entry);
             case {'BOX'}
                 box = add_box(entry);
+            case {'SPHERE'}
+				sphere = add_sphere(entry);
+				sphere_list = [ sphere_list sphere ];
+            case {'BLOCK'}
+				block = add_block(entry);
+				block_list = [ block_list block ];
+            case {'CYLINDER'}
+				cylinder = add_cylinder(entry);
+				cylinder_list = [ cylinder_list cylinder ];
+            case {'ROTATION'}
+				rotation = add_rotation(entry);
+				rotation_list = [ rotation_list rotation ];
 			otherwise
 				% disp('Unknown type.');
 		end % end of switch
@@ -120,6 +136,10 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
     structured_entries.flag = flag;
     structured_entries.boundaries = boundaries;
     structured_entries.box = box;
+    structured_entries.sphere_list = sphere_list;
+    structured_entries.block_list = block_list;
+    structured_entries.cylinder_list = cylinder_list;
+    structured_entries.rotation_list = rotation_list;
 
 end % end of function
 
@@ -144,6 +164,45 @@ end
 function box = add_box(entry)
     box.lower = entry.data(1:3);
     box.upper = entry.data(4:6);
+end
+
+function sphere = add_sphere(entry)
+    idx = 1;
+    sphere.center = entry.data(idx:idx+2); idx = idx+3;
+    sphere.outer_radius = entry.data(idx); idx = idx+1;
+    sphere.inner_radius = entry.data(idx); idx = idx+1;
+    sphere.permittivity = entry.data(idx); idx = idx+1;
+    sphere.conductivity = entry.data(idx); idx = idx+1;
+end
+
+function block = add_block(entry)
+    idx = 1;
+    block.lower = entry.data(idx:idx+2); idx = idx+3;
+    block.upper = entry.data(idx:idx+2); idx = idx+3;
+    block.permittivity = entry.data(idx); idx = idx+1;
+    block.conductivity = entry.data(idx); idx = idx+1;
+end
+
+function cylinder = add_cylinder(entry)
+    idx = 1;
+    cylinder.center = entry.data(idx:idx+2); idx = idx+3;
+    cylinder.inner_radius = entry.data(idx); idx = idx+1;
+    cylinder.outer_radius = entry.data(idx); idx = idx+1;
+    cylinder.height = entry.data(idx); idx = idx+1;
+    cylinder.permittivity = entry.data(idx); idx = idx+1;
+    cylinder.conductivity = entry.data(idx); idx = idx+1;
+    if length(entry.data)>=idx
+        cylinder.angle = entry.data(idx); idx = idx+1;
+    else
+        cylinder.angle = 0; idx = idx+1;
+    end
+end
+
+function rotation = add_rotation(entry)
+    idx = 1;
+    rotation.axis_point = entry.data(idx:idx+2); idx = idx+3;
+    rotation.axis_direction = entry.data(idx:idx+2); idx = idx+3;
+    rotation.angle_degrees = entry.data(idx); idx = idx+1;
 end
 
 function snapshot = add_frequency_snapshot(entry)

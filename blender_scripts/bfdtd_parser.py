@@ -239,21 +239,21 @@ class Block:
 class Sphere:
     def __init__(self):
         self.center = [0,0,0];
-        self.R1 = 0;
-        self.R2 = 0;
+        self.outer_radius = 0;
+        self.inner_radius = 0;
         self.permittivity = 0;
         self.conductivity = 0;
     def __str__(self):
         ret = 'center = ' + str(self.center) + '\n' +\
-        'R1 = ' + str(self.R1) + '\n' +\
-        'R2 = ' + str(self.R2) + '\n' +\
+        'outer_radius = ' + str(self.outer_radius) + '\n' +\
+        'inner_radius = ' + str(self.inner_radius) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
         'conductivity = ' + str(self.conductivity);
         return ret;
     def read_entry(self,entry):
         self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
-        self.R1 = float(entry.data[3]);
-        self.R2 = float(entry.data[4]);
+        self.outer_radius = float(entry.data[3]);
+        self.inner_radius = float(entry.data[4]);
         self.permittivity = float(entry.data[5]);
         self.conductivity = float(entry.data[6]);
         return(0);
@@ -261,16 +261,16 @@ class Sphere:
 class Cylinder:
     def __init__(self):
         self.center = [0,0,0];
-        self.R1 = 0;
-        self.R2 = 0;
+        self.inner_radius = 0;
+        self.outer_radius = 0;
         self.height = 0;
         self.permittivity = 0;
         self.conductivity = 0;
         self.angle = 0;
     def __str__(self):
         ret = 'center = ' + str(self.center) + '\n' +\
-        'R1 = ' + str(self.R1) + '\n' +\
-        'R2 = ' + str(self.R2) + '\n' +\
+        'inner_radius = ' + str(self.inner_radius) + '\n' +\
+        'outer_radius = ' + str(self.outer_radius) + '\n' +\
         'height = ' + str(self.height) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
         'conductivity = ' + str(self.conductivity) + '\n' +\
@@ -278,8 +278,8 @@ class Cylinder:
         return ret;
     def read_entry(self,entry):
         self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
-        self.R1 = float(entry.data[3]);
-        self.R2 = float(entry.data[4]);
+        self.inner_radius = float(entry.data[3]);
+        self.outer_radius = float(entry.data[4]);
         self.height = float(entry.data[5]);
         self.permittivity = float(entry.data[6]);
         self.conductivity = float(entry.data[7]);

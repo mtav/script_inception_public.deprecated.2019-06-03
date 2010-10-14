@@ -83,9 +83,9 @@ def GEObox(lower, upper):
     obj.setLocation(pos[0], pos[1], pos[2]);
     return
     
-def GEOcylinder(centre, R1, R2, H, permittivity, conductivity, angle):
+def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivity, angle):
     scene = Blender.Scene.GetCurrent();
-    mesh = Blender.Mesh.Primitives.Cylinder(32, 2*R2, H);
+    mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
     mesh.materials = materials(permittivity, conductivity);
     for f in mesh.faces:
         f.mat = 0;
@@ -449,7 +449,7 @@ def importBristolFDTD(filename):
     # Sphere
     Blender.Window.SetActiveLayer(1<<7);
     for sphere in structured_entries.sphere_list:
-        GEOsphere(Vector(sphere.center), sphere.R1, sphere.R2, sphere.permittivity, sphere.conductivity);
+        GEOsphere(Vector(sphere.center), sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
     # Block
     Blender.Window.SetActiveLayer(1<<8);
     for block in structured_entries.block_list:
@@ -457,7 +457,7 @@ def importBristolFDTD(filename):
     # Cylinder
     Blender.Window.SetActiveLayer(1<<9);
     for cylinder in structured_entries.cylinder_list:
-        GEOcylinder(Vector(cylinder.center),cylinder.R1,cylinder.R2,cylinder.height,cylinder.permittivity,cylinder.conductivity,cylinder.angle);
+        GEOcylinder(Vector(cylinder.center),cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,cylinder.angle);
 
     #########################
     # Not yet implemented:
