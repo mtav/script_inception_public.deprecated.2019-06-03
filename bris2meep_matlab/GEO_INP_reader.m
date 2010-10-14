@@ -3,10 +3,10 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
     % creates entries + structured_entries from filename
 
 	% ask for input file if not given
-	if exist('filename','var')==0
+	if exist('filename','var') == 0
 		disp('filename not given');
 		[file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
-		filename=[path,file];
+		filename = [path,file];
 	end
 
 	% read the whole file as one string
@@ -20,57 +20,57 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
 	[tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
-	time_snapshots=struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
-	frequency_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-	all_snapshots=struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
-	excitations=struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
-	boundaries=struct('type',{},'p',{});
+	time_snapshots = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{});
+	frequency_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+	all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
+	excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
+	boundaries = struct('type',{},'p',{});
 	
 	xmesh = [];
 	ymesh = [];
 	zmesh = [];
-    flag=[];
-    boundaries=[];
+    flag = [];
+    boundaries = [];
 
-	entries={};
+	entries = {};
 	% process blocks
-	for i=1:length(names_blocks)
+	for i = 1:length(names_blocks)
 
 		type = names_blocks(:,i).type;
 		data = names_blocks(:,i).data;
-		% disp(['===>type=',type]);
+		% disp(['===>type = ',type]);
 
-		dataV=[];
+		dataV = [];
 		% remove empty lines
 		lines = strread(data,'%s','delimiter','\r');
-		cellFlag=0;
-		for L=1:length(lines)
+		cellFlag = 0;
+		for L = 1:length(lines)
 			if ~length(lines{L})
 				continue;
 			end
 
-			dd=str2num(lines{L});
+			dd = str2num(lines{L});
 
 			if cellFlag
 				if length(dd)  %% dd is num
-					dataV{length(dataV)+1}=dd;
+					dataV{length(dataV)+1} = dd;
 				else           %% dd is not num
-					dataV{length(dataV)+1}=lines{L};
+					dataV{length(dataV)+1} = lines{L};
 				end
 			else
 			   if length(dd)  %% dd is num
-					dataV=[dataV,dd];
+					dataV = [dataV,dd];
 				else           %% dd is not num
-					cellFlag=1;
-					dataV=num2cell(dataV);
-					dataV{length(dataV)+1}=lines{L};
+					cellFlag = 1;
+					dataV = num2cell(dataV);
+					dataV{length(dataV)+1} = lines{L};
 				end
 			end
 		end % end of loop through lines
 
-		entry.type=type;
-		entry.data=dataV';
-		entries{length(entries)+1}=entry;
+		entry.type = type;
+		entry.data = dataV';
+		entries{length(entries)+1} = entry;
 
 		% entry.type
 		% entry.data(1)
@@ -114,25 +114,25 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 	structured_entries.xmesh = xmesh;
 	structured_entries.ymesh = ymesh;
 	structured_entries.zmesh = zmesh;
-    structured_entries.flag=flag;
-    structured_entries.boundaries=boundaries;
+    structured_entries.flag = flag;
+    structured_entries.boundaries = boundaries;
     structured_entries.box = box;
 
 end % end of function
 
 function flag = add_flag(entry)
-    flag.iMethod=entry.data{1};
-    flag.propCons=entry.data{2};
-    flag.flagOne=entry.data{3};
-    flag.flagTwo=entry.data{4};
-    flag.numSteps=entry.data{5};
-    flag.stabFactor=entry.data{6};
-    flag.id=entry.data{7};
+    flag.iMethod = entry.data{1};
+    flag.propCons = entry.data{2};
+    flag.flagOne = entry.data{3};
+    flag.flagTwo = entry.data{4};
+    flag.numSteps = entry.data{5};
+    flag.stabFactor = entry.data{6};
+    flag.id = entry.data{7};
 end
 
 function boundaries = add_boundary(entry)
 	M = reshape(entry.data,4,length(entry.data)/4)';
-	for i=1:6
+	for i = 1:6
 		boundaries(i).type = M(i,1);
 		boundaries(i).p = M(i,2:4);
 	end
