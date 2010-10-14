@@ -3,8 +3,15 @@
 set -eux
 
 BLENDERSCRIPTDIR="$HOME/Application Data/Blender Foundation/Blender/.blender/scripts"
-SCRIPTS="bfdtd_import.py bfdtd_parser.py"
-
+SCRIPTS="\
+bfdtd_parser.py \
+bfdtd_import.py \
+bfdtd_export.py \
+meep_parser.py \
+meep_import.py \
+meep_export.py \
+bfdtd_meep_export.py"
+    
 function BlenderScriptDir_to_repo()
 {
     echo "BlenderScriptDir->repo"

@@ -1,4 +1,5 @@
-#!BPY
+#!/usr/bin/env python
+# parses BFDTD files
 
 import math;
 import os;
