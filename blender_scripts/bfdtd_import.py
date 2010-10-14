@@ -407,7 +407,7 @@ def TestObjects():
         GEOcylinder(Vector(4.5, 4.5, i+0.5), 0, 0.5, 1, 10*i, 200, 45);
         GEOsphere(Vector(5.5, 5.5, i+0.5), 0.5, 0, i, 0);
         GEOprobe(Vector(0, 0, i));
-  
+
 def importBristolFDTD(filename):
     print '----->Importing bristol FDTD geometry...';
     Blender.Window.WaitCursor(1);

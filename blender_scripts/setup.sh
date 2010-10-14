@@ -2,7 +2,7 @@
 
 set -eux
 
-BLENDERSCRIPTDIR="/c/Documents and Settings/eempct/Application Data/Blender Foundation/Blender/.blender/scripts"
+BLENDERSCRIPTDIR="$HOME/Application Data/Blender Foundation/Blender/.blender/scripts"
 SCRIPTS="bfdtd_import.py bfdtd_parser.py"
 
 function BlenderScriptDir_to_repo()
