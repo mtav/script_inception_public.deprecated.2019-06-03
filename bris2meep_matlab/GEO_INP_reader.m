@@ -3,21 +3,22 @@ function [ entries, structured_entries ] = GEO_INP_reader(file_list)
     % creates entries + structured_entries from file_list
 
 	entries = {};
-    structured_entries.all_snapshots = [ structured_entries.all_snapshots, all_snapshots ];
-	structured_entries.time_snapshots =  [structured_entries.time_snapshots, time_snapshots];
-	structured_entries.frequency_snapshots =  [structured_entries.frequency_snapshots, frequency_snapshots];
-	structured_entries.excitations =  [structured_entries.excitations, excitations];
-    structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
-    structured_entries.block_list =  [structured_entries.block_list, block_list];
-    structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
-    structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
-    structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
-	structured_entries.xmesh = xmesh;
-	structured_entries.ymesh = ymesh;
-	structured_entries.zmesh = zmesh;
-    structured_entries.flag = flag;
-    structured_entries.boundaries = boundaries;
-    structured_entries.box = box;
+    structured_entries = FDTDobject;
+    % structured_entries.all_snapshots = [ structured_entries.all_snapshots, all_snapshots ];
+	% structured_entries.time_snapshots =  [structured_entries.time_snapshots, time_snapshots];
+	% structured_entries.frequency_snapshots =  [structured_entries.frequency_snapshots, frequency_snapshots];
+	% structured_entries.excitations =  [structured_entries.excitations, excitations];
+    % structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
+    % structured_entries.block_list =  [structured_entries.block_list, block_list];
+    % structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
+    % structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
+    % structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
+	% structured_entries.xmesh = xmesh;
+	% structured_entries.ymesh = ymesh;
+	% structured_entries.zmesh = zmesh;
+    % structured_entries.flag = flag;
+    % structured_entries.boundaries = boundaries;
+    % structured_entries.box = box;
 
     for idx = 1:length(file_list)
         filename = file_list{idx};
@@ -27,7 +28,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(file_list)
 
 end % end of function
 
-function [ entries, structured_entries ] = single_GEO_INP_reader(filename)
+function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries)
     % function [ entries, structured_entries ] = GEO_INP_reader(filename)
     % creates entries + structured_entries from filename
     
@@ -61,11 +62,11 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename)
     rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
     probe_list = struct('position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
     
-	xmesh = [];
-	ymesh = [];
-	zmesh = [];
-    flag = [];
-    boundaries = [];
+	% xmesh = [];
+	% ymesh = [];
+	% zmesh = [];
+    % flag = [];
+    % boundaries = [];
 
 	% process blocks
 	for i = 1:length(names_blocks)
@@ -126,17 +127,17 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename)
 				current_excitation = add_excitation(entry);
 				excitations = [ excitations current_excitation ];
 			case {'XMESH'}
-				xmesh = entry.data;
+				structured_entries.xmesh = entry.data;
 			case {'YMESH'}
-				ymesh = entry.data;
+				structured_entries.ymesh = entry.data;
 			case {'ZMESH'}
-				zmesh = entry.data;
+				structured_entries.zmesh = entry.data;
             case {'FLAG'}
-				flag = add_flag(entry);
+				structured_entries.flag = add_flag(entry);
             case {'BOUNDARY'}
-                boundaries = add_boundary(entry);
+                structured_entries.boundaries = add_boundary(entry);
             case {'BOX'}
-                box = add_box(entry);
+                structured_entries.box = add_box(entry);
             case {'SPHERE'}
 				sphere = add_sphere(entry);
 				sphere_list = [ sphere_list sphere ];
@@ -167,12 +168,6 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename)
     structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
     structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
     structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
-	structured_entries.xmesh = xmesh;
-	structured_entries.ymesh = ymesh;
-	structured_entries.zmesh = zmesh;
-    structured_entries.flag = flag;
-    structured_entries.boundaries = boundaries;
-    structured_entries.box = box;
 end
 
 function flag = add_flag(entry)

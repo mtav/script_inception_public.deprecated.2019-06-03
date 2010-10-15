@@ -1,6 +1,7 @@
 function writeBFDTD(structured_entries, DSTDIR, BASENAME)
 	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % writes out BFDTD files based on structured_entries input
+    % function writeBFDTD(structured_entries, DSTDIR, BASENAME)
 	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%
     % structured_entries = 
