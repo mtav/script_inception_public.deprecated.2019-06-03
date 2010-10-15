@@ -9,7 +9,7 @@ for m=1:length(size)
     end
 end
 
-B=['(make block\t( center ',num2str(center,'%4.9g '),')\t( ',sizeStr,')\t(material (make dielectric (epsilon ',num2str(epsilon),'))))\r\n'];
+B=['\t\t(make block\n\t\t\t( center ',num2str(center,'%4.9g '),')\n\t\t\t( ',sizeStr,')\n\t\t\t(material (make dielectric (epsilon ',num2str(epsilon),'))))\r\n'];
 
 % Center=struct('type',{'center'},'properties',{{center}});
 % Size=struct('type',{'size'},'properties',{{size}});
