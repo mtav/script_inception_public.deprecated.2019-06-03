@@ -1,14 +1,43 @@
-function [ entries, structured_entries ] = GEO_INP_reader(filename)
+function [ entries, structured_entries ] = GEO_INP_reader(file_list)
+    % function [ entries, structured_entries ] = GEO_INP_reader(file_list)
+    % creates entries + structured_entries from file_list
+
+	entries = {};
+    structured_entries.all_snapshots = [ structured_entries.all_snapshots, all_snapshots ];
+	structured_entries.time_snapshots =  [structured_entries.time_snapshots, time_snapshots];
+	structured_entries.frequency_snapshots =  [structured_entries.frequency_snapshots, frequency_snapshots];
+	structured_entries.excitations =  [structured_entries.excitations, excitations];
+    structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
+    structured_entries.block_list =  [structured_entries.block_list, block_list];
+    structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
+    structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
+    structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
+	structured_entries.xmesh = xmesh;
+	structured_entries.ymesh = ymesh;
+	structured_entries.zmesh = zmesh;
+    structured_entries.flag = flag;
+    structured_entries.boundaries = boundaries;
+    structured_entries.box = box;
+
+    for idx = 1:length(file_list)
+        filename = file_list{idx};
+        disp(['Processing ', filename]);
+        [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries);
+    end
+
+end % end of function
+
+function [ entries, structured_entries ] = single_GEO_INP_reader(filename)
     % function [ entries, structured_entries ] = GEO_INP_reader(filename)
     % creates entries + structured_entries from filename
-
+    
 	% ask for input file if not given
 	if exist('filename','var') == 0
 		disp('filename not given');
 		[file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
 		filename = [path,file];
 	end
-
+    
 	% read the whole file as one string
 	fulltext = fileread(filename);
 
@@ -38,7 +67,6 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
     flag = [];
     boundaries = [];
 
-	entries = {};
 	% process blocks
 	for i = 1:length(names_blocks)
 
@@ -130,23 +158,22 @@ function [ entries, structured_entries ] = GEO_INP_reader(filename)
 
 	end %end of loop through blocks
 
-	structured_entries.all_snapshots = all_snapshots;
-	structured_entries.time_snapshots = time_snapshots;
-	structured_entries.frequency_snapshots = frequency_snapshots;
-	structured_entries.excitations = excitations;
+	structured_entries.all_snapshots = [ structured_entries.all_snapshots, all_snapshots ];
+	structured_entries.time_snapshots =  [structured_entries.time_snapshots, time_snapshots];
+	structured_entries.frequency_snapshots =  [structured_entries.frequency_snapshots, frequency_snapshots];
+	structured_entries.excitations =  [structured_entries.excitations, excitations];
+    structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
+    structured_entries.block_list =  [structured_entries.block_list, block_list];
+    structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
+    structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
+    structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
 	structured_entries.xmesh = xmesh;
 	structured_entries.ymesh = ymesh;
 	structured_entries.zmesh = zmesh;
     structured_entries.flag = flag;
     structured_entries.boundaries = boundaries;
     structured_entries.box = box;
-    structured_entries.sphere_list = sphere_list;
-    structured_entries.block_list = block_list;
-    structured_entries.cylinder_list = cylinder_list;
-    structured_entries.rotation_list = rotation_list;
-    structured_entries.probe_list = probe_list;
-
-end % end of function
+end
 
 function flag = add_flag(entry)
     flag.iMethod = entry.data{1};
