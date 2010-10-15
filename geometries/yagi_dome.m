@@ -153,8 +153,8 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	[ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
 
 	% regular grid of interval delta_regular
-	% delta_regular = delta_hole;
-	delta_regular = delta_min;
+	delta_regular = delta_hole;
+	% delta_regular = delta_min;
 	delta_X_vector = subGridMultiLayer(delta_regular,[ Xmax/2 ]);
 	delta_Y_vector = subGridMultiLayer(delta_regular,[ Ymax ]);
 	delta_Z_vector = subGridMultiLayer(delta_regular,[ Zmax ]);
@@ -260,7 +260,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	hole_length = dome_radius;
 	
 	% create bottom holes
-	for i=1:bottom_N
+	for i=1:1 %bottom_N
 	  A = [ Xmax/2-solid_center_radius-hole_length/2, y_current, Zmax/2 ];
 	  B = A + [hole_length/2, -hole_radius_y, 0];
 	  Ap = B(:) + rotation_matrix(0,0,radians(angle))*(A(:)-B(:));

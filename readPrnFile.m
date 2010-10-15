@@ -1,4 +1,5 @@
 function [header,data,ux,uy]=readPrnFile(filename)
+    % function [header,data,ux,uy]=readPrnFile(filename)
     % header = first line
     % data = rest of file
     % if ux and uy are asked for, it will create a 3D plot of col(3) vs ( col(1), col(2) )

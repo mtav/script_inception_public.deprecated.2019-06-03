@@ -97,7 +97,7 @@ def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivit
     obj.setLocation(centre[0], centre[1], centre[2]);
     obj.RotX = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
     obj.RotY = 0;
-    obj.RotZ = math.radians(angle);
+    obj.RotZ = -math.radians(angle);
     return
 
 def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
