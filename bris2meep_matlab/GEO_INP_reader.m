@@ -84,21 +84,25 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
 				continue;
 			end
 
-			dd = str2num(lines{L});
+			num_val = str2num(lines{L});
+            
+            str_val = strtrim(lines{L}); % trim string
+            str_val = str_val(str_val ~= '"');% remove double quotes
 
+            % TODO: Check if this can't be simplified, or if it's even necessary.
 			if cellFlag
-				if length(dd)  %% dd is num
-					dataV{length(dataV)+1} = dd;
-				else           %% dd is not num
-					dataV{length(dataV)+1} = lines{L};
+				if length(num_val)  %% num_val is num
+					dataV{length(dataV)+1} = num_val;
+				else           %% num_val is not num
+					dataV{length(dataV)+1} = str_val;
 				end
 			else
-			   if length(dd)  %% dd is num
-					dataV = [dataV,dd];
-				else           %% dd is not num
+			   if length(num_val)  %% num_val is num
+					dataV = [dataV,num_val];
+				else           %% num_val is not num
 					cellFlag = 1;
 					dataV = num2cell(dataV);
-					dataV{length(dataV)+1} = lines{L};
+					dataV{length(dataV)+1} = str_val;
 				end
 			end
 		end % end of loop through lines
