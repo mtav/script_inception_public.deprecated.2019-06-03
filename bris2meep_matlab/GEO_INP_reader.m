@@ -4,21 +4,6 @@ function [ entries, structured_entries ] = GEO_INP_reader(file_list)
 
 	entries = {};
     structured_entries = FDTDobject;
-    % structured_entries.all_snapshots = [ structured_entries.all_snapshots, all_snapshots ];
-	% structured_entries.time_snapshots =  [structured_entries.time_snapshots, time_snapshots];
-	% structured_entries.frequency_snapshots =  [structured_entries.frequency_snapshots, frequency_snapshots];
-	% structured_entries.excitations =  [structured_entries.excitations, excitations];
-    % structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
-    % structured_entries.block_list =  [structured_entries.block_list, block_list];
-    % structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
-    % structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
-    % structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
-	% structured_entries.xmesh = xmesh;
-	% structured_entries.ymesh = ymesh;
-	% structured_entries.zmesh = zmesh;
-    % structured_entries.flag = flag;
-    % structured_entries.boundaries = boundaries;
-    % structured_entries.box = box;
 
     for idx = 1:length(file_list)
         filename = file_list{idx};
