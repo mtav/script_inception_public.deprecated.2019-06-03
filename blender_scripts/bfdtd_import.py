@@ -111,7 +111,7 @@ def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
 def grid_index(Nx, Ny, Nz, i, j, k):
     return (Ny*Nz*i + Nz*j + k);
     
-def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
+def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
     Nx = len(delta_X_vector)+1;
     Ny = len(delta_Y_vector)+1;
     Nz = len(delta_Z_vector)+1;
@@ -121,93 +121,111 @@ def GEOmesh(delta_X_vector, delta_Y_vector, delta_Z_vector):
     
     # verts = array.array('d',range());
     # verts = range(Nx*Ny*Nz);
-    verts = range(2*(Nx*Ny + Ny*Nz + Nz*Nx));
-    edges = range(Nx*Ny + Ny*Nz + Nz*Nx);
+    verts = [];
+    edges = [];
     faces = [];
-    
-    # x=0;
-    # y=0;
-    # z=0;
-    # vert_idx = 0;
-    # for i in range(Nx):
-        # if i>0:
-            # x+=delta_X_vector[i-1];
-        # y=0;
-        # for j in range(Ny):
-            # if j>0:
-                # y+=delta_Y_vector[j-1];
-            # z=0;
-            # for k in range(Nz):
-                # if k>0:
-                    # z+=delta_Z_vector[k-1];
-                # # print i, j, k, '->', x, y, z;
-                # verts[vert_idx] = Vector(x, y, z); vert_idx+=1;
-    
-    # edge_idx = 0;
-    # for i in range(Nx):
-        # for j in range(Ny):
-            # A = grid_index(Nx, Ny, Nz, i, j, 0);
-            # B = grid_index(Nx, Ny, Nz, i, j, Nz-1);
-            # edges[edge_idx] = [A, B]; edge_idx+=1;
 
-    # for j in range(Ny):
-        # for k in range(Nz):
-            # A = grid_index(Nx, Ny, Nz, 0, j, k);
-            # B = grid_index(Nx, Ny, Nz, Nx-1, j, k);
-            # edges[edge_idx] = [A, B]; edge_idx+=1;
-
-    # for k in range(Nz):
-        # for i in range(Nx):
-            # A = grid_index(Nx, Ny, Nz, i, 0, k);
-            # B = grid_index(Nx, Ny, Nz, i, Ny-1, k);
-            # edges[edge_idx] = [A, B]; edge_idx+=1;
-
-    vert_idx = 0;
-    edge_idx = 0;
-    # Z edges
-    x = 0;
-    for i in range(Nx):
-        if i>0:
-            x+=delta_X_vector[i-1];
-        y = 0;
-        for j in range(Ny):
-            if j>0:
-                y+=delta_Y_vector[j-1];
-            A = vert_idx;
-            verts[vert_idx] = Vector(x, y, 0); vert_idx+=1;
-            B = vert_idx;
-            verts[vert_idx] = Vector(x, y, zmax); vert_idx+=1;
-            edges[edge_idx] = [A, B]; edge_idx+=1;
-
-    # X edges
-    y = 0;
-    for j in range(Ny):
-        if j>0:
-            y+=delta_Y_vector[j-1];
-        z = 0;
-        for k in range(Nz):
-            if k>0:
-                z+=delta_Z_vector[k-1];
-            A = vert_idx;
-            verts[vert_idx] = Vector(0, y, z); vert_idx+=1;
-            B = vert_idx;
-            verts[vert_idx] = Vector(xmax, y, z); vert_idx+=1;
-            edges[edge_idx] = [A, B]; edge_idx+=1;
-
-    # Y edges
-    z = 0;
-    for k in range(Nz):
-        if k>0:
-            z+=delta_Z_vector[k-1];
+    if full_mesh:
+        verts = range(2*(Nx*Ny + Ny*Nz + Nz*Nx));
+        edges = range(Nx*Ny + Ny*Nz + Nz*Nx);
+        faces = [];
+        
+        vert_idx = 0;
+        edge_idx = 0;
+        # Z edges
         x = 0;
         for i in range(Nx):
             if i>0:
                 x+=delta_X_vector[i-1];
-            A = vert_idx;
-            verts[vert_idx] = Vector(x, 0, z); vert_idx+=1;
-            B = vert_idx;
-            verts[vert_idx] = Vector(x, ymax, z); vert_idx+=1;
+            y = 0;
+            for j in range(Ny):
+                if j>0:
+                    y+=delta_Y_vector[j-1];
+                A = vert_idx;
+                verts[vert_idx] = Vector(x, y, 0); vert_idx+=1;
+                B = vert_idx;
+                verts[vert_idx] = Vector(x, y, zmax); vert_idx+=1;
+                edges[edge_idx] = [A, B]; edge_idx+=1;
+
+        # X edges
+        y = 0;
+        for j in range(Ny):
+            if j>0:
+                y+=delta_Y_vector[j-1];
+            z = 0;
+            for k in range(Nz):
+                if k>0:
+                    z+=delta_Z_vector[k-1];
+                A = vert_idx;
+                verts[vert_idx] = Vector(0, y, z); vert_idx+=1;
+                B = vert_idx;
+                verts[vert_idx] = Vector(xmax, y, z); vert_idx+=1;
+                edges[edge_idx] = [A, B]; edge_idx+=1;
+
+        # Y edges
+        z = 0;
+        for k in range(Nz):
+            if k>0:
+                z+=delta_Z_vector[k-1];
+            x = 0;
+            for i in range(Nx):
+                if i>0:
+                    x+=delta_X_vector[i-1];
+                A = vert_idx;
+                verts[vert_idx] = Vector(x, 0, z); vert_idx+=1;
+                B = vert_idx;
+                verts[vert_idx] = Vector(x, ymax, z); vert_idx+=1;
+                edges[edge_idx] = [A, B]; edge_idx+=1;
+    
+    else:
+        verts = range(4*(Nx + Ny + Nz));
+        edges = range(4*(Nx + Ny + Nz));
+        faces = [];
+        
+        vert_idx = 0;
+        edge_idx = 0;
+        
+        # X edges
+        x = 0;
+        for i in range(Nx):
+            if i>0:
+                x+=delta_X_vector[i-1];
+            A = vert_idx; verts[vert_idx] = Vector(x, 0,    0   ); vert_idx+=1;
+            B = vert_idx; verts[vert_idx] = Vector(x, ymax, 0   ); vert_idx+=1;
+            C = vert_idx; verts[vert_idx] = Vector(x, ymax, zmax); vert_idx+=1;
+            D = vert_idx; verts[vert_idx] = Vector(x, 0,    zmax); vert_idx+=1;
             edges[edge_idx] = [A, B]; edge_idx+=1;
+            edges[edge_idx] = [B, C]; edge_idx+=1;
+            edges[edge_idx] = [C, D]; edge_idx+=1;
+            edges[edge_idx] = [D, A]; edge_idx+=1;
+            
+        # Y edges
+        y = 0;
+        for j in range(Ny):
+            if j>0:
+                y+=delta_Y_vector[j-1];
+            A = vert_idx; verts[vert_idx] = Vector(0,    y, 0   ); vert_idx+=1;
+            B = vert_idx; verts[vert_idx] = Vector(xmax, y, 0   ); vert_idx+=1;
+            C = vert_idx; verts[vert_idx] = Vector(xmax, y, zmax); vert_idx+=1;
+            D = vert_idx; verts[vert_idx] = Vector(0,    y, zmax); vert_idx+=1;
+            edges[edge_idx] = [A, B]; edge_idx+=1;
+            edges[edge_idx] = [B, C]; edge_idx+=1;
+            edges[edge_idx] = [C, D]; edge_idx+=1;
+            edges[edge_idx] = [D, A]; edge_idx+=1;
+
+        # Z edges
+        z = 0;
+        for k in range(Nz):
+            if k>0:
+                z+=delta_Z_vector[k-1];
+            A = vert_idx; verts[vert_idx] = Vector(0,    0,    z); vert_idx+=1;
+            B = vert_idx; verts[vert_idx] = Vector(xmax, 0,    z); vert_idx+=1;
+            C = vert_idx; verts[vert_idx] = Vector(xmax, ymax, z); vert_idx+=1;
+            D = vert_idx; verts[vert_idx] = Vector(0,    ymax, z); vert_idx+=1;
+            edges[edge_idx] = [A, B]; edge_idx+=1;
+            edges[edge_idx] = [B, C]; edge_idx+=1;
+            edges[edge_idx] = [C, D]; edge_idx+=1;
+            edges[edge_idx] = [D, A]; edge_idx+=1;
             
     # print verts;
     BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
@@ -347,7 +365,7 @@ def GEOprobe(position):
     return
 
 def TestObjects():
-    GEOmesh([1, 1], [1, 2, 3], [4, 3, 2, 1]);
+    GEOmesh(False, [1, 1], [1, 2, 3], [4, 3, 2, 1]);
     
     GEOexcitation(Vector(0,0,0), Vector(1,0,0));
     GEOexcitation(Vector(0,0,0), Vector(0,1,0));
@@ -419,7 +437,7 @@ def importBristolFDTD(filename):
     Blender.Window.SetActiveLayer(1<<0);
     GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
     Blender.Window.SetActiveLayer(1<<1);
-    GEOmesh(structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
+    GEOmesh(False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
 
     # print structured_entries.xmesh;
     # print structured_entries.ymesh;
@@ -485,3 +503,4 @@ if not default_path:
     
 Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
 # importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
+# TestObjects();
