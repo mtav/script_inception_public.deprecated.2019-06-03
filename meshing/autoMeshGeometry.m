@@ -1,5 +1,5 @@
-function [dx,dy,dz] = autoMesh(filename)
-    % function [dx,dy,dz] = autoMesh(filename)
+function [dx,dy,dz] = autoMeshGeometry(filename)
+    % function [dx,dy,dz] = autoMeshGeometry(filename)
 
 	% ask for input file if not given
 	if exist('filename','var') == 0
