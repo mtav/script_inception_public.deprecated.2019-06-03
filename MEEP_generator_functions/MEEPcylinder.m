@@ -1,4 +1,4 @@
-function GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_deg)
+function MEEP_cylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_deg)
 	% cylinder
 	% {
 	% 1-7 Coordinates of the material volume ( xc yc zc r1 r2 h )

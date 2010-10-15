@@ -1,6 +1,6 @@
-function GEOrotation(FILE, axis_point, axis_direction, angle_degrees)
+function MEEP_rotation(FILE, axis_point, axis_direction, angle_degrees)
 	% rotation structure. Actually affects previous geometry object in Prof. Railton's modified BrisFDTD. Not fully implemented yet.
-    % Should be integrated into existing structures using a directional vector anyway, like in MEEP. BrisFDTD hacking required... :)
+    % Should be integrated into existing structures using a directional vector anyway, like in MEEP_. BrisFDTD hacking required... :)
 
 	fprintf(FILE,'ROTATION **Rotation Definition, affects previous geometry object\n');
 	fprintf(FILE,'{\n');

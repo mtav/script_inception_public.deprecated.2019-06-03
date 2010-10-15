@@ -1,4 +1,4 @@
-function GEObox(FILE, lower, upper)
+function MEEP_box(FILE, lower, upper)
 	fprintf(FILE,'BOX  **BOX DEFINITION\n');
 	fprintf(FILE,'{\n');
 	fprintf(FILE,'%E **XL\n', lower(1));

@@ -1,4 +1,4 @@
-function GEOin(filename, file_list)
+function MEEP_in(filename, file_list)
 
 	%IN file generation
 	disp('Writing IN file...');

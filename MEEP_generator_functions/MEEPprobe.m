@@ -1,4 +1,4 @@
-function GEOprobe(FILE, position, step, E, H, J, power )
+function MEEP_probe(FILE, position, step, E, H, J, power )
 	fprintf(FILE,'PROBE **PROBE DEFINITION\n');
 	fprintf(FILE,'{\n');
 	fprintf(FILE,'%E **X\n', position(1));

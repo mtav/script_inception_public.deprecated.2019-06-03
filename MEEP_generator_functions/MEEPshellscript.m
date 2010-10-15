@@ -1,4 +1,4 @@
-function GEOshellscript(filename, BASENAME, EXE, WORKDIR)
+function MEEP_shellscript(filename, BASENAME, EXE, WORKDIR)
 	disp('Writing shellscript...')
 
 	%open file

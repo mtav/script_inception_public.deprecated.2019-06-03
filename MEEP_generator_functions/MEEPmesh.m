@@ -1,4 +1,4 @@
-function GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector)
+function MEEP_mesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector)
 	% mesh X
 	fprintf(FILE,'XMESH **XMESH DEFINITION\n');
 	fprintf(FILE,'{\n');

@@ -1,4 +1,4 @@
-function GEOcommand(filename, BASENAME)
+function MEEP_command(filename, BASENAME)
 	%CMD file generation
 	disp('Writing CMD file...');
 

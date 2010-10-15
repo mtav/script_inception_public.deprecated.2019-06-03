@@ -1,4 +1,4 @@
-function GEOexcitation(FILE, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4)
+function MEEP_excitation(FILE, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4)
 	fprintf(FILE,'EXCITATION **EXCITATION DEFINITION\n');
 	fprintf(FILE,'{\n');
 	fprintf(FILE,'%d ** CURRENT SOURCE \n', current_source);

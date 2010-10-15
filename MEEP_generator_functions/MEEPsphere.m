@@ -1,4 +1,4 @@
-function GEOsphere(FILE, center, outer_radius, inner_radius, permittivity, conductivity)
+function MEEP_sphere(FILE, center, outer_radius, inner_radius, permittivity, conductivity)
 	% sphere
 	% {
 	% 1-5 Coordinates of the sphere ( xc yc zc r1 r2 )

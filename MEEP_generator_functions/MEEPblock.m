@@ -1,4 +1,4 @@
-function GEOblock(FILE, lower, upper, permittivity, conductivity)
+function MEEP_block(FILE, lower, upper, permittivity, conductivity)
 	fprintf(FILE,'BLOCK **Block Definition (XL,YL,ZL,XU,YU,ZU)\n');
 	fprintf(FILE,'{\n');
 	fprintf(FILE,'%E **XL\n', lower(1));

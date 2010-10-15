@@ -1,4 +1,4 @@
-function GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J)
+function MEEP_frequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J)
 
 	function snapshot(plane,P1,P2, frequency)
 		if plane == 1
