@@ -15,7 +15,10 @@ import os;
 import sys;
 import re;
 import array;
+import cPickle;
 from bfdtd_parser import *;
+
+cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
 
 Vector = Blender.Mathutils.Vector;
 Matrix = Blender.Mathutils.Matrix;
@@ -430,7 +433,13 @@ def importBristolFDTD(filename):
     print '----->Importing bristol FDTD geometry...';
     Blender.Window.WaitCursor(1);
 
-    Blender.Set('tempdir',os.path.dirname(filename));
+    # save import path
+    # Blender.Set('tempdir',os.path.dirname(filename));
+    FILE = open(cfgfile, 'w');
+    cPickle.dump(filename, FILE);
+    FILE.close();
+    
+    # create structured_entries
     structured_entries = readBristolFDTD(filename);
     
     # Box
@@ -494,13 +503,28 @@ def importBristolFDTD(filename):
     Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print '...done';
 
-print 'tempdir=',Blender.Get('tempdir');
-print 'soundsdir=',Blender.Get('soundsdir');
+###################
+# load import path
+###################
+# print 'tempdir=',Blender.Get('tempdir');
+# print 'soundsdir=',Blender.Get('soundsdir');
 
-default_path = Blender.Get('tempdir');
-if not default_path:
-    default_path = 'H:\DATA';
+# default_path = Blender.Get('tempdir');
+# if not default_path:
+    # default_path = 'H:\DATA';
     
+default_path = 'H:\DATA';
+print 'cfgfile = ', cfgfile;
+
+if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
+    with open(cfgfile, 'r') as FILE:
+        default_path = cPickle.load(FILE);
+
+###################
+
+###################
+# import file
+###################
 Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
 # importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
 # TestObjects();
