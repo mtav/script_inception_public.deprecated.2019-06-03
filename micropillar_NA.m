@@ -32,7 +32,7 @@ function micropillar_NA(caseID, INP_FILE)
 	[ folder, basename, ext ] = fileparts(INP_FILE);
 	folder
 	
-	[ entries, structured_entries ] = GEO_INP_reader(INP_FILE);
+	[ entries, structured_entries ] = GEO_INP_reader({INP_FILE});
 	Nx = 6;
 	Ny = 12;
 	Nz = 11;

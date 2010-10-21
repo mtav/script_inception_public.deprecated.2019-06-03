@@ -39,7 +39,7 @@ function BFDTDtoMEEP(file_list)
     
 	GeoFileName = [GeoFileName_basename, ext];
 	    
-	% [entries]=GEO_INP_reader(geofile);
+	% [entries]=GEO_INP_reader({geofile});
 	[entries,FDTDobj]=GEO_INP_reader(file_list);
 
 	projectPath = [GeoPathName, filesep, 'ctlConversion'];

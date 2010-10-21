@@ -14,7 +14,6 @@ function [ entries, structured_entries ] = GEO_INP_reader(file_list)
 end % end of function
 
 function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries)
-    % function [ entries, structured_entries ] = GEO_INP_reader(filename)
     % creates entries + structured_entries from filename
     
 	% ask for input file if not given

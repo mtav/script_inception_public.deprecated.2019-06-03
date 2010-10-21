@@ -8,7 +8,7 @@ ZFsnapFiles=dir([folder,'\z*01.prn']);
 % [InpFileName,InpPathName] = uigetfile('*.inp','Select INP file','J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400');
 inpfile=dir([folder,'\*.inp']);
 inpfile=[folder,'\',inpfile(1).name];
-inpEntries=GEO_INP_reader(inpfile);
+inpEntries=GEO_INP_reader({inpfile});
 
 XSnaps={};YSnaps={};ZSnaps={};
 for m=1:length(inpEntries)

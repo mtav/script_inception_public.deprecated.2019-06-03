@@ -50,7 +50,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 		save_as_filename = 0;
 	end
 
-	[ entries, structured_entries ] = GEO_INP_reader(INP_FILE);
+	[ entries, structured_entries ] = GEO_INP_reader({INP_FILE});
 	frequency = structured_entries.excitations(1).frequency;
 	Nx = length(structured_entries.xmesh); % number of X cells in mesh
 	Ny = length(structured_entries.ymesh); % number of Y cells in mesh
