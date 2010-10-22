@@ -12,7 +12,7 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="yagi_dome.inp yagi_dome.geo yagi_dome.ctl" />
+				<Option parameters="simpleblock.geo simpleblock.ctl" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

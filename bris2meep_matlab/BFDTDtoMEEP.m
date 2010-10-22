@@ -88,12 +88,23 @@ function BFDTDtoMEEP(file_list)
 	   
 	   switch lower(type)
 	   case 'block'
-		   data(1:6)=data(1:6)-[geoCenter;geoCenter];
-		   xl=data(1); yl=data(2);zl=data(3);xu=data(4);yu=data(5);zu=data(6);eps=data(7);
-		   w=data(4)-data(1);h=data(5)-data(2);d=data(6)-data(3);
-		   
-		   text=meepBlock([xl+w/2,yl+h/2,zl+d/2],[w,h,d],eps);
-		   fprintf(FILE,text);
+            % 
+            data(1:6) = data(1:6) - [geoCenter;geoCenter];
+            xl = data(1); yl = data(2); zl = data(3);
+            xu = data(4); yu = data(5); zu = data(6);
+            eps = data(7);
+            w = data(4)-data(1); h = data(5)-data(2); d = data(6)-data(3);
+
+            % if (axis==1) { *c=((b->p2.x-b->p1.x)/2)+b->p1.x; }
+            % if (axis==2) { *c=((b->p2.y-b->p1.y)/2)+b->p1.y; }
+            % if (axis==3) { *c=((b->p2.z-b->p1.z)/2)+b->p1.z; }
+
+            % centre_[0]=centre_[0]-(w/2);
+            % centre_[1]=-1*(centre_[1]-(h/2));
+            % centre_[2]=centre_[2]-(d/2);
+
+            text=meepBlock([xl+w/2,yl+h/2,zl+d/2],[w,h,d],eps);
+            fprintf(FILE,text);
 	   case 'cylinder'
 		   data(1:3)=data(1:3)-geoCenter;
 		   xc=data(1);yc=data(2);zc=data(3);ri=data(4);ro=data(5);h=data(6);eps=data(7);

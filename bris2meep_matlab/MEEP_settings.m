@@ -2,7 +2,7 @@ function MEEP_settings(FILE, resolution, simSize)
     fprintf(FILE, ';preamble - some interesting settings\n');
     fprintf(FILE, '(set! filename-prefix false)\n');
     fprintf(FILE, '(set! output-single-precision? true)\n');
-    fprintf(FILE, '(set-param! resolution %2.4f )\r\n',resolution);
+    fprintf(FILE, '(set-param! resolution %2.4f)\r\n',resolution);
     fprintf(FILE, '\n');
     fprintf(FILE, ';simulation size\n');
     fprintf(FILE, '(define-param sx %2.5f) ; x size\n',simSize(1));
