@@ -1,0 +1,30 @@
+function setup_paths(BASEDIR)
+  addpath('BASEDIR');
+  addpath( [ BASEDIR, '/simple_gui_guide' ] );
+  addpath( [ BASEDIR, '/bin' ] );
+  addpath( [ BASEDIR, '/simple_gui' ] );
+  addpath( [ BASEDIR, '/mode_volume' ] );
+  addpath( [ BASEDIR, '/bris2meep' ] );
+  addpath( [ BASEDIR, '/bris2meep/source' ] );
+  addpath( [ BASEDIR, '/bris2meep/example' ] );
+  addpath( [ BASEDIR, '/classes' ] );
+%    addpath( [ BASEDIR, '/classes/@FDTDobject' ] );
+%    addpath( [ BASEDIR, '/classes/@TensileData' ] );
+  addpath( [ BASEDIR, '/bris2meep_matlab' ] );
+  addpath( [ BASEDIR, '/meshing' ] );
+  addpath( [ BASEDIR, '/numerical_aperture' ] );
+  addpath( [ BASEDIR, '/bristolFDTD_generator_functions' ] );
+  addpath( [ BASEDIR, '/pascal_test' ] );
+  addpath( [ BASEDIR, '/examples' ] );
+  addpath( [ BASEDIR, '/MEEP_generator_functions' ] );
+  addpath( [ BASEDIR, '/snapshot_IDs' ] );
+  addpath( [ BASEDIR, '/testing' ] );
+  addpath( [ BASEDIR, '/efficiency' ] );
+  addpath( [ BASEDIR, '/postprocessor' ] );
+  addpath( [ BASEDIR, '/constants' ] );
+  addpath( [ BASEDIR, '/geo2str' ] );
+  addpath( [ BASEDIR, '/probe_fft' ] );
+  addpath( [ BASEDIR, '/blender_scripts' ] );
+  addpath( [ BASEDIR, '/utilities' ] );
+  addpath( [ BASEDIR, '/geometries' ] );
+end

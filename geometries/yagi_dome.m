@@ -16,8 +16,8 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	end
 	
 	if exist('DSTDIR','var')==0
-		disp('DSTDIR not given');
-	    DSTDIR = uigetdir('H:\DATA','DSTDIR');
+		error('DSTDIR not given');
+%  	    DSTDIR = uigetdir('H:\DATA','DSTDIR');
 	end
 	if ~(exist(DSTDIR,'dir'))
 		error([DSTDIR,' not found']);
