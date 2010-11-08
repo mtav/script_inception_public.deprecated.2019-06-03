@@ -26,8 +26,7 @@ function [fft_out,lambda,freq] = cFFT(datain,dt,NFFT)
     freq = nyqfreq/Lout*linspace(1,Lout/2,length(fft_out));
 
 	%wavelength from FDTD frequency units
-	c0 = 2.99792458E8;
-    lambda = c0./freq;
+    lambda = get_c0()./freq;
 
 	% make sure all vectors are column vectors
 	fft_out = fft_out(:);
