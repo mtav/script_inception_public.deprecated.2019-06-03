@@ -129,6 +129,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
             case {'SPHERE'}
 				sphere = add_sphere(entry);
 				sphere_list = [ sphere_list sphere ];
+                geometry_object_list =  = [ geometry_object_list sphere ];
             case {'BLOCK'}
 				block = add_block(entry);
 				block_list = [ block_list block ];
@@ -156,6 +157,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
     structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
     structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
     structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
+    structured_entries.geometry_object_list =  [structured_entries.geometry_object_list, geometry_object_list];
 end
 
 function flag = add_flag(entry)

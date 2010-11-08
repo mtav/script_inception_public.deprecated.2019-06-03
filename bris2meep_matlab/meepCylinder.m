@@ -12,10 +12,19 @@ else
     axisStr='';
 end
 
-C=['(make cylinder\r\n\t(center ',num2str(center,'%4.11g '),')\r\n\t(radius ',num2str(radius,'%4.9g'),')\r\n\t(height ',heightStr,')\r\n\t',axisStr,'(material (make dielectric (epsilon ',num2str(epsilon,'%4.9g'),'))))\r\n'];
-		
-            
-            
+% C=['(make cylinder\r\n
+% \t(center ',num2str(center,'%4.11g '),')\r\n
+% \t(radius ',num2str(radius,'%4.9g'),')\r\n
+% \t(height ',heightStr,')\r\n
+% \t',axisStr,'(material (make dielectric (epsilon ',num2str(epsilon,'%4.9g'),'))))\r\n'];
+
+C=['\t\t(make cylinder\n'];
+C=[C,'\t\t\t(center ',num2str(center,'%4.11g '),')\n'];
+C=[C,'\t\t\t(radius ',num2str(radius,'%4.9g'),')\n'];
+C=[C,'\t\t\t(height ',heightStr,')\n'];
+C=[C,'\t\t\t',axisStr,'\n'];
+C=[C,'\t\t\t(material (make dielectric (epsilon 1))))\n'];
+
 % Center=struct('type',{'center'},'properties',{{center}});
 % Size=struct('type',{'size'},'properties',{{size}});
 % Epsilon=struct('type',{'epsilon'},'properties',{{epsilon}});
