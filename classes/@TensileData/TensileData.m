@@ -2,8 +2,8 @@ classdef TensileData
    properties
       Material = '';
       SampleNumber = 0;
-      Stress
-      Strain
+      Stress;
+      Strain;
       Modulus = 0;
-   end
-end
+   end;
+end;
