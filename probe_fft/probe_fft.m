@@ -62,7 +62,7 @@ for ii=start:1:(number+start-1)
     nyqfreq = 1/((datain(2,1)-datain(1,1))*1e-12);
     freq = nyqfreq*(1:N/2)/N;
     %wavelength from FDTD frequency units
-    wl = 2.99792458e8./freq;
+    wl = get_c0()./freq;
     %set up output file
     titles = [' frequency ','wavelength ','fft_',data_cols((col-1),1:2),...
         ' fft_',data_cols((col-1),1:2),'_pow','\n'];
