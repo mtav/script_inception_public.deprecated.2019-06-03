@@ -1,5 +1,5 @@
 % case 2
-function g = coupling_strength(mu_Debye,lambda_nm,K1,V_mum3)
+function g_Hz = coupling_strength(mu_Debye,lambda_nm,K1,V_mum3)
     % calculations
     lambda_m = 10^-9*lambda_nm;
     V_m3 = (10^-6)^3*V_mum3;
