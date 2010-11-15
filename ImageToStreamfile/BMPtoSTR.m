@@ -1,4 +1,8 @@
 function BMPtoSTR()
+    % converts a bitmap file to a streamfile by considering the red values of the image.
+    % maximum red => dwell time = 0
+    % minimum red (R=0) => dwell time = max dwell time
+    
     [fileName,pathName] = uigetfile('*.bmp','Select input BMP-file','H:\');
 
     % dwell=10;
