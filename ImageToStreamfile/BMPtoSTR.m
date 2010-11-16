@@ -36,8 +36,8 @@ function BMPtoSTR(maxDwell, minDwell, rep, step, INFILE, OUTFILE)
     [x,y,RR]=ScanIm(GS,scanType,scanDir, step);
 
     % Example Scaling with maxDwell  and minDwell values.
-    dwell=round((RR/255)*(maxDwell-minDwell)+minDwell);
-    dwell = RR;
+    dwell = round((RR/255)*(maxDwell-minDwell)+minDwell);
+    % dwell = RR;
 
     % plot3(x,y,dwell);
 
