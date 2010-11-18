@@ -17,10 +17,10 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	
 	if exist('DSTDIR','var')==0
 		disp('DSTDIR not given');
-	    DSTDIR = uigetdir('D:\Simulations\BFDTD','DSTDIR');
+	    DSTDIR = uigetdir(getuserdir(),'DSTDIR');
 	end
 	if ~(exist(DSTDIR,'dir'))
-		disp('dir not found');
+		error('dir not found');
 		return;
 	end
 	mkdir([DSTDIR,filesep,BASENAME]);
