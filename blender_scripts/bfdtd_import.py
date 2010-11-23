@@ -6,6 +6,9 @@ Blender: 249
 Group: 'Import'
 Tooltip: 'Import from Bristol FDTD'
 """
+###############################
+# IMPORTS
+###############################
 
 import Blender;
 import bpy;
@@ -18,8 +21,12 @@ import array;
 import cPickle;
 from bfdtd_parser import *;
 
+###############################
+# INITIALIZATIONS
+###############################
 cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
 
+# define Vector+Matrix
 Vector = Blender.Mathutils.Vector;
 Matrix = Blender.Mathutils.Matrix;
 
@@ -34,6 +41,10 @@ eps_snapshot_material.rgbCol = 0.5, 0, 1;
 excitation_material = Blender.Material.New('excitation');
 excitation_material.rgbCol = 1, 0, 0;
 snapshot_materials = [ frequency_snapshot_material, time_snapshot_material, eps_snapshot_material ];
+
+###############################
+# FUNCTIONS
+###############################
 
 def materials(permittivity, conductivity):
     if permittivity not in material_dict:
@@ -503,28 +514,44 @@ def importBristolFDTD(filename):
     Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print '...done';
 
-###################
-# load import path
-###################
-# print 'tempdir=',Blender.Get('tempdir');
-# print 'soundsdir=',Blender.Get('soundsdir');
+###############################
+# MAIN FUNCTION
+###############################
+print 'sys.argv=',sys.argv;
+print 'len(sys.argv)=',len(sys.argv);
 
-# default_path = Blender.Get('tempdir');
-# if not default_path:
-    # default_path = 'H:\DATA';
-    
-default_path = 'H:\DATA';
-print 'cfgfile = ', cfgfile;
+# arg[0]='blender'
+# arg[1]='-P'
+# arg[2]='scriptname'
+# arg[3]='--'
 
-if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
-    with open(cfgfile, 'r') as FILE:
-        default_path = cPickle.load(FILE);
+if len(sys.argv)>4:
+    for i in range(len(sys.argv)- 4):
+        print 'Importing ', sys.argv[4+i];
+        importBristolFDTD(sys.argv[4+i]);
+else:
+    ###################
+    # load import path
+    ###################
+    # print 'tempdir=',Blender.Get('tempdir');
+    # print 'soundsdir=',Blender.Get('soundsdir');
 
-###################
+    # default_path = Blender.Get('tempdir');
+    # if not default_path:
+        # default_path = 'H:\DATA';
+        
+    default_path = 'H:\DATA';
+    print 'cfgfile = ', cfgfile;
 
-###################
-# import file
-###################
-Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
-# importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
-# TestObjects();
+    if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
+        with open(cfgfile, 'r') as FILE:
+            default_path = cPickle.load(FILE);
+
+    ###################
+
+    ###################
+    # import file
+    ###################
+    Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
+    # importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
+    # TestObjects();

@@ -53,7 +53,7 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 	% .lst file
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
-	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], { [BASENAME,'.inp'],[BASENAME,'.geo'] });
+	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], { [BASENAME,'.inp'],[BASENAME,'.geo'] });
 	% .sh file
 	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	% .cmd file

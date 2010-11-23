@@ -47,7 +47,7 @@ function dome_tests(BASENAME, DSTDIR, Nx_frequency_snapshot,Ny_frequency_snapsho
 	% .lst file
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
-	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], BASENAME);
 	% .sh file
 	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	% .cmd file
