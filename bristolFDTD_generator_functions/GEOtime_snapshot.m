@@ -1,5 +1,6 @@
 function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps)
-
+    % function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps)
+    %
 	% format specification:
 	% 1 iteration number for the first snapshot
 	% 2 number of iterations between snapshots

@@ -459,27 +459,27 @@ function micropillar(RADIUS, DSTDIR, BASENAME, N_TYPE, BOTTOM_N, TOP_N, FREQUENC
 			P1 = [Xplanes(iX),0,0];
 			P2 = [Xplanes(iX),Ymax,Zmax];
 			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, FREQUENCY, starting_sample, E, H, J);
-			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power);
+			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 		for iY = 1:length(Yplanes)
 			plane = 2;
 			P1 = [0,Yplanes(iY),0];
 			P2 = [Xmax/2,Yplanes(iY),Zmax];
 			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, FREQUENCY, starting_sample, E, H, J);
-			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power);
+			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 		for iZ = 1:length(Zplanes)
 			plane = 3;
 			P1 = [0,0,Zplanes(iZ)];
 			P2 = [Xmax/2,Ymax,Zplanes(iZ)];
 			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, FREQUENCY, starting_sample, E, H, J);
-			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power);
+			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 	end
 	
 	% snapshot boxes for NFF (near-to-far-field) transform
 	GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, 1, P1_SNAPSHOT_BOX, P2_SNAPSHOT_BOX, FREQUENCY, starting_sample, E, H, J);
-	GEOtime_snapshot(out, first, repetition, 1, P1_SNAPSHOT_BOX, P2_SNAPSHOT_BOX, E, H, J, power);
+	GEOtime_snapshot(out, first, repetition, 1, P1_SNAPSHOT_BOX, P2_SNAPSHOT_BOX, E, H, J, power,0);
 	
 	% probes
 	for iY =1:length(probes_Y_vector)

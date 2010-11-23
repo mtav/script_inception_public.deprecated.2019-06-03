@@ -147,13 +147,13 @@ function minimum_geometry(BASENAME, DSTDIR, Nx_frequency_snapshot,Ny_frequency_s
 
 	% time snapshots
 	for i = 1:Nx_time_snapshot
-		GEOtime_snapshot(out, first, repetition, 1, Px1, Px2, E, H, J, power);
+		GEOtime_snapshot(out, first, repetition, 1, Px1, Px2, E, H, J, power,0);
 	end
 	for i = 1:Ny_time_snapshot
-		GEOtime_snapshot(out, first, repetition, 2, Py1, Py2, E, H, J, power);
+		GEOtime_snapshot(out, first, repetition, 2, Py1, Py2, E, H, J, power,0);
 	end
 	for i = 1:Nz_time_snapshot
-		GEOtime_snapshot(out, first, repetition, 3, Pz1, Pz2, E, H, J, power);
+		GEOtime_snapshot(out, first, repetition, 3, Pz1, Pz2, E, H, J, power,0);
 	end
 	
 	% probes
