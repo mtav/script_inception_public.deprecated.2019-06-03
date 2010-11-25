@@ -12,4 +12,4 @@ then
 fi
 
 DIR=$1
-find $DIR -name "*.sh" | xargs -n1 -I{} $HOME/bin/superqsub.sh {}
+find $DIR -name "*.sh" | xargs -n1 -I{} superqsub.sh {}
