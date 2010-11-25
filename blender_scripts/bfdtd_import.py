@@ -244,7 +244,7 @@ def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
     # print verts;
     BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
     obj = Blender.Object.GetSelected()[0];
-    # obj.layers = [ 2 ];
+    obj.layers = [ 2 ];
     # print 'Nverts=', len(verts);
     # print 'Nverts=', Nx*Ny*Nz;
 
@@ -308,7 +308,7 @@ def GEOexcitation(P1, P2):
     arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
 
     arrow_cylinder_obj.join([arrow_cone_obj]);
-    # arrow_cylinder_obj.layers = [ 5 ];
+    arrow_cylinder_obj.layers = [ 5 ];
     scene.objects.unlink(arrow_cone_obj);
     
     return
@@ -351,7 +351,7 @@ def snapshot(plane, P1, P2, snapshot_type):
     # print "Adding plane at ", A, B, C, D;
     BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
     obj = Blender.Object.GetSelected()[0];
-    # obj.layers = [ 3 ];
+    obj.layers = [ 3 ];
     mesh = Blender.Mesh.Get( obj.data.name );
     mesh.materials = snapshot_materials;
     for f in mesh.faces:
@@ -375,7 +375,7 @@ def GEOprobe(position):
 
     obj = scene.objects.new(mesh, 'probe');
     obj.setLocation(position[0], position[1], position[2]);
-    # obj.layers = [ 4 ];
+    obj.layers = [ 4 ];
     return
 
 def TestObjects():
