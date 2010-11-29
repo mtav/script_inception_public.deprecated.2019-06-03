@@ -34,12 +34,20 @@ Matrix = Blender.Mathutils.Matrix;
 material_dict={};
 frequency_snapshot_material = Blender.Material.New('frequency_snapshot');
 frequency_snapshot_material.rgbCol = 0.5, 0, 0;
+frequency_snapshot_material.setAlpha(0.5);
+
 time_snapshot_material = Blender.Material.New('time_snapshot');
 time_snapshot_material.rgbCol = 0.5, 1, 0;
+time_snapshot_material.setAlpha(0.5);
+
 eps_snapshot_material = Blender.Material.New('eps_snapshot');
 eps_snapshot_material.rgbCol = 0.5, 0, 1;
+eps_snapshot_material.setAlpha(0.5);
+
 excitation_material = Blender.Material.New('excitation');
 excitation_material.rgbCol = 1, 0, 0;
+excitation_material.setAlpha(0.5);
+
 snapshot_materials = [ frequency_snapshot_material, time_snapshot_material, eps_snapshot_material ];
 
 ###############################
@@ -53,16 +61,19 @@ def materials(permittivity, conductivity):
         max_permittivity = 25.0;
         permittivity_material = Blender.Material.New('permittivity');
         permittivity_material.rgbCol = 0, permittivity/max_permittivity, 1.0-permittivity/max_permittivity;
-
+        permittivity_material.setAlpha(0.5);
+        
         # conductivity_material = Blender.Material.New('conductivity')
         # conductivity_material.rgbCol = 0, 1.0-conductivity/100.0, 0;
+        # conductivity_material.setAlpha(0.5);
 
         # refractive_index_material = Blender.Material.New('refractive_index')
         # if n!=0:
             # refractive_index_material.rgbCol = 0, 0, 1.0/n;
         # else:
             # refractive_index_material.rgbCol = 0, 0, 1.0;
-            
+        # refractive_index_material.setAlpha(0.5);
+          
         material_dict[permittivity] = permittivity_material;
 
     return [ material_dict[permittivity] ];
@@ -81,7 +92,8 @@ def GEOblock(lower, upper, permittivity, conductivity):
     obj.SizeY = abs(diag[1]);
     obj.SizeZ = abs(diag[2]);
     obj.setLocation(pos[0], pos[1], pos[2]);
-    return
+    obj.transp = True; obj.wireMode = True;
+    return;
 
 def GEObox(lower, upper):
     scene = Blender.Scene.GetCurrent();
@@ -95,6 +107,8 @@ def GEObox(lower, upper):
     obj.SizeY = abs(diag[1]);
     obj.SizeZ = abs(diag[2]);
     obj.setLocation(pos[0], pos[1], pos[2]);
+    obj.transp = True; obj.wireMode = True;
+
     return
     
 def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivity, angle):
@@ -109,6 +123,7 @@ def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivit
     obj.RotX = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
     obj.RotY = 0;
     obj.RotZ = -math.radians(angle);
+    obj.transp = True; obj.wireMode = True;
     return
 
 def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
@@ -120,6 +135,7 @@ def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
 
     obj = scene.objects.new(mesh, 'sphere');
     obj.setLocation(center[0], center[1], center[2]);
+    obj.transp = True; obj.wireMode = True;
     return
     
 def grid_index(Nx, Ny, Nz, i, j, k):
@@ -309,6 +325,8 @@ def GEOexcitation(P1, P2):
 
     arrow_cylinder_obj.join([arrow_cone_obj]);
     arrow_cylinder_obj.layers = [ 5 ];
+    arrow_cylinder_obj.transp = True; arrow_cylinder_obj.wireMode = True;
+
     scene.objects.unlink(arrow_cone_obj);
     
     return
@@ -352,6 +370,8 @@ def snapshot(plane, P1, P2, snapshot_type):
     BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
     obj = Blender.Object.GetSelected()[0];
     obj.layers = [ 3 ];
+    obj.transp = True; obj.wireMode = True;
+    
     mesh = Blender.Mesh.Get( obj.data.name );
     mesh.materials = snapshot_materials;
     for f in mesh.faces:
@@ -376,6 +396,7 @@ def GEOprobe(position):
     obj = scene.objects.new(mesh, 'probe');
     obj.setLocation(position[0], position[1], position[2]);
     obj.layers = [ 4 ];
+    obj.transp = True; obj.wireMode = True;
     return
 
 def TestObjects():
