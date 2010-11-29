@@ -1,9 +1,23 @@
-function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
+function INFILENAME = loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%description:
 	% function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	% creates a Loncar type structure (cylinder with transverse circular holes)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Settings
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    print_mesh = false;
+    print_holes = true;
+    print_pillar = true;
+    print_podium = true;
+    print_freqsnap = true;
+    print_timesnap = true;
+    print_epssnap = true;
+    print_excitation = true;
+    print_probes = true;
+    SNAPSHOTS_ON = 0;
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%arguments
@@ -68,14 +82,12 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	
 	ITERATIONS = 261600;%no unit
 	% ITERATIONS = 32000;%no unit
-%	ITERATIONS=10;%no unit
+	% ITERATIONS = 10;%no unit
 	TIMESTEP=0.9;%mus
 	TIME_CONSTANT=4.000000E-09;%mus
 	AMPLITUDE=1.000000E+01;%V/mum???
 	TIME_OFFSET=2.700000E-08;%mus
-	
-	SNAPSHOTS_ON = 1;
-	
+		
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% additional calculations
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +212,8 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	% .lst file
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
-	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], { [BASENAME,'.inp'],[BASENAME,'.geo'] });
+    INFILENAME = [DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'];
+	GEOin(INFILENAME, { [BASENAME,'.inp'],[BASENAME,'.geo'] });
 	% .sh file
 	%TODO: improve this
 	% WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
@@ -220,58 +233,65 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 
 	% initialize current y
 	y_current=0;
+    
+    if print_podium
+        % create bottom block
+        L = [ 0, 0, 0 ];
+        U = [ Xmax, y_current + h_bottom_square, Zmax ];
+        GEOblock(out, L, U, n_bottom_square^2, 0);
+    end
 
-	% create bottom block
-	L = [ 0, 0, 0 ];
-	U = [ Xmax, y_current + h_bottom_square, Zmax ];
-	GEOblock(out, L, U, n_bottom_square^2, 0);
-	y_current = y_current + h_bottom_square;
-
-	% create main pillar
-	L = [ Xmax/2 - pillar_radius, y_current, Zmax/2 - pillar_radius ];
-	U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
-	GEOblock(out, L, U, n_Diamond^2, 0)
+    y_current = y_current + h_bottom_square;
+        
+    if print_pillar
+        % create main pillar
+        L = [ Xmax/2 - pillar_radius, y_current, Zmax/2 - pillar_radius ];
+        U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
+        GEOblock(out, L, U, n_Diamond^2, 0)
+    end
 
 	y_current = y_current + d_holes/2;
 
-	% hole settings
-	permittivity = n_Air^2;
-	conductivity = 0;
-	% create bottom holes
-	for i=1:bottom_N
-	  centre = [ Xmax/2, y_current, Zmax/2 ];
- 	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
-	  elseif HOLE_TYPE == 2
-		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
-		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
-		GEOblock(out, lower, upper, permittivity, conductivity);
-	  else
-		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_z];
-		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_z];
-		GEOblock(out, lower, upper, permittivity, conductivity);
-	  end
-	  y_current = y_current + d_holes;
-	end
+    if print_holes
+        % hole settings
+        permittivity = n_Air^2;
+        conductivity = 0;
+        % create bottom holes
+        for i=1:bottom_N
+          centre = [ Xmax/2, y_current, Zmax/2 ];
+          if HOLE_TYPE == 1
+            GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
+          elseif HOLE_TYPE == 2
+            lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
+            upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
+            GEOblock(out, lower, upper, permittivity, conductivity);
+          else
+            lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_z];
+            upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_z];
+            GEOblock(out, lower, upper, permittivity, conductivity);
+          end
+          y_current = y_current + d_holes;
+        end
 
-	y_current = y_current - d_holes + d_holes_cavity;
+        y_current = y_current - d_holes + d_holes_cavity;
 
-	% create top holes
-	for i=1:top_N
-      centre = [ Xmax/2, y_current, Zmax/2 ];
-	  if HOLE_TYPE == 1
-		GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
-	  elseif HOLE_TYPE == 2
-		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
-		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
-		GEOblock(out, lower, upper, permittivity, conductivity);
-	  else
-		lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_z];
-		upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_z];
-		GEOblock(out, lower, upper, permittivity, conductivity);
-	  end
-	  y_current = y_current + d_holes;
-	end
+        % create top holes
+        for i=1:top_N
+          centre = [ Xmax/2, y_current, Zmax/2 ];
+          if HOLE_TYPE == 1
+            GEOcylinder(out, centre, 0, hole_radius_y, 2*pillar_radius, permittivity, conductivity, 90);
+          elseif HOLE_TYPE == 2
+            lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_y];
+            upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_y];
+            GEOblock(out, lower, upper, permittivity, conductivity);
+          else
+            lower = [ Xmax/2 - pillar_radius, y_current - hole_radius_y, Zmax/2 - hole_radius_z];
+            upper = [ Xmax/2 + pillar_radius, y_current + hole_radius_y, Zmax/2 + hole_radius_z];
+            GEOblock(out, lower, upper, permittivity, conductivity);
+          end
+          y_current = y_current + d_holes;
+        end
+    end
 
 	%write box
 	L = [ 0, 0, 0 ];
@@ -292,13 +312,15 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	% open file
 	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
 
-	P1 = [ pillar_centre_X-2*delta_center,	pillar_centre_Y, pillar_centre_Z ];
-	P2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z ];
-	E = [ 1, 0,	0];
-	H = [ 0, 0,	0];
-	type = 10;
-	GEOexcitation(out, 7, P1, P2, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
-	
+    if print_excitation
+        P1 = [ pillar_centre_X,	pillar_centre_Y, pillar_centre_Z-2*delta_center ];
+        P2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z ];
+        E = [ 1, 0,	0];
+        H = [ 0, 0,	0];
+        type = 10;
+        GEOexcitation(out, 7, P1, P2, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+	end
+    
 	Xpos_bc = 1; Xpos_param = [1,1,0];
 	Ypos_bc = 2; Ypos_param = [1,1,0];
 	Zpos_bc = 2; Zpos_param = [1,1,0];
@@ -314,7 +336,9 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 	id_character = 'id';
 	GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, ITERATIONS, TIMESTEP, id_character);
 
-	GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector);
+	if print_mesh
+        GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector);
+    end
 	
 	% frequency snapshots
 	first = ITERATIONS;
@@ -352,30 +376,32 @@ function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
 			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 	end
-	
-	% probes
-	step=10;
-	E=[1,1,1];
-	H=[1,1,1];
-	J=[0,0,0];
-	power = 0;
-	for iY =1:length(probes_Y_vector)
-		% XY probes
-		for iX =1:length(probes_X_vector)
-			GEOprobe(out, [probes_X_vector(iX), probes_Y_vector(iY), Zplanes(6)], step, E, H, J, power );
-		end
-		% ZY probes
-		for iZ =1:length(probes_Z_vector)
-			GEOprobe(out, [Xplanes(5), probes_Y_vector(iY), probes_Z_vector(iZ)], step, E, H, J, power );
-		end
-	end
-	
-	% ZY center probes
-	for iY =1:length(probes_Y_vector_center)
-		for iZ =1:length(probes_Z_vector_center)
-			GEOprobe(out, [Xplanes(4), probes_Y_vector_center(iY), probes_Z_vector_center(iZ)], step, E, H, J, power );
-		end
-	end
+
+    if print_probes
+        % probes
+        step=10;
+        E=[1,1,1];
+        H=[1,1,1];
+        J=[0,0,0];
+        power = 0;
+        for iY =1:length(probes_Y_vector)
+            % XY probes
+            for iX =1:length(probes_X_vector)
+                GEOprobe(out, [probes_X_vector(iX), probes_Y_vector(iY), Zplanes(6)], step, E, H, J, power );
+            end
+            % ZY probes
+            for iZ =1:length(probes_Z_vector)
+                GEOprobe(out, [Xplanes(5), probes_Y_vector(iY), probes_Z_vector(iZ)], step, E, H, J, power );
+            end
+        end
+        
+        % ZY center probes
+        for iY =1:length(probes_Y_vector_center)
+            for iZ =1:length(probes_Z_vector_center)
+                GEOprobe(out, [Xplanes(4), probes_Y_vector_center(iY), probes_Z_vector_center(iZ)], step, E, H, J, power );
+            end
+        end
+    end
 	
 	%write footer
 	fprintf(out,'end\n'); %end the file
