@@ -1,4 +1,5 @@
 function setup_paths(BASEDIR)
+  disp('Setting up paths...');
   addpath('BASEDIR');
   addpath( [ BASEDIR, '/simple_gui_guide' ] );
   addpath( [ BASEDIR, '/bin' ] );
@@ -27,4 +28,5 @@ function setup_paths(BASEDIR)
   addpath( [ BASEDIR, '/blender_scripts' ] );
   addpath( [ BASEDIR, '/utilities' ] );
   addpath( [ BASEDIR, '/geometries' ] );
+  disp('...done');
 end
