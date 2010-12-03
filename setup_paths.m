@@ -1,6 +1,6 @@
 function setup_paths(BASEDIR)
   disp('Setting up paths...');
-  addpath('BASEDIR');
+  addpath( BASEDIR );
   addpath( [ BASEDIR, '/simple_gui_guide' ] );
   addpath( [ BASEDIR, '/bin' ] );
   addpath( [ BASEDIR, '/simple_gui' ] );
