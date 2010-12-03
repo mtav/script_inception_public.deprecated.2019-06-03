@@ -78,7 +78,7 @@ function BFDTDtoMEEP(file_list)
     
     MEEP_settings(FILE, resolution, simSize);
 
-    %%%%%%%%%%%%%%%%%%%    
+    %%%%%%%%%%%%%%%%%%%
     fprintf(FILE,';geometry specification\r\n(set! geometry\r\n\t(list\r\n');
     % fprintf(FILE, '\r\n');
 
@@ -119,6 +119,9 @@ function BFDTDtoMEEP(file_list)
 		   fprintf(FILE,text);
 	   end   
 	end
+    
+    fprintf(FILE,'\t)\r\n)\r\n\r\n');
+    
     %%%%%%%%%%%%%%%%%%%    
 	% Excitations
 	fields={'Ex','Ey','Ez','Hx','Hy','Hz'};
