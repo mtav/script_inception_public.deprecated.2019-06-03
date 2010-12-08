@@ -226,7 +226,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radiu
 
 	% open file
 	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.geo'],'wt');
-
+    
 	% write header
 	fprintf(out,'**GEOMETRY FILE\n');
 	fprintf(out,'\n');
@@ -247,7 +247,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radiu
         % create main pillar
         L = [ Xmax/2 - pillar_radius, y_current, Zmax/2 - pillar_radius ];
         U = [ Xmax/2 + pillar_radius, y_current + pillar_height, Zmax/2 + pillar_radius ];
-        GEOblock(out, L, U, n_Diamond^2, 0)
+        GEOblock(out, L, U, n_Diamond^2, 0);
     end
 
 	y_current = y_current + d_holes/2;

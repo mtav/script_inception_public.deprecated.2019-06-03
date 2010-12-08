@@ -67,6 +67,10 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
 	% set default value
 	new_dir = pwd();
 
+    % disp(varargin{1});
+    % disp(varargin{2});
+    % disp(varargin{3});
+
 	% CLI input arg handling
 	if nargin > 3
 		for k = 1:length(varargin)
