@@ -5,6 +5,7 @@ import pyscheme.parser
 import pyscheme.scheme
 import pyscheme.expressions
 import sys
+from glob import glob
 
 def parseFile(filename):
 	print "Processing "+filename;
@@ -16,4 +17,11 @@ def parseFile(filename):
 
 
 for arg in sys.argv[1:]: 
-	parseFile(arg);
+    filelist = glob(arg);
+    for file in filelist:
+        parseFile(file);
+    # filelist = glob('*.ctl');
+    # print "============"
+    # print filelist
+    # print "============"
+	# parseFile(arg);
