@@ -24,12 +24,55 @@ def parseFile(filename):
 	program = pyscheme.parser.parse('('+str+')')
 	print program
 
-if len(sys.argv)>4:
+print '================='
+for arg in sys.argv:
+    print arg;
+print '================='
+
+# blender normal
+# =================
+# C:\Program Files\Blender Foundation\Blender\blender.exe
+# =================
+
+# blender DOS
+# =================
+# C:\Program Files\Blender Foundation\Blender\blender.exe
+# -P
+# C:\Documents and Settings\eempct\Application Data\Blender Foundation\Blender\.blender\scripts\meep_import.py
+# --
+# ...
+# =================
+
+# blender DOS post start
+# same as Blender DOS, keeps same arguments as well making it unpractical :(
+
+# python direct
+# =================
+# meep_import.py
+# ...
+# =================
+
+offset=0;
+if 'blender.exe' in sys.argv[0]:
+    if len(sys.argv)>1:
+        print 'De DOS kaj Blender kun amo!'
+        offset=4
+    else:
+        print 'De Blender sole kun amo!'
+        offset=1
+else:
+    print 'De la komanda linio kun amo!'
+    offset=1
+
+# print offset
+# print len(sys.argv)
+if len(sys.argv)>offset:
     # for i in range(len(sys.argv)- 4):
         # print 'Importing ', sys.argv[4+i];
         # importMEEP(sys.argv[4+i]);
-    for arg in sys.argv[4:]:
+    for arg in sys.argv[offset:]:
         filelist = glob(arg);
+        # print filelist
         for file in filelist:
             parseFile(file);
         # filelist = glob('*.ctl');
