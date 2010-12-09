@@ -1,5 +1,9 @@
 function varargout = postprocessor(varargin)
 %
+% usage examples:
+% postprocessor
+% postprocessor({'H:\DATA\IN\loncar_test_4'})
+%
 % postprocessor v4, written by Ian Buss 2007
 %
 % POSTPROCESSOR M-file for postprocessor.fig
