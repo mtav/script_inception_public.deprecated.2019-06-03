@@ -20,6 +20,15 @@ classdef FDTDobject
     all_snapshots = [];
 	time_snapshots =  [];
 	frequency_snapshots =  [];
+
+	time_snapshots_X =  [];
+	time_snapshots_Y =  [];
+	time_snapshots_Z =  [];
+    
+	frequency_snapshots_X =  [];
+	frequency_snapshots_Y =  [];
+	frequency_snapshots_Z =  [];
+    
     probe_list =  [];
    end
 end

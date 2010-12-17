@@ -110,7 +110,17 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 		powerX(n,:) = Exmod(n,1)^2;
 		powerY(n,:) = Eymod(n,1)^2;
 		powerZ(n,:) = Ezmod(n,1)^2;
-		poynting(n,:) = abs(0.5*real((Exre(n,1)+i*Exim(n,1)).*conj(Hzre(n,1)+i*Hzim(n,1))-(Ezre(n,1)+i*Ezim(n,1)).*conj(Hxre(n,1)+i*Hxim(n,1))));
+        
+        Ex = Exre(n,1)+i*Exim(n,1);
+        Ey = Eyre(n,1)+i*Eyim(n,1);
+        Ez = Ezre(n,1)+i*Ezim(n,1);
+        Hx = Hxre(n,1)+i*Hxim(n,1);
+        Hy = Hyre(n,1)+i*Hyim(n,1);
+        Hz = Hzre(n,1)+i*Hzim(n,1);
+        
+		poynting_X(n,:) = 0.5*real(().*conj()-(Ezre(n,1)+i*Ezim(n,1)).*conj(Hxre(n,1)+i*Hxim(n,1)));
+		poynting_Y(n,:) = 0.5*real(conj(Hzre(n,1)+i*Hzim(n,1)).*(Exre(n,1)+i*Exim(n,1))-conj(Hxre(n,1)+i*Hxim(n,1)).*(Ezre(n,1)+i*Ezim(n,1)));
+		poynting_Z(n,:) = 0.5*real((Exre(n,1)+i*Exim(n,1)).*conj(Hzre(n,1)+i*Hzim(n,1))-(Ezre(n,1)+i*Ezim(n,1)).*conj(Hxre(n,1)+i*Hxim(n,1)));
 	end
 
 	% plot(z,powerXYZ,z,powerX,z,powerY,z,powerZ),
@@ -118,7 +128,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
 	% ylabel('power'),
 	% legend('powerXYZ','powerX','powerY','powerZ')
 
-	function gaussian_fit(fit_input, type, legend_txt)
+	function NA = gaussian_fit(fit_input, type, legend_txt)
 		%% fitting
 		disp(['=== Using ',type,' ===']);
 		[sigma,mu,A] = mygaussfit(z,fit_input);

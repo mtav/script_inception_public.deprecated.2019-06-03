@@ -36,6 +36,14 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
 
 	time_snapshots = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
 	frequency_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+
+	time_snapshots_X = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+	time_snapshots_Y = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+	time_snapshots_Z = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+	frequency_snapshots_X = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+	frequency_snapshots_Y = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+	frequency_snapshots_Z = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+    
 	all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
 	excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
 	boundaries = struct('type',{},'position',{});
@@ -105,9 +113,23 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
 				if strcmpi(entry.type,'FREQUENCY_SNAPSHOT')
 					snapshot = add_frequency_snapshot(entry);
 					frequency_snapshots = [ frequency_snapshots snapshot ];
+                    if snapshot.plane == 1
+                        frequency_snapshots_X = [ frequency_snapshots_X snapshot ];
+                    elseif snapshot.plane == 2
+                        frequency_snapshots_Y = [ frequency_snapshots_Y snapshot ];
+                    else
+                        frequency_snapshots_Z = [ frequency_snapshots_Z snapshot ];
+                    end
 				elseif strcmpi(entry.type,'SNAPSHOT')
 					snapshot = add_time_snapshot(entry);
-					time_snapshots = [ time_snapshots snapshot ];                    
+					time_snapshots = [ time_snapshots snapshot ];
+                    if snapshot.plane == 1
+                        time_snapshots_X = [ time_snapshots_X snapshot ];
+                    elseif snapshot.plane == 2
+                        time_snapshots_Y = [ time_snapshots_Y snapshot ];
+                    else
+                        time_snapshots_Z = [ time_snapshots_Z snapshot ];
+                    end
 				else
 					error('Sense, it makes none.');
 				end
@@ -151,6 +173,15 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
 	structured_entries.all_snapshots = [ structured_entries.all_snapshots, all_snapshots ];
 	structured_entries.time_snapshots =  [structured_entries.time_snapshots, time_snapshots];
 	structured_entries.frequency_snapshots =  [structured_entries.frequency_snapshots, frequency_snapshots];
+
+	structured_entries.time_snapshots_X =  [structured_entries.time_snapshots_X, time_snapshots_X];
+	structured_entries.time_snapshots_Y =  [structured_entries.time_snapshots_Y, time_snapshots_Y];
+	structured_entries.time_snapshots_Z =  [structured_entries.time_snapshots_Z, time_snapshots_Z];
+    
+	structured_entries.frequency_snapshots_X =  [structured_entries.frequency_snapshots_X, frequency_snapshots_X];
+	structured_entries.frequency_snapshots_Y =  [structured_entries.frequency_snapshots_Y, frequency_snapshots_Y];
+	structured_entries.frequency_snapshots_Z =  [structured_entries.frequency_snapshots_Z, frequency_snapshots_Z];
+    
 	structured_entries.excitations =  [structured_entries.excitations, excitations];
     structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
     structured_entries.block_list =  [structured_entries.block_list, block_list];
