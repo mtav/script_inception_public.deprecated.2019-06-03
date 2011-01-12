@@ -50,22 +50,7 @@ function probe_fft(number,sim,start,col)
             file = ['p',int2str(ii),sim,'.prn'];
         end
         [hdr,datain] = hdrload(file);
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % TODO: Replace by calcFFT function
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %perform fft on data defined by col
-        % y = fft(,);
-        % N = length(y);
-        %remove sum term from beginning of seq.
-        %y(1) = [];
-        %relative frequency according to nyquist criterion
-        % nyqfreq = 1/();
-        % freq = nyqfreq*(1:N/2)/N;
-        %wavelength from FDTD frequency units
-        % wl = get_c0()./freq;
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+                
         NFFT = 2^17;
         [fft_out,lambda,freq] = calcFFT(datain(:,col), (datain(2,1)-datain(1,1))*1e-12, NFFT);
         %calculate magnitude of fft
@@ -73,16 +58,13 @@ function probe_fft(number,sim,start,col)
         %calculate power of fft
         y_pow = fft_out.* conj(fft_out)/NFFT;
         
-        %set up output file
-        % titles = [' frequency ','wavelength ','fft_',data_cols((col-1),1:2),...
-            % '_mag fft_',data_cols((col-1),1:2),'_pow','\n'];
+        % write output file
         titles = [' frequency ','wavelength ','fft_',data_cols((col-1),1:2),...
-            ' fft_',data_cols((col-1),1:2),'_pow','\n'];
+            '_mag fft_',data_cols((col-1),1:2),'_pow','\n'];
         outfile = ['fft_',data_cols((col-1),1:2),'_',file];
         fid = fopen(outfile,'w');
         fprintf(fid,titles);
         fclose(fid);
-        % out = cat(2,freq,lambda,y_mag(1:floor(N/2)),y_pow(1:floor(N/2)));
         out = cat(2,freq,lambda,y_mag,y_pow);
         save(outfile,'out','-append','-ascii');
     end
