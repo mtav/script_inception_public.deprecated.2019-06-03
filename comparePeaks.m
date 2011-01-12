@@ -35,10 +35,10 @@ function comparePeaks(SRCDIR,X_AXIS_TYPE,probe_col)
 	% lambda_vec in nm
 	function [ freq, lambda_vec, fft_pow ] = getFFT(filename)
 		disp(['processing ',filename]);
-		[header, data] = readPrnFile(filename);		
+		[header, data] = readPrnFile(filename);
 		dt = 1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
 		% disp('	fourier transform start');
-		[cFFT_output, lambda_vec, freq] = cFFT(data(:,probe_col),dt, 2^19);
+		[cFFT_output, lambda_vec, freq] = calcFFT(data(:,probe_col),dt, 2^19);
 		lambda_vec = 1e3*lambda_vec; % to get lambda in nm
 		% disp('	fourier transform end');
 

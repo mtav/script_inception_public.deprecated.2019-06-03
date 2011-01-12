@@ -1,5 +1,5 @@
-function [fft_out,lambda,freq] = cFFT(datain,dt,NFFT)
-	% function [fft_out,lambda,freq] = cFFT(datain,dt,NFFT)
+function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
+	% function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
 	% datain = datain value in time domain
 	% dt = timestep in time domain
 	% NFFT = double the number of points you want in the output
@@ -19,13 +19,13 @@ function [fft_out,lambda,freq] = cFFT(datain,dt,NFFT)
     Lout = length(fft_out);
 	fft_out = fft_out(1:Lout/2);
 
-    %relative frequency according to nyquist criterion
+    % relative frequency according to nyquist criterion
     nyqfreq = 1/dt;
 
 	% freq = nyqfreq/2*linspace(0,1,length(fft_out));
     freq = nyqfreq/Lout*linspace(1,Lout/2,length(fft_out));
 
-	%wavelength from FDTD frequency units
+	% wavelength from FDTD frequency units
     lambda = get_c0()./freq;
 
 	% make sure all vectors are column vectors

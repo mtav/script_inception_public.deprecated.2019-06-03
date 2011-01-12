@@ -104,16 +104,16 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 	dt = 1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
 	
     disp('	fourier transform start')
-    [cFFT_output, lambda_vec] = cFFT(data(:,probe_col),dt, 2^19);
+    [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
 	lambda_vec = 1e3*lambda_vec; % to get lambda in nm
     disp('	fourier transform end')
 
     %calculate magnitude of fft
-    c_y_mag = abs(cFFT_output);
+    c_y_mag = abs(calcFFT_output);
     %calculate power of fft
-    c_y_pow = cFFT_output.* conj(cFFT_output);
+    c_y_pow = calcFFT_output.* conj(calcFFT_output);
 
-    % c_Mag=2*abs(cFFT_output);
+    % c_Mag=2*abs(calcFFT_output);
     % c_Mag=c_y_mag;
     c_Mag=c_y_pow;
 		
@@ -184,8 +184,8 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 		frequency = 10^3*get_c0()/lambda;
 		peak_frequency_vector = [ peak_frequency_vector, frequency ];
 
-		amplitude = abs(cFFT_output(lambda_idx));
-		phase = angle(cFFT_output(lambda_idx));
+		amplitude = abs(calcFFT_output(lambda_idx));
+		phase = angle(calcFFT_output(lambda_idx));
 		decay_constant = 0;
 		Err = 0;
 		fprintf(superfile, '%E, %E, %E, %E, %E, %E\n', frequency, decay_constant, peakdata_loc(i).Q, amplitude, phase, Err);

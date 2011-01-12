@@ -151,7 +151,7 @@ for m=1:length(id_list)
     dt=1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
     disp('	fourier transform start')
     [bFFT_output,b_lambda] = bFFT(data(:,colnumP),dt);
-    [cFFT_output,c_lambda] = cFFT(data(:,colnumP),dt,2^19);
+    [cFFT_output,c_lambda] = calcFFT(data(:,colnumP),dt,2^19);
     disp('	fourier transform end')
 
     %calculate magnitude of fft

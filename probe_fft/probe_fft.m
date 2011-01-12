@@ -1,17 +1,34 @@
+%
+% PROBE_FFT Calculate the FFT from probe file data.
+%
+% PROBE_FFT(number,'sim',start,col) performs FFT on multiple 
+% data sets in standard University of Bristol probe file fo-
+% rmats. The number of input files is defined by number.  The 
+% appended letter on probe files is given by 'sim' (e.g. 'a').
+% start tells the subroutine where to begin. Col defines the
+% data on which to perform the FFT.
+%
+% An example function call for performing the FFT on the Ey data
+% from 12 files from simulation run 'c' starting at the 15th 
+% probe would be: PROBE_FFT(12,'c',15,3).  This would produce
+% 12 files named in the form 'fft_Ey_p15.prn' to 'fft_Ey_p27.prn'.
+% 
+% Version 1, 28/11/2006. Ian Buss.
+
 % The MIT License
-
+%
 % Copyright (c) 2009 Ian Buss
-
+%
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
 % in the Software without restriction, including without limitation the rights
 % to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 % copies of the Software, and to permit persons to whom the Software is
 % furnished to do so, subject to the following conditions:
-
+%
 % The above copyright notice and this permission notice shall be included in
 % all copies or substantial portions of the Software.
-
+%
 % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 % IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 % FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,21 +38,6 @@
 % THE SOFTWARE.
 
 function probe_fft(number,sim,start,col)
-
-% PROBE_FFT Calculate the FFT from probe file data.
-%	PROBE_FFT(number,'sim',start,col) performs FFT on multiple 
-%	data sets in standard University of Bristol probe file fo-
-%	rmats. The number of input files is defined by number.  The 
-%	appended letter on probe files is given by 'sim' (e.g. 'a').
-%	start tells the subroutine where to begin. Col defines the
-%	data on which to perform the FFT.
-%
-%	An example function call for performing the FFT on the Ey data
-%	from 12 files from simulation run 'c' starting at the 15th 
-%	probe would be:	PROBE_FFT(12,'c',15,3).  This would produce
-%	12 files named in the form 'fft_Ey_p15.prn' to 'fft_Ey_p27.prn'.
-%	
-%	Version 1, 28/11/2006. Ian Buss.
 
 %% Define columns
 data_cols = ['Ex';'Ey';'Ez';'Hx';'Hy';'Hz'];
