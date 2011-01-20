@@ -6,16 +6,18 @@ function GEOshellscript(filename, BASENAME, EXE, WORKDIR)
 
 
 	if exist('EXE','var')==0
-		disp('EXE not given');
+		% disp('EXE not given');
 		% EXE = '$HOME/bin/fdtd64_2003';
 		EXE = '$HOME/bin/fdtd';
+		disp(['EXE not given. Using default: EXE=',EXE]);
 	end
 
 	if exist('WORKDIR','var')==0
-		disp('WORKDIR not given');
+		% disp('WORKDIR not given');
 	    % WORKDIR = '$(dirname "$0")';
 		%TODO: Is WORKDIR even necessary in the script? O.o
 	    WORKDIR = '$JOBDIR';
+		disp(['WORKDIR not given. Using default: WORKDIR=',WORKDIR]);
 	end
 	
 	%write file
