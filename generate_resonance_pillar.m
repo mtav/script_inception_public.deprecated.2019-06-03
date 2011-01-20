@@ -21,11 +21,12 @@ function generate_resonance_pillar(SRCDIR, DSTDIR)
 	end
 	if ~(exist(DSTDIR,'dir'))
 		disp('dir not found');
-		return;
+        mkdir(DSTDIR);
+		% return;
 	end
 
-	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),DSTDIR);
-	copyfile(fullfile(getuserdir(),'MATLAB','qedc3_2_05.sh'),DSTDIR);
+	% copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),DSTDIR);
+	% copyfile(fullfile(getuserdir(),'MATLAB','qedc3_2_05.sh'),DSTDIR);
 	cd(DSTDIR);
 
 	%===============================
@@ -41,10 +42,10 @@ function generate_resonance_pillar(SRCDIR, DSTDIR)
 	dt_vec = [0,0,0,0];
 	fmin_vec = [0,0,0,0];
 	fmax_vec = [0,0,0,0];
-	[ vEnd1, vStart1, dt_vec(1), fmin_vec(1), fmax_vec(1) ] = analyzePRN([SRCDIR,'\\p62id.prn'], 1/4);
-	[ vEnd2, vStart2, dt_vec(2), fmin_vec(2), fmax_vec(2) ] = analyzePRN([SRCDIR,'\\p71id.prn'], 1/4);
-	[ vEnd3, vStart3, dt_vec(3), fmin_vec(3), fmax_vec(3) ] = analyzePRN([SRCDIR,'\\p80id.prn'], 1/4);
-	[ vEnd4, vStart4, dt_vec(4), fmin_vec(4), fmax_vec(4) ] = analyzePRN([SRCDIR,'\\p89id.prn'], 1/4);
+	[ vEnd1, vStart1, dt_vec(1), fmin_vec(1), fmax_vec(1) ] = analyzePRN([SRCDIR,'\\p062id.prn'], [DSTDIR,'\\p062id.peakfile'], 1/4);
+	[ vEnd2, vStart2, dt_vec(2), fmin_vec(2), fmax_vec(2) ] = analyzePRN([SRCDIR,'\\p071id.prn'], [DSTDIR,'\\p071id.peakfile'], 1/4);
+	[ vEnd3, vStart3, dt_vec(3), fmin_vec(3), fmax_vec(3) ] = analyzePRN([SRCDIR,'\\p080id.prn'], [DSTDIR,'\\p080id.peakfile'], 1/4);
+	[ vEnd4, vStart4, dt_vec(4), fmin_vec(4), fmax_vec(4) ] = analyzePRN([SRCDIR,'\\p089id.prn'], [DSTDIR,'\\p089id.peakfile'], 1/4);
 	for i=1:length(dt_vec)
 		fprintf('%d: dt=%E fmin=%E fmax=%E\n', i, dt_vec(i), fmin_vec(i), fmax_vec(i));
 	end

@@ -1,4 +1,4 @@
-function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fullpath, peak_file, delta_scaling, snapshot_col, probe_col)
+function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_max ] = analyzePRN(fullpath, peak_file, delta_scaling, snapshot_col, probe_col)
 	% Analyzes a single PRN file
 	% snapshot_col:
 	%1 x
@@ -44,6 +44,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 		[FileName,PathName] = uigetfile('*.prn','Select the probe PRN file');
 		fullpath = [PathName, filesep, FileName];
 	end
+    disp(['fullpath = ',fullpath]);
 
 	if ~(exist(fullpath,'file'))
 		error( ['File not found: ',fullpath] );
@@ -58,22 +59,22 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 	[ foo, headquarters ] = fileparts(folder);
 
 	if exist('peak_file','var')==0
-		disp('peak_file not given');
+		% disp('peak_file not given');
 		peak_file = [folder, filesep, basename, '_bilan.txt'];
 	end
 	
 	if exist('delta_scaling','var')==0
-		disp('delta_scaling not given');
+		% disp('delta_scaling not given');
 		delta_scaling = 1/3;
 	end
 
 	if exist('snapshot_col','var')==0
-		disp('snapshot_col not given');
+		% disp('snapshot_col not given');
 		snapshot_col = 3;
 	end
 
 	if exist('probe_col','var')==0
-		disp('probe_col not given');
+		% disp('probe_col not given');
 		probe_col = 2;
 	end
 	
@@ -87,6 +88,12 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 	% size(data)
 
 	disp(['processing ',filebasename,'.prn'])
+
+    data_min = min(data(:,probe_col));
+    data_max = max(data(:,probe_col));
+    
+        disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
+        disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
 
 	if time_plot == 1
 		disp('	figure 1')
@@ -142,14 +149,18 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector ] = analyzePRN(fu
 	fprintf('max = %E\n',max(c_Mag));
 	fprintf('average = %E\n',Mag_aver);
 	fprintf('detPeak_delta = %E\n',detPeak_delta);
-	% return;
+    vStart=0;
+    vEnd=0;
+    fmin=0;
+    fmax=0;
+	return;
 
-	[ peakdata_all, peakdata_loc ] = zoomOnPeak(lambda_vec, c_Mag, detPeak_delta);
+	% [ peakdata_all, peakdata_loc ] = zoomOnPeak(lambda_vec, c_Mag, detPeak_delta);
 
-	fprintf('Number of peaks found: %d\n', size(peakdata_loc,2));
+	% fprintf('Number of peaks found: %d\n', size(peakdata_loc,2));
 	
-	wavelength_vec = peakdata_all.Xzoom;
-	c_Mag_zoom_1 = peakdata_all.Yzoom;
+	% wavelength_vec = peakdata_all.Xzoom;
+	% c_Mag_zoom_1 = peakdata_all.Yzoom;
 	%===============================
 	
 	if freq_plot_zoom1 == 1

@@ -39,12 +39,17 @@ function INFILENAME = just_signal(ITERATIONS)
 	fclose(out);
 	
 	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
-    P1 = [ Xmax/2.0, Ymax/2.0, Zmax/2.0-2*delta_mesh ];
-    P2 = [ Xmax/2.0, Ymax/2.0, Zmax/2.0 ];
+    P_Xm = [ Xmax/2.0-2*delta_mesh, Ymax/2.0, Zmax/2.0 ];
+    P_Xp = [ Xmax/2.0+2*delta_mesh, Ymax/2.0, Zmax/2.0 ];
+    P_Ym = [ Xmax/2.0, Ymax/2.0-2*delta_mesh, Zmax/2.0 ];
+    P_Yp = [ Xmax/2.0, Ymax/2.0+2*delta_mesh, Zmax/2.0 ];
+    P_Zm = [ Xmax/2.0, Ymax/2.0, Zmax/2.0-2*delta_mesh ];
+    P_Zp = [ Xmax/2.0, Ymax/2.0, Zmax/2.0+2*delta_mesh ];
+    P_center = [ Xmax/2.0, Ymax/2.0, Zmax/2.0 ];
     E = [ 1, 0,	0 ];
     H = [ 0, 0,	0 ];
     type = 10;
-    GEOexcitation(out, 7, P1, P2, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    GEOexcitation(out, 7, P_center, P_Xm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
     
 	Xpos_bc = 1; Xpos_param = [1,1,0];
 	Ypos_bc = 2; Ypos_param = [1,1,0];
@@ -67,7 +72,14 @@ function INFILENAME = just_signal(ITERATIONS)
     H = [1,1,1];
     J = [0,0,0];
     power = 0;
-    GEOprobe(out, [ Xmax/2.0, Ymax/2.0, Zmax/2.0-4*delta_mesh ], step, E, H, J, power );	
+    
+    GEOprobe(out, [ Xmax/2.0-4*delta_mesh, Ymax/2.0, Zmax/2.0 ], step, E, H, J, power );
+    GEOprobe(out, [ Xmax/2.0+4*delta_mesh, Ymax/2.0, Zmax/2.0 ], step, E, H, J, power );
+    GEOprobe(out, [ Xmax/2.0, Ymax/2.0-4*delta_mesh, Zmax/2.0 ], step, E, H, J, power );
+    GEOprobe(out, [ Xmax/2.0, Ymax/2.0+4*delta_mesh, Zmax/2.0 ], step, E, H, J, power );
+    GEOprobe(out, [ Xmax/2.0, Ymax/2.0, Zmax/2.0-4*delta_mesh ], step, E, H, J, power );
+    GEOprobe(out, [ Xmax/2.0, Ymax/2.0, Zmax/2.0+4*delta_mesh ], step, E, H, J, power );
+    
 	fprintf(out,'end\n'); %end the file
 	fclose(out);
 end
