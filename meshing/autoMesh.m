@@ -1,5 +1,5 @@
 function [dx,dy,dz,inpFilePath]=autoMesh(geoFilePath,lambda,offset,writeToFile)
-
+% comment
 if ~exist('writeToFile','var')
     writeToFile=0;
 end
