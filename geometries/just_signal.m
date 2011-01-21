@@ -1,7 +1,7 @@
-function INFILENAME = just_signal(ITERATIONS)
+function INFILENAME = just_signal(ITERATIONS,excitation_direction)
      
-    BASENAME = ['just_signal_',num2str(ITERATIONS)];
-    DSTDIR = [getuserdir(),filesep,'DATA'];
+    BASENAME = ['just_signal_',num2str(ITERATIONS),'_',num2str(excitation_direction)];
+    DSTDIR = [getuserdir(),filesep,'DATA',filesep,'just_signal_test'];
 	mkdir([DSTDIR,filesep,BASENAME]);
     INFILENAME = [DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'];
 
@@ -18,7 +18,7 @@ function INFILENAME = just_signal(ITERATIONS)
 	Ymax = 1;%mum
 	Zmax = 1;%mum
 	
-	delta_mesh = lambda/(4*n_Air);
+	delta_mesh = lambda/(10*n_Air);
 	thicknessVector = [ Ymax ];
 	max_delta_Vector = [ delta_mesh ];
 	
@@ -49,8 +49,34 @@ function INFILENAME = just_signal(ITERATIONS)
     E = [ 1, 0,	0 ];
     H = [ 0, 0,	0 ];
     type = 10;
-    GEOexcitation(out, 7, P_center, P_Xm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
     
+    if excitation_direction == 1
+    GEOexcitation(out, 7, P_center, P_Xm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 2
+    GEOexcitation(out, 7, P_center, P_Xp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 3
+    GEOexcitation(out, 7, P_center, P_Ym, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 4
+    GEOexcitation(out, 7, P_center, P_Yp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 5
+    GEOexcitation(out, 7, P_center, P_Zm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 6
+    GEOexcitation(out, 7, P_center, P_Zp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif excitation_direction == 7
+    GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 8
+    GEOexcitation(out, 7, P_Xp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 9
+    GEOexcitation(out, 7, P_Ym, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 10
+    GEOexcitation(out, 7, P_Yp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 11
+    GEOexcitation(out, 7, P_Zm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    elseif  excitation_direction == 12
+    GEOexcitation(out, 7, P_Zp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+    else
+        error('invalid direction');
+    end
 	Xpos_bc = 1; Xpos_param = [1,1,0];
 	Ypos_bc = 2; Ypos_param = [1,1,0];
 	Zpos_bc = 2; Zpos_param = [1,1,0];

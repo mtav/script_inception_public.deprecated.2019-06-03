@@ -30,8 +30,8 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	%6 Hy
 	%7 Hz
 
-	time_plot = 0;
-	freq_plot_all = 0;
+	time_plot = 1;
+	freq_plot_all = 1;
 	freq_plot_zoom1 = 0;
 	freq_plot_zoom2 = 0;
 	
