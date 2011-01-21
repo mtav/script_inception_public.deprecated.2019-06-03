@@ -4,8 +4,8 @@ function loncar_structure_wrapper(BASENAME, DSTDIR)
     pillar_radius = 1;
     
     function gen_loncar(N, print_holes_top, print_holes_bottom)
-        filename = [ BASENAME, '_', num2str(N), '_', num2str(print_holes_top), '_', num2str(print_holes_bottom) ];
         for excitation_direction=1:12
+            filename = [ BASENAME, '_', num2str(N), '_', num2str(print_holes_top), '_', num2str(print_holes_bottom),'_',num2str(excitation_direction) ];
             loncar_structure(filename, DSTDIR, N, excitation_direction, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius);
         end
     end
