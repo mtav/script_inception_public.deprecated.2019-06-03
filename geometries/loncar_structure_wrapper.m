@@ -5,7 +5,9 @@ function loncar_structure_wrapper(BASENAME, DSTDIR)
     
     function gen_loncar(N, print_holes_top, print_holes_bottom)
         filename = [ BASENAME, '_', num2str(N), '_', num2str(print_holes_top), '_', num2str(print_holes_bottom) ];
-        loncar_structure(filename, DSTDIR, N, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius);
+        for excitation_direction=1:12
+            loncar_structure(filename, DSTDIR, N, excitation_direction, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius);
+        end
     end
     
     for iter_index=1:length(ITERATIONS)

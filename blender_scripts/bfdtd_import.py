@@ -260,7 +260,7 @@ def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
     # print verts;
     BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
     obj = Blender.Object.GetSelected()[0];
-    obj.layers = [ 2 ];
+    # obj.layers = [ 2 ];
     # print 'Nverts=', len(verts);
     # print 'Nverts=', Nx*Ny*Nz;
 
@@ -324,7 +324,7 @@ def GEOexcitation(P1, P2):
     arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
 
     arrow_cylinder_obj.join([arrow_cone_obj]);
-    arrow_cylinder_obj.layers = [ 5 ];
+    # arrow_cylinder_obj.layers = [ 5 ];
     arrow_cylinder_obj.transp = True; arrow_cylinder_obj.wireMode = True;
 
     scene.objects.unlink(arrow_cone_obj);
@@ -369,7 +369,7 @@ def snapshot(plane, P1, P2, snapshot_type):
     # print "Adding plane at ", A, B, C, D;
     BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
     obj = Blender.Object.GetSelected()[0];
-    obj.layers = [ 3 ];
+    # obj.layers = [ 3 ];
     obj.transp = True; obj.wireMode = True;
     
     mesh = Blender.Mesh.Get( obj.data.name );
@@ -394,14 +394,17 @@ def GEOprobe(position):
     mesh = Blender.Mesh.Primitives.Cube(0.1);
 
     obj = scene.objects.new(mesh, 'probe');
+    # obj = Blender.Object.GetSelected()[0];
     obj.setLocation(position[0], position[1], position[2]);
-    obj.layers = [ 4 ];
+    # obj.layers = [ 4 ];
     obj.transp = True; obj.wireMode = True;
     return
 
 def TestObjects():
+    Blender.Window.SetActiveLayer(1<<0);
     GEOmesh(False, [1, 1], [1, 2, 3], [4, 3, 2, 1]);
     
+    Blender.Window.SetActiveLayer(1<<1);
     GEOexcitation(Vector(0,0,0), Vector(1,0,0));
     GEOexcitation(Vector(0,0,0), Vector(0,1,0));
     GEOexcitation(Vector(0,0,0), Vector(0,0,1));
@@ -428,38 +431,48 @@ def TestObjects():
         # GEOexcitation(Vector(x1,y1,z1), Vector(x2,y2,z2));
         # x1=x2;y1=y2;z1=z2;
 
+    Blender.Window.SetActiveLayer(1<<2);
     GEOfrequency_snapshot(1, Vector(-1, -1, -1), Vector(1, 1, 1));
     GEOfrequency_snapshot(2, Vector(-1, -1, -1), Vector(1, 1, 1));
     GEOfrequency_snapshot(3, Vector(-1, -1, -1), Vector(1, 1, 1));
 
+    Blender.Window.SetActiveLayer(1<<3);
     GEOtime_snapshot(1, Vector(2, -1, -1), Vector(4, 1, 1));
     GEOtime_snapshot(2, Vector(2, -1, -1), Vector(4, 1, 1));
     GEOtime_snapshot(3, Vector(2, -1, -1), Vector(4, 1, 1));
 
+    Blender.Window.SetActiveLayer(1<<4);
     GEOeps_snapshot(1, Vector(5, -1, -1), Vector(7, 1, 1));
     GEOeps_snapshot(2, Vector(5, -1, -1), Vector(7, 1, 1));
     GEOeps_snapshot(3, Vector(5, -1, -1), Vector(7, 1, 1));
 
+    Blender.Window.SetActiveLayer(1<<5);
     GEOfrequency_snapshot(1, Vector(-1, -1, -1), Vector(-1, 1, 1));
     GEOfrequency_snapshot(2, Vector(-1, -1, -1), Vector(1, -1, 1));
     GEOfrequency_snapshot(3, Vector(-1, -1, -1), Vector(1, 1, -1));
 
+    Blender.Window.SetActiveLayer(1<<6);
     GEOtime_snapshot(1, Vector(2, -1, -1), Vector(2, 1, 1));
     GEOtime_snapshot(2, Vector(2, -1, -1), Vector(4, -1, 1));
     GEOtime_snapshot(3, Vector(2, -1, -1), Vector(4, 1, -1));
 
+    Blender.Window.SetActiveLayer(1<<7);
     GEOeps_snapshot(1, Vector(5, -1, -1), Vector(5, 1, 1));
     GEOeps_snapshot(2, Vector(5, -1, -1), Vector(7, -1, 1));
     GEOeps_snapshot(3, Vector(5, -1, -1), Vector(7, 1, -1));
 
     for i in range(11):
+        Blender.Window.SetActiveLayer(1<<8);
         GEOblock(Vector(0, 0, i), Vector(1, 1, i+1), 10*i, 0);
         GEObox(Vector(1, 1, i), Vector(2, 2, i+1));
         GEOblock(Vector(2, 2, i), Vector(3, 3, i+1), 10*i, 100);
         GEOcylinder(Vector(3.5, 3.5, i+0.5), 0, 0.5, 1, 100-10*i, 200, 0);
         GEOcylinder(Vector(4.5, 4.5, i+0.5), 0, 0.5, 1, 10*i, 200, 45);
         GEOsphere(Vector(5.5, 5.5, i+0.5), 0.5, 0, i, 0);
+        Blender.Window.SetActiveLayer(1<<9);
         GEOprobe(Vector(0, 0, i));
+
+    Blender.Scene.GetCurrent().setLayers([1,2,3,4,5,6,7,8,9,10]);
 
 def importBristolFDTD(filename):
     print '----->Importing bristol FDTD geometry...';
@@ -504,6 +517,7 @@ def importBristolFDTD(filename):
     # Probe
     Blender.Window.SetActiveLayer(1<<6);
     for probe in structured_entries.probe_list:
+        print 'probe = ',Vector(probe.position);
         GEOprobe(Vector(probe.position));
     # Sphere
     Blender.Window.SetActiveLayer(1<<7);

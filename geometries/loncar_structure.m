@@ -1,4 +1,4 @@
-function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, FREQUENCY)
+function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_direction, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, FREQUENCY)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% description:
 	%  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
@@ -12,14 +12,14 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes
     print_holes = true;
     % print_holes_top = true;
     % print_holes_bottom = true;
-    print_pillar = false;
-    print_podium = false;
+    print_pillar = true;
+    print_podium = true;
     print_freqsnap = true;
     print_timesnap = true;
     print_epssnap = true;
     print_excitation = true;
     print_probes = true;
-    SNAPSHOTS_ON = 1;
+    SNAPSHOTS_ON = 0;
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% arguments
@@ -333,12 +333,45 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes
 	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
 
     if print_excitation
-        P1 = [ pillar_centre_X,	pillar_centre_Y, pillar_centre_Z-2*delta_center ];
-        P2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z ];
+        P_Xm = [ pillar_centre_X-2*delta_center,	pillar_centre_Y, pillar_centre_Z ];
+        P_Xp = [ pillar_centre_X+2*delta_center,	pillar_centre_Y, pillar_centre_Z ];
+        P_Ym = [ pillar_centre_X,	pillar_centre_Y-2*delta_center, pillar_centre_Z ];
+        P_Yp = [ pillar_centre_X,	pillar_centre_Y+2*delta_center, pillar_centre_Z ];
+        P_Zm = [ pillar_centre_X,	pillar_centre_Y, pillar_centre_Z-2*delta_center ];
+        P_Zp = [ pillar_centre_X,	pillar_centre_Y, pillar_centre_Z+2*delta_center ];
+        P_center = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z ];
         E = [ 1, 0,	0];
         H = [ 0, 0,	0];
         type = 10;
-        GEOexcitation(out, 7, P1, P2, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        
+        if excitation_direction == 1
+        GEOexcitation(out, 7, P_center, P_Xm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 2
+        GEOexcitation(out, 7, P_center, P_Xp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 3
+        GEOexcitation(out, 7, P_center, P_Ym, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 4
+        GEOexcitation(out, 7, P_center, P_Yp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 5
+        GEOexcitation(out, 7, P_center, P_Zm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 6
+        GEOexcitation(out, 7, P_center, P_Zp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif excitation_direction == 7
+        GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 8
+        GEOexcitation(out, 7, P_Xp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 9
+        GEOexcitation(out, 7, P_Ym, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 10
+        GEOexcitation(out, 7, P_Yp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 11
+        GEOexcitation(out, 7, P_Zm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 12
+        GEOexcitation(out, 7, P_Zp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        else
+        error('invalid direction');
+        end
+        
 	end
     
 	Xpos_bc = 1; Xpos_param = [1,1,0];
