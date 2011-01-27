@@ -30,8 +30,9 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	%6 Hy
 	%7 Hz
 
-	time_plot = 1;
-	freq_plot_all = 1;
+    verbose=0;
+	time_plot = 0;
+	freq_plot_all = 0;
 	freq_plot_zoom1 = 0;
 	freq_plot_zoom2 = 0;
 	
@@ -44,7 +45,9 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 		[FileName,PathName] = uigetfile('*.prn','Select the probe PRN file');
 		fullpath = [PathName, filesep, FileName];
 	end
-    disp(['fullpath = ',fullpath]);
+    if verbose == 1
+        disp(['fullpath = ',fullpath]);
+    end
 
 	if ~(exist(fullpath,'file'))
 		error( ['File not found: ',fullpath] );
@@ -87,13 +90,17 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	% size(header)
 	% size(data)
 
-	disp(['processing ',filebasename,'.prn'])
+	if verbose == 1
+        disp(['processing ',filebasename,'.prn'])
+    end
 
     data_min = min(data(:,probe_col));
     data_max = max(data(:,probe_col));
-    
-        disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
-        disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
+
+    if verbose == 1    
+            disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
+            disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
+    end
 
 	if time_plot == 1
 		disp('	figure 1')
@@ -110,10 +117,14 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
     
 	dt = 1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
 	
-    disp('	fourier transform start')
+    if verbose == 1
+        disp('	fourier transform start');
+    end
     [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
 	lambda_vec = 1e3*lambda_vec; % to get lambda in nm
-    disp('	fourier transform end')
+    if verbose == 1
+        disp('	fourier transform end');
+    end
 
     %calculate magnitude of fft
     c_y_mag = abs(calcFFT_output);
@@ -153,7 +164,6 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
     vEnd=0;
     fmin=0;
     fmax=0;
-	return;
 
 	% [ peakdata_all, peakdata_loc ] = zoomOnPeak(lambda_vec, c_Mag, detPeak_delta);
 
@@ -180,6 +190,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	
 	%===============================
 	peak_frequency_vector = [];
+	return;
 	superfile = fopen(peak_file,'w');
 	% fprintf(superfile,'===============\n');
 	% fprintf(superfile,'=== %s\n',fullpath);

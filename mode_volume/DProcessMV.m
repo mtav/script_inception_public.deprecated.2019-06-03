@@ -7,11 +7,11 @@ snapDirInt=snapDirection-119;
 
 %folder='J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400';
 folder='J:\optics\Erman\M1_13_11\M1_exe_inside\Ex_537.942766\y';
-FsnapFiles=dir([folder,'\',snapDirection,'*00.prn']);
+FsnapFiles=dir([folder,filesep,snapDirection,'*00.prn']);
 
 % [InpFileName,InpPathName] = uigetfile('*.inp','Select INP file','J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400');
 inpfile=dir([folder,'\*.inp']);
-inpfile=[folder,'\',inpfile(1).name];
+inpfile=[folder,filesep,inpfile(1).name];
 inpEntries=GEO_INP_reader({inpfile});
 
 Snaps={};
@@ -26,10 +26,10 @@ for m=1:length(inpEntries)
            fileNumStr=fileNumStr-96*ones(1,length(fileNumStr));
            val=fileNumStr*fliplr([1:25:length(fileNumStr)*25])';
            
-           SnapEntry.fileName=[folder,'\',filename];
+           SnapEntry.fileName=[folder,filesep,filename];
            SnapEntry.pos=data(7+snapDirInt);
-           epsFile=dir([folder,'\',snapDirection,num2str(val),'a*.prn']);
-           SnapEntry.epsFile=[folder,'\',epsFile(1).name];
+           epsFile=dir([folder,filesep,snapDirection,num2str(val),'a*.prn']);
+           SnapEntry.epsFile=[folder,filesep,epsFile(1).name];
            Snaps{snapNo}=SnapEntry;  
        end
    elseif strcmp(lower(inpEntries{m}.type),'xmesh')
