@@ -30,9 +30,12 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	%6 Hy
 	%7 Hz
 
-    verbose=0;
-	time_plot = 0;
-	freq_plot_all = 0;
+    original_working_dir = pwd();
+    original_working_dir
+    
+    verbose=1;
+	time_plot = 1;
+	freq_plot_all = 1;
 	freq_plot_zoom1 = 0;
 	freq_plot_zoom2 = 0;
 	
@@ -190,7 +193,11 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	
 	%===============================
 	peak_frequency_vector = [];
+    
+    original_working_dir
+    cd(original_working_dir);
 	return;
+    
 	superfile = fopen(peak_file,'w');
 	% fprintf(superfile,'===============\n');
 	% fprintf(superfile,'=== %s\n',fullpath);
@@ -267,4 +274,6 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 
 	% fprintf('Qmax = %E\n', lambda0_end);
 	% Qmax
-return
+    
+    cd(original_working_dir);
+end

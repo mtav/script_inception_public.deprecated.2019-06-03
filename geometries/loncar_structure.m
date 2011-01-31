@@ -1,7 +1,7 @@
-function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_direction, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, FREQUENCY)
+function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_direction, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% description:
-	%  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, FREQUENCY)
+	%  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
 	%  creates a Loncar type structure (cylinder with transverse circular holes)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,9 +52,9 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_
 		error('print_holes_top not given');
 	end
 	
-	if exist('FREQUENCY','var')==0
-		disp('FREQUENCY not given');
-		FREQUENCY = get_c0()/lambda;
+	if exist('EXCITATION_FREQUENCY','var')==0
+		disp('EXCITATION_FREQUENCY not given');
+		EXCITATION_FREQUENCY = get_c0()/lambda;
 	end
 
 	% pillar radius
@@ -345,29 +345,29 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_
         type = 10;
         
         if excitation_direction == 1
-        GEOexcitation(out, 7, P_center, P_Xm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_center, P_Xm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 2
-        GEOexcitation(out, 7, P_center, P_Xp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_center, P_Xp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 3
-        GEOexcitation(out, 7, P_center, P_Ym, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_center, P_Ym, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 4
-        GEOexcitation(out, 7, P_center, P_Yp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_center, P_Yp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 5
-        GEOexcitation(out, 7, P_center, P_Zm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_center, P_Zm, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 6
-        GEOexcitation(out, 7, P_center, P_Zp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_center, P_Zp, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif excitation_direction == 7
-        GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 8
-        GEOexcitation(out, 7, P_Xp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_Xp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 9
-        GEOexcitation(out, 7, P_Ym, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_Ym, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 10
-        GEOexcitation(out, 7, P_Yp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_Yp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 11
-        GEOexcitation(out, 7, P_Zm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_Zm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_direction == 12
-        GEOexcitation(out, 7, P_Zp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, FREQUENCY, 0, 0, 0, 0);
+        GEOexcitation(out, 7, P_Zp, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         else
         error('invalid direction');
         end
@@ -411,21 +411,21 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_
 			plane = 1;
 			P1 = [Xplanes(iX),0,0];
 			P2 = [Xplanes(iX),Ymax,Zmax];
-			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, FREQUENCY, starting_sample, E, H, J);
+			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 		for iY = 1:length(Yplanes)
 			plane = 2;
 			P1 = [0,Yplanes(iY),0];
 			P2 = [Xmax/2,Yplanes(iY),Zmax];
-			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, FREQUENCY, starting_sample, E, H, J);
+			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 		for iZ = 1:length(Zplanes)
 			plane = 3;
 			P1 = [0,0,Zplanes(iZ)];
 			P2 = [Xmax/2,Ymax,Zplanes(iZ)];
-			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, FREQUENCY, starting_sample, E, H, J);
+			GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 			GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 		end
 	end
