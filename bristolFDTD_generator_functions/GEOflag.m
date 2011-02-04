@@ -6,7 +6,7 @@ function GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, i
 	fprintf(FILE,'%d **FLAG ONE\n', flag_1);
 	fprintf(FILE,'%d **FLAG TWO\n', flag_2);
 	fprintf(FILE,'%d **ITERATIONS\n', iterations);
-	fprintf(FILE,'%E **TIMESTEP\n', timestep);
+	fprintf(FILE,'%E **TIMESTEP as a proportion of the maximum allowed\n', timestep);
 	fprintf(FILE,'"%s" **ID CHARACTER (ALWAYS USE QUOTES)\n', id_character);
 	fprintf(FILE,'}\n');
 	fprintf(FILE,'\n');
