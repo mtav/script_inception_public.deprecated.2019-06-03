@@ -8,7 +8,7 @@ function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power
 	% 4-9 coordinates of the lower left and top right corners of the plane x1 y1 z1 x2 y2 z2
 	% 10-18 field components to be sampled ex ey ez hx hy hz Ix Iy Iz
 	% 19 print power? =0/1
-	% 20 create EPS snapshot? =0/1
+	% 20 create EPS (->epsilon->refractive index) snapshot? =0/1
 	% 21 write an output file in “list” format
 	% 22 write an output file in “matrix” format
 	%
