@@ -19,7 +19,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_
     print_epssnap = true;
     print_excitation = true;
     print_probes = true;
-    SNAPSHOTS_ON = 0;
+    SNAPSHOTS_ON = 1;
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% arguments
