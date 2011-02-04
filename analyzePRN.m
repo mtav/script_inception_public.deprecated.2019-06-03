@@ -35,7 +35,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
     
     verbose=1;
 	time_plot = 1;
-	freq_plot_all = 1;
+	freq_plot_all = 0;
 	freq_plot_zoom1 = 0;
 	freq_plot_zoom2 = 0;
 	
@@ -105,26 +105,31 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
             disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
     end
 
+    % time in the .prn file is in 10^-12 s if frequency was given in Hz. (10^12*X*Y=1)
+    % Frequency was given in 10^6 Hz, so time is in 10^-18 s.
+    % So multiplying it by 10^-6 changes it to 10^-18 s/10^-6=10^-12 s = ps
 	if time_plot == 1
 		disp('	figure 1')
 		figure;hold on;
 		% size(data(:,1)*1e-9)
 		% size(data(:,probe_col))
-		plot(data(:,1)*1e-9,data(:,probe_col));
+		plot(data(:,1)*1e-6,data(:,probe_col));
 		title([ headquarters, '\\', basename,'  ',header{probe_col}]);
-		xlabel('time (ns)');
+		xlabel('time (ps)');
 		saveas(gcf,[filebasename,'_',header{probe_col},'.png'],'png');
 	end
 	
 	%WARNING: The timestep is considered to be constant here!!!
     
-	dt = 1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
+	dt = 1e-12*(data(2,1)-data(1,1));  % data(*,1) being in 10^-18 s, dt is in 10^-18 s/1e-12 = 10^-6 s
 	
     if verbose == 1
         disp('	fourier transform start');
     end
     [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
-	lambda_vec = 1e3*lambda_vec; % to get lambda in nm
+    
+    % dt being in 10^-6 s, lambda_vec is in 10^-6 m
+	lambda_vec = 10^3*lambda_vec; % to get lambda in 10^-6 m/10^3 = 10^-9 m = nm (originally in 10^-6 m)
     if verbose == 1
         disp('	fourier transform end');
     end
