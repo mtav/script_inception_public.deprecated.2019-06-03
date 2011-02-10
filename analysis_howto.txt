@@ -1,0 +1,8 @@
+cd F:\DATA\IN\GOOD\loncar_test_32000_1_1_7
+open_in_blender('loncar_test_32000_1_1_7.in')
+analyzePRN('p078id.prn')
+view->property editor
+change X axis to 500-800
+
+harminv:
+create_harminv_input_files

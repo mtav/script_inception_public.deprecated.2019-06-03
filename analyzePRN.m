@@ -35,7 +35,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
     
     verbose=1;
 	time_plot = 1;
-	freq_plot_all = 0;
+	freq_plot_all = 1;
 	freq_plot_zoom1 = 0;
 	freq_plot_zoom2 = 0;
 	
@@ -100,9 +100,9 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
     data_min = min(data(:,probe_col));
     data_max = max(data(:,probe_col));
 
-    if verbose == 1    
-            disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
-            disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
+    if verbose == 1
+        disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
+        disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
     end
 
     % time in the .prn file is in 10^-12 s if frequency was given in Hz. (10^12*X*Y=1)

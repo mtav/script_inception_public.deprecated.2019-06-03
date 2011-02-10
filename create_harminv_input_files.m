@@ -3,20 +3,18 @@ function create_harminv_input_files(SRCDIR, DSTDIR)
 
 	if exist('SRCDIR','var')==0
 		disp('SRCDIR not given');
-	    SRCDIR = uigetdir('D:\Simulations\BFDTD','SRCDIR');
+	    SRCDIR = uigetdir(pwd(),'SRCDIR');
 	end
 	if ~(exist(SRCDIR,'dir'))
-		disp('dir not found');
-		return;
+		error('dir not found');
 	end
 
 	if exist('DSTDIR','var')==0
 		disp('DSTDIR not given');
-	    DSTDIR = uigetdir('D:\Simulations\BFDTD','DSTDIR');
+	    DSTDIR = uigetdir(pwd(),'DSTDIR');
 	end
 	if ~(exist(DSTDIR,'dir'))
-		disp('dir not found');
-		return;
+		error('dir not found');
 	end
 
 	% ===================
@@ -107,7 +105,7 @@ function create_harminv_input_files(SRCDIR, DSTDIR)
 		dt = min(dt_vec);
 		
 		if dt==0
-			return
+			error('dt==0');
 		end
 		
 		fmin = min(fmin_vec);
