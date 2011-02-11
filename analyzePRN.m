@@ -1,4 +1,11 @@
 function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_max ] = analyzePRN(fullpath, peak_file, delta_scaling, snapshot_col, probe_col)
+    % fullpath : path to the .prn file
+    % peak_file: output file to which the peak frequencies get written
+    % delta_scaling
+    % snapshot_col: 
+    % probe_col
+    
+    
 	% Analyzes a single PRN file
 	% snapshot_col:
 	%1 x

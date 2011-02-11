@@ -1,0 +1,4 @@
+    [header, data] = readPrnFile([filebasename,'.prn']);
+    [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
+    plot(10^3*lambda_vec, calcFFT_output.* conj(calcFFT_output),'-b+');
+    
