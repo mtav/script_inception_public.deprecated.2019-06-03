@@ -21,3 +21,4 @@ snapshot_IDs/snapshot_IDs
 hello
 *_automesh
 *~
+*.pyc
