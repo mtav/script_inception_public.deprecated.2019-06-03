@@ -21,6 +21,7 @@ function userDir = getuserdir()
             ['Software\Microsoft\Windows\CurrentVersion\' ...
              'Explorer\Shell Folders'],'Personal');
     else
-        userDir = char(java.lang.System.getProperty('user.home'));
+%        userDir = char(java.lang.System.getProperty('user.home'));
+        userDir = getenv('HOME');
     end
 end
