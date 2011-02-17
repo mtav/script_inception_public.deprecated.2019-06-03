@@ -115,7 +115,7 @@ function [INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FREQUENCY] = just_signa
     else
         error('invalid direction');
     end
-	Xpos_bc = 1; Xpos_param = [1,1,0];
+	Xpos_bc = 2; Xpos_param = [1,1,0];
 	Ypos_bc = 2; Ypos_param = [1,1,0];
 	Zpos_bc = 2; Zpos_param = [1,1,0];
 	Xneg_bc = 2; Xneg_param = [1,1,0];

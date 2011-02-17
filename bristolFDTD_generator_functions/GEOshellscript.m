@@ -1,4 +1,4 @@
-function GEOshellscript(filename, BASENAME, EXE, WORKDIR)
+function GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME, NODES, PPN)
 	disp('Writing shellscript...')
 
 	%open file
@@ -20,13 +20,28 @@ function GEOshellscript(filename, BASENAME, EXE, WORKDIR)
 		disp(['WORKDIR not given. Using default: WORKDIR=',WORKDIR]);
 	end
 	
+	if exist('WALLTIME','var')==0
+	    WALLTIME = 12;
+		disp(['WALLTIME not given. Using default: WALLTIME=',WALLTIME]);
+	end
+
+	if exist('NODES','var')==0
+	    NODES = 1;
+		disp(['NODES not given. Using default: NODES=',NODES]);
+	end
+
+	if exist('PPN','var')==0
+	    PPN = 4;
+		disp(['PPN not given. Using default: PPN=',PPN]);
+	end
+
 	%write file
 	fprintf(out,'#!/bin/bash\n');
 	fprintf(out,'#\n');
-	fprintf(out,'#PBS -l walltime=360:00:00\n');
+	fprintf(out,'#PBS -l walltime=%d:00:00\n',WALLTIME);
 	fprintf(out,'#PBS -mabe\n');
 	fprintf(out,'#PBS -joe\n');
-	fprintf(out,'#PBS -l nodes=1:ppn=8\n');
+	fprintf(out,'#PBS -l nodes=%d:ppn=%d\n',NODES,PPN);
 	fprintf(out,'#\n');
 	fprintf(out,'\n');
 	fprintf(out,'\n');
