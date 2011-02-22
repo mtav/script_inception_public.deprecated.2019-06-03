@@ -16,7 +16,7 @@ if [ $# -lt 1 ]
 then
 	echo "$(basename $0) SCRIPT1 SCRIPT2 ..."
         echo 'submits scripts using the following command:'
-	echo 'qsub -M $QSUBMAIL -v JOBDIR=$(readlink -f $(dirname $SCRIPT)) $SCRIPT'
+	echo 'qsub -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT'
 fi
 #exit
 
@@ -25,5 +25,5 @@ fi
 for SCRIPT in "$@"
 do
 	echo "submitting $SCRIPT"
-	qsub -M $QSUBMAIL -v JOBDIR=$(readlink -f $(dirname $SCRIPT)) $SCRIPT
+	qsub -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT
 done
