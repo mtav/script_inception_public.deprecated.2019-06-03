@@ -166,7 +166,7 @@ function [caAddRemDirs] = addpath_recursively(caAddRemDirs, strStartDir, caStrsI
 %Note:Don't need to check input arguments, because caller already has.
 
 %Add this directory to the add/remove path list
-caAddRemDirs = [caAddRemDirs,strStartDir];
+caAddRemDirs{end+1} = strStartDir;
 
 strFileSep = filesep();
 %Get list of directories beneath the specified directory, this two-step process is faster.
