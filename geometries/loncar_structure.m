@@ -1,4 +1,4 @@
-function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_direction, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
+function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% description:
 	%  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
@@ -20,6 +20,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_
     print_excitation = true;
     print_probes = true;
     SNAPSHOTS_ON = 1;
+    excitation_direction = 7;
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% arguments
@@ -227,7 +228,8 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, excitation_
 	% .sh file
 	%TODO: improve this
 	% WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 12, 1, 4);
+    
 	% .cmd file
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

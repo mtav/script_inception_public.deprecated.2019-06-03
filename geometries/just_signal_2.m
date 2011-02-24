@@ -65,7 +65,8 @@ function [INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FREQUENCY] = just_signa
     
 	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	GEOin(INFILENAME, { [BASENAME,'.inp'],[BASENAME,'.geo'] });
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+    GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 3, 1, 4);
+	% GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
     
 	out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.geo'],'wt');
