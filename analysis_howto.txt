@@ -4,5 +4,15 @@ analyzePRN('p078id.prn')
 view->property editor
 change X axis to 500-800
 
+    [header, data] = readPrnFile([filebasename,'.prn']);
+    [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
+    plot(10^3*lambda_vec, calcFFT_output.* conj(calcFFT_output),'-b+');
+        
+[header, data] = readPrnFile('p078id.prn');
+[calcFFT_output, lambda_vec] = calcFFT(data(:,2),dt, 2^19);
+plot(10^3*lambda_vec, calcFFT_output.* conj(calcFFT_output),'-b+');
+
 harminv:
 create_harminv_input_files
+
+[INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FREQUENCY]=just_signal_2('F:\DATA\just_signal_test_2','electro_hack_6');
