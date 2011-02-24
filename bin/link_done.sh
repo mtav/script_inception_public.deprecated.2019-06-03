@@ -33,10 +33,15 @@ then
 elif [ $justlink = "1" ]
 then
 	DST=$(readlink -f $1)
+	if ! [ -d $DST ]
+	then
+		echo "Error: $DST does not exist or is not a directory"
+		exit -1
+	fi
 	shift
 	for f in "$@"
 	do
-		echo "$f"
+		echo "Processing $f"
 		DIR=$(dirname $(readlink -f $f))
 		BASE=$(basename $DIR)
 		LINKNAME=$DST/$BASE
@@ -46,7 +51,11 @@ then
 			then
 				echo "ln -s $DIR $LINKNAME"
 				ln -s $DIR $LINKNAME
+			else
+				echo "Deallocating not found in $f"
 			fi
+		else
+			echo "Warning: $LINKNAME already exists"
 		fi
 	done
 elif [ $justlink = "2" ]
