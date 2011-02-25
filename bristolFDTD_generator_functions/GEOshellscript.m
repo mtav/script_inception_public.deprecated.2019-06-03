@@ -8,7 +8,8 @@ function GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME, NODES, PPN)
 	if exist('EXE','var')==0
 		% disp('EXE not given');
 		% EXE = '$HOME/bin/fdtd64_2003';
-		EXE = '$HOME/bin/fdtd';
+		% EXE = '$HOME/bin/fdtd';
+		EXE = 'fdtd';
 		disp(['EXE not given. Using default: EXE=',EXE]);
 	end
 
@@ -51,6 +52,7 @@ function GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME, NODES, PPN)
 	fprintf(out,'cd $WORKDIR\n');
 	fprintf(out,'\n');
 	fprintf(out,'$EXE %s.in > %s.out\n', BASENAME, BASENAME);
+	fprintf(out,'fix_filenames.sh\n');
 
 	%close file
 	fclose(out);
