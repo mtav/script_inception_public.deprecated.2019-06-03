@@ -1,11 +1,3 @@
-function startup()
-    disp('Recursively adding paths...');
-    DEBUG=false;
-    HOME=getuserdir();
-    addpath([HOME,filesep,'MATLAB',filesep,'addpath_recurse']);
-    addpath_recurse([HOME,filesep,'MATLAB'],{'.git'},'begin',false,DEBUG);
-    disp('...done');
-end
 
 function userDir = getuserdir()
     %GETUSERDIR   return the user home directory.
@@ -26,3 +18,12 @@ function userDir = getuserdir()
         userDir = getenv('HOME');
     end
 end
+
+%  function startup()
+disp('Recursively adding paths...');
+DEBUG=false;
+HOME=getuserdir();
+addpath([HOME,filesep,'MATLAB',filesep,'addpath_recurse']);
+addpath_recurse([HOME,filesep,'MATLAB'],{'.git'},'begin',false,DEBUG);
+disp('...done');
+%  end
