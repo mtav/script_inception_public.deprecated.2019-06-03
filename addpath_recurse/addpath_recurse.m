@@ -64,8 +64,8 @@ function addpath_recurse(strStartDir, caStrsIgnoreDirs, strXorIntAddpathMode, bl
 
   %--------------------------------------------------------------------------
 
-%    debug_on_warning(1);
-%    debug_on_error(1);
+   % debug_on_warning(1);
+   % debug_on_error(1);
 
   %Error messages.
   strErrStartDirNoExist = 'Start directory does not exist ???';
@@ -94,11 +94,13 @@ function addpath_recurse(strStartDir, caStrsIgnoreDirs, strXorIntAddpathMode, bl
 
   if intNumInArgs < 3 || (intNumInArgs >= 3 && isempty(strXorIntAddpathMode))
     strXorIntAddpathMode = 0;
+    % strXorIntAddpathMode_string = '-begin';
   end
 
   if intNumInArgs >= 3 && ischar(strXorIntAddpathMode)  %Use 0/1 internally.
     strAddpathErrMessage = sprintf('Input arg addpath() mode "%s" ???\n%s', strXorIntAddpathMode, strErrIllAddpathMode);
     assert(any(strcmpi(strXorIntAddpathMode, {'begin', 'end'})), strAddpathErrMessage);
+    % strXorIntAddpathMode_string = strXorIntAddpathMode;
     strXorIntAddpathMode = strcmpi(strXorIntAddpathMode, 'end'); %When 'end' 0 sets prepend, otherwise 1 sets append.
   end
 
@@ -150,13 +152,29 @@ function addpath_recurse(strStartDir, caStrsIgnoreDirs, strXorIntAddpathMode, bl
   caAddRemDirs = {};
   [caAddRemDirs] = addpath_recursively(caAddRemDirs, strStartDir, caStrsIgnoreDirs, strXorIntAddpathMode, blnRemDirs,blnDebug);
 
+  % disp('==========');
+  
   %Remove or add the directory from the search path
   if blnRemDirs
     if blnDebug, fprintf('"%s", removing from search path ...', strStartDir); end
     rmpath(caAddRemDirs{:})
   else
     if blnDebug, fprintf('"%s", adding to search path ...', strStartDir); end
-    addpath(caAddRemDirs{:}, strXorIntAddpathMode);
+    % disp('==========');
+    % caAddRemDirs
+    % disp('==========');
+    % strXorIntAddpathMode
+    % disp('==========');
+    if inoctave()
+        if strXorIntAddpathMode == 0
+            addpath(caAddRemDirs{:}, '-begin');
+        else
+            addpath(caAddRemDirs{:}, '-end');
+        end
+    else
+        addpath(caAddRemDirs{:}, strXorIntAddpathMode);
+    end
+    % disp('==========');
   end
 
   %Restore the warning state for rmpath
@@ -173,15 +191,25 @@ function [caAddRemDirs] = addpath_recursively(caAddRemDirs, strStartDir, caStrsI
   caAddRemDirs{end+1} = strStartDir;
 
   strFileSep = filesep();
+  
+  % disp('========');
+  % disp(['strStartDir=',strStartDir]);
+  % disp('========');
+  
   %Get list of directories beneath the specified directory, this two-step process is faster.
-  if ispc
+  if ispc & not(inoctave())
       saSubDirs = dir(sprintf('%s%s%s', strStartDir, strFileSep, '*.'));
   else
       saSubDirs = dir(strStartDir);
   end
+  
   saSubDirs = saSubDirs([saSubDirs.isdir]); %Handles files without extensions that otherwise pass through previous filter
 
   %Loop through the directory list and recursively call this function.
+  % disp('========');
+  % saSubDirs
+  % disp('========');
+  
   for intDirIndex = 1 : length(saSubDirs)
     strThisDirName = saSubDirs(intDirIndex).name;
     blnIgnoreDir = any(strcmpi(strThisDirName, { 'private', 'CVS', '.', '..', caStrsIgnoreDirs{:} }));
