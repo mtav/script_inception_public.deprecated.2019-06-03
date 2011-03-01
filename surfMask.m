@@ -33,7 +33,8 @@ toc()
 
 % imagesc(A)
 % plot3(x,y,dwell);
-surf(padarray(A,10)); shading interp
-set(gca,'ZDir','reverse')
+A
+% surf(padarray(A,10)); shading interp
+% set(gca,'ZDir','reverse')
 % axis equal
-view(-31,80)
+% view(-31,80)
