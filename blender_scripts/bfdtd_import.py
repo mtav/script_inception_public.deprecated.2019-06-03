@@ -50,6 +50,13 @@ excitation_material.setAlpha(0.5);
 
 snapshot_materials = [ frequency_snapshot_material, time_snapshot_material, eps_snapshot_material ];
 
+probe_scalefactor = 0.0218;
+mesh_min = 0;
+mesh_max = 0;
+box_SizeX = 0;
+box_SizeY = 0;
+box_SizeZ = 0;
+
 ###############################
 # FUNCTIONS
 ###############################
@@ -103,9 +110,21 @@ def GEObox(lower, upper):
     obj = scene.objects.new(mesh, 'box');
     pos = 0.5*(lower+upper);
     diag = upper-lower;
-    obj.SizeX = abs(diag[0]);
-    obj.SizeY = abs(diag[1]);
-    obj.SizeZ = abs(diag[2]);
+    
+    global box_SizeX;
+    global box_SizeY;
+    global box_SizeZ;
+    box_SizeX = abs(diag[0]);
+    box_SizeY = abs(diag[1]);
+    box_SizeZ = abs(diag[2]);
+    print "box_SizeX = ", box_SizeX;
+    print "box_SizeY = ", box_SizeY;
+    print "box_SizeZ = ", box_SizeZ;
+    
+    obj.SizeX = box_SizeX;
+    obj.SizeY = box_SizeY;
+    obj.SizeZ = box_SizeZ;
+    
     obj.setLocation(pos[0], pos[1], pos[2]);
     obj.transp = True; obj.wireMode = True;
 
@@ -148,6 +167,19 @@ def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
     xmax = sum(delta_X_vector);
     ymax = sum(delta_Y_vector);
     zmax = sum(delta_Z_vector);
+    
+    delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
+    
+    print "len(delta_X_vector) = ", len(delta_X_vector);
+    print "len(delta_Y_vector) = ", len(delta_Y_vector);
+    print "len(delta_Z_vector) = ", len(delta_Z_vector);
+    print "len(delta_vector) = ", len(delta_vector);
+    global mesh_min;
+    global mesh_max;
+    mesh_min = min(delta_vector);
+    mesh_max = max(delta_vector);
+    print "mesh_min = ", mesh_min;
+    print "mesh_max = ", mesh_max;
     
     # verts = array.array('d',range());
     # verts = range(Nx*Ny*Nz);
@@ -391,7 +423,11 @@ def GEOeps_snapshot(plane, P1, P2):
 
 def GEOprobe(position):
     scene = Blender.Scene.GetCurrent();
-    mesh = Blender.Mesh.Primitives.Cube(0.1);
+    
+    probe_size = probe_scalefactor*max(box_SizeX,box_SizeY,box_SizeZ);
+    print "probe_size = ", probe_scalefactor,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
+    
+    mesh = Blender.Mesh.Primitives.Cube(probe_size);
 
     obj = scene.objects.new(mesh, 'probe');
     # obj = Blender.Object.GetSelected()[0];
