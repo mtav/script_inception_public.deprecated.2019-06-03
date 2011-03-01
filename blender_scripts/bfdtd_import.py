@@ -170,16 +170,16 @@ def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
     
     delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
     
-    print "len(delta_X_vector) = ", len(delta_X_vector);
-    print "len(delta_Y_vector) = ", len(delta_Y_vector);
-    print "len(delta_Z_vector) = ", len(delta_Z_vector);
-    print "len(delta_vector) = ", len(delta_vector);
+    # print "len(delta_X_vector) = ", len(delta_X_vector);
+    # print "len(delta_Y_vector) = ", len(delta_Y_vector);
+    # print "len(delta_Z_vector) = ", len(delta_Z_vector);
+    # print "len(delta_vector) = ", len(delta_vector);
     global mesh_min;
     global mesh_max;
     mesh_min = min(delta_vector);
     mesh_max = max(delta_vector);
-    print "mesh_min = ", mesh_min;
-    print "mesh_max = ", mesh_max;
+    # print "mesh_min = ", mesh_min;
+    # print "mesh_max = ", mesh_max;
     
     # verts = array.array('d',range());
     # verts = range(Nx*Ny*Nz);
@@ -425,7 +425,7 @@ def GEOprobe(position):
     scene = Blender.Scene.GetCurrent();
     
     probe_size = probe_scalefactor*max(box_SizeX,box_SizeY,box_SizeZ);
-    print "probe_size = ", probe_scalefactor,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
+    # print "probe_size = ", probe_scalefactor,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
     
     mesh = Blender.Mesh.Primitives.Cube(probe_size);
 
@@ -553,7 +553,7 @@ def importBristolFDTD(filename):
     # Probe
     Blender.Window.SetActiveLayer(1<<6);
     for probe in structured_entries.probe_list:
-        print 'probe = ',Vector(probe.position);
+        # print 'probe = ',Vector(probe.position);
         GEOprobe(Vector(probe.position));
     # Sphere
     Blender.Window.SetActiveLayer(1<<7);
