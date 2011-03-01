@@ -323,8 +323,8 @@ function [handles] = setWorkDir(handles, new_dir)
 	handles.geolist = {};
 	handles.inplist = {};
 
-	prn_files = dir(fullfile(new_dir,'*.prn'));
-	% TODO: prn_files = dir(fullfile(new_dir,'*.dat'));
+	prn_files = [dir(fullfile(new_dir,'*.prn')); dir(fullfile(new_dir,'*.dat'))];
+	
 	handles.snaplist = {prn_files.name}';
 	prn_files = char(prn_files.name);
 	geo_files = dir(fullfile(new_dir,'*.geo'));
