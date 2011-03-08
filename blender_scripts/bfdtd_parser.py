@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # parses BFDTD files
 
 import math;
@@ -327,21 +328,30 @@ class Rotation:
     
 class Structured_entries:
     def __init__(self):
-        self.snapshot_list = [];
-        self.time_snapshot_list = [];
-        self.frequency_snapshot_list = [];
-        self.excitation_list = [];
+        # mandatory objects
         self.xmesh = [];
         self.ymesh = [];
         self.zmesh = [];
         self.flag = Flag();
         self.boundaries = Boundaries();
         self.box = Box();
-        self.probe_list = [];
+                
+        # geometry objects
+        self.geometry_object_list = [];
         self.sphere_list = [];
         self.block_list = [];
         self.cylinder_list = [];
         self.rotation_list = [];
+        
+        # excitation objects
+        self.excitation_list = [];
+        
+        # measurement objects
+        self.snapshot_list = [];
+        self.time_snapshot_list = [];
+        self.frequency_snapshot_list = [];
+        self.probe_list = [];
+
     def __str__(self):
         ret = '--->snapshot_list\n';
         for i in range(len(self.snapshot_list)):
@@ -390,11 +400,16 @@ class Structured_entries:
             ret += '-->cylinder '+str(i)+':\n';
             ret += self.cylinder_list[i].__str__()+'\n';
 
-        ret += '--->rotation_list';
+        ret += '--->rotation_list\n';
         for i in range(len(self.rotation_list)):
-            ret += '\n';
+            # ret += '\n';
             ret += '-->rotation '+str(i)+':\n';
-            ret += self.rotation_list[i].__str__();
+            ret += self.rotation_list[i].__str__()+'\n';
+
+        ret += '--->geometry_object_list\n';
+        for i in range(len(self.geometry_object_list)):
+            ret += '-->geometry_object '+str(i)+':\n';
+            ret += self.geometry_object_list[i].__str__()+'\n';
             
         return ret;
 
@@ -432,6 +447,7 @@ def read_input_file(filename, structured_entries):
     time_snapshot_list = [];
     frequency_snapshot_list = [];
     snapshot_list = [];
+    geometry_object_list = [];
     excitation_list = [];
     probe_list = [];
     sphere_list = [];
@@ -463,22 +479,9 @@ def read_input_file(filename, structured_entries):
         entry.type = type;
         entry.data = data;
         entries.append(entry);
-
-        if entry.type == 'FREQUENCY_SNAPSHOT':
-            frequency_snapshot = Frequency_snapshot();
-            frequency_snapshot.read_entry(entry);
-            frequency_snapshot_list.append(frequency_snapshot);
-            snapshot_list.append(frequency_snapshot);
-        elif entry.type == 'SNAPSHOT':
-            time_snapshot = Time_snapshot();
-            time_snapshot.read_entry(entry);
-            time_snapshot_list.append(time_snapshot);
-            snapshot_list.append(time_snapshot);
-        elif entry.type == 'EXCITATION':
-            current_excitation = Excitation();
-            current_excitation.read_entry(entry);
-            excitation_list.append(current_excitation);
-        elif entry.type == 'XMESH':
+        
+        # mandatory objects
+        if entry.type == 'XMESH':
             structured_entries.xmesh = float_array(entry.data);
             xmesh_read = True;
         elif entry.type == 'YMESH':
@@ -492,30 +495,56 @@ def read_input_file(filename, structured_entries):
         elif entry.type == 'BOX':
             structured_entries.box.read_entry(entry);
             box_read = True;
-        elif entry.type == 'PROBE':
-            probe = Probe();
-            probe.read_entry(entry);
-            probe_list.append(probe);
+                
+        # geometry objects
         elif entry.type == 'SPHERE':
             sphere = Sphere();
             sphere.read_entry(entry);
             sphere_list.append(sphere);
+            geometry_object_list.append(sphere);
         elif entry.type == 'BLOCK':
             block = Block();
             block.read_entry(entry);
             block_list.append(block);
+            geometry_object_list.append(block);
         elif entry.type == 'CYLINDER':
             cylinder = Cylinder();
             cylinder.read_entry(entry);
             cylinder_list.append(cylinder);
+            geometry_object_list.append(cylinder);
         elif entry.type == 'ROTATION':
             rotation = Rotation();
             rotation.read_entry(entry);
             rotation_list.append(rotation);
+            geometry_object_list.append(rotation);
+        
+        # excitation objects
+        elif entry.type == 'EXCITATION':
+            current_excitation = Excitation();
+            current_excitation.read_entry(entry);
+            excitation_list.append(current_excitation);
+        
+        # measurement objects
+        elif entry.type == 'FREQUENCY_SNAPSHOT':
+            frequency_snapshot = Frequency_snapshot();
+            frequency_snapshot.read_entry(entry);
+            frequency_snapshot_list.append(frequency_snapshot);
+            snapshot_list.append(frequency_snapshot);
+        elif entry.type == 'SNAPSHOT':
+            time_snapshot = Time_snapshot();
+            time_snapshot.read_entry(entry);
+            time_snapshot_list.append(time_snapshot);
+            snapshot_list.append(time_snapshot);
+        elif entry.type == 'PROBE':
+            probe = Probe();
+            probe.read_entry(entry);
+            probe_list.append(probe);
+
         else:
             print 'Unknown type: ', entry.type;
 
     structured_entries.snapshot_list += snapshot_list;
+    structured_entries.geometry_object_list += geometry_object_list;
     structured_entries.time_snapshot_list += time_snapshot_list;
     structured_entries.frequency_snapshot_list += frequency_snapshot_list;
     structured_entries.excitation_list += excitation_list;
@@ -589,11 +618,11 @@ def readBristolFDTD(filename):
     else:
         print 'Unknown file format:', extension;
     
-    # print '================';
-    # print structured_entries;
-    # print '================';
+    print '================';
+    print structured_entries;
+    print '================';
     return structured_entries;
     
-# print '----->Importing bristol FDTD geometry...';
-# structured_entries = readBristolFDTD('rotated_cylinder.in');
-# print '...done';
+print '----->Importing bristol FDTD geometry...';
+structured_entries = readBristolFDTD(sys.argv[1]);
+print '...done';

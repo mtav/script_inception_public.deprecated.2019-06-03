@@ -51,7 +51,7 @@ function rotated_cylinder(DSTDIR, BASENAME, angle_degrees)
 	% .inp
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% .lst file
-	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
+%  	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
 	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], { [BASENAME,'.inp'],[BASENAME,'.geo'] });
 	% .sh file
@@ -77,7 +77,7 @@ function rotated_cylinder(DSTDIR, BASENAME, angle_degrees)
 	% create cylinder
 	axis_point = [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2]
 	GEOcylinder(out, axis_point, 0, 1/4, 3/4, 3, 0, angle_degrees);	
-	GEOrotation(out, axis_point, [0,0,1], angle_degrees);
+	GEOrotation(out, axis_point, [0,0,-1], angle_degrees);
 
 	%write box
 	L = [ 0, 0, 0 ];
