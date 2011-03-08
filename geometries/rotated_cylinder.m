@@ -1,4 +1,4 @@
-function rotated_cylinder(DSTDIR, BASENAME, angle)
+function rotated_cylinder(DSTDIR, BASENAME, angle_degrees)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%description:
 	% creates a rotated cylinder and makes EPS snapshots of it.
@@ -23,9 +23,9 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 	    BASENAME = 'rotated_cylinder';
 	end
 
-	if exist('angle','var')==0
-		disp('angle not given');
-		angle = 45;
+	if exist('angle_degrees','var')==0
+		disp('angle_degrees not given');
+		angle_degrees = 45;
 	end
 
 	mkdir([DSTDIR,filesep,BASENAME]);
@@ -75,7 +75,9 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 	GEOblock(out, L, U, 2, 0);
 
 	% create cylinder
-	GEOcylinder(out, [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2], 0, 1/4, 3/4, 3, 0, angle);	
+	axis_point = [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2]
+	GEOcylinder(out, axis_point, 0, 1/4, 3/4, 3, 0, angle_degrees);	
+	GEOrotation(out, axis_point, [0,0,1], angle_degrees);
 
 	%write box
 	L = [ 0, 0, 0 ];
@@ -122,7 +124,7 @@ function rotated_cylinder(DSTDIR, BASENAME, angle)
 	delta_Y_vector = subGridMultiLayer(Ymax/50,[Ymax]);
 	delta_Z_vector = subGridMultiLayer(Zmax/50,[Zmax]);
 	GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector);
-		
+	
 	% frequency snapshots
 	first = ITERATIONS;
 	repetition = ITERATIONS;
