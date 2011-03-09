@@ -628,7 +628,8 @@ def readBristolFDTD(filename):
     print '================';
     return structured_entries;
     
+
 # for testing
-print '----->Importing bristol FDTD geometry...';
-structured_entries = readBristolFDTD(sys.argv[1]);
-print '...done';
+#~ print '----->Importing bristol FDTD geometry...';
+#~ structured_entries = readBristolFDTD(sys.argv[1]);
+#~ print '...done';
