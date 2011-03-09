@@ -119,6 +119,7 @@ class Geometry_object:
 
 class Sphere(Geometry_object):
     def __init__(self):
+        Geometry_object.__init__(self)
         self.center = [0,0,0];
         self.outer_radius = 0;
         self.inner_radius = 0;
@@ -129,7 +130,8 @@ class Sphere(Geometry_object):
         'outer_radius = ' + str(self.outer_radius) + '\n' +\
         'inner_radius = ' + str(self.inner_radius) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
-        'conductivity = ' + str(self.conductivity);
+        'conductivity = ' + str(self.conductivity)+'\n';
+        ret += Geometry_object.__str__(self)
         return ret;
     def read_entry(self,entry):
         self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
@@ -141,6 +143,7 @@ class Sphere(Geometry_object):
 
 class Block(Geometry_object):
     def __init__(self):
+        Geometry_object.__init__(self)
         self.lower = [0,0,0];
         self.upper = [0,0,0];
         self.permittivity = 0;
@@ -149,7 +152,8 @@ class Block(Geometry_object):
         ret  = 'lower = '+str(self.lower)+'\n';
         ret += 'upper = '+str(self.upper)+'\n';
         ret += 'permittivity = '+str(self.permittivity)+'\n';
-        ret += 'conductivity = '+str(self.conductivity);
+        ret += 'conductivity = '+str(self.conductivity)+'\n';
+        ret += Geometry_object.__str__(self)
         return ret;
     def read_entry(self,entry):
         self.lower = float_array(entry.data[0:3]);
@@ -485,26 +489,8 @@ class Structured_entries:
       pattern_objects = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
       objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
     
-      #~ time_snapshot_list = [];
-      #~ frequency_snapshot_list = [];
-      #~ snapshot_list = [];
-      #~ geometry_object_list = [];
-      #~ excitation_list = [];
-      #~ probe_list = [];
-      #~ sphere_list = [];
-      #~ block_list = [];
-      #~ cylinder_list = [];
-      #~ global_rotation_list = [];
-  
-      # xmesh = [];
-      # ymesh = [];
-      # zmesh = [];
-      # flag = Flag();
-      # boundaries = Boundaries();
-      # box = Box();
-  
       entries = [];
-    # process objects
+      # process objects
       for i in range(len(objects)):
           type = objects[i]['type'];
           data = objects[i]['data'];
@@ -557,7 +543,6 @@ class Structured_entries:
               rotation = Rotation();
               rotation.read_entry(entry);
               self.global_rotation_list.append(rotation);
-              #~ self.geometry_object_list.append(rotation);
               self.geometry_object_list[-1].rotation_list.append(rotation);
           
           # excitation objects
@@ -584,18 +569,7 @@ class Structured_entries:
   
           else:
               print 'Unknown type: ', entry.type;
-  
-      #~ self.snapshot_list += snapshot_list;
-      #~ self.geometry_object_list += geometry_object_list;
-      #~ self.time_snapshot_list += time_snapshot_list;
-      #~ self.frequency_snapshot_list += frequency_snapshot_list;
-      #~ self.excitation_list += excitation_list;
-      #~ self.probe_list += probe_list;
-      #~ self.sphere_list += sphere_list;
-      #~ self.block_list += block_list;
-      #~ self.cylinder_list += cylinder_list;
-      #~ self.global_rotation_list += global_rotation_list;
-      
+
       return [ xmesh_read, box_read ];
 
   def read_inputs(self,filename):
