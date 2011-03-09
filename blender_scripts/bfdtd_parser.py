@@ -109,6 +109,13 @@ class Box:
 class Geometry_object:
     def __init__(self):
         self.rotation_list = [];
+    def __str__(self):
+        ret = '--->object rotation_list';
+        for i in range(len(self.rotation_list)):
+            ret += '\n'
+            ret += '-->object rotation '+str(i)+':\n';
+            ret += self.rotation_list[i].__str__();
+        return(ret)
 
 class Sphere(Geometry_object):
     def __init__(self):
@@ -152,6 +159,7 @@ class Block(Geometry_object):
 
 class Cylinder(Geometry_object):
     def __init__(self):
+        Geometry_object.__init__(self)
         self.center = [0,0,0];
         self.inner_radius = 0;
         self.outer_radius = 0;
@@ -166,7 +174,8 @@ class Cylinder(Geometry_object):
         'height = ' + str(self.height) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
         'conductivity = ' + str(self.conductivity) + '\n' +\
-        'angle = ' + str(self.angle);
+        'angle = ' + str(self.angle) + '\n';
+        ret += Geometry_object.__str__(self)
         return ret;
     def read_entry(self,entry):
         self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
@@ -381,7 +390,7 @@ class Structured_entries:
     self.sphere_list = [];
     self.block_list = [];
     self.cylinder_list = [];
-    self.rotation_list = [];
+    self.global_rotation_list = [];
     
     # excitation objects
     self.excitation_list = [];
@@ -440,11 +449,11 @@ class Structured_entries:
           ret += '-->cylinder '+str(i)+':\n';
           ret += self.cylinder_list[i].__str__()+'\n';
 
-      ret += '--->rotation_list\n';
-      for i in range(len(self.rotation_list)):
+      ret += '--->global_rotation_list\n';
+      for i in range(len(self.global_rotation_list)):
           # ret += '\n';
           ret += '-->rotation '+str(i)+':\n';
-          ret += self.rotation_list[i].__str__()+'\n';
+          ret += self.global_rotation_list[i].__str__()+'\n';
 
       ret += '--->geometry_object_list\n';
       for i in range(len(self.geometry_object_list)):
@@ -476,16 +485,16 @@ class Structured_entries:
       pattern_objects = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
       objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
     
-      time_snapshot_list = [];
-      frequency_snapshot_list = [];
-      snapshot_list = [];
-      geometry_object_list = [];
-      excitation_list = [];
-      probe_list = [];
-      sphere_list = [];
-      block_list = [];
-      cylinder_list = [];
-      rotation_list = [];
+      #~ time_snapshot_list = [];
+      #~ frequency_snapshot_list = [];
+      #~ snapshot_list = [];
+      #~ geometry_object_list = [];
+      #~ excitation_list = [];
+      #~ probe_list = [];
+      #~ sphere_list = [];
+      #~ block_list = [];
+      #~ cylinder_list = [];
+      #~ global_rotation_list = [];
   
       # xmesh = [];
       # ymesh = [];
@@ -532,59 +541,60 @@ class Structured_entries:
           elif entry.type == 'SPHERE':
               sphere = Sphere();
               sphere.read_entry(entry);
-              sphere_list.append(sphere);
-              geometry_object_list.append(sphere);
+              self.sphere_list.append(sphere);
+              self.geometry_object_list.append(sphere);
           elif entry.type == 'BLOCK':
               block = Block();
               block.read_entry(entry);
-              block_list.append(block);
-              geometry_object_list.append(block);
+              self.block_list.append(block);
+              self.geometry_object_list.append(block);
           elif entry.type == 'CYLINDER':
               cylinder = Cylinder();
               cylinder.read_entry(entry);
-              cylinder_list.append(cylinder);
-              geometry_object_list.append(cylinder);
+              cylinder.rotation_list.append(Rotation());
+              self.cylinder_list.append(cylinder);
+              self.geometry_object_list.append(cylinder);
           elif entry.type == 'ROTATION':
               rotation = Rotation();
               rotation.read_entry(entry);
-              rotation_list.append(rotation);
-              geometry_object_list.append(rotation);
+              self.global_rotation_list.append(rotation);
+              self.geometry_object_list.append(rotation);
           
           # excitation objects
           elif entry.type == 'EXCITATION':
               current_excitation = Excitation();
               current_excitation.read_entry(entry);
-              excitation_list.append(current_excitation);
+              self.excitation_list.append(current_excitation);
           
           # measurement objects
           elif entry.type == 'FREQUENCY_SNAPSHOT':
               frequency_snapshot = Frequency_snapshot();
               frequency_snapshot.read_entry(entry);
-              frequency_snapshot_list.append(frequency_snapshot);
-              snapshot_list.append(frequency_snapshot);
+              self.frequency_snapshot_list.append(frequency_snapshot);
+              self.snapshot_list.append(frequency_snapshot);
           elif entry.type == 'SNAPSHOT':
               time_snapshot = Time_snapshot();
               time_snapshot.read_entry(entry);
-              time_snapshot_list.append(time_snapshot);
-              snapshot_list.append(time_snapshot);
+              self.time_snapshot_list.append(time_snapshot);
+              self.snapshot_list.append(time_snapshot);
           elif entry.type == 'PROBE':
               probe = Probe();
               probe.read_entry(entry);
-              probe_list.append(probe);
+              self.probe_list.append(probe);
   
           else:
               print 'Unknown type: ', entry.type;
   
-      self.snapshot_list += snapshot_list;
-      self.geometry_object_list += geometry_object_list;
-      self.time_snapshot_list += time_snapshot_list;
-      self.frequency_snapshot_list += frequency_snapshot_list;
-      self.excitation_list += excitation_list;
-      self.probe_list += probe_list;
-      self.sphere_list += sphere_list;
-      self.block_list += block_list;
-      self.cylinder_list += cylinder_list;
-      self.rotation_list += rotation_list;
+      #~ self.snapshot_list += snapshot_list;
+      #~ self.geometry_object_list += geometry_object_list;
+      #~ self.time_snapshot_list += time_snapshot_list;
+      #~ self.frequency_snapshot_list += frequency_snapshot_list;
+      #~ self.excitation_list += excitation_list;
+      #~ self.probe_list += probe_list;
+      #~ self.sphere_list += sphere_list;
+      #~ self.block_list += block_list;
+      #~ self.cylinder_list += cylinder_list;
+      #~ self.global_rotation_list += global_rotation_list;
       
       return [ xmesh_read, box_read ];
 
