@@ -161,6 +161,9 @@ def grid_index(Nx, Ny, Nz, i, j, k):
     return (Ny*Nz*i + Nz*j + k);
     
 def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
+    if len(delta_X_vector)<=0 or len(delta_Y_vector)<=0 or len(delta_Z_vector)<=0:
+      return
+    
     Nx = len(delta_X_vector)+1;
     Ny = len(delta_Y_vector)+1;
     Nz = len(delta_Z_vector)+1;
