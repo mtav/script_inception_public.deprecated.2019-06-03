@@ -551,14 +551,14 @@ class Structured_entries:
           elif entry.type == 'CYLINDER':
               cylinder = Cylinder();
               cylinder.read_entry(entry);
-              cylinder.rotation_list.append(Rotation());
               self.cylinder_list.append(cylinder);
               self.geometry_object_list.append(cylinder);
           elif entry.type == 'ROTATION':
               rotation = Rotation();
               rotation.read_entry(entry);
               self.global_rotation_list.append(rotation);
-              self.geometry_object_list.append(rotation);
+              #~ self.geometry_object_list.append(rotation);
+              self.geometry_object_list[-1].rotation_list.append(rotation);
           
           # excitation objects
           elif entry.type == 'EXCITATION':
@@ -654,8 +654,6 @@ def readBristolFDTD(filename):
     print '================';
     return structured_entries;
     
-
-
 # for testing
 print '----->Importing bristol FDTD geometry...';
 structured_entries = readBristolFDTD(sys.argv[1]);
