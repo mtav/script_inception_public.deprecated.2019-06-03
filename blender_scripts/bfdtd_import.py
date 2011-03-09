@@ -130,7 +130,7 @@ def GEObox(lower, upper):
 
     return
     
-def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivity, angle):
+def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
     mesh.materials = materials(permittivity, conductivity);
@@ -139,9 +139,9 @@ def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivit
 
     obj = scene.objects.new(mesh, 'cylinder');
     obj.setLocation(centre[0], centre[1], centre[2]);
-    obj.RotX = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
-    obj.RotY = 0;
-    obj.RotZ = -math.radians(angle);
+    obj.RotX = angle_X;
+    obj.RotY = angle_Y;
+    obj.RotZ = angle_Z;
     obj.transp = True; obj.wireMode = True;
     return
 
@@ -569,7 +569,18 @@ def importBristolFDTD(filename):
     # Cylinder
     Blender.Window.SetActiveLayer(1<<9);
     for cylinder in structured_entries.cylinder_list:
-        GEOcylinder(Vector(cylinder.center),cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,cylinder.angle);
+      
+        #TODO: finish this part, then extend to other objects
+        print '+++++++++++++'
+        print cylinder.rotation_list;
+        for r in cylinder.rotation_list:
+          print r
+        print '+++++++++++++'
+
+        angle_X = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
+        angle_Y = 0;
+        angle_Z = -math.radians(cylinder.angle);
+        GEOcylinder(Vector(cylinder.center),cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,angle_X,angle_Y,angle_Z);
 
     #########################
     # Not yet implemented:
