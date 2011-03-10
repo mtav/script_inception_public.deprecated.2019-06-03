@@ -613,7 +613,104 @@ print 'len(sys.argv)=',len(sys.argv);
 if len(sys.argv)>4:
     for i in range(len(sys.argv)- 4):
         print 'Importing ', sys.argv[4+i];
-        importBristolFDTD(sys.argv[4+i]);
+        #~ importBristolFDTD(sys.argv[4+i]);
+        u=Blender.Mathutils.Vector(1,2,3)
+        v=Blender.Mathutils.Vector(4,5,6)
+        w=Blender.Mathutils.Vector(7,8,9)
+        M=Blender.Mathutils.Matrix(u,v,w)
+        print '============'
+        print u
+        print v
+        print w
+        print '============'
+        print M
+        print '============'
+        print Blender.Mathutils.RotationMatrix(math.radians(0), 2)
+        print Blender.Mathutils.RotationMatrix(math.radians(45), 2)
+        print Blender.Mathutils.RotationMatrix(math.radians(90), 2)
+        print Blender.Mathutils.RotationMatrix(0, 2)
+        print Blender.Mathutils.RotationMatrix(45, 2)
+        print Blender.Mathutils.RotationMatrix(90, 2)
+        M=Blender.Mathutils.RotationMatrix(45, 3, 'x' )
+        print '======QUAT======'
+        print M
+        print M.toQuat()
+        print '============'
+        Q=Blender.Mathutils.RotationMatrix(45, 4, 'x' )
+        print Q;
+        print '============'
+        u1=Blender.Mathutils.Vector(1,2,3,4)
+        u2=Blender.Mathutils.Vector(5,6,7,8)
+        u3=Blender.Mathutils.Vector(9,10,11,12)
+        u4=Blender.Mathutils.Vector(13,14,15,16)        
+        print '============'
+        Q=Blender.Mathutils.Matrix(u1,u2,u3,u4)
+        print Q
+        print '============'
+        print Q.translationPart()
+        print Q.scalePart()
+        print Q.rotationPart()
+        print '====Q=R*Sx*Sy*Sz*T========'
+        R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(17,18,19))
+        T=Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(14,15,16))
+        Sx=Blender.Mathutils.ScaleMatrix(2,4,Blender.Mathutils.Vector(1,0,0))
+        Sy=Blender.Mathutils.ScaleMatrix(3,4,Blender.Mathutils.Vector(0,1,0))
+        Sz=Blender.Mathutils.ScaleMatrix(4,4,Blender.Mathutils.Vector(0,0,1))
+        print Sx
+        print Sy
+        print Sz
+        S=Sx*Sy*Sz
+        print S.scalePart()
+        print T
+        print R
+        Q=S*R*T
+        #~ Q=R*T
+        print '============'
+        print Q
+        print '============'
+        print Q.translationPart()
+        print Q.scalePart()
+        print Q.rotationPart()
+        print '============'
+        
+        scene = Blender.Scene.GetCurrent();
+        #~ mesh = Blender.Mesh.Primitives.Cylinder(32, 2, 5);
+        mesh = Blender.Mesh.Primitives.Cone(32, 2, 3);
+        mesh = Blender.Mesh.Primitives.Cube(1.0);
+        obj = scene.objects.new(mesh, 'test_object');
+        #~ obj.setMatrix(rotmat);
+        #~ obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
+    
+        #~ obj.setLocation(centre[0], centre[1], centre[2]);
+        #~ obj.RotX = angle_X;
+        #~ obj.RotY = angle_Y;
+        #~ obj.RotZ = angle_Z;
+        #~ obj.transp = True; obj.wireMode = True;
+
+        #~ pos = 0.5*(lower+upper);
+        #~ diag = upper-lower;
+        obj.SizeX = 1;
+        obj.SizeY = 2;
+        obj.SizeZ = 3;
+
+        #~ sys.exit(0)
+        
+#~ Vector object 	
+#~ ProjectVecs(vec1, vec2)
+#~ Return the projection of vec1 onto vec2. 	source code
+#~ Matrix object. 	
+#~ RotationMatrix(angle, matSize, axisFlag, axis)
+#~ Create a matrix representing a rotation. 	source code
+#~ Matrix object. 	
+#~ TranslationMatrix(vector)
+#~ Create a matrix representing a translation 	source code
+#~ Matrix object. 	
+#~ ScaleMatrix(factor, matSize, axis)
+#~ Create a matrix representing a scaling. 	source code
+#~ Matrix object. 	
+#~ OrthoProjectionMatrix(plane, matSize, axis)
+#~ Create a matrix to represent an orthographic projection
+
 else:
     ###################
     # load import path
