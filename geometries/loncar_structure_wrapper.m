@@ -8,7 +8,7 @@ function loncar_structure_wrapper(BASENAME, DSTDIR)
     lambda = 637*10^-3;%mum
     EXCITATION_FREQUENCY = get_c0()/lambda;
 
-    lambda_res = 634.7730;
+    lambda_res = 634.7730*10^-3;%mum
 
     SNAPSHOTS_FREQUENCY = [ get_c0()/lambda_res ];
     

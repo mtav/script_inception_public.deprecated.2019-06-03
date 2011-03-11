@@ -1,2 +1,2 @@
 #!/bin/bash
-blender -P bfdtd_import.py -- "$@"
+blender -P $HOME/.blender/scripts/bfdtd_import.py -- "$@"

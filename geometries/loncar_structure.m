@@ -221,7 +221,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes
 	% .inp
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% .lst file
-	copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
+	%~ copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),[DSTDIR,filesep,BASENAME]);
 	% .in file
     INFILENAME = [DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'];
 	GEOin(INFILENAME, { [BASENAME,'.inp'],[BASENAME,'.geo'] });
