@@ -572,14 +572,38 @@ def importBristolFDTD(filename):
       
         #TODO: finish this part, then extend to other objects
         print '+++++++++++++'
+        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix.identity();
+        
         print cylinder.rotation_list;
+        
         for r in cylinder.rotation_list:
-          print r
+          print r.axis_point
+          print r.axis_direction
+          print r.angle_degrees
+          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
+          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
+          T = Blender.Mathutils.TranslationMatrix(C)
+          Tinv = Blender.Mathutils.TranslationMatrix(-C)
+          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
+          rotation_matrix *= Tinv*R*T
         print '+++++++++++++'
+
+        #~ scene = Blender.Scene.GetCurrent();
+        #~ mesh = Blender.Mesh.Primitives.Cone(32, 2, 3);
+        #~ mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #~ obj = scene.objects.new(mesh, 'test_object');
+        #~ obj.SizeX = 1;
+        #~ obj.SizeY = 2;
+        #~ obj.SizeZ = 3;
+        #~ L=Blender.Mathutils.Vector(1,0,0);
+        #~ obj.setLocation(L);
+        #~ M=obj.getMatrix()
 
         angle_X = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
         angle_Y = 0;
         angle_Z = -math.radians(cylinder.angle);
+        
         GEOcylinder(Vector(cylinder.center),cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,angle_X,angle_Y,angle_Z);
 
     #########################
@@ -614,8 +638,8 @@ def main():
   if len(sys.argv)>4:
       for i in range(len(sys.argv)- 4):
           print 'Importing ', sys.argv[4+i];
-          importBristolFDTD(sys.argv[4+i]);
-          return
+          #~ importBristolFDTD(sys.argv[4+i]);
+          #~ return
           
           u=Blender.Mathutils.Vector(1,2,3)
           v=Blender.Mathutils.Vector(4,5,6)
@@ -711,6 +735,9 @@ def main():
           print M*Tinv*R*T
           print '############'
           obj.setMatrix(M*Tinv*R*T);
+          print '# EULER ###########'
+          print obj.getMatrix().toEuler()
+          print '############'
           #~ obj.RotX = 90;
           #~ obj.RotY = 45;
           #~ obj.RotZ = 0;
