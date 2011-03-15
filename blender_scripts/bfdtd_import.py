@@ -638,8 +638,8 @@ def main():
   if len(sys.argv)>4:
       for i in range(len(sys.argv)- 4):
           print 'Importing ', sys.argv[4+i];
-          #~ importBristolFDTD(sys.argv[4+i]);
-          #~ return
+          importBristolFDTD(sys.argv[4+i]);
+          return
           
           u=Blender.Mathutils.Vector(1,2,3)
           v=Blender.Mathutils.Vector(4,5,6)

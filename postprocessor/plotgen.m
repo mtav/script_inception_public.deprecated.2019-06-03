@@ -139,6 +139,7 @@ hold on
 
 %% Plot Geometry Entities
 if get(handles.checkbox_geometry,'Value') == 1
+    disp('DRAWING GEOMETRY')
     switch handles.plane
         case 1
             %Blocks
