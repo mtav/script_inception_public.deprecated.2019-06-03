@@ -19,7 +19,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       print_epssnap = true;
       print_excitation = true;
       print_probes = true;
-      SNAPSHOTS_ON = 0;
+      SNAPSHOTS_ON = 1;
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % arguments
@@ -367,24 +367,24 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       power = 0;
           
       if SNAPSHOTS_ON == 1
-              for iX = 1:length(Xplanes)
+              for iZ = 1:length(Zplanes)
                       plane = 2;
-                      P1 = [0, Xplanes(iX), 0];
-                      P2 = [totomax, Xplanes(iX), Zmax];
+                      P1 = [0, Zplanes(iZ), 0];
+                      P2 = [totomax, Zplanes(iZ), Xmax/2];
                       GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
                       GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
               end
               for itoto = 1:length(totoplanes)
                       plane = 1;
                       P1 = [totoplanes(itoto), 0, 0];
-                      P2 = [totoplanes(itoto), Xmax/2, Zmax];
+                      P2 = [totoplanes(itoto), Zmax, Xmax/2];
                       GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
                       GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
               end
-              for iZ = 1:length(Zplanes)
+              for iX = 1:length(Xplanes)
                       plane = 3;
-                      P1 = [0, 0, Zplanes(iZ)];
-                      P2 = [totomax, Xmax/2, Zplanes(iZ)];
+                      P1 = [0, 0, Xplanes(iX)];
+                      P2 = [totomax, Zmax, Xplanes(iX)];
                       GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
                       GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
               end
