@@ -1,7 +1,7 @@
-function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
+function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % description:
-      %  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
+      %  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
       %  creates a Loncar type structure (cylinder with transverse circular holes)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -58,9 +58,9 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       end
 
       % pillar radius
-      if exist('pillar_radius','var')==0
-              disp('pillar_radius not given');
-              pillar_radius = 2;%mum
+      if exist('pillar_radius_mum','var')==0
+              disp('pillar_radius_mum not given');
+              pillar_radius_mum = 0.150/2.0;%mum
       end
       
       if exist('HOLE_TYPE','var')==0
@@ -73,18 +73,18 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       n_Air = 1;%no unit
       n_bottom_square=3.5214;%no unit
       % distance between holes
-      d_holes = lambda/(4*n_Diamond)+lambda/(4*n_Air);%mum
+      d_holes_mum = 0.220;%mum
       % hole radius
-      hole_radius_toto = (lambda/(4*n_Air))/2;%mum
-      hole_radius_z = pillar_radius - (d_holes-2*hole_radius_toto);%mum
+      hole_radius_toto = 0.28*d_holes_mum;%mum
+      hole_radius_z = pillar_radius_mum - (d_holes_mum-2*hole_radius_toto);%mum
       % number of holes on bottom
-      bottom_N = 6;%no unit
+      bottom_N = 12;%no unit
       % number of holes on top
-      top_N = 3;%no unit
+      top_N = 12;%no unit
       % distance between 2 holes around cavity
-      d_holes_cavity = lambda/n_Diamond + 2*hole_radius_toto;%mum
-      Lcav = d_holes_cavity - d_holes; % mum
-      % d_holes_cavity = Lcav + d_holes;
+      d_holes_cavity = 2*d_holes_mum;%mum
+      Lcav = d_holes_cavity - d_holes_mum; % mum
+      % d_holes_cavity = Lcav + d_holes_mum;
       % top box offset
       top_box_offset=1;%mum
       %bottom square thickness
@@ -104,14 +104,14 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       
       % max mesh intervals
       delta_bottom_square = lambda/(10*n_bottom_square);
-      delta_hole = lambda/(10*n_Air);
-      delta_diamond = lambda/(10*n_Diamond);
+      delta_hole = lambda/(15*n_Diamond);
+      delta_diamond = lambda/(15*n_Diamond);
       delta_outside = lambda/(4*n_Air);
       delta_center = lambda/(15*n_Diamond);
       delta_boundary = delta_diamond;
       
       % center area where excitation takes place (for meshing)
-      center_radius = 4*delta_center;
+      center_radius = 2*delta_center;
 
       % buffers (area outside pillar where mesh is fine)
       x_buffer = 4*delta_diamond;%mum
@@ -119,26 +119,26 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       z_buffer = 4*delta_diamond;%mum
 
       % dimension and position parameters
-      Xmax = 2*(pillar_radius + 4*delta_diamond + 4*delta_outside);%mum
-      pillar_height = (bottom_N+top_N)*d_holes + Lcav;
+      Xmax = 2*(pillar_radius_mum + 4*delta_diamond + 4*delta_outside);%mum
+      pillar_height = (bottom_N+top_N)*d_holes_mum + Lcav;
       totomax = h_bottom_square + pillar_height + y_buffer + top_box_offset;%mum
       Zmax = Xmax;%mum
       
       pillar_centre_X = Xmax/2;
-      pillar_centre_toto = h_bottom_square + bottom_N*d_holes + Lcav/2;
+      pillar_centre_toto = h_bottom_square + bottom_N*d_holes_mum + Lcav/2;
       pillar_centre_Z = Zmax/2;
 
       % meshing parameters
       thicknessVector_toto = [ h_bottom_square ];
       max_delta_Vector_toto = [ delta_bottom_square ];
       for i=1:bottom_N
-              thicknessVector_toto = [ thicknessVector_toto, d_holes/2 - hole_radius_toto, 2*hole_radius_toto, d_holes/2 - hole_radius_toto ];
+              thicknessVector_toto = [ thicknessVector_toto, d_holes_mum/2 - hole_radius_toto, 2*hole_radius_toto, d_holes_mum/2 - hole_radius_toto ];
               max_delta_Vector_toto = [ max_delta_Vector_toto, delta_diamond, delta_hole, delta_diamond ];
       end
       thicknessVector_toto = [ thicknessVector_toto, Lcav/2-center_radius, 2*center_radius, Lcav/2-center_radius ];
       max_delta_Vector_toto = [ max_delta_Vector_toto, delta_diamond, delta_center, delta_diamond ];
       for i=1:top_N
-              thicknessVector_toto = [ thicknessVector_toto, d_holes/2 - hole_radius_toto, 2*hole_radius_toto, d_holes/2 - hole_radius_toto ];
+              thicknessVector_toto = [ thicknessVector_toto, d_holes_mum/2 - hole_radius_toto, 2*hole_radius_toto, d_holes_mum/2 - hole_radius_toto ];
               max_delta_Vector_toto = [ max_delta_Vector_toto, delta_diamond, delta_hole, delta_diamond ];
       end
       thicknessVector_toto = [ thicknessVector_toto, y_buffer, top_box_offset ];
@@ -146,15 +146,15 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       delta_min = min(max_delta_Vector_toto);
 
-      thicknessVector_X = [ Xmax/2-pillar_radius-x_buffer, x_buffer, pillar_radius-center_radius, center_radius ];
+      thicknessVector_X = [ Xmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-center_radius, center_radius ];
       max_delta_Vector_X = [ delta_outside, delta_boundary, delta_diamond, delta_center ];
 
       if HOLE_TYPE == 1
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius-z_buffer, z_buffer, pillar_radius-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
       elseif HOLE_TYPE == 2
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius-z_buffer, z_buffer, pillar_radius-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
       else
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius-z_buffer, z_buffer, pillar_radius-2*hole_radius_toto, 2*hole_radius_toto-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-2*hole_radius_toto, 2*hole_radius_toto-center_radius, center_radius ];
       end
 
       thicknessVector_Z_2 = fliplr(thicknessVector_Z_1);
@@ -169,19 +169,19 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       % for the frequency snapshots
       Xplanes = [ 0,
-      Xmax/2-pillar_radius-x_buffer,
-      Xmax/2-pillar_radius,
+      Xmax/2-pillar_radius_mum-x_buffer,
+      Xmax/2-pillar_radius_mum,
       Xmax/2-2*delta_center,
       Xmax/2-delta_center,
       Xmax/2 ];
       
       totoplanes = [ 0,
       h_bottom_square,
-      h_bottom_square + bottom_N/2*d_holes,
+      h_bottom_square + bottom_N/2*d_holes_mum,
       pillar_centre_toto-delta_center,
       pillar_centre_toto,
       pillar_centre_toto+delta_center,
-      h_bottom_square + bottom_N*d_holes + Lcav + top_N/2*d_holes,
+      h_bottom_square + bottom_N*d_holes_mum + Lcav + top_N/2*d_holes_mum,
       h_bottom_square + pillar_height,
       h_bottom_square + pillar_height+1*delta_boundary,
       h_bottom_square + pillar_height+8*delta_boundary,
@@ -189,8 +189,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       totomax ];
       
       Zplanes = [ 0,
-      Zmax/2-pillar_radius-z_buffer,
-      Zmax/2-pillar_radius,
+      Zmax/2-pillar_radius_mum-z_buffer,
+      Zmax/2-pillar_radius_mum,
       Zmax/2-hole_radius_toto,
       Zmax/2-2*delta_center,
       Zmax/2-delta_center,
@@ -198,8 +198,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       Zmax/2+delta_center,
       Zmax/2+2*delta_center,
       Zmax/2+hole_radius_toto,
-      Zmax/2+pillar_radius,
-      Zmax/2+pillar_radius+z_buffer,
+      Zmax/2+pillar_radius_mum,
+      Zmax/2+pillar_radius_mum+z_buffer,
       Zmax ];
       
       % for probes
@@ -256,12 +256,12 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           
       if print_pillar
           % create main pillar
-          L = [ toto_current, Xmax/2 - pillar_radius, Zmax/2 - pillar_radius ];
-          U = [ toto_current + pillar_height, Xmax/2 + pillar_radius, Zmax/2 + pillar_radius ];
+          L = [ toto_current, Xmax/2 - pillar_radius_mum, Zmax/2 - pillar_radius_mum ];
+          U = [ toto_current + pillar_height, Xmax/2 + pillar_radius_mum, Zmax/2 + pillar_radius_mum ];
           GEOblock(out, L, U, n_Diamond^2, 0);
       end
 
-      toto_current = toto_current + d_holes/2;
+      toto_current = toto_current + d_holes_mum/2;
 
       if print_holes
           % hole settings
@@ -274,22 +274,22 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
               if print_holes_bottom
                   centre = [ toto_current, Xmax/2, Zmax/2 ];
                   if HOLE_TYPE == 1
-                  GEOcylinder(out, centre, 0, hole_radius_toto, 2*pillar_radius, permittivity, conductivity, 0);
+                  GEOcylinder(out, centre, 0, hole_radius_toto, 2*pillar_radius_mum, permittivity, conductivity, 0);
                   elseif HOLE_TYPE == 2
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius, Zmax/2 - hole_radius_toto];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius, Zmax/2 + hole_radius_toto];
+                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_toto];
+                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_toto];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   else
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius, Zmax/2 - hole_radius_z];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius, Zmax/2 + hole_radius_z];
+                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_z];
+                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_z];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   end
               end
 
-              toto_current = toto_current + d_holes;
+              toto_current = toto_current + d_holes_mum;
           end
 
-          toto_current = toto_current - d_holes + d_holes_cavity;
+          toto_current = toto_current - d_holes_mum + d_holes_cavity;
 
           % create top holes
           for i=1:top_N
@@ -297,19 +297,19 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
               if print_holes_top
                   centre = [ toto_current, Xmax/2, Zmax/2 ];
                   if HOLE_TYPE == 1
-                  GEOcylinder(out, centre, 0, hole_radius_toto, 2*pillar_radius, permittivity, conductivity, 0);
+                  GEOcylinder(out, centre, 0, hole_radius_toto, 2*pillar_radius_mum, permittivity, conductivity, 0);
                   elseif HOLE_TYPE == 2
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius, Zmax/2 - hole_radius_toto];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius, Zmax/2 + hole_radius_toto];
+                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_toto];
+                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_toto];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   else
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius, Zmax/2 - hole_radius_z];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius, Zmax/2 + hole_radius_z];
+                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_z];
+                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_z];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   end
               end
               
-              toto_current = toto_current + d_holes;
+              toto_current = toto_current + d_holes_mum;
           end
           
       end
@@ -334,10 +334,10 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
 
       if print_excitation
-          P_Xm = [ pillar_centre_toto, pillar_centre_X-2*delta_center, pillar_centre_Z ];
-          P_Xp = [ pillar_centre_toto, pillar_centre_X+2*delta_center, pillar_centre_Z ];
           P_totom = [ pillar_centre_toto-2*delta_center, pillar_centre_X, pillar_centre_Z ];
           P_totop = [ pillar_centre_toto+2*delta_center, pillar_centre_X, pillar_centre_Z ];
+          P_Xm = [ pillar_centre_toto, pillar_centre_X-2*delta_center, pillar_centre_Z ];
+          P_Xp = [ pillar_centre_toto, pillar_centre_X+2*delta_center, pillar_centre_Z ];
           P_Zm = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-2*delta_center ];
           P_Zp = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+2*delta_center ];
           P_center = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z ];
@@ -345,9 +345,10 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           H = [ 0, 0, 0 ];
           type = 10;
           
-          GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+%            GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+          GEOexcitation(out, 7, P_Zm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
           
-          end
+      end
 
           totopos_bc = 1; totopos_param = [1,1,0];
           Xpos_bc = 2; Xpos_param = [1,1,0];
@@ -364,7 +365,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           id_character = 'id';
           GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, ITERATIONS, TIMESTEP, id_character);
 
-          if print_mesh
+      if print_mesh
           GEOmesh(out, delta_toto_vector, delta_X_vector, delta_Z_vector);
       end
           

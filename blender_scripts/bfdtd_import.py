@@ -537,27 +537,27 @@ def importBristolFDTD(filename):
     # print structured_entries.zmesh;
     
     # Time_snapshot (time or EPS)
-    for time_snapshot in structured_entries.time_snapshot_list:
-        if time_snapshot.eps == 0:
-            Blender.Window.SetActiveLayer(1<<2);
-            GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-        else:
-            Blender.Window.SetActiveLayer(1<<3);
-            GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+    #~ for time_snapshot in structured_entries.time_snapshot_list:
+        #~ if time_snapshot.eps == 0:
+            #~ Blender.Window.SetActiveLayer(1<<2);
+            #~ GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+        #~ else:
+            #~ Blender.Window.SetActiveLayer(1<<3);
+            #~ GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
     # Frequency_snapshot
-    Blender.Window.SetActiveLayer(1<<4);
-    for frequency_snapshot in structured_entries.frequency_snapshot_list:
-        GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+    #~ Blender.Window.SetActiveLayer(1<<4);
+    #~ for frequency_snapshot in structured_entries.frequency_snapshot_list:
+        #~ GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
     Blender.Window.SetActiveLayer(1<<5);
     for excitation in structured_entries.excitation_list:
         GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
     # Probe
-    Blender.Window.SetActiveLayer(1<<6);
-    for probe in structured_entries.probe_list:
-        # print 'probe = ',Vector(probe.position);
-        GEOprobe(Vector(probe.position));
+    #~ Blender.Window.SetActiveLayer(1<<6);
+    #~ for probe in structured_entries.probe_list:
+        #~ # print 'probe = ',Vector(probe.position);
+        #~ GEOprobe(Vector(probe.position));
     # Sphere
     Blender.Window.SetActiveLayer(1<<7);
     for sphere in structured_entries.sphere_list:
