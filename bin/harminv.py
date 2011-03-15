@@ -66,38 +66,39 @@ def comparePeaks(harminv_filename, matlab_filename, out_filename):
 	return resonance_peak;
 
 def harminv(infile, outfile, parameterFile):
-	pattern = re.compile("final: dt=(.*) fmin=(.*) fmax=(.*)");
-
-	if os.path.isfile(parameterFile):
-		f = open(parameterFile,'r')
-		str = f.readline();
-		m = pattern.match(str);
-		m.groups();
-		dt = m.group(1);
-		fmin = m.group(2);
-		fmax = m.group(3);
-		f.close()
-		
-		f = open(outfile,'w');
-		f.close();
-		print '-->Processing '+infile;
-		if os.path.isfile(infile):
-			# f = open(outfile,'a');
-			# f.write('=== '+infile+'\n');
-			# f.close();
-			cmd='harminv -t '+dt+' '+fmin+'-'+fmax+' <'+infile+' 1>'+outfile+' 2>&1';
-			print '\t'+cmd;
-			os.system(cmd);
-			# f = open(outfile,'a');
-			# f.write('=============================================================\n');
-			# f.close();
-			
-			# compare with matlab output
-			harminv_filename = outfile;
-			base = os.path.dirname(outfile) + '/' + os.path.basename(outfile).split('_')[0];
-			matlab_filename = base + '_bilan.txt';
-			out_filename = base + '_resonance.txt';
-			return comparePeaks(harminv_filename, matlab_filename, out_filename);
+  pattern = re.compile("final: dt=(.*) fmin=(.*) fmax=(.*)");
+  
+  if os.path.isfile(parameterFile):
+    f = open(parameterFile,'r')
+    str = f.readline();
+    m = pattern.match(str);
+    m.groups();
+    dt = m.group(1);
+    fmin = m.group(2);
+    fmax = m.group(3);
+    f.close()
+    
+    f = open(outfile,'w');
+    f.close();
+    print '-->Processing '+infile;
+    if os.path.isfile(infile):
+      # f = open(outfile,'a');
+      # f.write('=== '+infile+'\n');
+      # f.close();
+      cmd='harminv -t '+dt+' '+fmin+'-'+fmax+' <'+infile+' 1>'+outfile+' 2>&1';
+      print '\t'+cmd;
+      os.system(cmd);
+      # f = open(outfile,'a');
+      # f.write('=============================================================\n');
+      # f.close();
+      
+      # compare with matlab output
+      #~ harminv_filename = outfile;
+      #~ base = os.path.dirname(outfile) + '/' + os.path.basename(outfile).split('_')[0];
+      #~ matlab_filename = base + '_bilan.txt';
+      #~ out_filename = base + '_resonance.txt';
+      #~ return comparePeaks(harminv_filename, matlab_filename, out_filename);
+      return
 
 def harminv_top_probes(dir):
 	pattern = re.compile("final: dt=(.*) fmin=(.*) fmax=(.*)");

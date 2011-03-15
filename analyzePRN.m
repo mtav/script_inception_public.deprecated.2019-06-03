@@ -278,7 +278,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
 	lambdamax = max(peakdata_all.Xzoom);
 	
 	% TODO: figure out where 10^-12 and 10^-2 factors come from!!!
-	fmin = 10^3*get_c0()/lambdamax;
+	fmin = get_c0()/(10^-3*lambdamax);  % lambdamax being in 10^-9 m, (10^-3*lambdamax) is in 10^-9 m/10^-3 = 10^-6 m, so fmin is in 10^6 Hz
 	fmax = 10^3*get_c0()/lambdamin;
 	fprintf('=>dt=%E fmin=%E fmax=%E\n', dt, fmin, fmax);
 	% vEnd = [x0, y0, A, FWHM];

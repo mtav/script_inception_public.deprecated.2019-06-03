@@ -81,7 +81,7 @@ function create_harminv_input_files(SRCDIR, DSTDIR)
 		% peak_frequency_vector4
 		
 		%================================================
-		% generate the new pillar!!! RAAAAHHHHHHHHHHHHH
+		% generate the new pillar!!!
 		%================================================
 		% newDir = fullfile(getuserdir(),'DATA','newPillars_timeNFF_only');
 		% newDir = fullfile(getuserdir(),'DATA','newPillars_freqNFF_only');
