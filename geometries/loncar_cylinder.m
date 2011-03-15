@@ -1,4 +1,4 @@
-function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
+function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_direction)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % description:
       %  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
@@ -325,17 +325,34 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       if print_excitation
           P_totom = [ pillar_centre_toto-2*delta_center, pillar_centre_X, pillar_centre_Z ];
           P_totop = [ pillar_centre_toto+2*delta_center, pillar_centre_X, pillar_centre_Z ];
-          P_Xm = [ pillar_centre_toto, pillar_centre_X-2*delta_center, pillar_centre_Z ];
-          P_Xp = [ pillar_centre_toto, pillar_centre_X+2*delta_center, pillar_centre_Z ];
-          P_Zm = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-2*delta_center ];
-          P_Zp = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+2*delta_center ];
+          P_Xm1 = [ pillar_centre_toto, pillar_centre_X-1*delta_center, pillar_centre_Z ];
+          P_Xp1 = [ pillar_centre_toto, pillar_centre_X+1*delta_center, pillar_centre_Z ];
+          P_Xm2 = [ pillar_centre_toto, pillar_centre_X-2*delta_center, pillar_centre_Z ];
+          P_Xp2 = [ pillar_centre_toto, pillar_centre_X+2*delta_center, pillar_centre_Z ];
+          P_Zm1 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-1*delta_center ];
+          P_Zp1 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+1*delta_center ];
+          P_Zm2 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-2*delta_center ];
+          P_Zp2 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+2*delta_center ];
           P_center = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z ];
           E = [ 0, 1, 0 ];
           H = [ 0, 0, 0 ];
           type = 10;
           
-%            GEOexcitation(out, 7, P_Xm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
-          GEOexcitation(out, 7, P_Zm, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+
+
+        if excitation_direction == 1
+          GEOexcitation(out, 7, P_Xm1, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 2
+          GEOexcitation(out, 7, P_Zm1, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 3
+          GEOexcitation(out, 7, P_Xm2, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_direction == 4
+          GEOexcitation(out, 7, P_Zm2, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        else
+          error('invalid direction');
+        end
+
+
           
       end
 
