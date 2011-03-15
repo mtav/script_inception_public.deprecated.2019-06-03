@@ -13,13 +13,13 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       % print_holes_top = true;
       % print_holes_bottom = true;
       print_pillar = true;
-      print_podium = true;
+      print_podium = false;
       print_freqsnap = true;
       print_timesnap = true;
       print_epssnap = true;
       print_excitation = true;
       print_probes = true;
-      SNAPSHOTS_ON = 1;
+      SNAPSHOTS_ON = 0;
 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % arguments
@@ -88,7 +88,6 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       % top box offset
       top_box_offset=1;%mum
       %bottom square thickness
-      h_bottom_square=0.5;%mum
       
       % ITERATIONS = 261600;%no unit
       % ITERATIONS = 32000;%no unit
@@ -103,11 +102,10 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
       % max mesh intervals
-      delta_bottom_square = lambda/(10*n_bottom_square);
       delta_hole = lambda/(15*n_Diamond);
-      delta_diamond = lambda/(15*n_Diamond);
-      delta_outside = lambda/(4*n_Air);
-      delta_center = lambda/(15*n_Diamond);
+      delta_diamond = 0.5*lambda/(15*n_Diamond);
+      delta_outside = 2*delta_diamond;
+      delta_center = delta_diamond;
       delta_boundary = delta_diamond;
       
       % center area where excitation takes place (for meshing)
@@ -119,30 +117,29 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       z_buffer = 4*delta_diamond;%mum
 
       % dimension and position parameters
-      Xmax = 2*(pillar_radius_mum + 4*delta_diamond + 4*delta_outside);%mum
+      Xmax = 2*(pillar_radius_mum + x_buffer + 4*delta_outside);%mum
       pillar_height = (bottom_N+top_N)*d_holes_mum + Lcav;
-      totomax = h_bottom_square + pillar_height + y_buffer + top_box_offset;%mum
+      totomax = pillar_height;%mum
       Zmax = Xmax;%mum
       
       pillar_centre_X = Xmax/2;
-      pillar_centre_toto = h_bottom_square + bottom_N*d_holes_mum + Lcav/2;
+      pillar_centre_toto = bottom_N*d_holes_mum + Lcav/2;
       pillar_centre_Z = Zmax/2;
 
       % meshing parameters
-      thicknessVector_toto = [ h_bottom_square ];
-      max_delta_Vector_toto = [ delta_bottom_square ];
+      thicknessVector_toto = [ ];
+      max_delta_Vector_toto = [ ];
+      mesh_factor=1;
       for i=1:bottom_N
               thicknessVector_toto = [ thicknessVector_toto, d_holes_mum/2 - hole_radius_toto, 2*hole_radius_toto, d_holes_mum/2 - hole_radius_toto ];
-              max_delta_Vector_toto = [ max_delta_Vector_toto, delta_diamond, delta_hole, delta_diamond ];
+              max_delta_Vector_toto = [ max_delta_Vector_toto, mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ];
       end
       thicknessVector_toto = [ thicknessVector_toto, Lcav/2-center_radius, 2*center_radius, Lcav/2-center_radius ];
-      max_delta_Vector_toto = [ max_delta_Vector_toto, delta_diamond, delta_center, delta_diamond ];
+      max_delta_Vector_toto = [ max_delta_Vector_toto, mesh_factor*delta_diamond, mesh_factor*delta_center, mesh_factor*delta_diamond ];
       for i=1:top_N
               thicknessVector_toto = [ thicknessVector_toto, d_holes_mum/2 - hole_radius_toto, 2*hole_radius_toto, d_holes_mum/2 - hole_radius_toto ];
-              max_delta_Vector_toto = [ max_delta_Vector_toto, delta_diamond, delta_hole, delta_diamond ];
+              max_delta_Vector_toto = [ max_delta_Vector_toto, mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ];
       end
-      thicknessVector_toto = [ thicknessVector_toto, y_buffer, top_box_offset ];
-      max_delta_Vector_toto = [ max_delta_Vector_toto, delta_boundary, delta_outside ];
 
       delta_min = min(max_delta_Vector_toto);
 
@@ -176,17 +173,12 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       Xmax/2 ];
       
       totoplanes = [ 0,
-      h_bottom_square,
-      h_bottom_square + bottom_N/2*d_holes_mum,
+      bottom_N/2*d_holes_mum,
       pillar_centre_toto-delta_center,
       pillar_centre_toto,
       pillar_centre_toto+delta_center,
-      h_bottom_square + bottom_N*d_holes_mum + Lcav + top_N/2*d_holes_mum,
-      h_bottom_square + pillar_height,
-      h_bottom_square + pillar_height+1*delta_boundary,
-      h_bottom_square + pillar_height+8*delta_boundary,
-      h_bottom_square + pillar_height+32*delta_boundary,
-      totomax ];
+      bottom_N*d_holes_mum + Lcav + top_N/2*d_holes_mum,
+      pillar_height ];
       
       Zplanes = [ 0,
       Zmax/2-pillar_radius_mum-z_buffer,
@@ -204,10 +196,10 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       
       % for probes
       probes_X_vector = Xplanes(2:4);
-      probes_toto_vector = totoplanes(2:11);
+      probes_toto_vector = totoplanes(2:length(totoplanes)-1);
       probes_Z_vector = Zplanes(2:8);
       
-      probes_toto_vector_center = totoplanes(4:6);
+      probes_toto_vector_center = totoplanes(3:5);
       probes_Z_vector_center = [Zplanes(6),Zplanes(8)];
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,15 +236,6 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       % initialize current y
       toto_current=0;
-
-      if print_podium
-          % create bottom block
-          L = [ 0, 0, 0 ];
-          U = [ toto_current + h_bottom_square, Xmax, Zmax ];
-          GEOblock(out, L, U, n_bottom_square^2, 0);
-      end
-
-      toto_current = toto_current + h_bottom_square;
           
       if print_pillar
           % create main pillar
@@ -316,7 +299,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
           %write box
           L = [ 0, 0, 0 ];
-          U = [ totomax, Xmax/2, Zmax ];
+          U = [ totomax, Zmax, Xmax/2 ];
           GEObox(out, L, U);
 
           %write footer
@@ -366,7 +349,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, ITERATIONS, TIMESTEP, id_character);
 
       if print_mesh
-          GEOmesh(out, delta_toto_vector, delta_X_vector, delta_Z_vector);
+          GEOmesh(out, delta_toto_vector, delta_Z_vector, delta_X_vector);
       end
           
       % frequency snapshots
@@ -416,18 +399,18 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           for itoto =1:length(probes_toto_vector)
               % Xtoto probes
               for iX =1:length(probes_X_vector)
-                  GEOprobe(out, [probes_toto_vector(itoto), probes_X_vector(iX), Zplanes(6)], step, E, H, J, power );
+                  GEOprobe(out, [probes_toto_vector(itoto), Zplanes(6), probes_X_vector(iX)], step, E, H, J, power );
               end
               % Ztoto probes
               for iZ =1:length(probes_Z_vector)
-                  GEOprobe(out, [probes_toto_vector(itoto), Xplanes(5), probes_Z_vector(iZ)], step, E, H, J, power );
+                  GEOprobe(out, [probes_toto_vector(itoto), probes_Z_vector(iZ), Xplanes(5)], step, E, H, J, power );
               end
           end
           
           % Ztoto center probes
           for itoto =1:length(probes_toto_vector_center)
               for iZ =1:length(probes_Z_vector_center)
-                  GEOprobe(out, [probes_toto_vector_center(itoto), Xplanes(4), probes_Z_vector_center(iZ)], step, E, H, J, power );
+                  GEOprobe(out, [probes_toto_vector_center(itoto), probes_Z_vector_center(iZ), Xplanes(4)], step, E, H, J, power );
               end
           end
       end

@@ -50,7 +50,8 @@ excitation_material.setAlpha(0.5);
 
 snapshot_materials = [ frequency_snapshot_material, time_snapshot_material, eps_snapshot_material ];
 
-probe_scalefactor = 0.0218;
+probe_scalefactor_box = 0.0218;
+probe_scalefactor_mesh = 0.5;
 mesh_min = 0;
 mesh_max = 0;
 box_SizeX = 0;
@@ -427,8 +428,9 @@ def GEOeps_snapshot(plane, P1, P2):
 def GEOprobe(position):
     scene = Blender.Scene.GetCurrent();
     
-    probe_size = probe_scalefactor*max(box_SizeX,box_SizeY,box_SizeZ);
-    # print "probe_size = ", probe_scalefactor,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
+    #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
+    probe_size = probe_scalefactor_mesh*mesh_min;
+    # print "probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
     
     mesh = Blender.Mesh.Primitives.Cube(probe_size);
 
@@ -554,10 +556,10 @@ def importBristolFDTD(filename):
     for excitation in structured_entries.excitation_list:
         GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
     # Probe
-    #~ Blender.Window.SetActiveLayer(1<<6);
-    #~ for probe in structured_entries.probe_list:
-        #~ # print 'probe = ',Vector(probe.position);
-        #~ GEOprobe(Vector(probe.position));
+    Blender.Window.SetActiveLayer(1<<6);
+    for probe in structured_entries.probe_list:
+        # print 'probe = ',Vector(probe.position);
+        GEOprobe(Vector(probe.position));
     # Sphere
     Blender.Window.SetActiveLayer(1<<7);
     for sphere in structured_entries.sphere_list:
