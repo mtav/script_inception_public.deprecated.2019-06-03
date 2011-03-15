@@ -102,8 +102,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
       % max mesh intervals
-      delta_hole = lambda/(15*n_Diamond);
       delta_diamond = 0.5*lambda/(15*n_Diamond);
+      delta_hole = delta_diamond;
       delta_outside = 2*delta_diamond;
       delta_center = delta_diamond;
       delta_boundary = delta_diamond;
@@ -117,7 +117,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       z_buffer = 4*delta_diamond;%mum
 
       % dimension and position parameters
-      Xmax = 2*(pillar_radius_mum + x_buffer + 4*delta_outside);%mum
+      Xmax = 5*2*pillar_radius_mum;%2*(pillar_radius_mum + x_buffer + 4*delta_outside);%mum
       pillar_height = (bottom_N+top_N)*d_holes_mum + Lcav;
       totomax = pillar_height;%mum
       Zmax = Xmax;%mum
@@ -143,20 +143,20 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       delta_min = min(max_delta_Vector_toto);
 
-      thicknessVector_X = [ Xmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-center_radius, center_radius ];
-      max_delta_Vector_X = [ delta_outside, delta_boundary, delta_diamond, delta_center ];
+      thicknessVector_X = [ Xmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+      max_delta_Vector_X = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
 
       if HOLE_TYPE == 1
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       elseif HOLE_TYPE == 2
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       else
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-2*hole_radius_toto, 2*hole_radius_toto-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       end
 
       thicknessVector_Z_2 = fliplr(thicknessVector_Z_1);
       thicknessVector_Z = [ thicknessVector_Z_1, thicknessVector_Z_2 ];
-      max_delta_Vector_Z_1 = [ delta_outside, delta_boundary, delta_diamond, delta_hole, delta_center ];
+      max_delta_Vector_Z_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
       max_delta_Vector_Z_2 = fliplr(max_delta_Vector_Z_1);
       max_delta_Vector_Z = [ max_delta_Vector_Z_1, max_delta_Vector_Z_2 ];
       
