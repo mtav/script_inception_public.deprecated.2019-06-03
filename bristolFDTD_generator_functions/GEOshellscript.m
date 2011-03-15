@@ -2,8 +2,7 @@ function GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME, NODES, PPN)
 	disp('Writing shellscript...')
 
 	%open file
-	out = fopen(strcat(filename,'.sh'),'wt');
-
+	out = fopen(filename,'wt');
 
 	if exist('EXE','var')==0
 		% disp('EXE not given');
