@@ -86,6 +86,24 @@ def materials(permittivity, conductivity):
 
     return [ material_dict[permittivity] ];
 
+def grid_index(Nx, Ny, Nz, i, j, k):
+    return (Ny*Nz*i + Nz*j + k);
+
+def Orthogonal(vec):
+    xx = abs(vec.x);
+    yy = abs(vec.y);
+    zz = abs(vec.z);
+    if (xx < yy):
+        if xx < zz:
+            return Vector(0,vec.z,-vec.y);
+        else:
+            return Vector(vec.y,-vec.x,0);
+    else:
+        if yy < zz:
+            return Vector(-vec.z,0,vec.x)
+        else:
+            return Vector(vec.y,-vec.x,0);
+
 def GEOblock(lower, upper, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cube(1.0);
@@ -103,34 +121,18 @@ def GEOblock(lower, upper, permittivity, conductivity):
     obj.transp = True; obj.wireMode = True;
     return;
 
-def GEObox(lower, upper):
+def GEOblock(rotation_matrix, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cube(1.0);
-    mesh.faces.delete(0, range(len(mesh.faces)));
+    mesh.materials = materials(permittivity, conductivity);
+    for f in mesh.faces:
+        f.mat = 0;
 
-    obj = scene.objects.new(mesh, 'box');
-    pos = 0.5*(lower+upper);
-    diag = upper-lower;
-    
-    global box_SizeX;
-    global box_SizeY;
-    global box_SizeZ;
-    box_SizeX = abs(diag[0]);
-    box_SizeY = abs(diag[1]);
-    box_SizeZ = abs(diag[2]);
-    print "box_SizeX = ", box_SizeX;
-    print "box_SizeY = ", box_SizeY;
-    print "box_SizeZ = ", box_SizeZ;
-    
-    obj.SizeX = box_SizeX;
-    obj.SizeY = box_SizeY;
-    obj.SizeZ = box_SizeZ;
-    
-    obj.setLocation(pos[0], pos[1], pos[2]);
+    obj = scene.objects.new(mesh, 'block');
+    obj.setMatrix(rotation_matrix);
     obj.transp = True; obj.wireMode = True;
+    return;
 
-    return
-    
 def GEOcylinder(center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
@@ -169,10 +171,47 @@ def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
     obj.setLocation(center[0], center[1], center[2]);
     obj.transp = True; obj.wireMode = True;
     return
+
+def GEOsphere(outer_radius, inner_radius, permittivity, conductivity, rotation_matrix):
+    scene = Blender.Scene.GetCurrent();
+    mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
+    mesh.materials = materials(permittivity, conductivity);
+    for f in mesh.faces:
+        f.mat = 0;
+
+    obj = scene.objects.new(mesh, 'sphere');
+    obj.setMatrix(rotation_matrix);
+    obj.transp = True; obj.wireMode = True;
+    return
     
-def grid_index(Nx, Ny, Nz, i, j, k):
-    return (Ny*Nz*i + Nz*j + k);
+def GEObox(lower, upper):
+    scene = Blender.Scene.GetCurrent();
+    mesh = Blender.Mesh.Primitives.Cube(1.0);
+    mesh.faces.delete(0, range(len(mesh.faces)));
+
+    obj = scene.objects.new(mesh, 'box');
+    pos = 0.5*(lower+upper);
+    diag = upper-lower;
     
+    global box_SizeX;
+    global box_SizeY;
+    global box_SizeZ;
+    box_SizeX = abs(diag[0]);
+    box_SizeY = abs(diag[1]);
+    box_SizeZ = abs(diag[2]);
+    print "box_SizeX = ", box_SizeX;
+    print "box_SizeY = ", box_SizeY;
+    print "box_SizeZ = ", box_SizeZ;
+    
+    obj.SizeX = box_SizeX;
+    obj.SizeY = box_SizeY;
+    obj.SizeZ = box_SizeZ;
+    
+    obj.setLocation(pos[0], pos[1], pos[2]);
+    obj.transp = True; obj.wireMode = True;
+
+    return
+
 def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
     if len(delta_X_vector)<=0 or len(delta_Y_vector)<=0 or len(delta_Z_vector)<=0:
       return
@@ -317,21 +356,6 @@ def GEOmesh(full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
     return
     
-def Orthogonal(vec):
-    xx = abs(vec.x);
-    yy = abs(vec.y);
-    zz = abs(vec.z);
-    if (xx < yy):
-        if xx < zz:
-            return Vector(0,vec.z,-vec.y);
-        else:
-            return Vector(vec.y,-vec.x,0);
-    else:
-        if yy < zz:
-            return Vector(-vec.z,0,vec.x)
-        else:
-            return Vector(vec.y,-vec.x,0);
-
 def GEOexcitation(P1, P2):
     # arrow dimensions:
     arrow_length = (P2-P1).length;
@@ -579,7 +603,36 @@ def importBristolFDTD(filename):
     # Block
     Blender.Window.SetActiveLayer(1<<8);
     for block in structured_entries.block_list:
-        GEOblock(Vector(block.lower), Vector(block.upper), block.permittivity, block.conductivity);
+        lower = Vector(block.lower)
+        upper = Vector(block.upper)
+        pos = 0.5*(lower+upper);
+        diag = upper-lower;
+
+        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix.identity();
+
+        Sx=Blender.Mathutils.ScaleMatrix(abs(diag[0]),4,Blender.Mathutils.Vector(1,0,0))
+        Sy=Blender.Mathutils.ScaleMatrix(abs(diag[1]),4,Blender.Mathutils.Vector(0,1,0))
+        Sz=Blender.Mathutils.ScaleMatrix(abs(diag[2]),4,Blender.Mathutils.Vector(0,0,1))
+        rotation_matrix *= Sx*Sy*Sz;
+        T = Blender.Mathutils.TranslationMatrix(pos)
+        rotation_matrix *= T;
+        
+        print block.rotation_list;
+        
+        for r in block.rotation_list:
+          print r.axis_point
+          print r.axis_direction
+          print r.angle_degrees
+          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
+          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
+          T = Blender.Mathutils.TranslationMatrix(C)
+          Tinv = Blender.Mathutils.TranslationMatrix(-C)
+          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
+          rotation_matrix *= Tinv*R*T
+        print '+++++++++++++'
+
+        GEOblock(rotation_matrix, block.permittivity, block.conductivity);
     # Cylinder
     Blender.Window.SetActiveLayer(1<<9);
     for cylinder in structured_entries.cylinder_list:
