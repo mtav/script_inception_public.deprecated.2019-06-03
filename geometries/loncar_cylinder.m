@@ -1,4 +1,4 @@
-function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_direction)
+function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_type)
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % description:
       %  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
@@ -94,8 +94,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       % ITERATIONS = 10;%no unit
 
 %        ITERATIONS=1048400
-      FIRST=65400
-      REPETITION=524200
+      FIRST=65400;
+      REPETITION=524200;
 
       TIMESTEP=0.9;%mus
       TIME_CONSTANT=4.000000E-09;%mus
@@ -224,8 +224,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       % .sh file
       %TODO: improve this
       % WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
-      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_4ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 200, 1, 4);
-      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_8ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 200, 1, 8);
+      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_4ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 400, 1, 4);
+      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_8ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 400, 1, 8);
 
       % .cmd file
       GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
@@ -334,20 +334,21 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           P_Zm2 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-2*delta_center ];
           P_Zp2 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+2*delta_center ];
           P_center = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z ];
-          E = [ 0, 1, 0 ];
+          Ey = [ 0, 1, 0 ];
+          Ez = [ 0, 0, 1 ];
           H = [ 0, 0, 0 ];
           type = 10;
           
 
 
-        if excitation_direction == 1
-          GEOexcitation(out, 7, P_Xm1, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
-        elseif  excitation_direction == 2
-          GEOexcitation(out, 7, P_Zm1, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
-        elseif  excitation_direction == 3
-          GEOexcitation(out, 7, P_Xm2, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
-        elseif  excitation_direction == 4
-          GEOexcitation(out, 7, P_Zm2, P_center, E, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        if excitation_type == 1
+          GEOexcitation(out, 7, P_Xm1, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_type == 2
+          GEOexcitation(out, 7, P_Zm1, P_center, Ez, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_type == 3
+          GEOexcitation(out, 7, P_Xm2, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+        elseif  excitation_type == 4
+          GEOexcitation(out, 7, P_Zm2, P_center, Ez, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         else
           error('invalid direction');
         end
@@ -356,13 +357,13 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           
       end
 
-          totopos_bc = 1; totopos_param = [1,1,0];
+          totopos_bc = 2; totopos_param = [1,1,0];
           Xpos_bc = 2; Xpos_param = [1,1,0];
-          Zpos_bc = 2; Zpos_param = [1,1,0];
+          Zpos_bc = 1; Zpos_param = [1,1,0];
           totoneg_bc = 2; totoneg_param = [1,1,0];
           Xneg_bc = 2; Xneg_param = [1,1,0];
           Zneg_bc = 2; Zneg_param = [1,1,0];
-          GEOboundary(out, Xpos_bc, Xpos_param, totopos_bc, totopos_param, Zpos_bc, Zpos_param, Xneg_bc, Xneg_param, totoneg_bc, totoneg_param, Zneg_bc, Zneg_param);
+          GEOboundary(out, totopos_bc, totopos_param, Xpos_bc, Xpos_param, Zpos_bc, Zpos_param, Xneg_bc, Xneg_param, totoneg_bc, totoneg_param, Zneg_bc, Zneg_param);
           
           iteration_method = 5;
           propagation_constant = 0;
