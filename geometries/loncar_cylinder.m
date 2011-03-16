@@ -171,14 +171,14 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
 
       % for the frequency snapshots
-      xoxoplanes = [ 0,
+      Zplanes = [ 0,
       Zmax/2-pillar_radius_mum-x_buffer,
       Zmax/2-pillar_radius_mum,
       Zmax/2-2*delta_center,
       Zmax/2-delta_center,
       Zmax/2 ];
       
-      totoplanes = [ 0,
+      Xplanes = [ 0,
       bottom_N/2*d_holes_mum,
       pillar_centre_X-delta_center,
       pillar_centre_X,
@@ -186,7 +186,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       bottom_N*d_holes_mum + Lcav + top_N/2*d_holes_mum,
       pillar_height ];
       
-      zozoplanes = [ 0,
+      Yplanes = [ 0,
       Ymax/2-pillar_radius_mum-z_buffer,
       Ymax/2-pillar_radius_mum,
       Ymax/2-hole_radius_toto,
@@ -201,12 +201,12 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       Ymax ];
       
       % for probes
-      probes_X_vector = xoxoplanes(2:4);
-      probes_toto_vector = totoplanes(2:length(totoplanes)-1);
-      probes_Z_vector = zozoplanes(2:8);
+      probes_X_vector = Zplanes(2:4);
+      probes_toto_vector = Xplanes(2:length(Xplanes)-1);
+      probes_Z_vector = Yplanes(2:8);
       
-      probes_toto_vector_center = totoplanes(3:5);
-      probes_Z_vector_center = [zozoplanes(6),zozoplanes(8)];
+      probes_toto_vector_center = Xplanes(3:5);
+      probes_Z_vector_center = [Yplanes(6),Yplanes(8)];
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Files to generate:
@@ -391,24 +391,24 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       power = 0;
       
       if SNAPSHOTS_ON == 1
-%                for izozo = 1:length(zozoplanes)
+%                for iY = 1:length(Yplanes)
 %                        plane = 2;
-%                        P1 = [0, zozoplanes(izozo), 0];
-%                        P2 = [Xmax, zozoplanes(izozo), Zmax/2];
+%                        P1 = [0, Yplanes(iY), 0];
+%                        P2 = [Xmax, Yplanes(iY), Zmax/2];
 %                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 %                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 %                end
-%                for itoto = 1:length(totoplanes)
+%                for iX = 1:length(Xplanes)
 %                        plane = 1;
-%                        P1 = [totoplanes(itoto), 0, 0];
-%                        P2 = [totoplanes(itoto), Ymax, Zmax/2];
+%                        P1 = [Xplanes(iX), 0, 0];
+%                        P2 = [Xplanes(iX), Ymax, Zmax/2];
 %                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 %                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 %                end
-%                for ixoxo = 1:length(xoxoplanes)
+%                for iZ = 1:length(Zplanes)
 %                        plane = 3;
-%                        P1 = [0, 0, xoxoplanes(ixoxo)];
-%                        P2 = [Xmax, Ymax, xoxoplanes(ixoxo)];
+%                        P1 = [0, 0, Zplanes(iZ)];
+%                        P2 = [Xmax, Ymax, Zplanes(iZ)];
 %                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 %                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 %                end
@@ -440,21 +440,21 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           H=[1,1,1];
           J=[0,0,0];
           power = 0;
-          for itoto =1:length(probes_toto_vector)
+          for iX =1:length(probes_toto_vector)
               % Xtoto probes
-              for ixoxo =1:length(probes_X_vector)
-                  GEOprobe(out, [probes_toto_vector(itoto), zozoplanes(6), probes_X_vector(ixoxo)], step, E, H, J, power );
+              for iZ =1:length(probes_X_vector)
+                  GEOprobe(out, [probes_toto_vector(iX), Yplanes(6), probes_X_vector(iZ)], step, E, H, J, power );
               end
               % Ztoto probes
-              for izozo =1:length(probes_Z_vector)
-                  GEOprobe(out, [probes_toto_vector(itoto), probes_Z_vector(izozo), xoxoplanes(5)], step, E, H, J, power );
+              for iY =1:length(probes_Z_vector)
+                  GEOprobe(out, [probes_toto_vector(iX), probes_Z_vector(iY), Zplanes(5)], step, E, H, J, power );
               end
           end
           
           % Ztoto center probes
-          for itoto =1:length(probes_toto_vector_center)
-              for izozo =1:length(probes_Z_vector_center)
-                  GEOprobe(out, [probes_toto_vector_center(itoto), probes_Z_vector_center(izozo), xoxoplanes(4)], step, E, H, J, power );
+          for iX =1:length(probes_toto_vector_center)
+              for iY =1:length(probes_Z_vector_center)
+                  GEOprobe(out, [probes_toto_vector_center(iX), probes_Z_vector_center(iY), Zplanes(4)], step, E, H, J, power );
               end
           end
       end
