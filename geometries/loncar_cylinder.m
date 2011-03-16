@@ -358,13 +358,13 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           
       end
 
-          totopos_bc = 2; totopos_param = [1,1,0];
-          xoxopos_bc = 2; xoxopos_param = [1,1,0];
-          zozopos_bc = 1; zozopos_param = [1,1,0];
-          totoneg_bc = 2; totoneg_param = [1,1,0];
-          xoxoneg_bc = 2; xoxoneg_param = [1,1,0];
-          zozoneg_bc = 2; zozoneg_param = [1,1,0];
-          GEOboundary(out, totopos_bc, totopos_param, xoxopos_bc, xoxopos_param, zozopos_bc, zozopos_param, xoxoneg_bc, xoxoneg_param, totoneg_bc, totoneg_param, zozoneg_bc, zozoneg_param);
+          Xpos_bc = 2; Xpos_param = [1,1,0];
+          Ypos_bc = 2; Ypos_param = [1,1,0];
+          Zpos_bc = 1; Zpos_param = [1,1,0];
+          Xneg_bc = 2; Xneg_param = [1,1,0];
+          Yneg_bc = 2; Yneg_param = [1,1,0];
+          Zneg_bc = 2; Zneg_param = [1,1,0];
+          GEOboundary(out, Xpos_bc, Xpos_param, Ypos_bc, Ypos_param, Zpos_bc, Zpos_param, Xneg_bc, Xneg_param, Yneg_bc, Yneg_param, Zneg_bc, Zneg_param);
           
           iteration_method = 5;
           propagation_constant = 0;
