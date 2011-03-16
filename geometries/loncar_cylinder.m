@@ -243,16 +243,16 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       fprintf(out,'\n');
 
       % initialize current y
-      toto_current=0;
+      X_current=0;
           
       if print_pillar
           % create main pillar
-          L = [ toto_current, Ymax/2 - pillar_radius_mum, Zmax/2 - pillar_radius_mum ];
-          U = [ toto_current + pillar_height, Ymax/2 + pillar_radius_mum, Zmax/2 + pillar_radius_mum ];
+          L = [ X_current, Ymax/2 - pillar_radius_mum, Zmax/2 - pillar_radius_mum ];
+          U = [ X_current + pillar_height, Ymax/2 + pillar_radius_mum, Zmax/2 + pillar_radius_mum ];
           GEOblock(out, L, U, n_Diamond^2, 0);
       end
 
-      toto_current = toto_current + d_holes_mum/2;
+      X_current = X_current + d_holes_mum/2;
 
       if print_holes
           % hole settings
@@ -263,44 +263,44 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           for i=1:bottom_N
           
               if print_holes_bottom
-                  centre = [ toto_current, Ymax/2, Zmax/2 ];
+                  centre = [ X_current, Ymax/2, Zmax/2 ];
                   if HOLE_TYPE == 1
                   GEOcylinder(out, centre, 0, hole_radius_X, 2*pillar_radius_mum, permittivity, conductivity, 0);
                   elseif HOLE_TYPE == 2
-                  lower = [ toto_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X];
-                  upper = [ toto_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X];
+                  lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X];
+                  upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   else
-                  lower = [ toto_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z];
-                  upper = [ toto_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z];
+                  lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z];
+                  upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   end
               end
 
-              toto_current = toto_current + d_holes_mum;
+              X_current = X_current + d_holes_mum;
           end
 
-          toto_current = toto_current - d_holes_mum + d_holes_cavity;
+          X_current = X_current - d_holes_mum + d_holes_cavity;
 
           % create top holes
           for i=1:top_N
           
               if print_holes_top
-                  centre = [ toto_current, Ymax/2, Zmax/2 ];
+                  centre = [ X_current, Ymax/2, Zmax/2 ];
                   if HOLE_TYPE == 1
                   GEOcylinder(out, centre, 0, hole_radius_X, 2*pillar_radius_mum, permittivity, conductivity, 0);
                   elseif HOLE_TYPE == 2
-                  lower = [ toto_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X];
-                  upper = [ toto_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X];
+                  lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X];
+                  upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   else
-                  lower = [ toto_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z];
-                  upper = [ toto_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z];
+                  lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z];
+                  upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   end
               end
               
-              toto_current = toto_current + d_holes_mum;
+              X_current = X_current + d_holes_mum;
           end
           
       end
