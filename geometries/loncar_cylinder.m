@@ -149,26 +149,26 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       delta_min = min(max_delta_Vector_toto);
 
-      thicknessVector_X = [ Zmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
-      max_delta_Vector_X = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
+      thicknessVector_xoxo = [ Zmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+      max_delta_Vector_xoxo = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
 
       if HOLE_TYPE == 1
-        thicknessVector_Z_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
+        thicknessVector_zozo_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       elseif HOLE_TYPE == 2
-        thicknessVector_Z_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
+        thicknessVector_zozo_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       else
-        thicknessVector_Z_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
+        thicknessVector_zozo_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       end
 
-      thicknessVector_Z_2 = fliplr(thicknessVector_Z_1);
-      thicknessVector_Z = [ thicknessVector_Z_1, thicknessVector_Z_2 ];
-      max_delta_Vector_Z_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
-      max_delta_Vector_Z_2 = fliplr(max_delta_Vector_Z_1);
-      max_delta_Vector_Z = [ max_delta_Vector_Z_1, max_delta_Vector_Z_2 ];
+      thicknessVector_zozo_2 = fliplr(thicknessVector_zozo_1);
+      thicknessVector_zozo = [ thicknessVector_zozo_1, thicknessVector_zozo_2 ];
+      max_delta_Vector_zozo_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
+      max_delta_Vector_zozo_2 = fliplr(max_delta_Vector_zozo_1);
+      max_delta_Vector_zozo = [ max_delta_Vector_zozo_1, max_delta_Vector_zozo_2 ];
       
-      [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X);
+      [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_xoxo,thicknessVector_xoxo);
       [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_toto,thicknessVector_toto);
-      [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
+      [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_zozo,thicknessVector_zozo);
 
       % for the frequency snapshots
       Zplanes = [ 0,
