@@ -131,7 +131,7 @@ def GEObox(lower, upper):
 
     return
     
-def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
+def GEOcylinder(center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
     mesh.materials = materials(permittivity, conductivity);
@@ -139,7 +139,7 @@ def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivit
         f.mat = 0;
 
     obj = scene.objects.new(mesh, 'cylinder');
-    obj.setLocation(centre[0], centre[1], centre[2]);
+    obj.setLocation(center[0], center[1], center[2]);
     obj.RotX = angle_X;
     obj.RotY = angle_Y;
     obj.RotZ = angle_Z;
@@ -735,7 +735,7 @@ def main():
           #~ obj.setMatrix(rotmat);
           #~ obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
       
-          #~ obj.setLocation(centre[0], centre[1], centre[2]);
+          #~ obj.setLocation(center[0], center[1], center[2]);
           #~ obj.RotX = angle_X;
           #~ obj.RotY = angle_Y;
           #~ obj.RotZ = angle_Z;
