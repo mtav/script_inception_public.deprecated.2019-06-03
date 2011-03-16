@@ -149,9 +149,6 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       delta_min = min(max_delta_Vector_X);
 
-      thicknessVector_Z = [ Zmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
-      max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
-
       if HOLE_TYPE == 1
         thicknessVector_Y_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       elseif HOLE_TYPE == 2
@@ -165,18 +162,15 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       max_delta_Vector_Y_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
       max_delta_Vector_Y_2 = fliplr(max_delta_Vector_Y_1);
       max_delta_Vector_Y = [ max_delta_Vector_Y_1, max_delta_Vector_Y_2 ];
+
+      thicknessVector_Z = [ Zmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+      max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
       
       [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X);
       [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y);
       [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
 
       % for the frequency snapshots
-      Zplanes = [ 0,
-      Zmax/2-pillar_radius_mum-x_buffer,
-      Zmax/2-pillar_radius_mum,
-      Zmax/2-2*delta_center,
-      Zmax/2-delta_center,
-      Zmax/2 ];
       
       Xplanes = [ 0,
       bottom_N/2*d_holes_mum,
@@ -199,6 +193,13 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       Ymax/2+pillar_radius_mum,
       Ymax/2+pillar_radius_mum+z_buffer,
       Ymax ];
+
+      Zplanes = [ 0,
+      Zmax/2-pillar_radius_mum-x_buffer,
+      Zmax/2-pillar_radius_mum,
+      Zmax/2-2*delta_center,
+      Zmax/2-delta_center,
+      Zmax/2 ];
       
       % for probes
       probes_Z_vector = Zplanes(2:4);
