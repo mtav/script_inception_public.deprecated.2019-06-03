@@ -96,6 +96,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 %        ITERATIONS=1048400
       FIRST=65400;
       REPETITION=524200;
+      WALLTIME=360;
 
       TIMESTEP=0.9;%mus
       TIME_CONSTANT=4.000000E-09;%mus
@@ -224,8 +225,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       % .sh file
       %TODO: improve this
       % WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
-      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_4ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 400, 1, 4);
-      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_8ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 400, 1, 8);
+      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_4ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME, 1, 4);
+      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_8ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME, 1, 8);
 
       % .cmd file
       GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
