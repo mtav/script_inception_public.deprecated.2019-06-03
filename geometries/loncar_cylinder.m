@@ -201,12 +201,12 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       Ymax ];
       
       % for probes
-      probes_X_vector = Zplanes(2:4);
-      probes_toto_vector = Xplanes(2:length(Xplanes)-1);
-      probes_Z_vector = Yplanes(2:8);
+      probes_Z_vector = Zplanes(2:4);
+      probes_X_vector = Xplanes(2:length(Xplanes)-1);
+      probes_Y_vector = Yplanes(2:8);
       
-      probes_toto_vector_center = Xplanes(3:5);
-      probes_Z_vector_center = [Yplanes(6),Yplanes(8)];
+      probes_X_vector_center = Xplanes(3:5);
+      probes_Y_vector_center = [Yplanes(6),Yplanes(8)];
       
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % Files to generate:
@@ -440,21 +440,21 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           H=[1,1,1];
           J=[0,0,0];
           power = 0;
-          for iX =1:length(probes_toto_vector)
+          for iX =1:length(probes_X_vector)
               % Xtoto probes
-              for iZ =1:length(probes_X_vector)
-                  GEOprobe(out, [probes_toto_vector(iX), Yplanes(6), probes_X_vector(iZ)], step, E, H, J, power );
+              for iZ =1:length(probes_Z_vector)
+                  GEOprobe(out, [probes_X_vector(iX), Yplanes(6), probes_Z_vector(iZ)], step, E, H, J, power );
               end
               % Ztoto probes
-              for iY =1:length(probes_Z_vector)
-                  GEOprobe(out, [probes_toto_vector(iX), probes_Z_vector(iY), Zplanes(5)], step, E, H, J, power );
+              for iY =1:length(probes_Y_vector)
+                  GEOprobe(out, [probes_X_vector(iX), probes_Y_vector(iY), Zplanes(5)], step, E, H, J, power );
               end
           end
           
           % Ztoto center probes
-          for iX =1:length(probes_toto_vector_center)
-              for iY =1:length(probes_Z_vector_center)
-                  GEOprobe(out, [probes_toto_vector_center(iX), probes_Z_vector_center(iY), Zplanes(4)], step, E, H, J, power );
+          for iX =1:length(probes_X_vector_center)
+              for iY =1:length(probes_Y_vector_center)
+                  GEOprobe(out, [probes_X_vector_center(iX), probes_Y_vector_center(iY), Zplanes(4)], step, E, H, J, power );
               end
           end
       end
