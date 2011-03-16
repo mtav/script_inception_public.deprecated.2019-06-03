@@ -146,6 +146,18 @@ def GEOcylinder(centre, inner_radius, outer_radius, H, permittivity, conductivit
     obj.transp = True; obj.wireMode = True;
     return
 
+def GEOcylinder(inner_radius, outer_radius, H, permittivity, conductivity, rotation_matrix):
+    scene = Blender.Scene.GetCurrent();
+    mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
+    mesh.materials = materials(permittivity, conductivity);
+    for f in mesh.faces:
+        f.mat = 0;
+
+    obj = scene.objects.new(mesh, 'cylinder');
+    obj.setMatrix(rotation_matrix);
+    obj.transp = True; obj.wireMode = True;
+    return
+
 def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
@@ -576,6 +588,17 @@ def importBristolFDTD(filename):
         print '+++++++++++++'
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
+
+        # because FDTD cylinders are aligned with the Y axis by default
+        axis = Blender.Mathutils.Vector(1,0,0)
+        C = Blender.Mathutils.Vector(0,0,0);
+        T = Blender.Mathutils.TranslationMatrix(C)
+        Tinv = Blender.Mathutils.TranslationMatrix(-C)
+        R = Blender.Mathutils.RotationMatrix(-90, 4, 'r', axis)
+        rotation_matrix *= Tinv*R*T;
+
+        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
+        rotation_matrix *= T;
         
         print cylinder.rotation_list;
         
@@ -602,12 +625,13 @@ def importBristolFDTD(filename):
         #~ obj.setLocation(L);
         #~ M=obj.getMatrix()
 
-        rotation_matrix.
-        angle_X = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
+        euler = rotation_matrix.toEuler();
+        
+        angle_X = math.radians(-90);
         angle_Y = 0;
         angle_Z = -math.radians(cylinder.angle);
         
-        GEOcylinder(Vector(cylinder.center),cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,angle_X,angle_Y,angle_Z);
+        GEOcylinder(cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,rotation_matrix);
 
     #########################
     # Not yet implemented:
