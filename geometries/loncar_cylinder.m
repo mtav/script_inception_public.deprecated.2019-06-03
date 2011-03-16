@@ -166,9 +166,9 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       max_delta_Vector_Z_2 = fliplr(max_delta_Vector_Z_1);
       max_delta_Vector_Z = [ max_delta_Vector_Z_1, max_delta_Vector_Z_2 ];
       
-      [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X);
-      [ delta_toto_vector, local_delta_toto_vector ] = subGridMultiLayer(max_delta_Vector_toto,thicknessVector_toto);
-      [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
+      [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X);
+      [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_toto,thicknessVector_toto);
+      [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z);
 
       % for the frequency snapshots
       Xplanes = [ 0,
@@ -374,7 +374,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, ITERATIONS, TIMESTEP, id_character);
 
       if print_mesh
-          GEOmesh(out, delta_toto_vector, delta_Z_vector, delta_X_vector);
+          GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector);
       end
           
       % frequency snapshots
