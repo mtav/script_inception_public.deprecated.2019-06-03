@@ -134,23 +134,23 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       % meshing parameters
       thicknessVector_toto = [ ];
-      max_delta_Vector_toto = [ ];
+      max_delta_Vector_X = [ ];
       mesh_factor=1;
       for i=1:bottom_N
               thicknessVector_toto = [ thicknessVector_toto, d_holes_mum/2 - hole_radius_toto, 2*hole_radius_toto, d_holes_mum/2 - hole_radius_toto ];
-              max_delta_Vector_toto = [ max_delta_Vector_toto, mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ];
+              max_delta_Vector_X = [ max_delta_Vector_X, mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ];
       end
       thicknessVector_toto = [ thicknessVector_toto, Lcav/2-center_radius, 2*center_radius, Lcav/2-center_radius ];
-      max_delta_Vector_toto = [ max_delta_Vector_toto, mesh_factor*delta_diamond, mesh_factor*delta_center, mesh_factor*delta_diamond ];
+      max_delta_Vector_X = [ max_delta_Vector_X, mesh_factor*delta_diamond, mesh_factor*delta_center, mesh_factor*delta_diamond ];
       for i=1:top_N
               thicknessVector_toto = [ thicknessVector_toto, d_holes_mum/2 - hole_radius_toto, 2*hole_radius_toto, d_holes_mum/2 - hole_radius_toto ];
-              max_delta_Vector_toto = [ max_delta_Vector_toto, mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ];
+              max_delta_Vector_X = [ max_delta_Vector_X, mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ];
       end
 
-      delta_min = min(max_delta_Vector_toto);
+      delta_min = min(max_delta_Vector_X);
 
       thicknessVector_xoxo = [ Zmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
-      max_delta_Vector_xoxo = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
+      max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
 
       if HOLE_TYPE == 1
         thicknessVector_zozo_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
@@ -162,13 +162,13 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       thicknessVector_zozo_2 = fliplr(thicknessVector_zozo_1);
       thicknessVector_zozo = [ thicknessVector_zozo_1, thicknessVector_zozo_2 ];
-      max_delta_Vector_zozo_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
-      max_delta_Vector_zozo_2 = fliplr(max_delta_Vector_zozo_1);
-      max_delta_Vector_zozo = [ max_delta_Vector_zozo_1, max_delta_Vector_zozo_2 ];
+      max_delta_Vector_Y_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
+      max_delta_Vector_Y_2 = fliplr(max_delta_Vector_Y_1);
+      max_delta_Vector_Y = [ max_delta_Vector_Y_1, max_delta_Vector_Y_2 ];
       
-      [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_xoxo,thicknessVector_xoxo);
-      [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_toto,thicknessVector_toto);
-      [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_zozo,thicknessVector_zozo);
+      [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_toto);
+      [ delta_Y_vector, local_delta_Y_vector ] = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_zozo);
+      [ delta_Z_vector, local_delta_Z_vector ] = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_xoxo);
 
       % for the frequency snapshots
       Zplanes = [ 0,
