@@ -123,14 +123,14 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       z_buffer = 4*delta_diamond;%mum
 
       % dimension and position parameters
-      Xmax = 5*2*pillar_radius_mum;%2*(pillar_radius_mum + x_buffer + 4*delta_outside);%mum
+      Zmax = 5*2*pillar_radius_mum;%2*(pillar_radius_mum + x_buffer + 4*delta_outside);%mum
       pillar_height = (bottom_N+top_N)*d_holes_mum + Lcav;
-      totomax = pillar_height;%mum
-      Zmax = Xmax;%mum
+      Xmax = pillar_height;%mum
+      Ymax = Zmax;%mum
       
-      pillar_centre_X = Xmax/2;
-      pillar_centre_toto = bottom_N*d_holes_mum + Lcav/2;
-      pillar_centre_Z = Zmax/2;
+      pillar_centre_Y = Zmax/2;
+      pillar_centre_X = bottom_N*d_holes_mum + Lcav/2;
+      pillar_centre_Z = Ymax/2;
 
       % meshing parameters
       thicknessVector_toto = [ ];
@@ -149,15 +149,15 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       delta_min = min(max_delta_Vector_toto);
 
-      thicknessVector_X = [ Xmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
+      thicknessVector_X = [ Zmax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_toto, hole_radius_toto-center_radius, center_radius ];
       max_delta_Vector_X = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
 
       if HOLE_TYPE == 1
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       elseif HOLE_TYPE == 2
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       else
-        thicknessVector_Z_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
+        thicknessVector_Z_1 = [ Ymax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ];
       end
 
       thicknessVector_Z_2 = fliplr(thicknessVector_Z_1);
@@ -172,33 +172,33 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       % for the frequency snapshots
       Xplanes = [ 0,
-      Xmax/2-pillar_radius_mum-x_buffer,
-      Xmax/2-pillar_radius_mum,
-      Xmax/2-2*delta_center,
-      Xmax/2-delta_center,
-      Xmax/2 ];
+      Zmax/2-pillar_radius_mum-x_buffer,
+      Zmax/2-pillar_radius_mum,
+      Zmax/2-2*delta_center,
+      Zmax/2-delta_center,
+      Zmax/2 ];
       
       totoplanes = [ 0,
       bottom_N/2*d_holes_mum,
-      pillar_centre_toto-delta_center,
-      pillar_centre_toto,
-      pillar_centre_toto+delta_center,
+      pillar_centre_X-delta_center,
+      pillar_centre_X,
+      pillar_centre_X+delta_center,
       bottom_N*d_holes_mum + Lcav + top_N/2*d_holes_mum,
       pillar_height ];
       
       Zplanes = [ 0,
-      Zmax/2-pillar_radius_mum-z_buffer,
-      Zmax/2-pillar_radius_mum,
-      Zmax/2-hole_radius_toto,
-      Zmax/2-2*delta_center,
-      Zmax/2-delta_center,
-      Zmax/2,
-      Zmax/2+delta_center,
-      Zmax/2+2*delta_center,
-      Zmax/2+hole_radius_toto,
-      Zmax/2+pillar_radius_mum,
-      Zmax/2+pillar_radius_mum+z_buffer,
-      Zmax ];
+      Ymax/2-pillar_radius_mum-z_buffer,
+      Ymax/2-pillar_radius_mum,
+      Ymax/2-hole_radius_toto,
+      Ymax/2-2*delta_center,
+      Ymax/2-delta_center,
+      Ymax/2,
+      Ymax/2+delta_center,
+      Ymax/2+2*delta_center,
+      Ymax/2+hole_radius_toto,
+      Ymax/2+pillar_radius_mum,
+      Ymax/2+pillar_radius_mum+z_buffer,
+      Ymax ];
       
       % for probes
       probes_X_vector = Xplanes(2:4);
@@ -246,8 +246,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           
       if print_pillar
           % create main pillar
-          L = [ toto_current, Xmax/2 - pillar_radius_mum, Zmax/2 - pillar_radius_mum ];
-          U = [ toto_current + pillar_height, Xmax/2 + pillar_radius_mum, Zmax/2 + pillar_radius_mum ];
+          L = [ toto_current, Zmax/2 - pillar_radius_mum, Ymax/2 - pillar_radius_mum ];
+          U = [ toto_current + pillar_height, Zmax/2 + pillar_radius_mum, Ymax/2 + pillar_radius_mum ];
           GEOblock(out, L, U, n_Diamond^2, 0);
       end
 
@@ -262,16 +262,16 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           for i=1:bottom_N
           
               if print_holes_bottom
-                  centre = [ toto_current, Xmax/2, Zmax/2 ];
+                  centre = [ toto_current, Zmax/2, Ymax/2 ];
                   if HOLE_TYPE == 1
                   GEOcylinder(out, centre, 0, hole_radius_toto, 2*pillar_radius_mum, permittivity, conductivity, 0);
                   elseif HOLE_TYPE == 2
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_toto];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_toto];
+                  lower = [ toto_current - hole_radius_toto, Zmax/2 - pillar_radius_mum, Ymax/2 - hole_radius_toto];
+                  upper = [ toto_current + hole_radius_toto, Zmax/2 + pillar_radius_mum, Ymax/2 + hole_radius_toto];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   else
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_z];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_z];
+                  lower = [ toto_current - hole_radius_toto, Zmax/2 - pillar_radius_mum, Ymax/2 - hole_radius_z];
+                  upper = [ toto_current + hole_radius_toto, Zmax/2 + pillar_radius_mum, Ymax/2 + hole_radius_z];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   end
               end
@@ -285,16 +285,16 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           for i=1:top_N
           
               if print_holes_top
-                  centre = [ toto_current, Xmax/2, Zmax/2 ];
+                  centre = [ toto_current, Zmax/2, Ymax/2 ];
                   if HOLE_TYPE == 1
                   GEOcylinder(out, centre, 0, hole_radius_toto, 2*pillar_radius_mum, permittivity, conductivity, 0);
                   elseif HOLE_TYPE == 2
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_toto];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_toto];
+                  lower = [ toto_current - hole_radius_toto, Zmax/2 - pillar_radius_mum, Ymax/2 - hole_radius_toto];
+                  upper = [ toto_current + hole_radius_toto, Zmax/2 + pillar_radius_mum, Ymax/2 + hole_radius_toto];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   else
-                  lower = [ toto_current - hole_radius_toto, Xmax/2 - pillar_radius_mum, Zmax/2 - hole_radius_z];
-                  upper = [ toto_current + hole_radius_toto, Xmax/2 + pillar_radius_mum, Zmax/2 + hole_radius_z];
+                  lower = [ toto_current - hole_radius_toto, Zmax/2 - pillar_radius_mum, Ymax/2 - hole_radius_z];
+                  upper = [ toto_current + hole_radius_toto, Zmax/2 + pillar_radius_mum, Ymax/2 + hole_radius_z];
                   GEOblock(out, lower, upper, permittivity, conductivity);
                   end
               end
@@ -306,7 +306,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
           %write box
           L = [ 0, 0, 0 ];
-          U = [ totomax, Zmax, Xmax/2 ];
+          U = [ Xmax, Ymax, Zmax/2 ];
           GEObox(out, L, U);
 
           %write footer
@@ -324,17 +324,17 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
           out = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
 
       if print_excitation
-          P_totom = [ pillar_centre_toto-2*delta_center, pillar_centre_X, pillar_centre_Z ];
-          P_totop = [ pillar_centre_toto+2*delta_center, pillar_centre_X, pillar_centre_Z ];
-          P_Xm1 = [ pillar_centre_toto, pillar_centre_X-1*delta_center, pillar_centre_Z ];
-          P_Xp1 = [ pillar_centre_toto, pillar_centre_X+1*delta_center, pillar_centre_Z ];
-          P_Xm2 = [ pillar_centre_toto, pillar_centre_X-2*delta_center, pillar_centre_Z ];
-          P_Xp2 = [ pillar_centre_toto, pillar_centre_X+2*delta_center, pillar_centre_Z ];
-          P_Zm1 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-1*delta_center ];
-          P_Zp1 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+1*delta_center ];
-          P_Zm2 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z-2*delta_center ];
-          P_Zp2 = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z+2*delta_center ];
-          P_center = [ pillar_centre_toto, pillar_centre_X, pillar_centre_Z ];
+          P_Xm = [ pillar_centre_X-2*delta_center, pillar_centre_Y, pillar_centre_Z ];
+          P_Xp = [ pillar_centre_X+2*delta_center, pillar_centre_Y, pillar_centre_Z ];
+          P_Ym1 = [ pillar_centre_X, pillar_centre_Y-1*delta_center, pillar_centre_Z ];
+          P_Yp1 = [ pillar_centre_X, pillar_centre_Y+1*delta_center, pillar_centre_Z ];
+          P_Ym2 = [ pillar_centre_X, pillar_centre_Y-2*delta_center, pillar_centre_Z ];
+          P_Yp2 = [ pillar_centre_X, pillar_centre_Y+2*delta_center, pillar_centre_Z ];
+          P_Zm1 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z-1*delta_center ];
+          P_Zp1 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z+1*delta_center ];
+          P_Zm2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z-2*delta_center ];
+          P_Zp2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z+2*delta_center ];
+          P_center = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z ];
           Ey = [ 0, 1, 0 ];
           Ez = [ 0, 0, 1 ];
           H = [ 0, 0, 0 ];
@@ -343,11 +343,11 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
 
         if excitation_type == 1
-          GEOexcitation(out, 7, P_Xm1, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+          GEOexcitation(out, 7, P_Ym1, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_type == 2
           GEOexcitation(out, 7, P_Zm1, P_center, Ez, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_type == 3
-          GEOexcitation(out, 7, P_Xm2, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
+          GEOexcitation(out, 7, P_Ym2, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         elseif  excitation_type == 4
           GEOexcitation(out, 7, P_Zm2, P_center, Ez, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, EXCITATION_FREQUENCY, 0, 0, 0, 0);
         else
@@ -359,12 +359,12 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       end
 
           totopos_bc = 2; totopos_param = [1,1,0];
-          Xpos_bc = 2; Xpos_param = [1,1,0];
-          Zpos_bc = 1; Zpos_param = [1,1,0];
+          xoxopos_bc = 2; xoxopos_param = [1,1,0];
+          zozopos_bc = 1; zozopos_param = [1,1,0];
           totoneg_bc = 2; totoneg_param = [1,1,0];
-          Xneg_bc = 2; Xneg_param = [1,1,0];
-          Zneg_bc = 2; Zneg_param = [1,1,0];
-          GEOboundary(out, totopos_bc, totopos_param, Xpos_bc, Xpos_param, Zpos_bc, Zpos_param, Xneg_bc, Xneg_param, totoneg_bc, totoneg_param, Zneg_bc, Zneg_param);
+          xoxoneg_bc = 2; xoxoneg_param = [1,1,0];
+          zozoneg_bc = 2; zozoneg_param = [1,1,0];
+          GEOboundary(out, totopos_bc, totopos_param, xoxopos_bc, xoxopos_param, zozopos_bc, zozopos_param, xoxoneg_bc, xoxoneg_param, totoneg_bc, totoneg_param, zozoneg_bc, zozoneg_param);
           
           iteration_method = 5;
           propagation_constant = 0;
@@ -394,40 +394,40 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 %                for iZ = 1:length(Zplanes)
 %                        plane = 2;
 %                        P1 = [0, Zplanes(iZ), 0];
-%                        P2 = [totomax, Zplanes(iZ), Xmax/2];
+%                        P2 = [Xmax, Zplanes(iZ), Zmax/2];
 %                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 %                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 %                end
 %                for itoto = 1:length(totoplanes)
 %                        plane = 1;
 %                        P1 = [totoplanes(itoto), 0, 0];
-%                        P2 = [totoplanes(itoto), Zmax, Xmax/2];
+%                        P2 = [totoplanes(itoto), Ymax, Zmax/2];
 %                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 %                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 %                end
 %                for iX = 1:length(Xplanes)
 %                        plane = 3;
 %                        P1 = [0, 0, Xplanes(iX)];
-%                        P2 = [totomax, Zmax, Xplanes(iX)];
+%                        P2 = [Xmax, Ymax, Xplanes(iX)];
 %                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
 %                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 %                end
 
                 plane = 1;
-                P1 = [pillar_centre_toto, 0, 0];
-                P2 = [pillar_centre_toto, Zmax, Xmax/2];
+                P1 = [pillar_centre_X, 0, 0];
+                P2 = [pillar_centre_X, Ymax, Zmax/2];
                 GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
                 GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 
                 plane = 2;
-                P1 = [0, Zmax/2, 0];
-                P2 = [totomax, Zmax/2, Xmax/2];
+                P1 = [0, Ymax/2, 0];
+                P2 = [Xmax, Ymax/2, Zmax/2];
                 GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
                 GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
 
                 plane = 3;
-                P1 = [0, 0, Xmax/2-2*delta_center];
-                P2 = [totomax, Zmax, Xmax/2-2*delta_center];
+                P1 = [0, 0, Zmax/2-2*delta_center];
+                P2 = [Xmax, Ymax, Zmax/2-2*delta_center];
                 GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
                 GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
           

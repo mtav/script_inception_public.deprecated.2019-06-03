@@ -602,6 +602,7 @@ def importBristolFDTD(filename):
         #~ obj.setLocation(L);
         #~ M=obj.getMatrix()
 
+        rotation_matrix.
         angle_X = math.radians(-90); # because FDTD cylinders are aligned with the Y axis by default
         angle_Y = 0;
         angle_Z = -math.radians(cylinder.angle);
