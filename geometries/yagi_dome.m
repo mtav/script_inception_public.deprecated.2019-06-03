@@ -218,7 +218,7 @@ function yagi_dome(BASENAME, DSTDIR, angle, pillar_radius, FREQUENCY)
 	% .sh file
 	%TODO: improve this
 	% WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME);
 	% .cmd file
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

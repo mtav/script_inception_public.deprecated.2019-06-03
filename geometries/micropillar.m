@@ -75,7 +75,7 @@ function micropillar(RADIUS, DSTDIR, BASENAME, N_TYPE, BOTTOM_N, TOP_N, FREQUENC
 	copyfile(fullfile(getuserdir(),'entity.lst'),DSTDIR);
 	
 	% .sh file
-	GEOshellscript(filename, BASENAME);
+	GEOshellscript([filename,'.sh'], BASENAME);
 
 	if exist('ITERATIONS','var')==0
 		disp('ITERATIONS not given');

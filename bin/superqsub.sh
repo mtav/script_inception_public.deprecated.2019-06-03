@@ -25,5 +25,5 @@ fi
 for SCRIPT in "$@"
 do
   echo "submitting $SCRIPT"
-  qsub -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT
+  qsub -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT
 done

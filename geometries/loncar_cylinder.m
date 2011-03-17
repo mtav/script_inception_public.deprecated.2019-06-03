@@ -226,8 +226,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       % .sh file
       %TODO: improve this
       % WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
-      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_4ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME, 1, 4);
-      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'_8ppn.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME, 1, 8);
+      GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME);
 
       % .cmd file
       GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);

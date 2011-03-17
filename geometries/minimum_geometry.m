@@ -49,7 +49,7 @@ function minimum_geometry(BASENAME, DSTDIR, Nx_frequency_snapshot,Ny_frequency_s
 	% .in file
 	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], { [BASENAME,'.inp'],[BASENAME,'.geo'] });
 	% .sh file
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME);
 	% .cmd file
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

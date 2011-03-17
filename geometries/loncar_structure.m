@@ -228,7 +228,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes
 	% .sh file
 	%TODO: improve this
 	% WORKDIR = ['$HOME/loncar_structure','/',BASENAME];
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 200, 1, 4);
+	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', 200);
     
 	% .cmd file
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);

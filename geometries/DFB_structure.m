@@ -185,7 +185,7 @@ function DFB_structure(BASENAME,DSTDIR,FREQUENCY)
 	% .in file
 	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], { [BASENAME,'.inp'],[BASENAME,'.geo'] });
 	% .sh file
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME);
 	% .cmd file
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

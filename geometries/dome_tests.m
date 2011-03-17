@@ -49,7 +49,7 @@ function dome_tests(BASENAME, DSTDIR, Nx_frequency_snapshot,Ny_frequency_snapsho
 	% .in file
 	GEOin([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.in'], BASENAME);
 	% .sh file
-	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+	GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME);
 	% .cmd file
 	GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -6,7 +6,7 @@ usage()
   echo "usage :"
   echo "`basename $0` 0 file1.out file2.out ... (just list finished ones)"
   echo "`basename $0` 1 file1.out file2.out ... (list unfinished running ones)"
-  echo "`basename $0` 2 file1.sh file2.sh ... (list all unfinished ones)"
+  echo "`basename $0` 2 file1.out file2.out ... (list all unfinished ones)"
   echo "`basename $0` 3 DEST  file1.out file2.out ... (create links to finished ones in DEST)"
   echo "creates links to the dirs containing *.out in DEST if *.out contains \"Deallocating\", i.e. if the simulations in those dirs are finished"
   echo "`basename $0` 4 file1.sh file2.sh ... (submit unfinished ones)"
@@ -55,20 +55,19 @@ function list_all_unfinished()
   for f in "$@"
   do
     DIR=$(dirname $(readlink -f "$f"))
-    BASE=$(basename $f '.sh')
+    BASE=$(basename $f '.out')
     OUTFILE="$DIR/$BASE.out"
-    SCRIPTFILE="$DIR/$BASE.sh"
     if [ -s  "$OUTFILE" ]
     then
       #~ echo "$OUTFILE exists"
       if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
       then
         #~ echo "$OUTFILE exists but is unfinished"
-        echo "$SCRIPTFILE"
+        echo "$OUTFILE"
       fi
     else
       #~ echo "$OUTFILE does not exist"
-      echo "$SCRIPTFILE"
+      echo "$OUTFILE"
     fi
   done
 }
@@ -110,20 +109,20 @@ function qsub_unfinished()
   for f in "$@"
   do
     DIR=$(dirname $(readlink -f "$f"))
-    BASE=$(basename $f '.sh')
+    BASE=$(basename $f '_4ppn.sh')
+    BASE=$(basename $BASE '_8ppn.sh')
     OUTFILE="$DIR/$BASE.out"
-    SCRIPTFILE="$DIR/$BASE.sh"
     if [ -s  "$OUTFILE" ]
     then
       #~ echo "$OUTFILE exists"
       if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
       then
         #~ echo "$OUTFILE exists but is unfinished"
-        superqsub.sh "$SCRIPTFILE"
+        superqsub.sh "$f"
       fi
     else
       #~ echo "$OUTFILE does not exist"
-      superqsub.sh "$SCRIPTFILE"
+      superqsub.sh "$f"
     fi
   done
 }
