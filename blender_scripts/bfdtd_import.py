@@ -551,187 +551,6 @@ def TestObjects():
 
     Blender.Scene.GetCurrent().setLayers([1,2,3,4,5,6,7,8,9,10]);
 
-def importBristolFDTD(filename):
-    print '----->Importing bristol FDTD geometry...';
-    Blender.Window.WaitCursor(1);
-
-    # save import path
-    # Blender.Set('tempdir',os.path.dirname(filename));
-    FILE = open(cfgfile, 'w');
-    cPickle.dump(filename, FILE);
-    FILE.close();
-    
-    # create structured_entries
-    structured_entries = readBristolFDTD(filename);
-    
-    # Box
-    Blender.Window.SetActiveLayer(1<<0);
-    GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
-    Blender.Window.SetActiveLayer(1<<1);
-    GEOmesh(False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
-
-    # print structured_entries.xmesh;
-    # print structured_entries.ymesh;
-    # print structured_entries.zmesh;
-    
-    # Time_snapshot (time or EPS)
-    for time_snapshot in structured_entries.time_snapshot_list:
-        if time_snapshot.eps == 0:
-            Blender.Window.SetActiveLayer(1<<2);
-            GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-        else:
-            Blender.Window.SetActiveLayer(1<<3);
-            GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-    # Frequency_snapshot
-    Blender.Window.SetActiveLayer(1<<4);
-    for frequency_snapshot in structured_entries.frequency_snapshot_list:
-        GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
-
-    # Excitation
-    Blender.Window.SetActiveLayer(1<<5);
-    for excitation in structured_entries.excitation_list:
-        GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
-    # Probe
-    Blender.Window.SetActiveLayer(1<<6);
-    for probe in structured_entries.probe_list:
-        # print 'probe = ',Vector(probe.position);
-        GEOprobe(Vector(probe.position));
-    # Sphere
-    Blender.Window.SetActiveLayer(1<<7);
-    for sphere in structured_entries.sphere_list:
-        # TODO: add rotation
-        center = Vector(sphere.center)
-
-        #~ print '+++++++++++++'
-        rotation_matrix = Blender.Mathutils.Matrix()
-        rotation_matrix.identity();
-
-        #~ Sx=Blender.Mathutils.ScaleMatrix(abs(diag[0]),4,Blender.Mathutils.Vector(1,0,0))
-        #~ Sy=Blender.Mathutils.ScaleMatrix(abs(diag[1]),4,Blender.Mathutils.Vector(0,1,0))
-        #~ Sz=Blender.Mathutils.ScaleMatrix(abs(diag[2]),4,Blender.Mathutils.Vector(0,0,1))
-        #~ rotation_matrix *= Sx*Sy*Sz;
-        T = Blender.Mathutils.TranslationMatrix(center)
-        rotation_matrix *= T;
-        
-        #~ print sphere.rotation_list;
-        
-        for r in sphere.rotation_list:
-          #~ print r.axis_point
-          #~ print r.axis_direction
-          #~ print r.angle_degrees
-          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
-          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
-          T = Blender.Mathutils.TranslationMatrix(C)
-          Tinv = Blender.Mathutils.TranslationMatrix(-C)
-          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
-          rotation_matrix *= Tinv*R*T
-        #~ print '+++++++++++++'
-        
-        GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
-    # Block
-    Blender.Window.SetActiveLayer(1<<8);
-    for block in structured_entries.block_list:
-        lower = Vector(block.lower)
-        upper = Vector(block.upper)
-        pos = 0.5*(lower+upper);
-        diag = upper-lower;
-
-        #~ print '+++++++++++++'
-        rotation_matrix = Blender.Mathutils.Matrix()
-        rotation_matrix.identity();
-
-        Sx=Blender.Mathutils.ScaleMatrix(abs(diag[0]),4,Blender.Mathutils.Vector(1,0,0))
-        Sy=Blender.Mathutils.ScaleMatrix(abs(diag[1]),4,Blender.Mathutils.Vector(0,1,0))
-        Sz=Blender.Mathutils.ScaleMatrix(abs(diag[2]),4,Blender.Mathutils.Vector(0,0,1))
-        rotation_matrix *= Sx*Sy*Sz;
-        T = Blender.Mathutils.TranslationMatrix(pos)
-        rotation_matrix *= T;
-        
-        #~ print block.rotation_list;
-        
-        for r in block.rotation_list:
-          #~ print r.axis_point
-          #~ print r.axis_direction
-          #~ print r.angle_degrees
-          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
-          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
-          T = Blender.Mathutils.TranslationMatrix(C)
-          Tinv = Blender.Mathutils.TranslationMatrix(-C)
-          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
-          rotation_matrix *= Tinv*R*T
-        #~ print '+++++++++++++'
-
-        GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
-    # Cylinder
-    Blender.Window.SetActiveLayer(1<<9);
-    for cylinder in structured_entries.cylinder_list:
-      
-        #TODO: finish this part, then extend to other objects
-        #~ print '+++++++++++++'
-        rotation_matrix = Blender.Mathutils.Matrix()
-        rotation_matrix.identity();
-
-        # because FDTD cylinders are aligned with the Y axis by default
-        axis = Blender.Mathutils.Vector(1,0,0)
-        C = Blender.Mathutils.Vector(0,0,0);
-        T = Blender.Mathutils.TranslationMatrix(C)
-        Tinv = Blender.Mathutils.TranslationMatrix(-C)
-        R = Blender.Mathutils.RotationMatrix(-90, 4, 'r', axis)
-        rotation_matrix *= Tinv*R*T;
-
-        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
-        rotation_matrix *= T;
-        
-        #~ print cylinder.rotation_list;
-        
-        for r in cylinder.rotation_list:
-          #~ print r.axis_point
-          #~ print r.axis_direction
-          #~ print r.angle_degrees
-          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
-          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
-          T = Blender.Mathutils.TranslationMatrix(C)
-          Tinv = Blender.Mathutils.TranslationMatrix(-C)
-          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
-          rotation_matrix *= Tinv*R*T
-        #~ print '+++++++++++++'
-
-        #~ scene = Blender.Scene.GetCurrent();
-        #~ mesh = Blender.Mesh.Primitives.Cone(32, 2, 3);
-        #~ mesh = Blender.Mesh.Primitives.Cube(1.0);
-        #~ obj = scene.objects.new(mesh, 'test_object');
-        #~ obj.SizeX = 1;
-        #~ obj.SizeY = 2;
-        #~ obj.SizeZ = 3;
-        #~ L=Blender.Mathutils.Vector(1,0,0);
-        #~ obj.setLocation(L);
-        #~ M=obj.getMatrix()
-
-        euler = rotation_matrix.toEuler();
-        
-        angle_X = math.radians(-90);
-        angle_Y = 0;
-        angle_Z = -math.radians(cylinder.angle);
-        
-        GEOcylinder_matrix(rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
-
-    #########################
-    # Not yet implemented:
-    # Rotation
-    # for rotation in structured_entries.rotation_list:
-    # Flag
-    # structured_entries.flag;
-    # Boundaries
-    # structured_entries.boundaries;
-    #########################
-
-    scene = Blender.Scene.GetCurrent();
-    scene.update(0);
-    Blender.Window.RedrawAll();
-    Blender.Window.WaitCursor(0);
-    Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
-    print '...done';
-
 def TestMatrix():
   u=Blender.Mathutils.Vector(1,2,3)
   v=Blender.Mathutils.Vector(4,5,6)
@@ -852,6 +671,157 @@ def TestMatrix():
   #~ OrthoProjectionMatrix(plane, matSize, axis)
   #~ Create a matrix to represent an orthographic projection
   
+def importBristolFDTD(filename):
+    print '----->Importing bristol FDTD geometry...';
+    Blender.Window.WaitCursor(1);
+
+    # save import path
+    # Blender.Set('tempdir',os.path.dirname(filename));
+    FILE = open(cfgfile, 'w');
+    cPickle.dump(filename, FILE);
+    FILE.close();
+    
+    # create structured_entries
+    structured_entries = readBristolFDTD(filename);
+    
+    # Box
+    Blender.Window.SetActiveLayer(1<<0);
+    GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
+    Blender.Window.SetActiveLayer(1<<1);
+    GEOmesh(False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
+    
+    # Time_snapshot (time or EPS)
+    for time_snapshot in structured_entries.time_snapshot_list:
+        if time_snapshot.eps == 0:
+            Blender.Window.SetActiveLayer(1<<2);
+            GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+        else:
+            Blender.Window.SetActiveLayer(1<<3);
+            GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+    # Frequency_snapshot
+    Blender.Window.SetActiveLayer(1<<4);
+    for frequency_snapshot in structured_entries.frequency_snapshot_list:
+        GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+
+    # Excitation
+    Blender.Window.SetActiveLayer(1<<5);
+    for excitation in structured_entries.excitation_list:
+        GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
+    # Probe
+    Blender.Window.SetActiveLayer(1<<6);
+    for probe in structured_entries.probe_list:
+        # print 'probe = ',Vector(probe.position);
+        GEOprobe(Vector(probe.position));
+    
+    # Sphere
+    Blender.Window.SetActiveLayer(1<<7);
+    for sphere in structured_entries.sphere_list:
+        # variables
+        center = Vector(sphere.center)
+
+        # initialise rotation_matrix
+        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix.identity();
+
+        # position object
+        T = Blender.Mathutils.TranslationMatrix(center)
+        rotation_matrix *= T;
+        
+        # add rotations
+        for r in sphere.rotation_list:
+          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
+          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
+          T = Blender.Mathutils.TranslationMatrix(C)
+          Tinv = Blender.Mathutils.TranslationMatrix(-C)
+          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
+          rotation_matrix *= Tinv*R*T
+          
+        # create object
+        GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        
+    # Block
+    Blender.Window.SetActiveLayer(1<<8);
+    for block in structured_entries.block_list:
+        # variables
+        lower = Vector(block.lower)
+        upper = Vector(block.upper)
+        pos = 0.5*(lower+upper);
+        diag = upper-lower;
+
+        # initialise rotation_matrix
+        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix.identity();
+
+        # scale object
+        Sx=Blender.Mathutils.ScaleMatrix(abs(diag[0]),4,Blender.Mathutils.Vector(1,0,0))
+        Sy=Blender.Mathutils.ScaleMatrix(abs(diag[1]),4,Blender.Mathutils.Vector(0,1,0))
+        Sz=Blender.Mathutils.ScaleMatrix(abs(diag[2]),4,Blender.Mathutils.Vector(0,0,1))
+        rotation_matrix *= Sx*Sy*Sz;
+        # position object
+        T = Blender.Mathutils.TranslationMatrix(pos)
+        rotation_matrix *= T;
+        
+        # add rotations
+        for r in block.rotation_list:
+          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
+          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
+          T = Blender.Mathutils.TranslationMatrix(C)
+          Tinv = Blender.Mathutils.TranslationMatrix(-C)
+          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
+          rotation_matrix *= Tinv*R*T
+
+        # create object
+        GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
+    
+    # Cylinder
+    Blender.Window.SetActiveLayer(1<<9);
+    for cylinder in structured_entries.cylinder_list:
+      
+        # initialise rotation_matrix
+        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix.identity();
+
+        # because FDTD cylinders are aligned with the Y axis by default
+        axis = Blender.Mathutils.Vector(1,0,0)
+        C = Blender.Mathutils.Vector(0,0,0);
+        T = Blender.Mathutils.TranslationMatrix(C)
+        Tinv = Blender.Mathutils.TranslationMatrix(-C)
+        R = Blender.Mathutils.RotationMatrix(-90, 4, 'r', axis)
+        rotation_matrix *= Tinv*R*T;
+
+        # position object
+        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
+        rotation_matrix *= T;
+        
+        # add rotations
+        for r in cylinder.rotation_list:
+          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
+          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
+          T = Blender.Mathutils.TranslationMatrix(C)
+          Tinv = Blender.Mathutils.TranslationMatrix(-C)
+          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
+          rotation_matrix *= Tinv*R*T
+        
+        # create object
+        GEOcylinder_matrix(rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
+
+    #########################
+    # Not yet implemented:
+    # Rotation
+    # for rotation in structured_entries.rotation_list:
+    # Flag
+    # structured_entries.flag;
+    # Boundaries
+    # structured_entries.boundaries;
+    #########################
+
+    scene = Blender.Scene.GetCurrent();
+    scene.update(0);
+    Blender.Window.RedrawAll();
+    Blender.Window.WaitCursor(0);
+    Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
+    print '...done';
+
 ###############################
 # MAIN FUNCTION
 ###############################
