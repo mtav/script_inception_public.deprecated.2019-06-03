@@ -9,7 +9,6 @@ Tooltip: 'Import from Bristol FDTD'
 ###############################
 # IMPORTS
 ###############################
-
 import Blender;
 import bpy;
 import BPyAddMesh;
@@ -59,9 +58,8 @@ box_SizeY = 0;
 box_SizeZ = 0;
 
 ###############################
-# FUNCTIONS
+# UTILITY FUNCTIONS
 ###############################
-
 def materials(permittivity, conductivity):
     if permittivity not in material_dict:
         n = math.sqrt(permittivity)
@@ -113,6 +111,9 @@ def rotationMatrix(axis_point, axis_direction, angle_degrees):
   R = Blender.Mathutils.RotationMatrix(angle_degrees, 4, 'r', axis)
   return Tinv*R*T;
 
+###############################
+# OBJECT CREATION FUNCTIONS
+###############################
 def GEOblock(lower, upper, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cube(1.0);
@@ -486,7 +487,11 @@ def GEOprobe(position):
     obj.transp = True; obj.wireMode = True;
     return
 
+###############################
+# TEST FUNCTIONS
+###############################
 def TestObjects():
+    ''' test objects '''
     Blender.Window.SetActiveLayer(1<<0);
     GEOmesh(False, [1, 1], [1, 2, 3], [4, 3, 2, 1]);
     
@@ -561,6 +566,7 @@ def TestObjects():
     Blender.Scene.GetCurrent().setLayers([1,2,3,4,5,6,7,8,9,10]);
 
 def TestMatrix():
+  ''' test Blender matrix object '''
   u=Blender.Mathutils.Vector(1,2,3)
   v=Blender.Mathutils.Vector(4,5,6)
   w=Blender.Mathutils.Vector(7,8,9)
@@ -680,7 +686,11 @@ def TestMatrix():
   #~ OrthoProjectionMatrix(plane, matSize, axis)
   #~ Create a matrix to represent an orthographic projection
   
+###############################
+# IMPORT FUNCTION
+###############################
 def importBristolFDTD(filename):
+    ''' import BristolFDTD geometry from .in,.geo or .inp and create corresponding structure in Blender'''
     print '----->Importing bristol FDTD geometry...';
     Blender.Window.WaitCursor(1);
 
@@ -813,6 +823,7 @@ def importBristolFDTD(filename):
 # MAIN FUNCTION
 ###############################
 def main():
+  ''' MAIN FUNCTION '''
   print 'sys.argv=',sys.argv;
   print 'len(sys.argv)=',len(sys.argv);
   
