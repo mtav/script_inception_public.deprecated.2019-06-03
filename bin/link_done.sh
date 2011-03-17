@@ -4,12 +4,13 @@ set -eu
 usage()
 {
   echo "usage :"
-  echo "`basename $0` 0 file1.out file2.out ... (just list finished ones)"
-  echo "`basename $0` 1 file1.out file2.out ... (list unfinished running ones)"
-  echo "`basename $0` 2 file1.out file2.out ... (list all unfinished ones)"
-  echo "`basename $0` 3 DEST  file1.out file2.out ... (create links to finished ones in DEST)"
+  echo "`basename $0` 0 file1.out/.sh file2.out/.sh ... (just list finished ones)"
+  echo "`basename $0` 1 file1.out/.sh file2.out/.sh ... (list unfinished running ones)"
+  echo "`basename $0` 2 file1.sh file2.sh ... (list all unfinished ones)"
+  echo "`basename $0` 3 DEST  file1.out/.sh file2.out/.sh ... (create links to finished ones in DEST)"
   echo "creates links to the dirs containing *.out in DEST if *.out contains \"Deallocating\", i.e. if the simulations in those dirs are finished"
-  echo "`basename $0` 4 file1.sh file2.sh ... (submit unfinished ones)"
+  echo "`basename $0` 4 file1.out/.sh file2.out/.sh ... (submit unfinished ones)"
+  echo "NOTE: Use of */*.sh is recommended instead of */*.out as out files may not exist"
   exit 0
 }
 
@@ -21,42 +22,61 @@ fi
 operation_type=$1
 shift
 
+function getOutFile()
+{
+    DIR=$(dirname $(readlink -f "$1"))
+    BASE=$(basename $(basename $1 '.out') .sh)
+    OUTFILE="$DIR/$BASE.out"
+    echo "$OUTFILE"
+}
+
+function getScriptFile()
+{
+    DIR=$(dirname $(readlink -f "$1"))
+    BASE=$(basename $(basename $1 '.out') .sh)
+    SCRIPTFILE="$DIR/$BASE.sh"
+    echo "$SCRIPTFILE"
+}
+
 function list_finished()
 {
-  echo "==>list_finished called"
+  #~ echo "==>list_finished called"
   for f in "$@"
   do
-    DIR=$(dirname $(readlink -f $f))
+    OUTFILE=$(getOutFile "$f")
+    DIR=$(dirname $(readlink -f $OUTFILE))
     BASE=$(basename $DIR)
-    if grep Deallocating  $f 1>/dev/null 2>&1
+    if grep Deallocating  $OUTFILE 1>/dev/null 2>&1
     then
-      echo "$f"
+      echo "$OUTFILE"
     fi
   done
 }
 
 function list_unfinished_running()
 {
-  echo "==>list_unfinished_running called"
+  #~ echo "==>list_unfinished_running called"
   for f in "$@"
   do
-    DIR=$(dirname $(readlink -f $f))
-    BASE=$(basename $DIR)
-    if ! grep Deallocating  $f 1>/dev/null 2>&1
+    OUTFILE=$(getOutFile "$f")
+    if [ -s  "$OUTFILE" ]
     then
-      echo "$f"
+      #~ echo "$OUTFILE exists"
+      if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
+      then
+        #~ echo "$OUTFILE exists but is unfinished"
+        echo "$OUTFILE"
+      fi
     fi
   done
 }
 
 function list_all_unfinished()
 {
-  echo "==>list_all_unfinished called"
+  #~ echo "==>list_all_unfinished called"
   for f in "$@"
   do
-    DIR=$(dirname $(readlink -f "$f"))
-    BASE=$(basename $f '.out')
-    OUTFILE="$DIR/$BASE.out"
+    OUTFILE=$(getOutFile "$f")
     if [ -s  "$OUTFILE" ]
     then
       #~ echo "$OUTFILE exists"
@@ -74,7 +94,7 @@ function list_all_unfinished()
 
 function link_finished()
 {
-  echo "==>link_finished called"
+  #~ echo "==>link_finished called"
   DST=$(readlink -f $1)
   if ! [ -d $DST ]
   then
@@ -85,17 +105,18 @@ function link_finished()
   for f in "$@"
   do
     echo "Processing $f"
-    DIR=$(dirname $(readlink -f $f))
+    OUTFILE=$(getOutFile "$f")
+    DIR=$(dirname $(readlink -f $OUTFILE))
     BASE=$(basename $DIR)
-    LINKNAME=$DST/$BASE
-    if ! [ -e $LINKNAME ]
+    LINKNAME="$DST/$BASE"
+    if ! [ -e "$LINKNAME" ]
     then
-      if grep Deallocating  $f
+      if grep Deallocating  "$OUTFILE"
       then
         echo "ln -s $DIR $LINKNAME"
-        ln -s $DIR $LINKNAME
+        ln -s "$DIR" "$LINKNAME"
       else
-        echo "Deallocating not found in $f"
+        echo "Deallocating not found in $OUTFILE"
       fi
     else
       echo "Warning: $LINKNAME already exists"
@@ -105,24 +126,22 @@ function link_finished()
 
 function qsub_unfinished()
 {
-  echo "==>qsub_unfinished called"
+  #~ echo "==>qsub_unfinished called"
   for f in "$@"
   do
-    DIR=$(dirname $(readlink -f "$f"))
-    BASE=$(basename $f '_4ppn.sh')
-    BASE=$(basename $BASE '_8ppn.sh')
-    OUTFILE="$DIR/$BASE.out"
+    OUTFILE=$(getOutFile "$f")
+    SCRIPTFILE=$(getScriptFile "$f")
     if [ -s  "$OUTFILE" ]
     then
       #~ echo "$OUTFILE exists"
       if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
       then
         #~ echo "$OUTFILE exists but is unfinished"
-        superqsub.sh "$f"
+        superqsub.sh "$SCRIPTFILE"
       fi
     else
       #~ echo "$OUTFILE does not exist"
-      superqsub.sh "$f"
+      superqsub.sh "$SCRIPTFILE"
     fi
   done
 }
