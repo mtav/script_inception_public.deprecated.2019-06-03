@@ -623,9 +623,9 @@ def readBristolFDTD(filename):
     else:
         print 'Unknown file format:', extension;
     
-    print '================';
-    print structured_entries;
-    print '================';
+    #~ print '================';
+    #~ print structured_entries;
+    #~ print '================';
     return structured_entries;
     
 
