@@ -18,6 +18,8 @@ function userDir = getuserdir()
     end
 end
 
-disp('Running ~/MATLAB/startup.m...');
-run([getuserdir(),filesep,'MATLAB',filesep,'startup.m']);
+STARTUPSCRIPT=[getuserdir(),filesep,'MATLAB',filesep,'startup.m']
+disp(['Running ',STARTUPSCRIPT,' ...']);
+run(STARTUPSCRIPT);
+startup()
 disp('...done');
