@@ -1,16 +1,16 @@
 function [dx,dy,dz] = autoMeshGeometry(filename)
     % function [dx,dy,dz] = autoMeshGeometry(filename)
 
-	% ask for input file if not given
-	if exist('filename','var') == 0
-		disp('filename not given');
-		[file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
-		filename = [path,file];
-	end
-	if ~(exist(filename,'file'))
-		error( ['File not found: ',filename] );
-		return;
-	end
+  % ask for input file if not given
+  if exist('filename','var') == 0
+    disp('filename not given');
+    [file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
+    filename = [path,file];
+  end
+  if ~(exist(filename,'file'))
+    error( ['File not found: ',filename] );
+    return;
+  end
 
     [ entries, structured_entries ] = GEO_INP_reader({filename});
     

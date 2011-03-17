@@ -65,7 +65,7 @@ for m=1:length(entries)
                 epsx=[epsx;eps];
                 epsy=[epsy;eps];
                 epsz=[epsz;eps];
-			case 'BLOCK'
+      case 'BLOCK'
                 data=entries{m}.data;
                 objx=sort([data(1),data(4)]);
                 objy=sort([data(2),data(5)]);
@@ -78,7 +78,7 @@ for m=1:length(entries)
                 epsx=[epsx;eps];
                 epsy=[epsy;eps];
                 epsz=[epsz;eps];
-			case 'SPHERE'
+      case 'SPHERE'
                 data=entries{m}.data;
                 r=max(data(5),data(4));
                 eps=data(6);
@@ -92,7 +92,7 @@ for m=1:length(entries)
                 epsx=[epsx;eps];
                 epsy=[epsy;eps];
                 epsz=[epsz;eps];
-			case 'CYLINDER'
+      case 'CYLINDER'
                 data=entries{m}.data;
                 xyz=data(1:3);
                 r=max(data(5),data(4));
