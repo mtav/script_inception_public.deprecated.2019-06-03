@@ -5,10 +5,10 @@ set -eux
 # If no, exit
 if [ $# -ne 1 ]
 then
-        echo "usage :"
-        echo "`basename $0` DIR"
-	echo "will submit all *.sh files in DIR"
-        exit 0
+  echo "usage :"
+  echo "`basename $0` DIR"
+  echo "will submit all *.sh files in DIR"
+  exit 0
 fi
 
 DIR=$1
