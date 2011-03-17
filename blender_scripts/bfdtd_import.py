@@ -782,7 +782,7 @@ def importBristolFDTD(filename):
 
         # because FDTD cylinders are aligned with the Y axis by default
         rotation_matrix *= rotationMatrix(Blender.Mathutils.Vector(0,0,0), Blender.Mathutils.Vector(1,0,0), -90)
-
+        
         # position object
         T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
         rotation_matrix *= T;
@@ -796,8 +796,6 @@ def importBristolFDTD(filename):
 
     #########################
     # Not yet implemented:
-    # Rotation
-    # for rotation in structured_entries.rotation_list:
     # Flag
     # structured_entries.flag;
     # Boundaries
