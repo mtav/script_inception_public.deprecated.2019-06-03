@@ -104,6 +104,15 @@ def Orthogonal(vec):
         else:
             return Vector(vec.y,-vec.x,0);
 
+def rotationMatrix(axis_point, axis_direction, angle_degrees):
+  ''' return a rotation matrix for a rotation around an arbitrary axis '''
+  axis = Blender.Mathutils.Vector(axis_direction[0],axis_direction[1],axis_direction[2])
+  C = Blender.Mathutils.Vector(axis_point[0],axis_point[1],axis_point[2]);
+  T = Blender.Mathutils.TranslationMatrix(C)
+  Tinv = Blender.Mathutils.TranslationMatrix(-C)
+  R = Blender.Mathutils.RotationMatrix(angle_degrees, 4, 'r', axis)
+  return Tinv*R*T;
+
 def GEOblock(lower, upper, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cube(1.0);
@@ -729,12 +738,7 @@ def importBristolFDTD(filename):
         
         # add rotations
         for r in sphere.rotation_list:
-          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
-          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
-          T = Blender.Mathutils.TranslationMatrix(C)
-          Tinv = Blender.Mathutils.TranslationMatrix(-C)
-          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
-          rotation_matrix *= Tinv*R*T
+          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
           
         # create object
         GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
@@ -763,12 +767,7 @@ def importBristolFDTD(filename):
         
         # add rotations
         for r in block.rotation_list:
-          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
-          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
-          T = Blender.Mathutils.TranslationMatrix(C)
-          Tinv = Blender.Mathutils.TranslationMatrix(-C)
-          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
-          rotation_matrix *= Tinv*R*T
+          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
 
         # create object
         GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
@@ -795,12 +794,7 @@ def importBristolFDTD(filename):
         
         # add rotations
         for r in cylinder.rotation_list:
-          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
-          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
-          T = Blender.Mathutils.TranslationMatrix(C)
-          Tinv = Blender.Mathutils.TranslationMatrix(-C)
-          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
-          rotation_matrix *= Tinv*R*T
+          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
         
         # create object
         GEOcylinder_matrix(rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
