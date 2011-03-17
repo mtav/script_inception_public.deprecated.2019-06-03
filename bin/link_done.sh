@@ -5,9 +5,11 @@ usage()
 {
   echo "usage :"
   echo "`basename $0` 0 file1.out file2.out ... (just list finished ones)"
-  echo "`basename $0` 1 DEST  file1.out file2.out ... (create links to finished ones in DEST)"
-  echo "`basename $0` 2 file1.out file2.out ... (list unfinished ones)"
+  echo "`basename $0` 1 file1.out file2.out ... (list unfinished running ones)"
+  echo "`basename $0` 2 file1.sh file2.sh ... (list all unfinished ones)"
+  echo "`basename $0` 3 DEST  file1.out file2.out ... (create links to finished ones in DEST)"
   echo "creates links to the dirs containing *.out in DEST if *.out contains \"Deallocating\", i.e. if the simulations in those dirs are finished"
+  echo "`basename $0` 4 file1.sh file2.sh ... (submit unfinished ones)"
   exit 0
 }
 
@@ -16,11 +18,12 @@ then
   usage;
 fi
 
-justlink=$1
+operation_type=$1
 shift
 
-if [ $justlink = "0" ]
-then
+function list_finished()
+{
+  echo "==>list_finished called"
   for f in "$@"
   do
     DIR=$(dirname $(readlink -f $f))
@@ -30,8 +33,49 @@ then
       echo "$f"
     fi
   done
-elif [ $justlink = "1" ]
-then
+}
+
+function list_unfinished_running()
+{
+  echo "==>list_unfinished_running called"
+  for f in "$@"
+  do
+    DIR=$(dirname $(readlink -f $f))
+    BASE=$(basename $DIR)
+    if ! grep Deallocating  $f 1>/dev/null 2>&1
+    then
+      echo "$f"
+    fi
+  done
+}
+
+function list_all_unfinished()
+{
+  echo "==>list_all_unfinished called"
+  for f in "$@"
+  do
+    DIR=$(dirname $(readlink -f "$f"))
+    BASE=$(basename $f '.sh')
+    OUTFILE="$DIR/$BASE.out"
+    SCRIPTFILE="$DIR/$BASE.sh"
+    if [ -s  "$OUTFILE" ]
+    then
+      #~ echo "$OUTFILE exists"
+      if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
+      then
+        #~ echo "$OUTFILE exists but is unfinished"
+        echo "$SCRIPTFILE"
+      fi
+    else
+      #~ echo "$OUTFILE does not exist"
+      echo "$SCRIPTFILE"
+    fi
+  done
+}
+
+function link_finished()
+{
+  echo "==>link_finished called"
   DST=$(readlink -f $1)
   if ! [ -d $DST ]
   then
@@ -58,17 +102,47 @@ then
       echo "Warning: $LINKNAME already exists"
     fi
   done
-elif [ $justlink = "2" ]
-then
+}
+
+function qsub_unfinished()
+{
+  echo "==>qsub_unfinished called"
   for f in "$@"
   do
-    DIR=$(dirname $(readlink -f $f))
-    BASE=$(basename $DIR)
-    if ! grep Deallocating  $f 1>/dev/null 2>&1
+    DIR=$(dirname $(readlink -f "$f"))
+    BASE=$(basename $f '.sh')
+    OUTFILE="$DIR/$BASE.out"
+    SCRIPTFILE="$DIR/$BASE.sh"
+    if [ -s  "$OUTFILE" ]
     then
-      echo "$f"
+      #~ echo "$OUTFILE exists"
+      if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
+      then
+        #~ echo "$OUTFILE exists but is unfinished"
+        superqsub.sh "$SCRIPTFILE"
+      fi
+    else
+      #~ echo "$OUTFILE does not exist"
+      superqsub.sh "$SCRIPTFILE"
     fi
   done
+}
+
+if [ $operation_type = "0" ]
+then
+  list_finished "$@";
+elif [ $operation_type = "1" ]
+then
+  list_unfinished_running "$@";
+elif [ $operation_type = "2" ]
+then
+  list_all_unfinished "$@";
+elif [ $operation_type = "3" ]
+then
+  link_finished "$@";
+elif [ $operation_type = "4" ]
+then
+  qsub_unfinished "$@";
 else
   usage;
 fi
