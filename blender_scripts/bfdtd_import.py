@@ -178,9 +178,9 @@ def main():
   
       # default_path = Blender.Get('tempdir');
       # if not default_path:
-          # default_path = 'H:\DATA';
+          # default_path = os.getenv('DATADIR');
           
-      default_path = 'H:\DATA';
+      default_path = os.getenv('DATADIR')
       print 'cfgfile = ', cfgfile;
   
       if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
@@ -193,7 +193,6 @@ def main():
       # import file
       ###################
       Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
-      # importBristolFDTD('H:\\MATLAB\\blender_scripts\\rotated_cylinder.in');
       # TestObjects();
 
 if __name__ == "__main__":
