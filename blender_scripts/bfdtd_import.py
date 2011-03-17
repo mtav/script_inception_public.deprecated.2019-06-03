@@ -602,7 +602,7 @@ def importBristolFDTD(filename):
         # TODO: add rotation
         center = Vector(sphere.center)
 
-        print '+++++++++++++'
+        #~ print '+++++++++++++'
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
@@ -613,19 +613,19 @@ def importBristolFDTD(filename):
         T = Blender.Mathutils.TranslationMatrix(center)
         rotation_matrix *= T;
         
-        print sphere.rotation_list;
+        #~ print sphere.rotation_list;
         
         for r in sphere.rotation_list:
-          print r.axis_point
-          print r.axis_direction
-          print r.angle_degrees
+          #~ print r.axis_point
+          #~ print r.axis_direction
+          #~ print r.angle_degrees
           axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
           C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
           T = Blender.Mathutils.TranslationMatrix(C)
           Tinv = Blender.Mathutils.TranslationMatrix(-C)
           R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
           rotation_matrix *= Tinv*R*T
-        print '+++++++++++++'
+        #~ print '+++++++++++++'
         
         GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
     # Block
@@ -636,7 +636,7 @@ def importBristolFDTD(filename):
         pos = 0.5*(lower+upper);
         diag = upper-lower;
 
-        print '+++++++++++++'
+        #~ print '+++++++++++++'
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
@@ -647,19 +647,19 @@ def importBristolFDTD(filename):
         T = Blender.Mathutils.TranslationMatrix(pos)
         rotation_matrix *= T;
         
-        print block.rotation_list;
+        #~ print block.rotation_list;
         
         for r in block.rotation_list:
-          print r.axis_point
-          print r.axis_direction
-          print r.angle_degrees
+          #~ print r.axis_point
+          #~ print r.axis_direction
+          #~ print r.angle_degrees
           axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
           C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
           T = Blender.Mathutils.TranslationMatrix(C)
           Tinv = Blender.Mathutils.TranslationMatrix(-C)
           R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
           rotation_matrix *= Tinv*R*T
-        print '+++++++++++++'
+        #~ print '+++++++++++++'
 
         GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
     # Cylinder
@@ -667,7 +667,7 @@ def importBristolFDTD(filename):
     for cylinder in structured_entries.cylinder_list:
       
         #TODO: finish this part, then extend to other objects
-        print '+++++++++++++'
+        #~ print '+++++++++++++'
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
@@ -682,19 +682,19 @@ def importBristolFDTD(filename):
         T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
         rotation_matrix *= T;
         
-        print cylinder.rotation_list;
+        #~ print cylinder.rotation_list;
         
         for r in cylinder.rotation_list:
-          print r.axis_point
-          print r.axis_direction
-          print r.angle_degrees
+          #~ print r.axis_point
+          #~ print r.axis_direction
+          #~ print r.angle_degrees
           axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
           C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
           T = Blender.Mathutils.TranslationMatrix(C)
           Tinv = Blender.Mathutils.TranslationMatrix(-C)
           R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
           rotation_matrix *= Tinv*R*T
-        print '+++++++++++++'
+        #~ print '+++++++++++++'
 
         #~ scene = Blender.Scene.GetCurrent();
         #~ mesh = Blender.Mesh.Primitives.Cone(32, 2, 3);
@@ -732,126 +732,109 @@ def importBristolFDTD(filename):
     Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print '...done';
 
-###############################
-# MAIN FUNCTION
-###############################
-def main():
-  print 'sys.argv=',sys.argv;
-  print 'len(sys.argv)=',len(sys.argv);
+def TestMatrix():
+  u=Blender.Mathutils.Vector(1,2,3)
+  v=Blender.Mathutils.Vector(4,5,6)
+  w=Blender.Mathutils.Vector(7,8,9)
+  M=Blender.Mathutils.Matrix(u,v,w)
+  print '============'
+  print u
+  print v
+  print w
+  print '============'
+  print M
+  print '============'
+  print Blender.Mathutils.RotationMatrix(math.radians(0), 2)
+  print Blender.Mathutils.RotationMatrix(math.radians(45), 2)
+  print Blender.Mathutils.RotationMatrix(math.radians(90), 2)
+  print Blender.Mathutils.RotationMatrix(0, 2)
+  print Blender.Mathutils.RotationMatrix(45, 2)
+  print Blender.Mathutils.RotationMatrix(90, 2)
+  M=Blender.Mathutils.RotationMatrix(45, 3, 'x' )
+  print '======QUAT======'
+  print M
+  print M.toQuat()
+  print '============'
+  Q=Blender.Mathutils.RotationMatrix(45, 4, 'x' )
+  print Q;
+  print '============'
+  u1=Blender.Mathutils.Vector(1,2,3,4)
+  u2=Blender.Mathutils.Vector(5,6,7,8)
+  u3=Blender.Mathutils.Vector(9,10,11,12)
+  u4=Blender.Mathutils.Vector(13,14,15,16)        
+  print '============'
+  Q=Blender.Mathutils.Matrix(u1,u2,u3,u4)
+  print Q
+  print '============'
+  print Q.translationPart()
+  print Q.scalePart()
+  print Q.rotationPart()
+  print '====Q=R*Sx*Sy*Sz*T========'
+  R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(17,18,19))
+  T=Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(14,15,16))
+  Sx=Blender.Mathutils.ScaleMatrix(2,4,Blender.Mathutils.Vector(1,0,0))
+  Sy=Blender.Mathutils.ScaleMatrix(3,4,Blender.Mathutils.Vector(0,1,0))
+  Sz=Blender.Mathutils.ScaleMatrix(4,4,Blender.Mathutils.Vector(0,0,1))
+  print Sx
+  print Sy
+  print Sz
+  S=Sx*Sy*Sz
+  print S.scalePart()
+  print T
+  print R
+  Q=S*R*T
+  #~ Q=R*T
+  print '============'
+  print Q
+  print '============'
+  print Q.translationPart()
+  print Q.scalePart()
+  print Q.rotationPart()
+  print '============'
   
-  # arg[0]='blender'
-  # arg[1]='-P'
-  # arg[2]='scriptname'
-  # arg[3]='--'
-  
-  if len(sys.argv)>4:
-      for i in range(len(sys.argv)- 4):
-          print 'Importing ', sys.argv[4+i];
-          importBristolFDTD(sys.argv[4+i]);
-          return
-          
-          u=Blender.Mathutils.Vector(1,2,3)
-          v=Blender.Mathutils.Vector(4,5,6)
-          w=Blender.Mathutils.Vector(7,8,9)
-          M=Blender.Mathutils.Matrix(u,v,w)
-          print '============'
-          print u
-          print v
-          print w
-          print '============'
-          print M
-          print '============'
-          print Blender.Mathutils.RotationMatrix(math.radians(0), 2)
-          print Blender.Mathutils.RotationMatrix(math.radians(45), 2)
-          print Blender.Mathutils.RotationMatrix(math.radians(90), 2)
-          print Blender.Mathutils.RotationMatrix(0, 2)
-          print Blender.Mathutils.RotationMatrix(45, 2)
-          print Blender.Mathutils.RotationMatrix(90, 2)
-          M=Blender.Mathutils.RotationMatrix(45, 3, 'x' )
-          print '======QUAT======'
-          print M
-          print M.toQuat()
-          print '============'
-          Q=Blender.Mathutils.RotationMatrix(45, 4, 'x' )
-          print Q;
-          print '============'
-          u1=Blender.Mathutils.Vector(1,2,3,4)
-          u2=Blender.Mathutils.Vector(5,6,7,8)
-          u3=Blender.Mathutils.Vector(9,10,11,12)
-          u4=Blender.Mathutils.Vector(13,14,15,16)        
-          print '============'
-          Q=Blender.Mathutils.Matrix(u1,u2,u3,u4)
-          print Q
-          print '============'
-          print Q.translationPart()
-          print Q.scalePart()
-          print Q.rotationPart()
-          print '====Q=R*Sx*Sy*Sz*T========'
-          R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(17,18,19))
-          T=Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(14,15,16))
-          Sx=Blender.Mathutils.ScaleMatrix(2,4,Blender.Mathutils.Vector(1,0,0))
-          Sy=Blender.Mathutils.ScaleMatrix(3,4,Blender.Mathutils.Vector(0,1,0))
-          Sz=Blender.Mathutils.ScaleMatrix(4,4,Blender.Mathutils.Vector(0,0,1))
-          print Sx
-          print Sy
-          print Sz
-          S=Sx*Sy*Sz
-          print S.scalePart()
-          print T
-          print R
-          Q=S*R*T
-          #~ Q=R*T
-          print '============'
-          print Q
-          print '============'
-          print Q.translationPart()
-          print Q.scalePart()
-          print Q.rotationPart()
-          print '============'
-          
-          scene = Blender.Scene.GetCurrent();
-          #~ mesh = Blender.Mesh.Primitives.Cylinder(32, 2, 5);
-          mesh = Blender.Mesh.Primitives.Cone(32, 2, 3);
-          mesh = Blender.Mesh.Primitives.Cube(1.0);
-          obj = scene.objects.new(mesh, 'test_object');
-          #~ obj.setMatrix(rotmat);
-          #~ obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
-      
-          #~ obj.setLocation(center[0], center[1], center[2]);
-          #~ obj.RotX = angle_X;
-          #~ obj.RotY = angle_Y;
-          #~ obj.RotZ = angle_Z;
-          #~ obj.transp = True; obj.wireMode = True;
-  
-          #~ pos = 0.5*(lower+upper);
-          #~ diag = upper-lower;
-          obj.SizeX = 1;
-          obj.SizeY = 2;
-          obj.SizeZ = 3;
-          L=Blender.Mathutils.Vector(1,0,0);
-          obj.setLocation(L);
-          M=obj.getMatrix()
-          C=Blender.Mathutils.Vector(-1,0,0);
-          T=Blender.Mathutils.TranslationMatrix(C)
-          Tinv=Blender.Mathutils.TranslationMatrix(-(C))
-          R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(0,0,1))
-          #~ T=Blender.Mathutils.TranslationMatrix(-2,0,0)
-          print '############'
-          print M
-          print T
-          print Tinv
-          print M*Tinv
-          print M*Tinv*R*T
-          print '############'
-          obj.setMatrix(M*Tinv*R*T);
-          print '# EULER ###########'
-          print obj.getMatrix().toEuler()
-          print '############'
-          #~ obj.RotX = 90;
-          #~ obj.RotY = 45;
-          #~ obj.RotZ = 0;
-  
-          #~ sys.exit(0)
+  scene = Blender.Scene.GetCurrent();
+  #~ mesh = Blender.Mesh.Primitives.Cylinder(32, 2, 5);
+  mesh = Blender.Mesh.Primitives.Cone(32, 2, 3);
+  mesh = Blender.Mesh.Primitives.Cube(1.0);
+  obj = scene.objects.new(mesh, 'test_object');
+  #~ obj.setMatrix(rotmat);
+  #~ obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
+
+  #~ obj.setLocation(center[0], center[1], center[2]);
+  #~ obj.RotX = angle_X;
+  #~ obj.RotY = angle_Y;
+  #~ obj.RotZ = angle_Z;
+  #~ obj.transp = True; obj.wireMode = True;
+
+  #~ pos = 0.5*(lower+upper);
+  #~ diag = upper-lower;
+  obj.SizeX = 1;
+  obj.SizeY = 2;
+  obj.SizeZ = 3;
+  L=Blender.Mathutils.Vector(1,0,0);
+  obj.setLocation(L);
+  M=obj.getMatrix()
+  C=Blender.Mathutils.Vector(-1,0,0);
+  T=Blender.Mathutils.TranslationMatrix(C)
+  Tinv=Blender.Mathutils.TranslationMatrix(-(C))
+  R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(0,0,1))
+  #~ T=Blender.Mathutils.TranslationMatrix(-2,0,0)
+  print '############'
+  print M
+  print T
+  print Tinv
+  print M*Tinv
+  print M*Tinv*R*T
+  print '############'
+  obj.setMatrix(M*Tinv*R*T);
+  print '# EULER ###########'
+  print obj.getMatrix().toEuler()
+  print '############'
+  #~ obj.RotX = 90;
+  #~ obj.RotY = 45;
+  #~ obj.RotZ = 0;
+
+  #~ sys.exit(0)
           
   #~ Vector object 	
   #~ ProjectVecs(vec1, vec2)
@@ -869,6 +852,22 @@ def main():
   #~ OrthoProjectionMatrix(plane, matSize, axis)
   #~ Create a matrix to represent an orthographic projection
   
+###############################
+# MAIN FUNCTION
+###############################
+def main():
+  print 'sys.argv=',sys.argv;
+  print 'len(sys.argv)=',len(sys.argv);
+  
+  # arg[0]='blender'
+  # arg[1]='-P'
+  # arg[2]='scriptname'
+  # arg[3]='--'
+  
+  if len(sys.argv)>4:
+      for i in range(len(sys.argv)- 4):
+          print 'Importing ', sys.argv[4+i];
+          importBristolFDTD(sys.argv[4+i]);
   else:
       ###################
       # load import path
