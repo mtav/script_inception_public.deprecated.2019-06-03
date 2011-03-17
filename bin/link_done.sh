@@ -25,7 +25,9 @@ shift
 function getOutFile()
 {
     DIR=$(dirname $(readlink -f "$1"))
-    BASE=$(basename $(basename $1 '.out') .sh)
+    BASE=$(basename $1 '_4ppn.sh')
+    BASE=$(basename $BASE '_8ppn.sh')
+    BASE=$(basename $(basename $BASE '.out') .sh)
     OUTFILE="$DIR/$BASE.out"
     echo "$OUTFILE"
 }
@@ -33,7 +35,9 @@ function getOutFile()
 function getScriptFile()
 {
     DIR=$(dirname $(readlink -f "$1"))
-    BASE=$(basename $(basename $1 '.out') .sh)
+    BASE=$(basename $1 '_4ppn.sh')
+    BASE=$(basename $BASE '_8ppn.sh')
+    BASE=$(basename $(basename $BASE '.out') .sh)
     SCRIPTFILE="$DIR/$BASE.sh"
     echo "$SCRIPTFILE"
 }
@@ -137,11 +141,11 @@ function qsub_unfinished()
       if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
       then
         #~ echo "$OUTFILE exists but is unfinished"
-        superqsub.sh "$SCRIPTFILE"
+        superqsub.sh "$f"
       fi
     else
       #~ echo "$OUTFILE does not exist"
-      superqsub.sh "$SCRIPTFILE"
+      superqsub.sh "$f"
     fi
   done
 }
