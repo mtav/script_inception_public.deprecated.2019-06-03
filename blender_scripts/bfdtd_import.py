@@ -121,7 +121,7 @@ def GEOblock(lower, upper, permittivity, conductivity):
     obj.transp = True; obj.wireMode = True;
     return;
 
-def GEOblock(rotation_matrix, permittivity, conductivity):
+def GEOblock_matrix(rotation_matrix, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cube(1.0);
     mesh.materials = materials(permittivity, conductivity);
@@ -148,7 +148,7 @@ def GEOcylinder(center, inner_radius, outer_radius, H, permittivity, conductivit
     obj.transp = True; obj.wireMode = True;
     return
 
-def GEOcylinder(inner_radius, outer_radius, H, permittivity, conductivity, rotation_matrix):
+def GEOcylinder_matrix(rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
     mesh.materials = materials(permittivity, conductivity);
@@ -172,7 +172,7 @@ def GEOsphere(center, outer_radius, inner_radius, permittivity, conductivity):
     obj.transp = True; obj.wireMode = True;
     return
 
-def GEOsphere(outer_radius, inner_radius, permittivity, conductivity, rotation_matrix):
+def GEOsphere_matrix(rotation_matrix, outer_radius, inner_radius, permittivity, conductivity):
     scene = Blender.Scene.GetCurrent();
     mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
     mesh.materials = materials(permittivity, conductivity);
@@ -599,7 +599,35 @@ def importBristolFDTD(filename):
     # Sphere
     Blender.Window.SetActiveLayer(1<<7);
     for sphere in structured_entries.sphere_list:
-        GEOsphere(Vector(sphere.center), sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        # TODO: add rotation
+        center = Vector(sphere.center)
+
+        print '+++++++++++++'
+        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix.identity();
+
+        #~ Sx=Blender.Mathutils.ScaleMatrix(abs(diag[0]),4,Blender.Mathutils.Vector(1,0,0))
+        #~ Sy=Blender.Mathutils.ScaleMatrix(abs(diag[1]),4,Blender.Mathutils.Vector(0,1,0))
+        #~ Sz=Blender.Mathutils.ScaleMatrix(abs(diag[2]),4,Blender.Mathutils.Vector(0,0,1))
+        #~ rotation_matrix *= Sx*Sy*Sz;
+        T = Blender.Mathutils.TranslationMatrix(center)
+        rotation_matrix *= T;
+        
+        print sphere.rotation_list;
+        
+        for r in sphere.rotation_list:
+          print r.axis_point
+          print r.axis_direction
+          print r.angle_degrees
+          axis = Blender.Mathutils.Vector(r.axis_direction[0],r.axis_direction[1],r.axis_direction[2])
+          C = Blender.Mathutils.Vector(r.axis_point[0],r.axis_point[1],r.axis_point[2]);
+          T = Blender.Mathutils.TranslationMatrix(C)
+          Tinv = Blender.Mathutils.TranslationMatrix(-C)
+          R = Blender.Mathutils.RotationMatrix(r.angle_degrees, 4, 'r', axis)
+          rotation_matrix *= Tinv*R*T
+        print '+++++++++++++'
+        
+        GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
     # Block
     Blender.Window.SetActiveLayer(1<<8);
     for block in structured_entries.block_list:
@@ -608,6 +636,7 @@ def importBristolFDTD(filename):
         pos = 0.5*(lower+upper);
         diag = upper-lower;
 
+        print '+++++++++++++'
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
@@ -632,7 +661,7 @@ def importBristolFDTD(filename):
           rotation_matrix *= Tinv*R*T
         print '+++++++++++++'
 
-        GEOblock(rotation_matrix, block.permittivity, block.conductivity);
+        GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
     # Cylinder
     Blender.Window.SetActiveLayer(1<<9);
     for cylinder in structured_entries.cylinder_list:
@@ -684,7 +713,7 @@ def importBristolFDTD(filename):
         angle_Y = 0;
         angle_Z = -math.radians(cylinder.angle);
         
-        GEOcylinder(cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity,rotation_matrix);
+        GEOcylinder_matrix(rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
 
     #########################
     # Not yet implemented:

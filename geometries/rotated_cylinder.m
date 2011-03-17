@@ -69,15 +69,66 @@ function rotated_cylinder(DSTDIR, BASENAME, angle_degrees)
 	fprintf(out,'**GEOMETRY FILE\n');
 	fprintf(out,'\n');
 
-	% create bottom block
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  radius = 1/4;
+  cylinder_height = 3/4;
 	L = [ 0, 0, 0 ];
-	U = [ Xmax, Ymax/4, Zmax ];
+	U = [ Xmax, (1-cylinder_height)*Ymax, Zmax ];
+	block_center = (L+U)/2;
+	cylinder_center = [Xmax/2,(radius+(cylinder_height)/2)*Ymax,Zmax/2];
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  axis_point = [0,0,0];
+	% create bottom block
 	GEOblock(out, L, U, 2, 0);
+	GEOrotation(out, axis_point, [0,0,-1], 0);
 
 	% create cylinder
-	axis_point = [Xmax/2,(1/4+(3/4)/2)*Ymax,Zmax/2]
-	GEOcylinder(out, axis_point, 0, 1/4, 3/4, 3, 0, angle_degrees);	
+	GEOcylinder(out, cylinder_center, 0, radius, cylinder_height, 3, 0, 0);	
+	GEOrotation(out, axis_point, [0,0,-1], 0);
+
+	% create sphere
+	GEOsphere(out, cylinder_center, radius, 0, 3, 0);
+	GEOrotation(out, axis_point, [0,0,-1], 0);
+
+	% create sphere
+	GEOsphere(out, cylinder_center, (cylinder_height)/2, 0, 3, 0);
+	GEOrotation(out, axis_point, [0,0,-1], 0);
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	axis_point = cylinder_center;
+	% create bottom block
+	GEOblock(out, L, U, 2, 0);
 	GEOrotation(out, axis_point, [0,0,-1], angle_degrees);
+
+	% create cylinder
+	GEOcylinder(out, cylinder_center, 0, radius, cylinder_height, 3, 0, angle_degrees);	
+	GEOrotation(out, axis_point, [0,0,-1], angle_degrees);
+
+	% create sphere
+	GEOsphere(out, cylinder_center, radius, 0, 3, 0);
+	GEOrotation(out, axis_point, [0,0,-1], angle_degrees);
+
+	% create sphere
+	GEOsphere(out, cylinder_center, (cylinder_height)/2, 0, 3, 0);
+	GEOrotation(out, axis_point, [0,0,-1], angle_degrees);
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	axis_point = block_center;
+	% create bottom block
+	GEOblock(out, L, U, 2, 0);
+	GEOrotation(out, axis_point, [0,0,-1], -angle_degrees);
+
+	% create cylinder
+	GEOcylinder(out, cylinder_center, 0, radius, cylinder_height, 3, 0, -angle_degrees);	
+	GEOrotation(out, axis_point, [0,0,-1], -angle_degrees);
+
+	% create sphere
+	GEOsphere(out, cylinder_center, radius, 0, 3, 0);
+	GEOrotation(out, axis_point, [0,0,-1], -angle_degrees);
+
+	% create sphere
+	GEOsphere(out, cylinder_center, (cylinder_height)/2, 0, 3, 0);
+	GEOrotation(out, axis_point, [0,0,-1], -angle_degrees);
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	%write box
 	L = [ 0, 0, 0 ];
