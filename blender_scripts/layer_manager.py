@@ -328,7 +328,7 @@ def gui():
   
   BGL.glColor3f(1,1,1)
   BGL.glRasterPos2i(10,offset + 419)
-  Draw.Text("Layer Manager", "small")
+  Draw.Text("Layer Manager HUHU", "small")
   
   BGL.glColor3f(1,1,1)
   Draw.PushButton("Update", 98, 110, offset + 395, 60,16 , "Updates Layer Manager")
@@ -345,16 +345,33 @@ def gui():
 toggles = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  
 offset = 0
 
-try:
-  txt = Text.Get("layernames")
-except:
-  txt = Text.New("layernames")
-  txt.write("Camera and Lights\n")
-  layersets = ["Working Set,1"]
-  for i in range(19):
-    txt.write("\n")
-  for i in layersets:
-    txt.write(i +"\n")
+#~ try:
+  #~ print 'normal stuff...'
+  #~ txt = Text.Get("layernames")
+#~ except:
+  #~ print 'Blender, we have an exception!'
+  #~ txt = Text.New("layernames")
+  #~ txt.write("Camera afdsfsnd Martelly\n")
+  #~ layersets = ["Working Set,1"]
+  #~ for i in range(19):
+    #~ txt.write("huhu " + i + " hihih\n")
+  #~ for i in layersets:
+    #~ txt.write(i +"\n")
+
+# initialisation
+DefaultLayers = ['huhu','hihi']
+#~ DefaultLayers = ['huhu']
+
+txt = Text.New("layernames")
+for i in range(20):
+  if i<len(DefaultLayers):
+    txt.write(DefaultLayers[i]+'\n')
+  else:
+    txt.write('\n')
+
+layersets = ["Working Set,1"]
+for i in layersets:
+  txt.write(i +"\n")
   
 names = txt.asLines()
 names.pop()
@@ -370,3 +387,9 @@ for i in range(20):
     toggles[i-1] = 1
 
 Draw.Register(gui, event, button_event)
+
+print '=========================='
+print Blender.Window.GetScreens()
+print Blender.Window.GetAreaID()
+print Blender.Window.GetAreaSize()
+print '=========================='
