@@ -22,7 +22,7 @@ cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
 ###############################
 def importBristolFDTD(filename):
     ''' import BristolFDTD geometry from .in,.geo or .inp and create corresponding structure in Blender'''
-    print '----->Importing bristol FDTD geometry...';
+    print('----->Importing bristol FDTD geometry...')
     Blender.Window.WaitCursor(1);
 
     # save import path
@@ -64,7 +64,7 @@ def importBristolFDTD(filename):
     # Probe
     Blender.Window.SetActiveLayer(1<<6);
     for probe in structured_entries.probe_list:
-        # print 'probe = ',Vector(probe.position);
+        # print('probe = ',Vector(probe.position))
         FDTDGeometryObjects_obj.GEOprobe(Vector(probe.position));
     
     # Sphere
@@ -152,15 +152,15 @@ def importBristolFDTD(filename):
     Blender.Window.RedrawAll();
     Blender.Window.WaitCursor(0);
     Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
-    print '...done';
+    print('...done')
 
 ###############################
 # MAIN FUNCTION
 ###############################
 def main():
   ''' MAIN FUNCTION '''
-  print 'sys.argv=',sys.argv;
-  print 'len(sys.argv)=',len(sys.argv);
+  print('sys.argv=',sys.argv)
+  print('len(sys.argv)=',len(sys.argv))
   
   # arg[0]='blender'
   # arg[1]='-P'
@@ -169,21 +169,21 @@ def main():
   
   if len(sys.argv)>4:
       for i in range(len(sys.argv)- 4):
-          print 'Importing ', sys.argv[4+i];
+          print('Importing ', sys.argv[4+i])
           importBristolFDTD(sys.argv[4+i]);
   else:
       ###################
       # load import path
       ###################
-      # print 'tempdir=',Blender.Get('tempdir');
-      # print 'soundsdir=',Blender.Get('soundsdir');
+      # print('tempdir=',Blender.Get('tempdir'))
+      # print('soundsdir=',Blender.Get('soundsdir'))
   
       # default_path = Blender.Get('tempdir');
       # if not default_path:
           # default_path = os.getenv('DATADIR');
           
       default_path = os.getenv('DATADIR')
-      print 'cfgfile = ', cfgfile;
+      print('cfgfile = ', cfgfile)
   
       if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
           with open(cfgfile, 'r') as FILE:

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import Blender
+#~ from bpy import *
 import math
 import bpy;
 import BPyAddMesh;
@@ -11,6 +12,8 @@ import re;
 import array;
 import cPickle;
 # define Vector+Matrix
+#~ from bpy.Mathutils import Vector;
+#~ from bpy.Mathutils import Matrix;
 from Blender.Mathutils import Vector;
 from Blender.Mathutils import Matrix;
 
@@ -164,9 +167,9 @@ class FDTDGeometryObjects:
         box_SizeX = abs(diag[0]);
         box_SizeY = abs(diag[1]);
         box_SizeZ = abs(diag[2]);
-        print "box_SizeX = ", box_SizeX;
-        print "box_SizeY = ", box_SizeY;
-        print "box_SizeZ = ", box_SizeZ;
+        print("box_SizeX = ", box_SizeX)
+        print("box_SizeY = ", box_SizeY)
+        print("box_SizeZ = ", box_SizeZ)
         
         obj.SizeX = box_SizeX;
         obj.SizeY = box_SizeY;
@@ -190,16 +193,16 @@ class FDTDGeometryObjects:
         
         delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
         
-        # print "len(delta_X_vector) = ", len(delta_X_vector);
-        # print "len(delta_Y_vector) = ", len(delta_Y_vector);
-        # print "len(delta_Z_vector) = ", len(delta_Z_vector);
-        # print "len(delta_vector) = ", len(delta_vector);
+        # print("len(delta_X_vector) = ", len(delta_X_vector))
+        # print("len(delta_Y_vector) = ", len(delta_Y_vector))
+        # print("len(delta_Z_vector) = ", len(delta_Z_vector))
+        # print("len(delta_vector) = ", len(delta_vector))
         global mesh_min;
         global mesh_max;
         mesh_min = min(delta_vector);
         mesh_max = max(delta_vector);
-        # print "mesh_min = ", mesh_min;
-        # print "mesh_max = ", mesh_max;
+        # print("mesh_min = ", mesh_min)
+        # print("mesh_max = ", mesh_max)
         
         # verts = array.array('d',range());
         # verts = range(Nx*Ny*Nz);
@@ -309,15 +312,17 @@ class FDTDGeometryObjects:
                 edges[edge_idx] = [C, D]; edge_idx+=1;
                 edges[edge_idx] = [D, A]; edge_idx+=1;
                 
-        # print verts;
+        # print(verts)
         BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
+        #~ bpy.data.meshes.new("Torus")
+        
         obj = Blender.Object.GetSelected()[0];
         # obj.layers = [ 2 ];
-        # print 'Nverts=', len(verts);
-        # print 'Nverts=', Nx*Ny*Nz;
+        # print('Nverts=', len(verts))
+        # print('Nverts=', Nx*Ny*Nz)
     
-        # print 'Nedges=', len(edges);
-        # print 'Nedges=', Nx*Ny + Ny*Nz + Nz*Nx;
+        # print('Nedges=', len(edges))
+        # print('Nedges=', Nx*Ny + Ny*Nz + Nz*Nx)
     
         return
         
@@ -403,7 +408,7 @@ class FDTDGeometryObjects:
         else:
             name = 'eps_snapshot';
         
-        # print "Adding plane at ", A, B, C, D;
+        # print("Adding plane at ", A, B, C, D)
         BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
         obj = Blender.Object.GetSelected()[0];
         # obj.layers = [ 3 ];
@@ -431,7 +436,7 @@ class FDTDGeometryObjects:
         
         #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
         probe_size = self.probe_scalefactor_mesh*self.mesh_min;
-        # print "probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
+        # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
         
         mesh = Blender.Mesh.Primitives.Cube(probe_size);
     
@@ -556,60 +561,60 @@ def TestMatrix():
   v=Blender.Mathutils.Vector(4,5,6)
   w=Blender.Mathutils.Vector(7,8,9)
   M=Blender.Mathutils.Matrix(u,v,w)
-  print '============'
-  print u
-  print v
-  print w
-  print '============'
-  print M
-  print '============'
-  print Blender.Mathutils.RotationMatrix(math.radians(0), 2)
-  print Blender.Mathutils.RotationMatrix(math.radians(45), 2)
-  print Blender.Mathutils.RotationMatrix(math.radians(90), 2)
-  print Blender.Mathutils.RotationMatrix(0, 2)
-  print Blender.Mathutils.RotationMatrix(45, 2)
-  print Blender.Mathutils.RotationMatrix(90, 2)
+  print('============')
+  print(u)
+  print(v)
+  print(w)
+  print('============')
+  print(M)
+  print('============')
+  print(Blender.Mathutils.RotationMatrix(math.radians(0), 2))
+  print(Blender.Mathutils.RotationMatrix(math.radians(45), 2))
+  print(Blender.Mathutils.RotationMatrix(math.radians(90), 2))
+  print(Blender.Mathutils.RotationMatrix(0, 2))
+  print(Blender.Mathutils.RotationMatrix(45, 2))
+  print(Blender.Mathutils.RotationMatrix(90, 2))
   M=Blender.Mathutils.RotationMatrix(45, 3, 'x' )
-  print '======QUAT======'
-  print M
-  print M.toQuat()
-  print '============'
+  print('======QUAT======')
+  print(M)
+  print(M.toQuat())
+  print('============')
   Q=Blender.Mathutils.RotationMatrix(45, 4, 'x' )
-  print Q;
-  print '============'
+  print(Q)
+  print('============')
   u1=Blender.Mathutils.Vector(1,2,3,4)
   u2=Blender.Mathutils.Vector(5,6,7,8)
   u3=Blender.Mathutils.Vector(9,10,11,12)
   u4=Blender.Mathutils.Vector(13,14,15,16)        
-  print '============'
+  print('============')
   Q=Blender.Mathutils.Matrix(u1,u2,u3,u4)
-  print Q
-  print '============'
-  print Q.translationPart()
-  print Q.scalePart()
-  print Q.rotationPart()
-  print '====Q=R*Sx*Sy*Sz*T========'
+  print(Q)
+  print('============')
+  print(Q.translationPart())
+  print(Q.scalePart())
+  print(Q.rotationPart())
+  print('====Q=R*Sx*Sy*Sz*T========')
   R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(17,18,19))
   T=Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(14,15,16))
   Sx=Blender.Mathutils.ScaleMatrix(2,4,Blender.Mathutils.Vector(1,0,0))
   Sy=Blender.Mathutils.ScaleMatrix(3,4,Blender.Mathutils.Vector(0,1,0))
   Sz=Blender.Mathutils.ScaleMatrix(4,4,Blender.Mathutils.Vector(0,0,1))
-  print Sx
-  print Sy
-  print Sz
+  print(Sx)
+  print(Sy)
+  print(Sz)
   S=Sx*Sy*Sz
-  print S.scalePart()
-  print T
-  print R
+  print(S.scalePart())
+  print(T)
+  print(R)
   Q=S*R*T
   #~ Q=R*T
-  print '============'
-  print Q
-  print '============'
-  print Q.translationPart()
-  print Q.scalePart()
-  print Q.rotationPart()
-  print '============'
+  print('============')
+  print(Q)
+  print('============')
+  print(Q.translationPart())
+  print(Q.scalePart())
+  print(Q.rotationPart())
+  print('============')
   
   scene = Blender.Scene.GetCurrent();
   #~ mesh = Blender.Mesh.Primitives.Cylinder(32, 2, 5);
@@ -638,17 +643,17 @@ def TestMatrix():
   Tinv=Blender.Mathutils.TranslationMatrix(-(C))
   R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(0,0,1))
   #~ T=Blender.Mathutils.TranslationMatrix(-2,0,0)
-  print '############'
-  print M
-  print T
-  print Tinv
-  print M*Tinv
-  print M*Tinv*R*T
-  print '############'
+  print('############')
+  print(M)
+  print(T)
+  print(Tinv)
+  print(M*Tinv)
+  print(M*Tinv*R*T)
+  print('############')
   obj.setMatrix(M*Tinv*R*T);
-  print '# EULER ###########'
-  print obj.getMatrix().toEuler()
-  print '############'
+  print('# EULER ###########')
+  print(obj.getMatrix().toEuler())
+  print('############')
   #~ obj.RotX = 90;
   #~ obj.RotY = 45;
   #~ obj.RotZ = 0;
