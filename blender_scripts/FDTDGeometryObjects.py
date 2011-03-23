@@ -163,19 +163,19 @@ class FDTDGeometryObjects:
         pos = 0.5*(lower+upper);
         diag = upper-lower;
         
-        global box_SizeX;
-        global box_SizeY;
-        global box_SizeZ;
-        box_SizeX = abs(diag[0]);
-        box_SizeY = abs(diag[1]);
-        box_SizeZ = abs(diag[2]);
-        print("box_SizeX = ", box_SizeX)
-        print("box_SizeY = ", box_SizeY)
-        print("box_SizeZ = ", box_SizeZ)
+        #~ global box_SizeX;
+        #~ global box_SizeY;
+        #~ global box_SizeZ;
+        self.box_SizeX = abs(diag[0]);
+        self.box_SizeY = abs(diag[1]);
+        self.box_SizeZ = abs(diag[2]);
+        print("box_SizeX = ", self.box_SizeX)
+        print("box_SizeY = ", self.box_SizeY)
+        print("box_SizeZ = ", self.box_SizeZ)
         
-        obj.SizeX = box_SizeX;
-        obj.SizeY = box_SizeY;
-        obj.SizeZ = box_SizeZ;
+        obj.SizeX = self.box_SizeX;
+        obj.SizeY = self.box_SizeY;
+        obj.SizeZ = self.box_SizeZ;
         
         obj.setLocation(pos[0], pos[1], pos[2]);
         obj.transp = True; obj.wireMode = True;
@@ -199,10 +199,10 @@ class FDTDGeometryObjects:
         # print("len(delta_Y_vector) = ", len(delta_Y_vector))
         # print("len(delta_Z_vector) = ", len(delta_Z_vector))
         # print("len(delta_vector) = ", len(delta_vector))
-        global mesh_min;
-        global mesh_max;
-        mesh_min = min(delta_vector);
-        mesh_max = max(delta_vector);
+        #~ global mesh_min;
+        #~ global mesh_max;
+        self.mesh_min = min(delta_vector);
+        self.mesh_max = max(delta_vector);
         # print("mesh_min = ", mesh_min)
         # print("mesh_max = ", mesh_max)
         
