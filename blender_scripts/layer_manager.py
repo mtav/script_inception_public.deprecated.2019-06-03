@@ -359,8 +359,7 @@ offset = 0
     #~ txt.write(i +"\n")
 
 # initialisation
-DefaultLayers = ['huhu','hihi']
-#~ DefaultLayers = ['huhu']
+DefaultLayers = ['box','mesh','time_snapshots','eps_snapshots','frequency_snapshots','excitations','probes','spheres','blocks','cylinders']
 
 txt = Text.New("layernames")
 for i in range(20):

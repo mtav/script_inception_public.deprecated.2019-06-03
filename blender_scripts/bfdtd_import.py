@@ -39,6 +39,8 @@ def importBristolFDTD(filename):
     # Box
     Blender.Window.SetActiveLayer(1<<0);
     FDTDGeometryObjects_obj.GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
+    
+    # mesh
     Blender.Window.SetActiveLayer(1<<1);
     FDTDGeometryObjects_obj.GEOmesh(False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
     

@@ -342,7 +342,7 @@ class FDTDGeometryObjects:
         scene = Blender.Scene.GetCurrent();
         
         mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
-        mesh.materials = [ excitation_material ];
+        mesh.materials = [ self.excitation_material ];
         for f in mesh.faces:
             f.mat = 0;
     
@@ -351,7 +351,7 @@ class FDTDGeometryObjects:
         arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
     
         mesh = Blender.Mesh.Primitives.Cone(32, 2*cone_radius, cone_length);
-        mesh.materials = [ excitation_material ];
+        mesh.materials = [ self.excitation_material ];
         for f in mesh.faces:
             f.mat = 0;
     
@@ -410,27 +410,27 @@ class FDTDGeometryObjects:
         obj.transp = True; obj.wireMode = True;
         
         mesh = Blender.Mesh.Get( obj.data.name );
-        mesh.materials = snapshot_materials;
+        mesh.materials = self.snapshot_materials;
         for f in mesh.faces:
             f.mat = snapshot_type;
     
     def GEOfrequency_snapshot(self,plane, P1, P2):
-        snapshot(plane, P1, P2, 0);
+        self.snapshot(plane, P1, P2, 0);
         return
         
     def GEOtime_snapshot(self,plane, P1, P2):
-        snapshot(plane, P1, P2, 1);
+        self.snapshot(plane, P1, P2, 1);
         return
     
     def GEOeps_snapshot(self,plane, P1, P2):
-        snapshot(plane, P1, P2, 2);
+        self.snapshot(plane, P1, P2, 2);
         return
     
     def GEOprobe(self,position):
         scene = Blender.Scene.GetCurrent();
         
         #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
-        probe_size = probe_scalefactor_mesh*mesh_min;
+        probe_size = self.probe_scalefactor_mesh*self.mesh_min;
         # print "probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size;
         
         mesh = Blender.Mesh.Primitives.Cube(probe_size);
