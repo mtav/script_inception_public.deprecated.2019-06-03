@@ -59,6 +59,50 @@ Layer names and layer set are saved in the .blend as texts.
 import Blender
 from Blender import Draw, BGL, Text, Scene, Window, Object
 
+toggles = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  
+offset = 0
+
+#~ try:
+  #~ print 'normal stuff...'
+  #~ txt = Text.Get("layernames")
+#~ except:
+  #~ print 'Blender, we have an exception!'
+  #~ txt = Text.New("layernames")
+  #~ txt.write("Camera afdsfsnd Martelly\n")
+  #~ layersets = ["Working Set,1"]
+  #~ for i in range(19):
+    #~ txt.write("huhu " + i + " hihih\n")
+  #~ for i in layersets:
+    #~ txt.write(i +"\n")
+
+# initialisation
+DefaultLayers = ['box','mesh','time_snapshots','eps_snapshots','frequency_snapshots','excitations','probes','spheres','blocks','cylinders']
+
+txt = Text.New("layernames")
+for i in range(20):
+  if i<len(DefaultLayers):
+    txt.write(DefaultLayers[i]+'\n')
+  else:
+    txt.write('\n')
+
+layersets = ["Working Set,1"]
+for i in layersets:
+  txt.write(i +"\n")
+  
+names = txt.asLines()
+names.pop()
+layersets = names[20:]  
+
+
+
+curset = layersets[0][0:layersets[0].find(",")]
+
+scn = Scene.getCurrent()
+for i in range(20):
+  if scn.layers.count(i):
+    toggles[i-1] = 1
+
+
 def event(evt, val):
   global offset
   if evt == Draw.ESCKEY or evt == Draw.QKEY or evt == Draw.RIGHTMOUSE:
@@ -342,53 +386,20 @@ def gui():
     Draw.PushButton(names[i], i+40, 50, offset + 375 -(18*i), 120, 16, "Click to change Layer name")
   
 
-toggles = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  
-offset = 0
+def algosomething(filename):
+  print 'Saluton mondo!'
 
-#~ try:
-  #~ print 'normal stuff...'
-  #~ txt = Text.Get("layernames")
-#~ except:
-  #~ print 'Blender, we have an exception!'
-  #~ txt = Text.New("layernames")
-  #~ txt.write("Camera afdsfsnd Martelly\n")
-  #~ layersets = ["Working Set,1"]
-  #~ for i in range(19):
-    #~ txt.write("huhu " + i + " hihih\n")
-  #~ for i in layersets:
-    #~ txt.write(i +"\n")
-
-# initialisation
-DefaultLayers = ['box','mesh','time_snapshots','eps_snapshots','frequency_snapshots','excitations','probes','spheres','blocks','cylinders']
-
-txt = Text.New("layernames")
-for i in range(20):
-  if i<len(DefaultLayers):
-    txt.write(DefaultLayers[i]+'\n')
-  else:
-    txt.write('\n')
-
-layersets = ["Working Set,1"]
-for i in layersets:
-  txt.write(i +"\n")
+def main():  
+  Draw.Register(gui, event, button_event)
   
-names = txt.asLines()
-names.pop()
-layersets = names[20:]  
+  print '=========================='
+  print Blender.Window.GetScreens()
+  print Blender.Window.GetAreaID()
+  print Blender.Window.GetAreaSize()
+  print Blender.Text.Get()
+  print '=========================='
+  #~ Blender.Window.FileSelector(algosomething, "Import Bristol FDTD file...");
+  #~ Blender.Run('~/.blender/scripts/bfdtd_import.py')
 
-
-
-curset = layersets[0][0:layersets[0].find(",")]
-
-scn = Scene.getCurrent()
-for i in range(20):
-  if scn.layers.count(i):
-    toggles[i-1] = 1
-
-Draw.Register(gui, event, button_event)
-
-print '=========================='
-print Blender.Window.GetScreens()
-print Blender.Window.GetAreaID()
-print Blender.Window.GetAreaSize()
-print '=========================='
+if __name__ == "__main__":
+  main()

@@ -90,6 +90,7 @@ class FDTDGeometryObjects:
         return;
     
     def GEOblock_matrix(self,rotation_matrix, permittivity, conductivity):
+        #~ Blender.Window.SetActiveLayer(1<<8);
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cube(1.0);
         mesh.materials = self.materials(permittivity, conductivity);
@@ -99,6 +100,7 @@ class FDTDGeometryObjects:
         obj = scene.objects.new(mesh, 'block');
         obj.setMatrix(rotation_matrix);
         obj.transp = True; obj.wireMode = True;
+        #~ obj.layers = [ 8 ];
         return;
     
     def GEOcylinder(self,center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
@@ -659,7 +661,7 @@ def TestMatrix():
   #~ obj.RotZ = 0;
 
   #~ sys.exit(0)
-          
+
   #~ Vector object 	
   #~ ProjectVecs(vec1, vec2)
   #~ Return the projection of vec1 onto vec2. 	source code

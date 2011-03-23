@@ -22,7 +22,7 @@ cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
 ###############################
 def importBristolFDTD(filename):
     ''' import BristolFDTD geometry from .in,.geo or .inp and create corresponding structure in Blender'''
-    print('----->Importing bristol FDTD geometry...')
+    print('----->Importing bristol FDTD geometry: '+filename)
     Blender.Window.WaitCursor(1);
 
     # save import path
@@ -35,6 +35,8 @@ def importBristolFDTD(filename):
     structured_entries = readBristolFDTD(filename);
     
     FDTDGeometryObjects_obj = FDTDGeometryObjects()
+    
+    Blender.Window.RedrawAll(); # This must be called before any SetActiveLayer calls!
     
     # Box
     Blender.Window.SetActiveLayer(1<<0);
@@ -159,8 +161,8 @@ def importBristolFDTD(filename):
 ###############################
 def main():
   ''' MAIN FUNCTION '''
-  print('sys.argv=',sys.argv)
-  print('len(sys.argv)=',len(sys.argv))
+  print('sys.argv=' + str(sys.argv))
+  print('len(sys.argv)=' + str(len(sys.argv)))
   
   # arg[0]='blender'
   # arg[1]='-P'
@@ -169,7 +171,7 @@ def main():
   
   if len(sys.argv)>4:
       for i in range(len(sys.argv)- 4):
-          print('Importing ', sys.argv[4+i])
+          print('Importing ' + sys.argv[4+i])
           importBristolFDTD(sys.argv[4+i]);
   else:
       ###################
