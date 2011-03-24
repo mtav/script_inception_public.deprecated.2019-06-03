@@ -11,41 +11,57 @@ import getopt
 def GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector):
   ''' writes mesh to FILE '''
   # mesh X
-  fprintf(FILE,'XMESH **XMESH DEFINITION\n');
-  fprintf(FILE,'{\n');
+  FILE.write('XMESH **XMESH DEFINITION\n');
+
+  FILE.write('{\n');
+
   for i in range(len(delta_X_vector)):
-    fprintf(FILE,'%E\n', delta_X_vector[i]);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+    FILE.write("%E\n" % delta_X_vector[i])
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
   # mesh Y
-  fprintf(FILE,'YMESH **YMESH DEFINITION\n');
-  fprintf(FILE,'{\n');
+  FILE.write('YMESH **YMESH DEFINITION\n');
+
+  FILE.write('{\n');
+
   for i in range(len(delta_Y_vector)):
-    fprintf(FILE,'%E\n', delta_Y_vector[i]);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+    FILE.write("%E\n" % delta_Y_vector[i])
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
   # mesh Z
-  fprintf(FILE,'ZMESH **ZMESH DEFINITION\n');
-  fprintf(FILE,'{\n');
+  FILE.write('ZMESH **ZMESH DEFINITION\n');
+
+  FILE.write('{\n');
+
   for i in range(len(delta_Z_vector)):
-    fprintf(FILE,'%E\n', delta_Z_vector[i]);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+    FILE.write("%E\n" % delta_Z_vector[i])
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 def GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, iterations, timestep, id_character):
-  fprintf(FILE,'FLAG  **PROGRAM CONTROL OPTIONS\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%d **ITERATION METHOD\n', iteration_method);
-  fprintf(FILE,'%d **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n', propagation_constant);
-  fprintf(FILE,'%d **FLAG ONE\n', flag_1);
-  fprintf(FILE,'%d **FLAG TWO\n', flag_2);
-  fprintf(FILE,'%d **ITERATIONS\n', iterations);
-  fprintf(FILE,'%E **TIMESTEP as a proportion of the maximum allowed\n', timestep);
-  fprintf(FILE,'"%s" **ID CHARACTER (ALWAYS USE QUOTES)\n', id_character);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('FLAG  **PROGRAM CONTROL OPTIONS\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%d **ITERATION METHOD\n" % iteration_method)
+  FILE.write("%d **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n" % propagation_constant)
+  FILE.write("%d **FLAG ONE\n" % flag_1)
+  FILE.write("%d **FLAG TWO\n" % flag_2)
+  FILE.write("%d **ITERATIONS\n" % iterations)
+  FILE.write("%E **TIMESTEP as a proportion of the maximum allowed\n" % timestep)
+  FILE.write("\"%s\" **ID CHARACTER (ALWAYS USE QUOTES)\n" % id_character)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 def GEOboundary(FILE, Xpos_bc, Xpos_param,\
                             Ypos_bc, Ypos_param,\
@@ -53,28 +69,36 @@ def GEOboundary(FILE, Xpos_bc, Xpos_param,\
                             Xneg_bc, Xneg_param,\
                             Yneg_bc, Yneg_param,\
                             Zneg_bc, Zneg_param):
-  fprintf(FILE,'BOUNDARY  **BOUNDARY DEFINITION\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%d %d %d %d **X+ \n', Xpos_bc, Xpos_param(1), Xpos_param(2), Xpos_param(3));
-  fprintf(FILE,'%d %d %d %d **Y+ \n', Ypos_bc, Ypos_param(1), Ypos_param(2), Ypos_param(3));
-  fprintf(FILE,'%d %d %d %d **Z+ \n', Zpos_bc, Zpos_param(1), Zpos_param(2), Zpos_param(3));
-  fprintf(FILE,'%d %d %d %d **X- \n', Xneg_bc, Xneg_param(1), Xneg_param(2), Xneg_param(3));
-  fprintf(FILE,'%d %d %d %d **Y- \n', Yneg_bc, Yneg_param(1), Yneg_param(2), Yneg_param(3));
-  fprintf(FILE,'%d %d %d %d **Z- \n', Zneg_bc, Zneg_param(1), Zneg_param(2), Zneg_param(3));
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('BOUNDARY  **BOUNDARY DEFINITION\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%d %d %d %d **X+ \n" % Xpos_bc, Xpos_param(1), Xpos_param(2), Xpos_param(3))
+  FILE.write("%d %d %d %d **Y+ \n" % Ypos_bc, Ypos_param(1), Ypos_param(2), Ypos_param(3))
+  FILE.write("%d %d %d %d **Z+ \n" % Zpos_bc, Zpos_param(1), Zpos_param(2), Zpos_param(3))
+  FILE.write("%d %d %d %d **X- \n" % Xneg_bc, Xneg_param(1), Xneg_param(2), Xneg_param(3))
+  FILE.write("%d %d %d %d **Y- \n" % Yneg_bc, Yneg_param(1), Yneg_param(2), Yneg_param(3))
+  FILE.write("%d %d %d %d **Z- \n" % Zneg_bc, Zneg_param(1), Zneg_param(2), Zneg_param(3))
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 def GEObox(FILE, lower, upper):
-  fprintf(FILE,'BOX  **BOX DEFINITION\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%E **XL\n', lower(1));
-  fprintf(FILE,'%E **YL\n', lower(2));
-  fprintf(FILE,'%E **ZL\n', lower(3));
-  fprintf(FILE,'%E **XU\n', upper(1));
-  fprintf(FILE,'%E **YU\n', upper(2));
-  fprintf(FILE,'%E **ZU\n', upper(3));
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('BOX  **BOX DEFINITION\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%E **XL\n" % lower(1))
+  FILE.write("%E **YL\n" % lower(2))
+  FILE.write("%E **ZL\n" % lower(3))
+  FILE.write("%E **XU\n" % upper(1))
+  FILE.write("%E **YU\n" % upper(2))
+  FILE.write("%E **ZU\n" % upper(3))
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 # geometry objects
 def GEOsphere(FILE, center, outer_radius, inner_radius, permittivity, conductivity):
@@ -84,31 +108,39 @@ def GEOsphere(FILE, center, outer_radius, inner_radius, permittivity, conductivi
    6 permittivity
    7 conductivity
   } '''
-  fprintf(FILE,'SPHERE  **SPHERE DEFINITION\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%E **XC\n', center(1));
-  fprintf(FILE,'%E **YC\n', center(2));
-  fprintf(FILE,'%E **ZC\n', center(3));
-  fprintf(FILE,'%E **outer_radius\n', outer_radius);
-  fprintf(FILE,'%E **inner_radius\n', inner_radius);
-  fprintf(FILE,'%E **permittivity\n', permittivity);
-  fprintf(FILE,'%E **conductivity\n', conductivity);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('SPHERE  **SPHERE DEFINITION\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%E **XC\n" % center(1))
+  FILE.write("%E **YC\n" % center(2))
+  FILE.write("%E **ZC\n" % center(3))
+  FILE.write("%E **outer_radius\n" % outer_radius)
+  FILE.write("%E **inner_radius\n" % inner_radius)
+  FILE.write("%E **permittivity\n" % permittivity)
+  FILE.write("%E **conductivity\n" % conductivity)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 def GEOblock(FILE, lower, upper, permittivity, conductivity):
-  fprintf(FILE,'BLOCK **Block Definition (XL,YL,ZL,XU,YU,ZU)\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%E **XL\n', lower(1));
-  fprintf(FILE,'%E **YL\n', lower(2));
-  fprintf(FILE,'%E **ZL\n', lower(3));
-  fprintf(FILE,'%E **XU\n', upper(1));
-  fprintf(FILE,'%E **YU\n', upper(2));
-  fprintf(FILE,'%E **ZU\n', upper(3));
-  fprintf(FILE,'%E **relative Permittivity\n', permittivity);
-  fprintf(FILE,'%E **Conductivity\n', conductivity);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('BLOCK **Block Definition (XL,YL,ZL,XU,YU,ZU)\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%E **XL\n" % lower(1))
+  FILE.write("%E **YL\n" % lower(2))
+  FILE.write("%E **ZL\n" % lower(3))
+  FILE.write("%E **XU\n" % upper(1))
+  FILE.write("%E **YU\n" % upper(2))
+  FILE.write("%E **ZU\n" % upper(3))
+  FILE.write("%E **relative Permittivity\n" % permittivity)
+  FILE.write("%E **Conductivity\n" % conductivity)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 def GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_deg):
   ''' # cylinder
@@ -124,64 +156,76 @@ def GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, condu
   #
   # i.e. angle_deg = Angle of rotation in degrees around -Z=(0,0,-1) '''
 
-  fprintf(FILE,'CYLINDER **Cylinder Definition\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%E **X CENTRE\n', centre(1));
-  fprintf(FILE,'%E **Y CENTRE\n', centre(2));
-  fprintf(FILE,'%E **Z CENTRE\n', centre(3));
-  fprintf(FILE,'%E **inner_radius\n', inner_radius);
-  fprintf(FILE,'%E **outer_radius\n', outer_radius);
-  fprintf(FILE,'%E **HEIGHT\n', H);
-  fprintf(FILE,'%E **Permittivity\n', permittivity);
-  fprintf(FILE,'%E **Conductivity\n', conductivity);
-  fprintf(FILE,'%E **Angle of rotation in degrees around -Z=(0,0,-1)\n', angle_deg);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('CYLINDER **Cylinder Definition\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%E **X CENTRE\n" % centre(1))
+  FILE.write("%E **Y CENTRE\n" % centre(2))
+  FILE.write("%E **Z CENTRE\n" % centre(3))
+  FILE.write("%E **inner_radius\n" % inner_radius)
+  FILE.write("%E **outer_radius\n" % outer_radius)
+  FILE.write("%E **HEIGHT\n" % H)
+  FILE.write("%E **Permittivity\n" % permittivity)
+  FILE.write("%E **Conductivity\n" % conductivity)
+  FILE.write("%E **Angle of rotation in degrees around -Z=(0,0,-1)\n" % angle_deg)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 def GEOrotation(FILE, axis_point, axis_direction, angle_degrees):
   # rotation structure. Actually affects previous geometry object in Prof. Railton's modified BrisFDTD. Not fully implemented yet.
   # Should be integrated into existing structures using a directional vector anyway, like in MEEP. BrisFDTD hacking required... :)
 
-  fprintf(FILE,'ROTATION **Rotation Definition, affects previous geometry object\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%E **X axis_point\n', axis_point(1));
-  fprintf(FILE,'%E **Y axis_point\n', axis_point(2));
-  fprintf(FILE,'%E **Z axis_point\n', axis_point(3));
-  fprintf(FILE,'%E **X axis_direction\n', axis_direction(1));
-  fprintf(FILE,'%E **Y axis_direction\n', axis_direction(2));
-  fprintf(FILE,'%E **Z axis_direction\n', axis_direction(3));
-  fprintf(FILE,'%E **angle_degrees\n', angle_degrees);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('ROTATION **Rotation Definition, affects previous geometry object\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%E **X axis_point\n" % axis_point(1))
+  FILE.write("%E **Y axis_point\n" % axis_point(2))
+  FILE.write("%E **Z axis_point\n" % axis_point(3))
+  FILE.write("%E **X axis_direction\n" % axis_direction(1))
+  FILE.write("%E **Y axis_direction\n" % axis_direction(2))
+  FILE.write("%E **Z axis_direction\n" % axis_direction(3))
+  FILE.write("%E **angle_degrees\n" % angle_degrees)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 # excitation objects
 def GEOexcitation(FILE, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
-  fprintf(FILE,'EXCITATION **EXCITATION DEFINITION\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%d ** CURRENT SOURCE \n', current_source);
-  fprintf(FILE,'%E **X1\n', P1(1));
-  fprintf(FILE,'%E **Y1\n', P1(2));
-  fprintf(FILE,'%E **Z1\n', P1(3));
-  fprintf(FILE,'%E **X2\n', P2(1));
-  fprintf(FILE,'%E **Y2\n', P2(2));
-  fprintf(FILE,'%E **Z2\n', P2(3));
-  fprintf(FILE,'%d **EX\n', E(1));
-  fprintf(FILE,'%d **EY\n', E(2));
-  fprintf(FILE,'%d **EZ\n', E(3));
-  fprintf(FILE,'%d **HX\n', H(1));
-  fprintf(FILE,'%d **HY\n', H(2));
-  fprintf(FILE,'%d **HZ\n', H(3));
-  fprintf(FILE,'%d **GAUSSIAN MODULATED SINUSOID\n', type);
-  fprintf(FILE,'%E **TIME CONSTANT\n', time_constant);
-  fprintf(FILE,'%E **AMPLITUDE\n', amplitude);
-  fprintf(FILE,'%E **TIME OFFSET\n', time_offset);
-  fprintf(FILE,'%E **FREQ (HZ)\n', frequency);
-  fprintf(FILE,'%d **UNUSED PARAMETER\n', param1);
-  fprintf(FILE,'%d **UNUSED PARAMETER\n', param2);
-  fprintf(FILE,'%d **UNUSED PARAMETER\n', param3);
-  fprintf(FILE,'%d **UNUSED PARAMETER\n', param4);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('EXCITATION **EXCITATION DEFINITION\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%d ** CURRENT SOURCE \n" % current_source)
+  FILE.write("%E **X1\n" % P1(1))
+  FILE.write("%E **Y1\n" % P1(2))
+  FILE.write("%E **Z1\n" % P1(3))
+  FILE.write("%E **X2\n" % P2(1))
+  FILE.write("%E **Y2\n" % P2(2))
+  FILE.write("%E **Z2\n" % P2(3))
+  FILE.write("%d **EX\n" % E(1))
+  FILE.write("%d **EY\n" % E(2))
+  FILE.write("%d **EZ\n" % E(3))
+  FILE.write("%d **HX\n" % H(1))
+  FILE.write("%d **HY\n" % H(2))
+  FILE.write("%d **HZ\n" % H(3))
+  FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % type)
+  FILE.write("%E **TIME CONSTANT\n" % time_constant)
+  FILE.write("%E **AMPLITUDE\n" % amplitude)
+  FILE.write("%E **TIME OFFSET\n" % time_offset)
+  FILE.write("%E **FREQ (HZ)\n" % frequency)
+  FILE.write("%d **UNUSED PARAMETER\n" % param1)
+  FILE.write("%d **UNUSED PARAMETER\n" % param2)
+  FILE.write("%d **UNUSED PARAMETER\n" % param3)
+  FILE.write("%d **UNUSED PARAMETER\n" % param4)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 # measurement objects
 def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
@@ -220,29 +264,32 @@ def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps
     end
 
     fprintf(FILE,'SNAPSHOT **SNAPSHOT DEFINITION %s\n',plane_name);
-    fprintf(FILE,'{\n');
-    fprintf(FILE,'%d **FIRST\n', first);
-    fprintf(FILE,'%d **REPETITION\n', repetition);
-    fprintf(FILE,'%d **PLANE\n', plane);
-    fprintf(FILE,'%E **X1\n', P1(1));
-    fprintf(FILE,'%E **Y1\n', P1(2));
-    fprintf(FILE,'%E **Z1\n', P1(3));
-    fprintf(FILE,'%E **X2\n', P2(1));
-    fprintf(FILE,'%E **Y2\n', P2(2));
-    fprintf(FILE,'%E **Z2\n', P2(3));
-    fprintf(FILE,'%d **EX\n', E(1));
-    fprintf(FILE,'%d **EY\n', E(2));
-    fprintf(FILE,'%d **EZ\n', E(3));
-    fprintf(FILE,'%d **HX\n', H(1));
-    fprintf(FILE,'%d **HY\n', H(2));
-    fprintf(FILE,'%d **HZ\n', H(3));
-    fprintf(FILE,'%d **JX\n', J(1));
-    fprintf(FILE,'%d **JY\n', J(2));
-    fprintf(FILE,'%d **JZ\n', J(3));
-    fprintf(FILE,'%d **POW\n', power);
-    fprintf(FILE,'%d **EPS\n', eps);
-    fprintf(FILE,'}\n');
-    fprintf(FILE,'\n');
+    FILE.write('{\n');
+
+    FILE.write("%d **FIRST\n" % first)
+    FILE.write("%d **REPETITION\n" % repetition)
+    FILE.write("%d **PLANE\n" % plane)
+    FILE.write("%E **X1\n" % P1(1))
+    FILE.write("%E **Y1\n" % P1(2))
+    FILE.write("%E **Z1\n" % P1(3))
+    FILE.write("%E **X2\n" % P2(1))
+    FILE.write("%E **Y2\n" % P2(2))
+    FILE.write("%E **Z2\n" % P2(3))
+    FILE.write("%d **EX\n" % E(1))
+    FILE.write("%d **EY\n" % E(2))
+    FILE.write("%d **EZ\n" % E(3))
+    FILE.write("%d **HX\n" % H(1))
+    FILE.write("%d **HY\n" % H(2))
+    FILE.write("%d **HZ\n" % H(3))
+    FILE.write("%d **JX\n" % J(1))
+    FILE.write("%d **JY\n" % J(2))
+    FILE.write("%d **JZ\n" % J(3))
+    FILE.write("%d **POW\n" % power)
+    FILE.write("%d **EPS\n" % eps)
+    FILE.write('}\n');
+
+    FILE.write('\n');
+
 
   if P1[plane] == P2[plane]:
     snapshot(plane,P1,P2);
@@ -264,33 +311,36 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
     else: #plane == 3
       plane_name='Z';
     fprintf(FILE,'FREQUENCY_SNAPSHOT **SNAPSHOT DEFINITION %s\n',plane_name);
-    fprintf(FILE,'{\n');
-    fprintf(FILE,'%d **FIRST\n', first);
-    fprintf(FILE,'%d **REPETITION\n', repetition);
-    fprintf(FILE,'%d **interpolate?\n', interpolate);
-    fprintf(FILE,'%d **REAL DFT\n', real_dft);
-    fprintf(FILE,'%d **MOD ONLY\n', mod_only);
-    fprintf(FILE,'%d **MOD ALL\n', mod_all);
-    fprintf(FILE,'%d **PLANE\n', plane);
-    fprintf(FILE,'%E **X1\n', P1(1));
-    fprintf(FILE,'%E **Y1\n', P1(2));
-    fprintf(FILE,'%E **Z1\n', P1(3));
-    fprintf(FILE,'%E **X2\n', P2(1));
-    fprintf(FILE,'%E **Y2\n', P2(2));
-    fprintf(FILE,'%E **Z2\n', P2(3));
-    fprintf(FILE,'%E **FREQUENCY (HZ)\n', frequency);
-    fprintf(FILE,'%d **STARTING SAMPLE\n', starting_sample);
-    fprintf(FILE,'%d **EX\n', E(1));
-    fprintf(FILE,'%d **EY\n', E(2));
-    fprintf(FILE,'%d **EZ\n', E(3));
-    fprintf(FILE,'%d **HX\n', H(1));
-    fprintf(FILE,'%d **HY\n', H(2));
-    fprintf(FILE,'%d **HZ\n', H(3));
-    fprintf(FILE,'%d **JX\n', J(1));
-    fprintf(FILE,'%d **JY\n', J(2));
-    fprintf(FILE,'%d **JZ\n', J(3));
-    fprintf(FILE,'}\n');
-    fprintf(FILE,'\n');
+    FILE.write('{\n');
+
+    FILE.write("%d **FIRST\n" % first)
+    FILE.write("%d **REPETITION\n" % repetition)
+    FILE.write("%d **interpolate?\n" % interpolate)
+    FILE.write("%d **REAL DFT\n" % real_dft)
+    FILE.write("%d **MOD ONLY\n" % mod_only)
+    FILE.write("%d **MOD ALL\n" % mod_all)
+    FILE.write("%d **PLANE\n" % plane)
+    FILE.write("%E **X1\n" % P1(1))
+    FILE.write("%E **Y1\n" % P1(2))
+    FILE.write("%E **Z1\n" % P1(3))
+    FILE.write("%E **X2\n" % P2(1))
+    FILE.write("%E **Y2\n" % P2(2))
+    FILE.write("%E **Z2\n" % P2(3))
+    FILE.write("%E **FREQUENCY (HZ)\n" % frequency)
+    FILE.write("%d **STARTING SAMPLE\n" % starting_sample)
+    FILE.write("%d **EX\n" % E(1))
+    FILE.write("%d **EY\n" % E(2))
+    FILE.write("%d **EZ\n" % E(3))
+    FILE.write("%d **HX\n" % H(1))
+    FILE.write("%d **HY\n" % H(2))
+    FILE.write("%d **HZ\n" % H(3))
+    FILE.write("%d **JX\n" % J(1))
+    FILE.write("%d **JY\n" % J(2))
+    FILE.write("%d **JZ\n" % J(3))
+    FILE.write('}\n');
+
+    FILE.write('\n');
+
 
   for i in range(len(frequency)):
     if P1[plane] == P2[plane]:
@@ -304,24 +354,28 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
       snapshot(3,[P1(1),P1(2),P2(3)],[P2(1),P2(2),P2(3)],frequency(i));
 
 def GEOprobe(FILE, position, step, E, H, J, power ):
-  fprintf(FILE,'PROBE **PROBE DEFINITION\n');
-  fprintf(FILE,'{\n');
-  fprintf(FILE,'%E **X\n', position(1));
-  fprintf(FILE,'%E **Y\n', position(2));
-  fprintf(FILE,'%E **Z\n', position(3));
-  fprintf(FILE,'%d **STEP\n', step);
-  fprintf(FILE,'%d **EX\n', E(1));
-  fprintf(FILE,'%d **EY\n', E(2));
-  fprintf(FILE,'%d **EZ\n', E(3));
-  fprintf(FILE,'%d **HX\n', H(1));
-  fprintf(FILE,'%d **HY\n', H(2));
-  fprintf(FILE,'%d **HZ\n', H(3));
-  fprintf(FILE,'%d **JX\n', J(1));
-  fprintf(FILE,'%d **JY\n', J(2));
-  fprintf(FILE,'%d **JZ\n', J(3));
-  fprintf(FILE,'%d **POW\n', power);
-  fprintf(FILE,'}\n');
-  fprintf(FILE,'\n');
+  FILE.write('PROBE **PROBE DEFINITION\n');
+
+  FILE.write('{\n');
+
+  FILE.write("%E **X\n" % position(1))
+  FILE.write("%E **Y\n" % position(2))
+  FILE.write("%E **Z\n" % position(3))
+  FILE.write("%d **STEP\n" % step)
+  FILE.write("%d **EX\n" % E(1))
+  FILE.write("%d **EY\n" % E(2))
+  FILE.write("%d **EZ\n" % E(3))
+  FILE.write("%d **HX\n" % H(1))
+  FILE.write("%d **HY\n" % H(2))
+  FILE.write("%d **HZ\n" % H(3))
+  FILE.write("%d **JX\n" % J(1))
+  FILE.write("%d **JY\n" % J(2))
+  FILE.write("%d **JZ\n" % J(3))
+  FILE.write("%d **POW\n" % power)
+  FILE.write('}\n');
+
+  FILE.write('\n');
+
 
 # files
 def GEOcommand(filename, BASENAME):
@@ -440,8 +494,12 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # more code, unchanged
-    with open('tmp.txt', 'w') as f:
-      f.write('hello\n')
+    with open('tmp.txt', 'w') as FILE:
+      delta_X_vector = [11.25,21.25,31.25];
+      delta_Y_vector = [12.25,22.25,32.25];
+      delta_Z_vector = [13.25,23.25,33.25];
+      GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector)
+
   except Usage, err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"
