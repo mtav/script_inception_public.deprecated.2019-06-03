@@ -2,7 +2,40 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 import getopt
+
+def planeNumberName(var):
+  S=['X','Y','Z']
+  if var in [1,2,3]:
+    return var, S[var-1]
+  elif var.upper() in S:
+    return S.index(var.upper())+1,var.upper()
+  else:
+    print('unknown plane: '+str(var))
+    sys.exit(-1)
+  #~ elif var == 'x' or var == 'X':
+    #~ return 1
+  #~ elif var == 'y' or var == 'Y':
+    #~ return 2
+  #~ elif var == 'z' or var == 'Z':
+    #~ return 3
+  #~ else:
+    #~ print('unknown plane: '+str(x))
+    #~ sys.exit(-1)
+#~ 
+#~ def planeName(var):
+  #~ if var.lower() in ['x','y','z']:
+    #~ return var.lower()
+  #~ elif var == 1:
+    #~ return 'x'
+  #~ elif var == 2:
+    #~ return 'y'
+  #~ elif var == 3:
+    #~ return 'z'
+  #~ else:
+    #~ print('unknown plane: '+str(x))
+    #~ sys.exit(-1)
 
 ########################
 # GENERATOR FUNCTIONS
@@ -250,20 +283,21 @@ def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps
   # the sample points in each direction. These files can be read into MathCad or to spreadsheet programs.'''
 
   def snapshot(plane,P1,P2):
-    if plane == 1:
-      plane_name='X'
-    elif plane == 2:
-      plane_name='Y'
-    else: #plane == 3:
-      plane_name='Z'
-    end
+    plane_ID, plane_name = planeNumberName(plane)
+    #~ if plane == 1:
+      #~ plane_name='X'
+    #~ elif plane == 2:
+      #~ plane_name='Y'
+    #~ else: #plane == 3:
+      #~ plane_name='Z'
+    #~ end
 
-    fprintf(FILE,'SNAPSHOT **SNAPSHOT DEFINITION %s\n',plane_name)
+    FILE.write("SNAPSHOT **SNAPSHOT DEFINITION %s\n" % plane_name)
     FILE.write('{\n')
 
     FILE.write("%d **FIRST\n" % first)
     FILE.write("%d **REPETITION\n" % repetition)
-    FILE.write("%d **PLANE\n" % plane)
+    FILE.write("%d **PLANE\n" % plane_ID)
     FILE.write("%E **X1\n" % P1[0])
     FILE.write("%E **Y1\n" % P1[1])
     FILE.write("%E **Z1\n" % P1[2])
@@ -286,8 +320,9 @@ def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps
     FILE.write('\n')
 
 
-  if P1[plane] == P2[plane]:
-    snapshot(plane,P1,P2)
+  plane_ID, plane_name = planeNumberName(plane)
+  if P1[plane_ID-1] == P2[plane_ID-1]:
+    snapshot(plane_ID,P1,P2)
   else:
     snapshot(1,[P1[0],P1[1],P1[2]],[P1[0],P2[1],P2[2]])
     snapshot(1,[P2[0],P1[1],P1[2]],[P2[0],P2[1],P2[2]])
@@ -299,13 +334,14 @@ def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps
 def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J):
 
   def snapshot(plane,P1,P2, frequency):
-    if plane == 1:
-      plane_name='X'
-    elif plane == 2:
-      plane_name='Y'
-    else: #plane == 3
-      plane_name='Z'
-    fprintf(FILE,'FREQUENCY_SNAPSHOT **SNAPSHOT DEFINITION %s\n',plane_name)
+    plane_ID, plane_name = planeNumberName(plane)
+    #~ if plane == 1:
+      #~ plane_name='X'
+    #~ elif plane == 2:
+      #~ plane_name='Y'
+    #~ else: #plane == 3
+      #~ plane_name='Z'
+    FILE.write("FREQUENCY_SNAPSHOT **SNAPSHOT DEFINITION %s\n" % plane_name)
     FILE.write('{\n')
 
     FILE.write("%d **FIRST\n" % first)
@@ -314,7 +350,7 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
     FILE.write("%d **REAL DFT\n" % real_dft)
     FILE.write("%d **MOD ONLY\n" % mod_only)
     FILE.write("%d **MOD ALL\n" % mod_all)
-    FILE.write("%d **PLANE\n" % plane)
+    FILE.write("%d **PLANE\n" % plane_ID)
     FILE.write("%E **X1\n" % P1[0])
     FILE.write("%E **Y1\n" % P1[1])
     FILE.write("%E **Z1\n" % P1[2])
@@ -337,16 +373,17 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
     FILE.write('\n')
 
 
+  plane_ID, plane_name = planeNumberName(plane)
   for i in range(len(frequency)):
-    if P1[plane] == P2[plane]:
-      snapshot(plane,P1,P2,frequency(i))
+    if P1[plane_ID-1] == P2[plane_ID-1]:
+      snapshot(plane_ID,P1,P2,frequency[i])
     else:
-      snapshot(1,[P1[0],P1[1],P1[2]],[P1[0],P2[1],P2[2]],frequency(i))
-      snapshot(1,[P2[0],P1[1],P1[2]],[P2[0],P2[1],P2[2]],frequency(i))
-      snapshot(2,[P1[0],P1[1],P1[2]],[P2[0],P1[1],P2[2]],frequency(i))
-      snapshot(2,[P1[0],P2[1],P1[2]],[P2[0],P2[1],P2[2]],frequency(i))
-      snapshot(3,[P1[0],P1[1],P1[2]],[P2[0],P2[1],P1[2]],frequency(i))
-      snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]],frequency(i))
+      snapshot(1,[P1[0],P1[1],P1[2]],[P1[0],P2[1],P2[2]],frequency[i])
+      snapshot(1,[P2[0],P1[1],P1[2]],[P2[0],P2[1],P2[2]],frequency[i])
+      snapshot(2,[P1[0],P1[1],P1[2]],[P2[0],P1[1],P2[2]],frequency[i])
+      snapshot(2,[P1[0],P2[1],P1[2]],[P2[0],P2[1],P2[2]],frequency[i])
+      snapshot(3,[P1[0],P1[1],P1[2]],[P2[0],P2[1],P1[2]],frequency[i])
+      snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]],frequency[i])
 
 def GEOprobe(FILE, position, step, E, H, J, power ):
   FILE.write('PROBE **PROBE DEFINITION\n')
@@ -378,60 +415,62 @@ def GEOcommand(filename, BASENAME):
   print('Writing CMD file...')
 
   #open file
-  out = fopen(strcat(filename,'.cmd'),'wt')
+  with open(filename, 'w') as FILE:
 
-  # Executable = 'D:\fdtd\source\latestfdtd02_03\subgrid\Fdtd32.exe'
-  Executable = fullfile(getuserdir(),'bin','fdtd.exe')
+    #~ FILE = fopen(strcat(filename,'.cmd'),'wt')
 
-  #write file
-  fprintf(out,'Executable = %s\n',Executable)
-  fprintf(out,'\n')
-  fprintf(out,'input = %s.in\n', BASENAME)
-  fprintf(out,'\n')
-  fprintf(out,'output = fdtd.out\n')
-  fprintf(out,'\n')
-  fprintf(out,'error = error.log\n')
-  fprintf(out,'\n')
-  fprintf(out,'Universe = vanilla\n')
-  fprintf(out,'\n')
-  fprintf(out,'transfer_files = ALWAYS\n')
-  fprintf(out,'\n')
-  fprintf(out,'transfer_input_files = entity.lst, %s.geo, %s.inp\n', BASENAME, BASENAME)
-  fprintf(out,'\n')
-  fprintf(out,'Log = foo.log\n')
-  fprintf(out,'\n')
-  fprintf(out,'Rank = Memory >= 1000\n')
-  fprintf(out,'\n')
-  fprintf(out,'LongRunJob = TRUE\n')
-  fprintf(out,'\n')
-  fprintf(out,'###Requirements = (LongRunMachine =?= TRUE)\n')
-  fprintf(out,'\n')
-  fprintf(out,'queue\n')
+    # Executable = 'D:\fdtd\source\latestfdtd02_03\subgrid\Fdtd32.exe'
+    Executable = os.path.join(getuserdir(),'bin','fdtd.exe')
 
-  #close file
-  fclose(out)
-  print('...done')
+    #write file
+    fprintf(FILE,'Executable = %s\n',Executable)
+    fprintf(FILE,'\n')
+    fprintf(FILE,'input = %s.in\n', BASENAME)
+    fprintf(FILE,'\n')
+    fprintf(FILE,'output = fdtd.out\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'error = error.log\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'Universe = vanilla\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'transfer_files = ALWAYS\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'transfer_input_files = entity.lst, %s.geo, %s.inp\n', BASENAME, BASENAME)
+    fprintf(FILE,'\n')
+    fprintf(FILE,'Log = foo.log\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'Rank = Memory >= 1000\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'LongRunJob = TRUE\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'###Requirements = (LongRunMachine =?= TRUE)\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'queue\n')
+
+    #close file
+    FILE.close()
+    print('...done')
 
 def GEOin(filename, file_list):
   ''' IN file generation '''
   print('Writing IN file...')
 
   #open file
-  out = fopen(filename,'wt')
+  FILE = fopen(filename,'wt')
 
   #write file
   for idx in len(file_list):
-    fprintf(out, '%s\n', file_list[idx])
+    fprintf(FILE, '%s\n', file_list[idx])
 
   #close file
-  fclose(out)
+  fclose(FILE)
   print('...done')
 
 def GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME):
   print('Writing shellscript...')
 
   #open file
-  out = fopen(filename,'wt')
+  FILE = fopen(filename,'wt')
 
   if exist('EXE','var')==0:
     # print('EXE not given')
@@ -452,24 +491,24 @@ def GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME):
     print(['WALLTIME not given. Using default: WALLTIME=',WALLTIME])
 
   #write file
-  fprintf(out,'#!/bin/bash\n')
-  fprintf(out,'#\n')
-  fprintf(out,'#PBS -l walltime=%d:00:00\n',WALLTIME)
-  fprintf(out,'#PBS -mabe\n')
-  fprintf(out,'#PBS -joe\n')
-  fprintf(out,'#\n')
-  fprintf(out,'\n')
-  fprintf(out,'\n')
-  fprintf(out,'export WORKDIR=%s\n',WORKDIR)
-  fprintf(out,'export EXE=%s\n',EXE)
-  fprintf(out,'\n')
-  fprintf(out,'cd $WORKDIR\n')
-  fprintf(out,'\n')
-  fprintf(out,'$EXE %s.in > %s.out\n', BASENAME, BASENAME)
-  fprintf(out,'fix_filenames.sh\n')
+  fprintf(FILE,'#!/bin/bash\n')
+  fprintf(FILE,'#\n')
+  fprintf(FILE,'#PBS -l walltime=%d:00:00\n',WALLTIME)
+  fprintf(FILE,'#PBS -mabe\n')
+  fprintf(FILE,'#PBS -joe\n')
+  fprintf(FILE,'#\n')
+  fprintf(FILE,'\n')
+  fprintf(FILE,'\n')
+  fprintf(FILE,'export WORKDIR=%s\n',WORKDIR)
+  fprintf(FILE,'export EXE=%s\n',EXE)
+  fprintf(FILE,'\n')
+  fprintf(FILE,'cd $WORKDIR\n')
+  fprintf(FILE,'\n')
+  fprintf(FILE,'$EXE %s.in > %s.out\n', BASENAME, BASENAME)
+  fprintf(FILE,'fix_filenames.sh\n')
 
   #close file
-  fclose(out)
+  fclose(FILE)
   print('...done')
 
 
@@ -504,6 +543,20 @@ def main(argv=None):
       GEObox(FILE, [1.2,3.4,5.6], [9.8,7.6,5.4])
       GEOsphere(FILE, [1,2,3], 9, 8, 7, 6)
       GEOblock(FILE, [1.1,2.2,3.3], [4.4,5.5,6.6], 600, 700)
+      GEOcylinder(FILE, [1.2,3.4,5.6], 77, 88, 99, 100, 0.02, 47.42)
+      GEOrotation(FILE, [1,2,3], [4,5,6], 56)
+      GEOexcitation(FILE, 77, [1,2,3], [4,5,6], [7,8,9], [77,88,99], 69, 12.36, 45.54, 78.87, 456, 1, 22, 333, 4444)
+      GEOtime_snapshot(FILE, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOtime_snapshot(FILE, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOtime_snapshot(FILE, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOfrequency_snapshot(FILE, 369, 852, 147, 258, 369, 987, 'x', [1,2,3], [1,2,3], [852,741,963], 147, [7,8,9],[4,5,6],[1,2,3])
+      GEOprobe(FILE, [1,2,3], 56, [5,6,7], [5,6,7], [5,6,7], 4564654 )
+      GEOcommand('tmp.bat', 'BASENAME')
+      GEOin('tmp.in', ['file','list'])
+      GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
       
   except Usage, err:
     print >>sys.stderr, err.msg
