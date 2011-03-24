@@ -45,14 +45,13 @@ def GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
   FILE.write('\n');
 
-
 def GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, iterations, timestep, id_character):
   FILE.write('FLAG  **PROGRAM CONTROL OPTIONS\n');
 
   FILE.write('{\n');
 
   FILE.write("%d **ITERATION METHOD\n" % iteration_method)
-  FILE.write("%d **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n" % propagation_constant)
+  FILE.write("%E **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n" % propagation_constant)
   FILE.write("%d **FLAG ONE\n" % flag_1)
   FILE.write("%d **FLAG TWO\n" % flag_2)
   FILE.write("%d **ITERATIONS\n" % iterations)
@@ -61,7 +60,6 @@ def GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, iterat
   FILE.write('}\n');
 
   FILE.write('\n');
-
 
 def GEOboundary(FILE, Xpos_bc, Xpos_param,\
                             Ypos_bc, Ypos_param,\
@@ -73,32 +71,30 @@ def GEOboundary(FILE, Xpos_bc, Xpos_param,\
 
   FILE.write('{\n');
 
-  FILE.write("%d %d %d %d **X+ \n" % Xpos_bc, Xpos_param(1), Xpos_param(2), Xpos_param(3))
-  FILE.write("%d %d %d %d **Y+ \n" % Ypos_bc, Ypos_param(1), Ypos_param(2), Ypos_param(3))
-  FILE.write("%d %d %d %d **Z+ \n" % Zpos_bc, Zpos_param(1), Zpos_param(2), Zpos_param(3))
-  FILE.write("%d %d %d %d **X- \n" % Xneg_bc, Xneg_param(1), Xneg_param(2), Xneg_param(3))
-  FILE.write("%d %d %d %d **Y- \n" % Yneg_bc, Yneg_param(1), Yneg_param(2), Yneg_param(3))
-  FILE.write("%d %d %d %d **Z- \n" % Zneg_bc, Zneg_param(1), Zneg_param(2), Zneg_param(3))
+  FILE.write("%d %d %d %d **X+ \n" % (Xpos_bc, Xpos_param[0], Xpos_param[1], Xpos_param[2]))
+  FILE.write("%d %d %d %d **Y+ \n" % (Ypos_bc, Ypos_param[0], Ypos_param[1], Ypos_param[2]))
+  FILE.write("%d %d %d %d **Z+ \n" % (Zpos_bc, Zpos_param[0], Zpos_param[1], Zpos_param[2]))
+  FILE.write("%d %d %d %d **X- \n" % (Xneg_bc, Xneg_param[0], Xneg_param[1], Xneg_param[2]))
+  FILE.write("%d %d %d %d **Y- \n" % (Yneg_bc, Yneg_param[0], Yneg_param[1], Yneg_param[2]))
+  FILE.write("%d %d %d %d **Z- \n" % (Zneg_bc, Zneg_param[0], Zneg_param[1], Zneg_param[2]))
   FILE.write('}\n');
 
   FILE.write('\n');
-
 
 def GEObox(FILE, lower, upper):
   FILE.write('BOX  **BOX DEFINITION\n');
 
   FILE.write('{\n');
 
-  FILE.write("%E **XL\n" % lower(1))
-  FILE.write("%E **YL\n" % lower(2))
-  FILE.write("%E **ZL\n" % lower(3))
-  FILE.write("%E **XU\n" % upper(1))
-  FILE.write("%E **YU\n" % upper(2))
-  FILE.write("%E **ZU\n" % upper(3))
+  FILE.write("%E **XL\n" % lower[0])
+  FILE.write("%E **YL\n" % lower[1])
+  FILE.write("%E **ZL\n" % lower[2])
+  FILE.write("%E **XU\n" % upper[0])
+  FILE.write("%E **YU\n" % upper[1])
+  FILE.write("%E **ZU\n" % upper[2])
   FILE.write('}\n');
 
   FILE.write('\n');
-
 
 # geometry objects
 def GEOsphere(FILE, center, outer_radius, inner_radius, permittivity, conductivity):
@@ -499,7 +495,14 @@ def main(argv=None):
       delta_Y_vector = [12.25,22.25,32.25];
       delta_Z_vector = [13.25,23.25,33.25];
       GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector)
-
+      GEOflag(FILE, 70, 12.34, 24, 42, 1000, 0.755025, '_id_')
+      GEOboundary(FILE, 1.2, [3.4,3.4,3.4],\
+                                  5.6, [7.8,7.8,6.2],\
+                                  9.10, [11.12,1,2],\
+                                  13.14, [15.16,3,4],\
+                                  17.18, [19.20,5,6],\
+                                  21.22, [23.24,7.8,5.4])
+      GEObox(FILE, [1.2,3.4,5.6], [9.8,7.6,5.4])
   except Usage, err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"
