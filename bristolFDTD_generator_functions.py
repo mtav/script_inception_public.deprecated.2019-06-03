@@ -4,6 +4,7 @@
 import sys
 import os
 import getopt
+import utilities.getuserdir
 
 def planeNumberName(var):
   S=['X','Y','Z']
@@ -168,7 +169,6 @@ def GEOblock(FILE, lower, upper, permittivity, conductivity):
   FILE.write('}\n')
 
   FILE.write('\n')
-
 
 def GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_deg):
   ''' # cylinder
@@ -456,61 +456,59 @@ def GEOin(filename, file_list):
   print('Writing IN file...')
 
   #open file
-  FILE = fopen(filename,'wt')
-
-  #write file
-  for idx in len(file_list):
-    fprintf(FILE, '%s\n', file_list[idx])
-
-  #close file
-  fclose(FILE)
-  print('...done')
+  with open(filename, 'w') as FILE:
+    #write file
+    for idx in len(file_list):
+      fprintf(FILE, '%s\n', file_list[idx])
+  
+    #close file
+    fclose(FILE)
+    print('...done')
 
 def GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME):
   print('Writing shellscript...')
 
   #open file
-  FILE = fopen(filename,'wt')
-
-  if exist('EXE','var')==0:
-    # print('EXE not given')
-    # EXE = '$HOME/bin/fdtd64_2003'
-    # EXE = '$HOME/bin/fdtd'
-    EXE = 'fdtd'
-    print(['EXE not given. Using default: EXE=',EXE])
-
-  if exist('WORKDIR','var')==0:
-    # print('WORKDIR not given')
-    # WORKDIR = '$(dirname "$0")'
-    #TODO: Is WORKDIR even necessary in the script? O.o
-    WORKDIR = '$JOBDIR'
-    print(['WORKDIR not given. Using default: WORKDIR=',WORKDIR])
+  with open(filename, 'w') as FILE:
   
-  if exist('WALLTIME','var')==0:
-    WALLTIME = 12
-    print(['WALLTIME not given. Using default: WALLTIME=',WALLTIME])
-
-  #write file
-  fprintf(FILE,'#!/bin/bash\n')
-  fprintf(FILE,'#\n')
-  fprintf(FILE,'#PBS -l walltime=%d:00:00\n',WALLTIME)
-  fprintf(FILE,'#PBS -mabe\n')
-  fprintf(FILE,'#PBS -joe\n')
-  fprintf(FILE,'#\n')
-  fprintf(FILE,'\n')
-  fprintf(FILE,'\n')
-  fprintf(FILE,'export WORKDIR=%s\n',WORKDIR)
-  fprintf(FILE,'export EXE=%s\n',EXE)
-  fprintf(FILE,'\n')
-  fprintf(FILE,'cd $WORKDIR\n')
-  fprintf(FILE,'\n')
-  fprintf(FILE,'$EXE %s.in > %s.out\n', BASENAME, BASENAME)
-  fprintf(FILE,'fix_filenames.sh\n')
-
-  #close file
-  fclose(FILE)
-  print('...done')
-
+    if exist('EXE','var')==0:
+      # print('EXE not given')
+      # EXE = '$HOME/bin/fdtd64_2003'
+      # EXE = '$HOME/bin/fdtd'
+      EXE = 'fdtd'
+      print(['EXE not given. Using default: EXE=',EXE])
+  
+    if exist('WORKDIR','var')==0:
+      # print('WORKDIR not given')
+      # WORKDIR = '$(dirname "$0")'
+      #TODO: Is WORKDIR even necessary in the script? O.o
+      WORKDIR = '$JOBDIR'
+      print(['WORKDIR not given. Using default: WORKDIR=',WORKDIR])
+    
+    if exist('WALLTIME','var')==0:
+      WALLTIME = 12
+      print(['WALLTIME not given. Using default: WALLTIME=',WALLTIME])
+  
+    #write file
+    fprintf(FILE,'#!/bin/bash\n')
+    fprintf(FILE,'#\n')
+    fprintf(FILE,'#PBS -l walltime=%d:00:00\n',WALLTIME)
+    fprintf(FILE,'#PBS -mabe\n')
+    fprintf(FILE,'#PBS -joe\n')
+    fprintf(FILE,'#\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'export WORKDIR=%s\n',WORKDIR)
+    fprintf(FILE,'export EXE=%s\n',EXE)
+    fprintf(FILE,'\n')
+    fprintf(FILE,'cd $WORKDIR\n')
+    fprintf(FILE,'\n')
+    fprintf(FILE,'$EXE %s.in > %s.out\n', BASENAME, BASENAME)
+    fprintf(FILE,'fix_filenames.sh\n')
+  
+    #close file
+    fclose(FILE)
+    print('...done')
 
 ########################
 # MAIN
@@ -554,9 +552,9 @@ def main(argv=None):
       GEOtime_snapshot(FILE, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
       GEOfrequency_snapshot(FILE, 369, 852, 147, 258, 369, 987, 'x', [1,2,3], [1,2,3], [852,741,963], 147, [7,8,9],[4,5,6],[1,2,3])
       GEOprobe(FILE, [1,2,3], 56, [5,6,7], [5,6,7], [5,6,7], 4564654 )
-      GEOcommand('tmp.bat', 'BASENAME')
-      GEOin('tmp.in', ['file','list'])
-      GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
+      #~ GEOcommand('tmp.bat', 'BASENAME')
+      #~ GEOin('tmp.in', ['file','list'])
+      #~ GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
       
   except Usage, err:
     print >>sys.stderr, err.msg
