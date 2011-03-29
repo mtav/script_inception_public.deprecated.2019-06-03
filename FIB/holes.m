@@ -1,12 +1,18 @@
 % upper case = pixels
 % lower case = microns
 
-function res = holes(filename,mag,dwell,rep,holes_X,holes_Y,holes_Radius)
+function res = holes(filename,mag,dwell,rep,holes_X,holes_Y,holes_Radius,separate_files)
     %rep Repetitions - try 1.
     %mag Magnification - set value from 20 to 200000.
+    % holes_X : list of X positions of the holes (in mum)
+    % holes_Y : list of Y positions of the holes (in mum)
+    % holes_Radius : list of radii of the holes (in mum)
+    % (x=0,y=0) = center of the screen
+    % x = horizontal axis, from left to right
+    % y = vertical axis, from bottom to top
 
-    HFW=304000/mag; %; % Width of the horizontal scan (um).
-    res=HFW/4096; % size of each pixel (um).
+    HFW=304000/mag; %; % Width of the horizontal scan (mum).
+    res=HFW/4096; % size of each pixel (mum).
     % res=1;
 
     total_dwell_vector = [];
@@ -14,20 +20,45 @@ function res = holes(filename,mag,dwell,rep,holes_X,holes_Y,holes_Radius)
     total_Y = [];
     for i=1:length(holes_X)
         [dwell_vector,X,Y] = spiralHole(filename,res,dwell,holes_X(i),holes_Y(i),holes_Radius(i));
+        if separate_files == true
+          % Write to file.
+          [ folder, basename, ext ] = fileparts(filename);
+          if strcmp(ext,'.str')
+            sub_filename = fullfile(folder, [ basename, '.', num2str(i), '.str']);
+          else
+            sub_filename = [filename, '.', num2str(i), '.str'];
+          end
+
+          disp(['Creating ',sub_filename]);
+          fid = fopen(sub_filename,'w+');
+          fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(X));
+          fprintf(fid,'%i %i %i\r\n',[dwell_vector;X;Y]);
+          % fprintf('s\r\n%i\r\n%i\r\n',rep,length(total_X));
+          % fprintf('%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
+          fclose(fid);
+          
+          % surfMask(total_X,total_Y,total_dwell_vector);
+          %~ readStrFile(filename);
+        end
         total_dwell_vector = [total_dwell_vector, dwell_vector];
         total_X = [total_X, X];
         total_Y = [total_Y, Y];
     end
-    % Write to file.
-    fid=fopen(filename,'w+');
-    fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(total_X));
-    fprintf(fid,'%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
-    % fprintf('s\r\n%i\r\n%i\r\n',rep,length(total_X));
-    % fprintf('%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
-    fclose(fid);
     
-    % surfMask(total_X,total_Y,total_dwell_vector);
-    readStrFile(filename);
+    if separate_files == false
+      % Write to file.
+      disp(['Creating ',filename]);
+      fid = fopen(filename,'w+');
+      fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(total_X));
+      fprintf(fid,'%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
+      % fprintf('s\r\n%i\r\n%i\r\n',rep,length(total_X));
+      % fprintf('%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
+      fclose(fid);
+      
+      % surfMask(total_X,total_Y,total_dwell_vector);
+      readStrFile(filename);
+    end
+    
     figure;
     plot(res*total_X(1:1:end),res*total_Y(1:1:end),'r')
     xlabel('microns');
