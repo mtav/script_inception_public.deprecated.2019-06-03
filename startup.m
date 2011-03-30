@@ -5,6 +5,7 @@ function startup()
     addpath([HOME,filesep,'MATLAB',filesep,'addpath_recurse']);
     addpath([HOME,filesep,'MATLAB',filesep,'utilities']);
     addpath_recurse([HOME,filesep,'MATLAB'],{'.git'},'begin',false,DEBUG);
+    addpath_recurse([HOME,filesep,'Development',filesep,'script_inception_private'],{'.git'},'begin',false,DEBUG);
     disp('...done');
 end
 
