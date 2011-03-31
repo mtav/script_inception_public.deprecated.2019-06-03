@@ -11,7 +11,7 @@ function [x,y,dwell,rep,numPoints]=readStrFile(filename)
 
     if (nargin==0)
         [FileName,PathName,FilterIndex] = uigetfile('*.str','',pwd());
-        filename=[PathName,FileName];
+        filename=[PathName,filesep,FileName];
     end
 
     try
@@ -23,8 +23,8 @@ function [x,y,dwell,rep,numPoints]=readStrFile(filename)
         M=fscanf(fid,'%f %f %f',[3 inf]);
         fclose(fid);
     catch
-        fclose(fid);
         ['Error in oppening file', filename]
+        fclose(fid);
     end
 
     dwell=M(1,:);
@@ -38,6 +38,7 @@ function [x,y,dwell,rep,numPoints]=readStrFile(filename)
     disp(sprintf('Approximate Mask Duration is %2.5f seconds',sum(dwell)*1e-5+0.008163229517396*numPoints));
     if (nargin==0)
     %     scatter(x,y)
+    % plot(x,y)
         set(gca,'YDir','reverse');
         title([num2str(length(x)),' Points']);
     %     
@@ -52,7 +53,7 @@ function [x,y,dwell,rep,numPoints]=readStrFile(filename)
     A=zeros(4094,4096);
 
     % for m=1:length(x)
-        % A(x(m),y(m))=dwell(m);
+    %   A(x(m),y(m))=dwell(m);
     % end
     % B=autoCrop(A);
     % surf(B);
