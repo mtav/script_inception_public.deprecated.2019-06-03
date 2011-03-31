@@ -1,20 +1,20 @@
 function [ entries, structured_entries ] = GEO_INP_reader(file_list)
-    % function [ entries, structured_entries ] = GEO_INP_reader(file_list)
-    % creates entries + structured_entries from file_list
+  % function [ entries, structured_entries ] = GEO_INP_reader(file_list)
+  % creates entries + structured_entries from file_list
 
   entries = {};
-    structured_entries = FDTDobject;
+  structured_entries = FDTDobject;
 
-    for idx = 1:length(file_list)
-        filename = file_list{idx};
-        disp(['Processing ', filename]);
-        [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries);
-    end
+  for idx = 1:length(file_list)
+    filename = file_list{idx};
+    disp(['Processing ', filename]);
+    [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries);
+  end
 
 end % end of function
 
 function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries)
-    % creates entries + structured_entries from filename
+  % creates entries + structured_entries from filename
     
   % ask for input file if not given
   if exist('filename','var') == 0
@@ -48,11 +48,11 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
   excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
   boundaries = struct('type',{},'position',{});
   box = struct('lower',{},'upper',{});
-    sphere_list = struct('center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
-    block_list = struct('lower',{},'upper',{},'permittivity',{},'conductivity',{});
-    cylinder_list = struct('center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
-    rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
-    probe_list = struct('position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
+  sphere_list = struct('center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
+  block_list = struct('lower',{},'upper',{},'permittivity',{},'conductivity',{});
+  cylinder_list = struct('center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
+  rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
+  probe_list = struct('position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
     
   % xmesh = [];
   % ymesh = [];
@@ -183,22 +183,22 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
   structured_entries.frequency_snapshots_Z =  [structured_entries.frequency_snapshots_Z, frequency_snapshots_Z];
     
   structured_entries.excitations =  [structured_entries.excitations, excitations];
-    structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
-    structured_entries.block_list =  [structured_entries.block_list, block_list];
-    structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
-    structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
-    structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
-    % structured_entries.geometry_object_list =  [structured_entries.geometry_object_list, geometry_object_list];
+  structured_entries.sphere_list =  [structured_entries.sphere_list, sphere_list];
+  structured_entries.block_list =  [structured_entries.block_list, block_list];
+  structured_entries.cylinder_list =  [structured_entries.cylinder_list, cylinder_list];
+  structured_entries.rotation_list =  [structured_entries.rotation_list, rotation_list];
+  structured_entries.probe_list =  [structured_entries.probe_list, probe_list];
+  % structured_entries.geometry_object_list =  [structured_entries.geometry_object_list, geometry_object_list];
 end
 
 function flag = add_flag(entry)
-    flag.iMethod = entry.data{1};
-    flag.propCons = entry.data{2};
-    flag.flagOne = entry.data{3};
-    flag.flagTwo = entry.data{4};
-    flag.numSteps = entry.data{5};
-    flag.stabFactor = entry.data{6};
-    flag.id = entry.data{7};
+  flag.iMethod = entry.data{1};
+  flag.propCons = entry.data{2};
+  flag.flagOne = entry.data{3};
+  flag.flagTwo = entry.data{4};
+  flag.numSteps = entry.data{5};
+  flag.stabFactor = entry.data{6};
+  flag.id = entry.data{7};
 end
 
 function boundaries = add_boundary(entry)
@@ -210,53 +210,53 @@ function boundaries = add_boundary(entry)
 end
 
 function box = add_box(entry)
-    box.lower = entry.data(1:3);
-    box.upper = entry.data(4:6);
+  box.lower = entry.data(1:3);
+  box.upper = entry.data(4:6);
 end
 
 function sphere = add_sphere(entry)
-    idx = 1;
-    sphere.center = entry.data(idx:idx+2); idx = idx+3;
-    sphere.outer_radius = entry.data(idx); idx = idx+1;
-    sphere.inner_radius = entry.data(idx); idx = idx+1;
-    sphere.permittivity = entry.data(idx); idx = idx+1;
-    sphere.conductivity = entry.data(idx); idx = idx+1;
+  idx = 1;
+  sphere.center = entry.data(idx:idx+2); idx = idx+3;
+  sphere.outer_radius = entry.data(idx); idx = idx+1;
+  sphere.inner_radius = entry.data(idx); idx = idx+1;
+  sphere.permittivity = entry.data(idx); idx = idx+1;
+  sphere.conductivity = entry.data(idx); idx = idx+1;
 end
 
 function block = add_block(entry)
-    idx = 1;
-    block.lower = entry.data(idx:idx+2); idx = idx+3;
-    block.upper = entry.data(idx:idx+2); idx = idx+3;
-    block.permittivity = entry.data(idx); idx = idx+1;
-    block.conductivity = entry.data(idx); idx = idx+1;
+  idx = 1;
+  block.lower = entry.data(idx:idx+2); idx = idx+3;
+  block.upper = entry.data(idx:idx+2); idx = idx+3;
+  block.permittivity = entry.data(idx); idx = idx+1;
+  block.conductivity = entry.data(idx); idx = idx+1;
 end
 
 function cylinder = add_cylinder(entry)
-    idx = 1;
-    cylinder.center = entry.data(idx:idx+2); idx = idx+3;
-    cylinder.inner_radius = entry.data(idx); idx = idx+1;
-    cylinder.outer_radius = entry.data(idx); idx = idx+1;
-    cylinder.height = entry.data(idx); idx = idx+1;
-    cylinder.permittivity = entry.data(idx); idx = idx+1;
-    cylinder.conductivity = entry.data(idx); idx = idx+1;
-    if length(entry.data)>=idx; cylinder.angle = entry.data(idx); else cylinder.angle = 0; end; idx = idx+1;
+  idx = 1;
+  cylinder.center = entry.data(idx:idx+2); idx = idx+3;
+  cylinder.inner_radius = entry.data(idx); idx = idx+1;
+  cylinder.outer_radius = entry.data(idx); idx = idx+1;
+  cylinder.height = entry.data(idx); idx = idx+1;
+  cylinder.permittivity = entry.data(idx); idx = idx+1;
+  cylinder.conductivity = entry.data(idx); idx = idx+1;
+  if length(entry.data)>=idx; cylinder.angle = entry.data(idx); else cylinder.angle = 0; end; idx = idx+1;
 end
 
 function rotation = add_rotation(entry)
-    idx = 1;
-    rotation.axis_point = entry.data(idx:idx+2); idx = idx+3;
-    rotation.axis_direction = entry.data(idx:idx+2); idx = idx+3;
-    rotation.angle_degrees = entry.data(idx); idx = idx+1;
+  idx = 1;
+  rotation.axis_point = entry.data(idx:idx+2); idx = idx+3;
+  rotation.axis_direction = entry.data(idx:idx+2); idx = idx+3;
+  rotation.angle_degrees = entry.data(idx); idx = idx+1;
 end
 
 function probe = add_probe(entry)
-    idx = 1;
-    probe.position = entry.data(idx:idx+2); idx = idx+3;
-    probe.step = entry.data(idx); idx = idx+1;
-    probe.E = entry.data(idx:idx+2); idx = idx+3;
-    probe.H = entry.data(idx:idx+2); idx = idx+3;
-    probe.J = entry.data(idx:idx+2); idx = idx+3;
-    probe.pow = entry.data(idx); idx = idx+1;
+  idx = 1;
+  probe.position = entry.data(idx:idx+2); idx = idx+3;
+  probe.step = entry.data(idx); idx = idx+1;
+  probe.E = entry.data(idx:idx+2); idx = idx+3;
+  probe.H = entry.data(idx:idx+2); idx = idx+3;
+  probe.J = entry.data(idx:idx+2); idx = idx+3;
+  probe.pow = entry.data(idx); idx = idx+1;
 end
 
 function snapshot = add_frequency_snapshot(entry)
@@ -288,7 +288,7 @@ function snapshot = add_time_snapshot(entry)
   snapshot.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   snapshot.J = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   snapshot.power = entry.data(idx); idx = idx+1;
-    if length(entry.data)>=idx; snapshot.eps = entry.data(idx); else snapshot.eps = 0; end; idx = idx+1;
+  if length(entry.data)>=idx; snapshot.eps = entry.data(idx); else snapshot.eps = 0; end; idx = idx+1;
 end
 
 function snapshot = add_snapshot(entry)

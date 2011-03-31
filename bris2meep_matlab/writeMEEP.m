@@ -1,8 +1,8 @@
 function writeMEEP(structured_entries, DSTDIR, BASENAME)
-	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % writes out MEEP files based on structured_entries input
     % function writeMEEP(structured_entries, DSTDIR, BASENAME)
-	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%
     % structured_entries = 
 
@@ -20,24 +20,24 @@ function writeMEEP(structured_entries, DSTDIR, BASENAME)
     %%%%%%%%%%%%%%%%%%%%%%%
 
     if exist('BASENAME','var')==0
-		disp('BASENAME not given');
-	    BASENAME = 'unknown';
-	end
-	
-	if exist('DSTDIR','var')==0
-		disp('DSTDIR not given');
-	    DSTDIR = uigetdir('H:\DATA','DSTDIR');
-	end
-	if ~(exist(DSTDIR,'dir'))
-		error(['dir ',DSTDIR,' not found']);
-	end
-	mkdir([DSTDIR,filesep,BASENAME]);
+    disp('BASENAME not given');
+      BASENAME = 'unknown';
+  end
+  
+  if exist('DSTDIR','var')==0
+    disp('DSTDIR not given');
+      DSTDIR = uigetdir('H:\DATA','DSTDIR');
+  end
+  if ~(exist(DSTDIR,'dir'))
+    error(['dir ',DSTDIR,' not found']);
+  end
+  mkdir([DSTDIR,filesep,BASENAME]);
 
     disp('----->Writing MEEP file...');    
     
     %%%%%%%%%%%%%%%%%%%%%%%
     % .ctl file
-	FILE = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.ctl'],'wt');
+  FILE = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.ctl'],'wt');
     
     % Box
     MEEP_box(FILE, structured_entries.box.lower, structured_entries.box.upper);
@@ -114,7 +114,7 @@ function writeMEEP(structured_entries, DSTDIR, BASENAME)
         MEEP_probe(FILE, probe.position, probe.step, probe.E, probe.H, probe.J, probe.pow );
     end
 
-	fclose(FILE);
+  fclose(FILE);
     %%%%%%%%%%%%%%%%%%%%%%%
     
     disp('...all done');

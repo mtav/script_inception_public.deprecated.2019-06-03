@@ -24,7 +24,7 @@ yp=y-min(y)+1;
 % dwell=-dwell+max(dwell);
 tic()
 for m=1:length(xp)
-  	A(xp(m),yp(m))=dwell(m);
+    A(xp(m),yp(m))=dwell(m);
 end
 toc()
 

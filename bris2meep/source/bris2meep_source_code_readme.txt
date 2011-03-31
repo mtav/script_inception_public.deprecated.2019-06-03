@@ -67,9 +67,9 @@ On 26/05/2010 15:49, martin cryan wrote:
 >>
 >
 bris2meep.zip
-	
+  
 Content-Type:
-	application/zip
+  application/zip
 Content-Encoding:
-	base64
+  base64
 

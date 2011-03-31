@@ -8,12 +8,12 @@ import sys
 from glob import glob
 
 def parseFile(filename):
-	print "Processing "+filename;
-	FILE = open(filename,'r');
-	str = FILE.read();
-	FILE.close();
-	program = pyscheme.parser.parse('('+str+')')
-	print program
+  print "Processing "+filename;
+  FILE = open(filename,'r');
+  str = FILE.read();
+  FILE.close();
+  program = pyscheme.parser.parse('('+str+')')
+  print program
 
 
 for arg in sys.argv[1:]: 
@@ -24,4 +24,4 @@ for arg in sys.argv[1:]:
     # print "============"
     # print filelist
     # print "============"
-	# parseFile(arg);
+  # parseFile(arg);

@@ -10,7 +10,7 @@ class Usage(Exception):
 def main(argv=None):
     print "main called"
     if argv is None:
-	print "none"
+  print "none"
         argv = sys.argv
     try:
         try:

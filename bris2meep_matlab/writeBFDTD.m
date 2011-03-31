@@ -1,8 +1,8 @@
 function writeBFDTD(structured_entries, DSTDIR, BASENAME)
-	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % writes out BFDTD files based on structured_entries input
     % function writeBFDTD(structured_entries, DSTDIR, BASENAME)
-	%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%
     % structured_entries = 
 
@@ -20,25 +20,25 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
     %%%%%%%%%%%%%%%%%%%%%%%
 
     if exist('BASENAME','var')==0
-		disp('BASENAME not given');
-	    BASENAME = 'unknown';
-	end
-	
-	if exist('DSTDIR','var')==0
-		disp('DSTDIR not given');
-	    DSTDIR = uigetdir('H:\DATA','DSTDIR');
-	end
-	if ~(exist(DSTDIR,'dir'))
-		error(['dir ',DSTDIR,' not found']);
-	end
-	mkdir([DSTDIR,filesep,BASENAME]);
+    disp('BASENAME not given');
+      BASENAME = 'unknown';
+  end
+  
+  if exist('DSTDIR','var')==0
+    disp('DSTDIR not given');
+      DSTDIR = uigetdir('H:\DATA','DSTDIR');
+  end
+  if ~(exist(DSTDIR,'dir'))
+    error(['dir ',DSTDIR,' not found']);
+  end
+  mkdir([DSTDIR,filesep,BASENAME]);
 
     disp('----->Writing bristol FDTD files...');    
     
     %%%%%%%%%%%%%%%%%%%%%%%
     % .geo file
-	disp('Writing GEO file...');
-	FILE = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.geo'],'wt');
+  disp('Writing GEO file...');
+  FILE = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.geo'],'wt');
     
     % Box
     GEObox(FILE, structured_entries.box.lower, structured_entries.box.upper);
@@ -67,14 +67,14 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
         GEOrotation(FILE, rotation.axis_point, rotation.axis_direction, rotation.angle_degrees);
     end
         
-	fclose(FILE);
+  fclose(FILE);
     disp('...done');
     %%%%%%%%%%%%%%%%%%%%%%%
 
     %%%%%%%%%%%%%%%%%%%%%%%
     % .inp file
-	disp('Writing INP file...');
-	FILE = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
+  disp('Writing INP file...');
+  FILE = fopen([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.inp'],'wt');
     
     % Excitation
     for idx=1:length(structured_entries.excitations)
@@ -124,7 +124,7 @@ function writeBFDTD(structured_entries, DSTDIR, BASENAME)
         GEOprobe(FILE, probe.position, probe.step, probe.E, probe.H, probe.J, probe.pow );
     end
 
-	fclose(FILE);
+  fclose(FILE);
     disp('...done');
     %%%%%%%%%%%%%%%%%%%%%%%
 

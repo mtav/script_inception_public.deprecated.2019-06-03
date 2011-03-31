@@ -19,7 +19,7 @@ function loncar_structure_wrapper(BASENAME, DSTDIR)
 
 %      disp('...done2');
     for iter_index=1:length(ITERATIONS)
-	disp(['--------->iter_index=',num2str(iter_index)]);
+  disp(['--------->iter_index=',num2str(iter_index)]);
         N = ITERATIONS(iter_index);
         gen_loncar(N, true, true, BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY);
         gen_loncar(N, false, true, BASENAME, DSTDIR, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY);

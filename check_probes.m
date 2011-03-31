@@ -14,5 +14,5 @@ function probe = check_probes(FOLDER,OUTFILE)
         max_list = [ max_list, data_max ];
     end
     fprintf(superfile, 'TOTAL : min = %E max = %E\n',min(min_list),max(max_list));
-	fclose(superfile);
+  fclose(superfile);
 end

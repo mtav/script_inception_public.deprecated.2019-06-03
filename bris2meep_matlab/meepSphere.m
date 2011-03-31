@@ -5,7 +5,7 @@ if size(center,2)==1
 end
 
 C=['\t\t(make sphere\r\n\t\t\t(center ',num2str(center,'%2.5f '),')\r\n\t\t\t(radius ',num2str(radius,'%2.5f'),')\r\n\t\t\t(material (make dielectric (epsilon ',num2str(epsilon,'%2.5f'),'))))\r\n'];
-		
+    
             
             
 % Center=struct('type',{'center'},'properties',{{center}});

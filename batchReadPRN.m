@@ -38,8 +38,8 @@ TEOnly=0;
 
 if nargin==0
     folder=uigetdir('D:\Simulations\BFDTD');
-	snapshot_col=3;
-	probe_col=2;
+  snapshot_col=3;
+  probe_col=2;
 end
 
 clf

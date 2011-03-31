@@ -133,7 +133,7 @@ function addpath_recurse(strStartDir, caStrsIgnoreDirs, strXorIntAddpathMode, bl
     strIgnoreDirs = '';
     for intD = 1 : length(caStrsIgnoreDirs)
       if ~isempty(strIgnoreDirs)
-	strIgnoreDirs = sprintf('%s, ', strIgnoreDirs);
+  strIgnoreDirs = sprintf('%s, ', strIgnoreDirs);
       end
       strIgnoreDirs = sprintf('%s%s', strIgnoreDirs, char(caStrsIgnoreDirs{intD}));
     end
