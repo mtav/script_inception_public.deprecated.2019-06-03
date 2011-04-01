@@ -6,6 +6,8 @@
 *.OBJ
 *.bak
 *.BAK
+*.opj
+*.OPJ
 *.asv
 *.ASV
 *.str
@@ -25,3 +27,5 @@ hello
 ncpus.txt
 tmp.txt
 tmp.bat
+*.db
+*.tif

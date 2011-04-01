@@ -34,7 +34,13 @@ toc()
 % imagesc(A)
 % plot3(x,y,dwell);
 % A
+%~ subplot(2,1,1)
 surf(padarray(A,10)); shading interp
 set(gca,'ZDir','reverse')
 axis equal
 view(-31,80)
+%~ subplot(2,1,2)
+%~ surf(padarray(A,10)); shading interp
+%~ set(gca,'ZDir','reverse')
+%~ axis equal
+%~ view(-31,80)
