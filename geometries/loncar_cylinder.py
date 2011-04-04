@@ -241,7 +241,7 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   
     if print_holes:
         # hole settings
-        permittivity = n_Air^2
+        permittivity = pow(n_Air,2)
         conductivity = 0
         
         # create bottom holes
