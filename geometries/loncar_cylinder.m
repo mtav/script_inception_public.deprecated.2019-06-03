@@ -202,9 +202,9 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       Ymax/2 ];
       
       % for probes
-      probes_Z_vector = Zplanes(2:4);
       probes_X_vector = Xplanes(2:length(Xplanes)-1);
       probes_Y_vector = Yplanes(2:8);
+      probes_Z_vector = Zplanes(2:4);
       
       probes_X_vector_center = Xplanes(3:5);
       probes_Y_vector_center = [Yplanes(6),Yplanes(8)];

@@ -3,7 +3,7 @@ function GEOcommand(filename, BASENAME)
   disp('Writing CMD file...');
 
   %open file
-  out = fopen(strcat(filename,'.cmd'),'wt');
+  out = fopen(filename,'wt');
 
   % Executable = 'D:\fdtd\source\latestfdtd02_03\subgrid\Fdtd32.exe';
   Executable = fullfile(getuserdir(),'bin','fdtd.exe');
