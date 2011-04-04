@@ -24,6 +24,9 @@ def subGridMultiLayer(Section_MaxDeltaVector = [1.76, 2.1385, 2.3535, 1],Section
   #  Section_MaxDeltaVector(new) = lambda(old)/16./indexVector(old)
   #  Section_ThicknessVector(new) = thicknessVector(old) '''
   
+  Section_MaxDeltaVector = array(Section_MaxDeltaVector)
+  Section_ThicknessVector = array(Section_ThicknessVector)
+  
   if len(Section_MaxDeltaVector) != len(Section_ThicknessVector) :
     print('FATAL ERROR: The 2 input vectors do not have the same size.')
     return
@@ -54,7 +57,7 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # more code, unchanged
-    Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer(array([1,2,3,4,5]),array([5,4,3,2,1]))
+    Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
     print('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector))
     print('Section_FinalDeltaVector = '+str(Section_FinalDeltaVector))
     
