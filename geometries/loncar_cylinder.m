@@ -159,9 +159,15 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
 
       thicknessVector_Y_2 = fliplr(thicknessVector_Y_1);
       thicknessVector_Y = [ thicknessVector_Y_1, thicknessVector_Y_2 ];
+      
       max_delta_Vector_Y_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ];
       max_delta_Vector_Y_2 = fliplr(max_delta_Vector_Y_1);
       max_delta_Vector_Y = [ max_delta_Vector_Y_1, max_delta_Vector_Y_2 ];
+
+      %disp(['thicknessVector_Y = ',thicknessVector_Y])
+      thicknessVector_Y
+      max_delta_Vector_Y
+      %disp(['max_delta_Vector_Y = ',])
 
       thicknessVector_Z = [ Ymax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ];
       max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];

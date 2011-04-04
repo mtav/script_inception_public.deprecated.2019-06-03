@@ -139,6 +139,9 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   max_delta_Vector_Y_2 = max_delta_Vector_Y_1; max_delta_Vector_Y_2.reverse();
   max_delta_Vector_Y = max_delta_Vector_Y_1 + max_delta_Vector_Y_2
 
+  print 'thicknessVector_Y = ', thicknessVector_Y
+  print 'max_delta_Vector_Y = ', max_delta_Vector_Y
+
   thicknessVector_Z = [ Ymax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ]
   max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ]
   
@@ -358,24 +361,24 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
     power = 0
     
     if SNAPSHOTS_ON == 1:
-      for iY in range(len(Yplanes)):
-        plane = 2
-        P1 = [0, Yplanes[iY], 0]
-        P2 = [Xmax, Yplanes[iY], Ymax/2]
-        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
-      for iX in range(len(Xplanes)):
-        plane = 1
-        P1 = [Xplanes[iX], 0, 0]
-        P2 = [Xplanes[iX], Zmax, Ymax/2]
-        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
-      for iZ in range(len(Zplanes)):
-        plane = 3
-        P1 = [0, 0, Zplanes[iZ]]
-        P2 = [Xmax, Zmax, Zplanes[iZ]]
-        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
+      #for iY in range(len(Yplanes)):
+        #plane = 2
+        #P1 = [0, Yplanes[iY], 0]
+        #P2 = [Xmax, Yplanes[iY], Ymax/2]
+        #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+        #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
+      #for iX in range(len(Xplanes)):
+        #plane = 1
+        #P1 = [Xplanes[iX], 0, 0]
+        #P2 = [Xplanes[iX], Zmax, Ymax/2]
+        #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+        #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
+      #for iZ in range(len(Zplanes)):
+        #plane = 3
+        #P1 = [0, 0, Zplanes[iZ]]
+        #P2 = [Xmax, Zmax, Zplanes[iZ]]
+        #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+        #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
   
       plane = 1
       P1 = [pillar_centre_X, 0, 0]
