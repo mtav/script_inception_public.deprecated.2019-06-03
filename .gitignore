@@ -29,3 +29,5 @@ tmp.txt
 tmp.bat
 *.db
 *.tif
+tmp.in
+tmp.sh

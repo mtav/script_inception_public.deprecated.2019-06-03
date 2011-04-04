@@ -4,7 +4,8 @@
 import sys
 import os
 import getopt
-import utilities.getuserdir
+#~ import utilities.getuserdir
+from utilities.getuserdir import *
 
 def planeNumberName(var):
   S=['X','Y','Z']
@@ -423,29 +424,29 @@ def GEOcommand(filename, BASENAME):
     Executable = os.path.join(getuserdir(),'bin','fdtd.exe')
 
     #write file
-    fprintf(FILE,'Executable = %s\n',Executable)
-    fprintf(FILE,'\n')
-    fprintf(FILE,'input = %s.in\n', BASENAME)
-    fprintf(FILE,'\n')
-    fprintf(FILE,'output = fdtd.out\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'error = error.log\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'Universe = vanilla\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'transfer_files = ALWAYS\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'transfer_input_files = entity.lst, %s.geo, %s.inp\n', BASENAME, BASENAME)
-    fprintf(FILE,'\n')
-    fprintf(FILE,'Log = foo.log\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'Rank = Memory >= 1000\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'LongRunJob = TRUE\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'###Requirements = (LongRunMachine =?= TRUE)\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'queue\n')
+    FILE.write("Executable = %s\n" % Executable)
+    FILE.write("\n")
+    FILE.write("input = %s.in\n" %  BASENAME)
+    FILE.write("\n")
+    FILE.write("output = fdtd.out\n")
+    FILE.write("\n")
+    FILE.write("error = error.log\n")
+    FILE.write("\n")
+    FILE.write("Universe = vanilla\n")
+    FILE.write("\n")
+    FILE.write("transfer_files = ALWAYS\n")
+    FILE.write("\n")
+    FILE.write("transfer_input_files = entity.lst, %s.geo, %s.inp\n" %  (BASENAME, BASENAME))
+    FILE.write("\n")
+    FILE.write("Log = foo.log\n")
+    FILE.write("\n")
+    FILE.write("Rank = Memory >= 1000\n")
+    FILE.write("\n")
+    FILE.write("LongRunJob = TRUE\n")
+    FILE.write("\n")
+    FILE.write("###Requirements = (LongRunMachine =?= TRUE)\n")
+    FILE.write("\n")
+    FILE.write("queue\n")
 
     #close file
     FILE.close()
@@ -458,56 +459,37 @@ def GEOin(filename, file_list):
   #open file
   with open(filename, 'w') as FILE:
     #write file
-    for idx in len(file_list):
-      fprintf(FILE, '%s\n', file_list[idx])
+    for obj in file_list:
+      FILE.write("%s\n" %  obj)
   
     #close file
-    fclose(FILE)
+    FILE.close()
     print('...done')
 
-def GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME):
+def GEOshellscript(filename, BASENAME, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTIME = 12):
   print('Writing shellscript...')
 
   #open file
   with open(filename, 'w') as FILE:
-  
-    if exist('EXE','var')==0:
-      # print('EXE not given')
-      # EXE = '$HOME/bin/fdtd64_2003'
-      # EXE = '$HOME/bin/fdtd'
-      EXE = 'fdtd'
-      print(['EXE not given. Using default: EXE=',EXE])
-  
-    if exist('WORKDIR','var')==0:
-      # print('WORKDIR not given')
-      # WORKDIR = '$(dirname "$0")'
-      #TODO: Is WORKDIR even necessary in the script? O.o
-      WORKDIR = '$JOBDIR'
-      print(['WORKDIR not given. Using default: WORKDIR=',WORKDIR])
-    
-    if exist('WALLTIME','var')==0:
-      WALLTIME = 12
-      print(['WALLTIME not given. Using default: WALLTIME=',WALLTIME])
-  
     #write file
-    fprintf(FILE,'#!/bin/bash\n')
-    fprintf(FILE,'#\n')
-    fprintf(FILE,'#PBS -l walltime=%d:00:00\n',WALLTIME)
-    fprintf(FILE,'#PBS -mabe\n')
-    fprintf(FILE,'#PBS -joe\n')
-    fprintf(FILE,'#\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'export WORKDIR=%s\n',WORKDIR)
-    fprintf(FILE,'export EXE=%s\n',EXE)
-    fprintf(FILE,'\n')
-    fprintf(FILE,'cd $WORKDIR\n')
-    fprintf(FILE,'\n')
-    fprintf(FILE,'$EXE %s.in > %s.out\n', BASENAME, BASENAME)
-    fprintf(FILE,'fix_filenames.sh\n')
+    FILE.write("#!/bin/bash\n")
+    FILE.write("#\n")
+    FILE.write("#PBS -l walltime=%d:00:00\n" % WALLTIME)
+    FILE.write("#PBS -mabe\n")
+    FILE.write("#PBS -joe\n")
+    FILE.write("#\n")
+    FILE.write("\n")
+    FILE.write("\n")
+    FILE.write("export WORKDIR=%s\n" % WORKDIR)
+    FILE.write("export EXE=%s\n" % EXE)
+    FILE.write("\n")
+    FILE.write("cd $WORKDIR\n")
+    FILE.write("\n")
+    FILE.write("$EXE %s.in > %s.out\n" %  (BASENAME, BASENAME))
+    FILE.write("fix_filenames.sh\n")
   
     #close file
-    fclose(FILE)
+    FILE.close()
     print('...done')
 
 ########################
@@ -552,9 +534,9 @@ def main(argv=None):
       GEOtime_snapshot(FILE, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
       GEOfrequency_snapshot(FILE, 369, 852, 147, 258, 369, 987, 'x', [1,2,3], [1,2,3], [852,741,963], 147, [7,8,9],[4,5,6],[1,2,3])
       GEOprobe(FILE, [1,2,3], 56, [5,6,7], [5,6,7], [5,6,7], 4564654 )
-      #~ GEOcommand('tmp.bat', 'BASENAME')
-      #~ GEOin('tmp.in', ['file','list'])
-      #~ GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
+      GEOcommand('tmp.bat', 'BASENAME')
+      GEOin('tmp.in', ['file','list'])
+      GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
       
   except Usage, err:
     print >>sys.stderr, err.msg
