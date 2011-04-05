@@ -19,6 +19,7 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   # Settings
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  verbose = False;
   print_mesh = True
   print_holes = True
   # print_holes_top = True
@@ -35,7 +36,8 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   # arguments
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  print('Reading input parameters...')
+  if verbose:
+    print('Reading input parameters...')
   
   if not os.path.isdir(DSTDIR):
     print('error: DSTDIR = '+DSTDIR+'is not a directory')
@@ -209,19 +211,35 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   # .lst file
   #~ copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),DSTDIR+os.sep+BASENAME)
   # .in file
-  INFILENAME = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.in'
-  GEOin(INFILENAME, [ BASENAME+'.inp', BASENAME+'.geo' ])
+  in_filename = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.in'
+  if verbose:
+    print('Writing IN file '+in_filename+' ...')
+  GEOin(in_filename, [ BASENAME+'.inp', BASENAME+'.geo' ])
+  if verbose:
+    print('...done')
+  
   # .sh file
   #TODO: improve this
   # WORKDIR = ['$HOME/loncar_structure','/',BASENAME]
+  if verbose:
+    print('Writing shellscript '+filename+' ...')
   GEOshellscript(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME)
+  if verbose:
+    print('...done')
 
   # .cmd file
-  GEOcommand(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.cmd', BASENAME)
+  cmd_filename = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.cmd'
+  if verbose:
+    print('Writing CMD file '+cmd_filename+' ...')
+  GEOcommand(cmd_filename, BASENAME)
+  if verbose:
+    print('...done')
+
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   # .geo file
   geo_filename = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.geo'
-  print('Writing GEO file '+geo_filename+' ...')
+  if verbose:
+    print('Writing GEO file '+geo_filename+' ...')
 
   # open file
   
@@ -291,12 +309,14 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   
     #close file
     out.close()
-    print('...done')
+    if verbose:
+      print('...done')
   
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   # .inp file
   inp_filename = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.inp'
-  print('Writing INP file '+inp_filename+' ...')
+  if verbose:
+    print('Writing INP file '+inp_filename+' ...')
 
   # open file
   with open(inp_filename, 'w') as out:
@@ -423,9 +443,10 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   
     #close file
     out.close()
-    print('...done')
+    if verbose:
+      print('...done')
   
-  return(INFILENAME)
+  return(in_filename)
 
 def main(argv=None):
   if argv is None:
@@ -437,8 +458,9 @@ def main(argv=None):
       raise Usage(msg)
     # more code, unchanged
     #print('hello')
-    loncar_cylinder('test', os.getenv('TESTDIR'), 32000, 1, 1, 1, 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
-      
+    in_filename = loncar_cylinder('test', os.getenv('TESTDIR'), 32000, 1, 1, 1, 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
+    print(in_filename)
+    
   except Usage, err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"

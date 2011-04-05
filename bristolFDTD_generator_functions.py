@@ -413,7 +413,6 @@ def GEOprobe(FILE, position, step, E, H, J, power ):
 # files
 def GEOcommand(filename, BASENAME):
   ''' CMD file generation '''
-  print('Writing CMD file '+filename+' ...')
 
   #open file
   with open(filename, 'w') as FILE:
@@ -450,11 +449,9 @@ def GEOcommand(filename, BASENAME):
 
     #close file
     FILE.close()
-    print('...done')
 
 def GEOin(filename, file_list):
   ''' IN file generation '''
-  print('Writing IN file '+filename+' ...')
 
   #open file
   with open(filename, 'w') as FILE:
@@ -464,10 +461,8 @@ def GEOin(filename, file_list):
   
     #close file
     FILE.close()
-    print('...done')
 
 def GEOshellscript(filename, BASENAME, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTIME = 12):
-  print('Writing shellscript '+filename+' ...')
 
   #open file
   with open(filename, 'w') as FILE:
@@ -490,7 +485,6 @@ def GEOshellscript(filename, BASENAME, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTI
   
     #close file
     FILE.close()
-    print('...done')
 
 ########################
 # MAIN
