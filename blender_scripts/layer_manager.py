@@ -59,338 +59,337 @@ Layer names and layer set are saved in the .blend as texts.
 import Blender
 from Blender import Draw, BGL, Text, Scene, Window, Object
 
-toggles = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  
-offset = 0
-
-#~ try:
-  #~ print 'normal stuff...'
-  #~ txt = Text.Get("layernames")
-#~ except:
-  #~ print 'Blender, we have an exception!'
-  #~ txt = Text.New("layernames")
-  #~ txt.write("Camera afdsfsnd Martelly\n")
-  #~ layersets = ["Working Set,1"]
-  #~ for i in range(19):
-    #~ txt.write("huhu " + i + " hihih\n")
-  #~ for i in layersets:
-    #~ txt.write(i +"\n")
-
-# initialisation
-DefaultLayers = ['box','mesh','time_snapshots','eps_snapshots','frequency_snapshots','excitations','probes','spheres','blocks','cylinders']
-
-txt = Text.New("layernames")
-for i in range(20):
-  if i<len(DefaultLayers):
-    txt.write(DefaultLayers[i]+'\n')
-  else:
-    txt.write('\n')
-
-layersets = ["Working Set,1"]
-for i in layersets:
-  txt.write(i +"\n")
-  
-names = txt.asLines()
-names.pop()
-layersets = names[20:]  
-
-
-
-curset = layersets[0][0:layersets[0].find(",")]
-
-scn = Scene.getCurrent()
-for i in range(20):
-  if scn.layers.count(i):
-    toggles[i-1] = 1
-
-
-def event(evt, val):
-  global offset
-  if evt == Draw.ESCKEY or evt == Draw.QKEY or evt == Draw.RIGHTMOUSE:
-    Draw.Exit()             
-    return
-  if evt == Draw. WHEELUPMOUSE:
-    offset = offset +20
-    Draw.Redraw(1)    
-  if evt == Draw. WHEELDOWNMOUSE:
-    offset = offset -20
-    Draw.Redraw(1)    
-
-def button_event(evt): 
-  global curset, templayers 
-  
-  #
-  # Layer ON/OFF button events
-  #
-  if evt <20:
-    toggles[evt] = 1 - toggles[evt]
-    mylayers = []
+class LayerManagerObjects:
+  def __init__(self):
+    self.toggles = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  
+    self.offset = 0
+    
+    #~ try:
+      #~ print 'normal stuff...'
+      #~ self.txt = Text.Get("layernames")
+    #~ except:
+      #~ print 'Blender, we have an exception!'
+      #~ self.txt = Text.New("layernames")
+      #~ self.txt.write("Camera afdsfsnd Martelly\n")
+      #~ self.layersets = ["Working Set,1"]
+      #~ for i in range(19):
+        #~ self.txt.write("huhu " + i + " hihih\n")
+      #~ for i in self.layersets:
+        #~ self.txt.write(i +"\n")
+    
+    # initialisation
+    self.DefaultLayers = ['box','mesh','time_snapshots','eps_snapshots','frequency_snapshots','excitations','probes','spheres','blocks','cylinders']
+    
+    self.txt = Text.New("layernames")
     for i in range(20):
-      if toggles[i]:
-        mylayers.append(i+1)
-        scn.layers = mylayers
-    Draw.Redraw()
-    scn.update(1)
-    Blender.Redraw()
-  
-  #
-  # Layer SOLO/UNSOLO button events
-  #
-  if evt >= 20 and evt < 40:
-    if scn.layers != [evt -19]:
-      templayers = scn.layers
-      for i in range(20):
-        toggles[i] = 0
-      toggles[evt-20] = 1  
-      scn.layers = [evt -19]
-    else:
-      scn.layers = templayers
-      for item in scn.layers:
-        toggles[item-1] = 1
-    Draw.Redraw()
-    scn.update(1)
-    Blender.Redraw()
-  
-  #
-  # Layer NAME Button events
-  #
-  if evt >= 40 and evt < 60 and Window.GetKeyQualifiers() != 48:
-    newname = Draw.PupStrInput("Name:", names[evt-40], 25)
-    if newname:
-      names[evt-40] = newname
-      updatetxt()
-      Draw.Redraw()
-  
-  #
-  # Layer OBJEctS button events
-  #
-  elif evt >= 60 and evt < 80:
-    objs = []
-    obs = Object.Get()
-    for ob in obs:
-      if ob.layers.count(evt-59):
-        objs.append(ob.getName())
-    menu = "Objects in this Layer%t|"
-    for item in objs:  
-      menu = menu + "|" + item  
-    if menu != "Objects in this Layer%t|":
-      menu = menu + "|%l|Select all%x100"
-    else:
-      menu = "Sorry%t|There are no Objects in this Layer"
-    c = Draw.PupMenu(menu)  
-    if c != -1 and c != 100 and menu != "Sorry%t|There are no Objects in this Layer":
-      sel = Object.GetSelected()
-      for item in sel:
-        item.select(0)
-      newob = Object.Get(objs[c-1])
-      newob.select(1)
-    elif c == 100:
-      sel = Object.GetSelected()
-      for item in sel:
-        item.select(0)
-      for item in objs:
-        Object.Get(item).select(1)
-  
-  #
-  # Remove Layer Set
-  #
-  if evt == 99:
-    for item in layersets:
-      if item.find(curset) != -1:
-        toremove = item
-        print "toremove:" + toremove
-    layersets.remove(toremove)
-    curset = layersets[0][0:layersets[0].find(",")]
-    updatetxt()
-    tomodify = layersets[0].split(",")
-    tomodify.pop(0)    
-    for item in range(21):
-      toggles[item-1] = 0
-    for item in tomodify:  
-      toggles[int(item)-1] = 1
-    Draw.Redraw(1)
-  
-  #
-  # Update Layer Manager
-  #
-  if evt == 98:  
-    for i in range(21):
-      if scn.layers.count(i):
-        toggles[i-1] = 1
-      else:  
-        toggles[i-1] = 0
-    Draw.Redraw(1)
-  
-  #
-  # Layer Sets Menu
-  #
-  if evt == 100:    
-    if men.val <= len(layersets):
-      # Set LayerSet current Set
-      for item in layersets:
-        if item.find(curset) != -1:
-          tomodify = item
-      if tomodify:
-        tomodify = tomodify.split(",")
-        tomodify.pop(0)
-      count = 0
-      c = -1
-      for item in toggles:
-        if item == 1: count = count +1
-      if len(tomodify) != count:      
-        c = Draw.PupMenu("Set has Changed. Save?%t|Yes|No")
+      if i<len(self.DefaultLayers):
+        self.txt.write(self.DefaultLayers[i]+'\n')
       else:
-        for item in tomodify:
-          if toggles[int(item)-1] == 0:
-            c = Draw.PupMenu("Set has Changed. Save?%t|Yes|No")
-      if c != -1 and c != 2:
-        for item in layersets:
-          if item.find(curset) != -1:
+        self.txt.write('\n')
+    
+    self.layersets = ["Working Set,1"]
+    for i in self.layersets:
+      self.txt.write(i +"\n")
+      
+    self.names = self.txt.asLines()
+    self.names.pop()
+    self.layersets = self.names[20:]  
+    
+    self.curset = self.layersets[0][0:self.layersets[0].find(",")]
+    
+    self.scn = Scene.getCurrent()
+    for i in range(20):
+      if self.scn.layers.count(i):
+        self.toggles[i-1] = 1
+
+  def event(self, evt, val):
+    #global offset
+    if evt == Draw.ESCKEY or evt == Draw.QKEY or evt == Draw.RIGHTMOUSE:
+      Draw.Exit()             
+      return
+    if evt == Draw. WHEELUPMOUSE:
+      self.offset = self.offset +20
+      Draw.Redraw(1)    
+    if evt == Draw. WHEELDOWNMOUSE:
+      self.offset = self.offset -20
+      Draw.Redraw(1)    
+  
+  def button_event(self, evt):
+    #global curset, templayers 
+    
+    #
+    # Layer ON/OFF button events
+    #
+    if evt <20:
+      self.toggles[evt] = 1 - self.toggles[evt]
+      mylayers = []
+      for i in range(20):
+        if self.toggles[i]:
+          mylayers.append(i+1)
+          self.scn.layers = mylayers
+      Draw.Redraw()
+      self.scn.update(1)
+      Blender.Redraw()
+    
+    #
+    # Layer SOLO/UNSOLO button events
+    #
+    if evt >= 20 and evt < 40:
+      if self.scn.layers != [evt -19]:
+        templayers = self.scn.layers
+        for i in range(20):
+          self.toggles[i] = 0
+        self.toggles[evt-20] = 1  
+        self.scn.layers = [evt -19]
+      else:
+        self.scn.layers = templayers
+        for item in self.scn.layers:
+          self.toggles[item-1] = 1
+      Draw.Redraw()
+      self.scn.update(1)
+      Blender.Redraw()
+    
+    #
+    # Layer NAME Button events
+    #
+    if evt >= 40 and evt < 60 and Window.GetKeyQualifiers() != 48:
+      newname = Draw.PupStrInput("Name:", self.names[evt-40], 25)
+      if newname:
+        self.names[evt-40] = newname
+        self.updatetxt()
+        Draw.Redraw()
+    
+    #
+    # Layer OBJEctS button events
+    #
+    elif evt >= 60 and evt < 80:
+      objs = []
+      obs = Object.Get()
+      for ob in obs:
+        if ob.layers.count(evt-59):
+          objs.append(ob.getName())
+      menu = "Objects in this Layer%t|"
+      for item in objs:  
+        menu = menu + "|" + item  
+      if menu != "Objects in this Layer%t|":
+        menu = menu + "|%l|Select all%x100"
+      else:
+        menu = "Sorry%t|There are no Objects in this Layer"
+      c = Draw.PupMenu(menu)  
+      if c != -1 and c != 100 and menu != "Sorry%t|There are no Objects in this Layer":
+        sel = Object.GetSelected()
+        for item in sel:
+          item.select(0)
+        newob = Object.Get(objs[c-1])
+        newob.select(1)
+      elif c == 100:
+        sel = Object.GetSelected()
+        for item in sel:
+          item.select(0)
+        for item in objs:
+          Object.Get(item).select(1)
+    
+    #
+    # Remove Layer Set
+    #
+    if evt == 99:
+      for item in self.layersets:
+        if item.find(self.curset) != -1:
+          toremove = item
+          print "toremove:" + toremove
+      self.layersets.remove(toremove)
+      self.curset = self.layersets[0][0:self.layersets[0].find(",")]
+      self.updatetxt()
+      tomodify = self.layersets[0].split(",")
+      tomodify.pop(0)    
+      for item in range(21):
+        self.toggles[item-1] = 0
+      for item in tomodify:  
+        self.toggles[int(item)-1] = 1
+      Draw.Redraw(1)
+    
+    #
+    # Update Layer Manager
+    #
+    if evt == 98:  
+      for i in range(21):
+        if self.scn.layers.count(i):
+          self.toggles[i-1] = 1
+        else:  
+          self.toggles[i-1] = 0
+      Draw.Redraw(1)
+    
+    #
+    # Layer Sets Menu
+    #
+    if evt == 100:    
+      if men.val <= len(self.layersets):
+        # Set LayerSet current Set
+        for item in self.layersets:
+          if item.find(self.curset) != -1:
             tomodify = item
         if tomodify:
-          layersets.remove(tomodify)
-          layersets.append(curset + "," + str(scn.layers)[1:-1])
-          layersets.sort()
-          layersets.reverse()
-          updatetxt()
-      toset = layersets[men.val-1].split(",")
-      curset = toset[0]
-      toset.pop(0)
-      mylayers = []
-      for item in toset:
-        mylayers.append(int(item))
-      scn.layers = mylayers  
-      Draw.Redraw(1)
-      for i in range(21):
-        if scn.layers.count(i):
-          toggles[i-1] = 1
-        else:  
-          toggles[i-1] = 0  
-      #
-      
-    if men.val == 100 or men.val == 101:
-      newset = Draw.PupStrInput("Set Name:", "", 25)
-      if newset != None:
-        newset = newset.replace(","," ")
-        print newset
-        if men.val == 100:
-          layersets.append(newset + ",1")
+          tomodify = tomodify.split(",")
+          tomodify.pop(0)
+        count = 0
+        c = -1
+        for item in self.toggles:
+          if item == 1: count = count +1
+        if len(tomodify) != count:      
+          c = Draw.PupMenu("Set has Changed. Save?%t|Yes|No")
         else:
-          toap = newset
-          for item in scn.layers:
-            toap = toap + "," + str(item)
-          layersets.append(toap)
-        curset = layersets[-1][0:layersets[-1].find(",")]        
-        if men.val == 100:
-          scn.layers = [1]
-          for i in range(20):
-            toggles[i] = 0
-          toggles[0] = 1
-    elif men.val == 102:
-      for item in layersets:
-        if item.find(curset) != -1:
-          tomodify = item
-      if tomodify:
-        layersets.remove(tomodify)
-        layersets.append(curset + "," + str(scn.layers)[1:-1])
-    layersets.sort()
-    layersets.reverse()
-    updatetxt()
-    Draw.Redraw(1)
-    scn.update(1)
-    Blender.Redraw()
-  
-  if evt == 101:
-    st.val = st.val.replace(","," ")
-    count = 0
-    for item in layersets:
-      if item.find(curset) != -1:
-          tomodify = item
-          toindex = count
-      count = count + 1    
-    tomodify = tomodify.replace(curset,st.val)
-    layersets[toindex] = tomodify
-    layersets.sort()
-    layersets.reverse()
-    updatetxt()
-    curset = st.val
-    Draw.Redraw(1)
+          for item in tomodify:
+            if self.toggles[int(item)-1] == 0:
+              c = Draw.PupMenu("Set has Changed. Save?%t|Yes|No")
+        if c != -1 and c != 2:
+          for item in self.layersets:
+            if item.find(self.curset) != -1:
+              tomodify = item
+          if tomodify:
+            self.layersets.remove(tomodify)
+            self.layersets.append(self.curset + "," + str(self.scn.layers)[1:-1])
+            self.layersets.sort()
+            self.layersets.reverse()
+            self.updatetxt()
+        toset = self.layersets[men.val-1].split(",")
+        self.curset = toset[0]
+        toset.pop(0)
+        mylayers = []
+        for item in toset:
+          mylayers.append(int(item))
+        self.scn.layers = mylayers  
+        Draw.Redraw(1)
+        for i in range(21):
+          if self.scn.layers.count(i):
+            self.toggles[i-1] = 1
+          else:  
+            self.toggles[i-1] = 0  
+        #
+        
+      if men.val == 100 or men.val == 101:
+        newset = Draw.PupStrInput("Set Name:", "", 25)
+        if newset != None:
+          newset = newset.replace(","," ")
+          print newset
+          if men.val == 100:
+            self.layersets.append(newset + ",1")
+          else:
+            toap = newset
+            for item in self.scn.layers:
+              toap = toap + "," + str(item)
+            self.layersets.append(toap)
+          self.curset = self.layersets[-1][0:self.layersets[-1].find(",")]        
+          if men.val == 100:
+            self.scn.layers = [1]
+            for i in range(20):
+              self.toggles[i] = 0
+            self.toggles[0] = 1
+      elif men.val == 102:
+        for item in self.layersets:
+          if item.find(self.curset) != -1:
+            tomodify = item
+        if tomodify:
+          self.layersets.remove(tomodify)
+          self.layersets.append(self.curset + "," + str(self.scn.layers)[1:-1])
+      self.layersets.sort()
+      self.layersets.reverse()
+      self.updatetxt()
+      Draw.Redraw(1)
+      self.scn.update(1)
+      Blender.Redraw()
     
-def  updatetxt():
-  global txt
-  Text.unlink(txt)
-  txt = Text.New("layernames")
-  for i in range(20):
-    txt.write(names[i] +"\n")
-  for i in layersets:
-    txt.write(i +"\n")
-  
-def INTtoFLOAT(rgba):
-  r = float(rgba[0] *10 /254) /10
-  g = float(rgba[1] *10 /254) /10
-  b = float(rgba[2] *10 /254) /10
-  a = float(rgba[3] *10 /254) /10
-  return [r,g,b,a]
-  
-def gui():
-  global st,men,lsetmenu,curset, offset
-  #lsetmenu = "Layer Sets%t"
-  lsetmenu = ""
-  for i in layersets:
-    lsetmenu = lsetmenu + "|    " + i[0:i.find(",")]
-  lsetmenu = lsetmenu + "|SAVE SET%x102|NEW SET FROM LAYERS%x101|NEW SET%x100"  
-  
-  theme = Blender.Window.Theme.Get()[0]
-  buts = theme.get('buts')    
-  r,g,b,a = INTtoFLOAT(buts.back)  
-  BGL.glClearColor(r+0.05,g+0.05,b+0.05,a)
-  BGL.glClear(BGL.GL_COLOR_BUFFER_BIT)
-  
-  
-  BGL.glEnable(BGL.GL_BLEND)
-  BGL.glBlendFunc(BGL.GL_SRC_ALPHA, BGL.GL_ONE_MINUS_SRC_ALPHA)
-  
-  r,g,b,a = INTtoFLOAT(buts.panel)
-  
-  BGL.glColor4f(r,g,b,a+0.1)
-  BGL.glBegin(BGL.GL_POLYGON)
-  BGL.glVertex2i(5, offset + 5)
-  BGL.glVertex2i(5, offset + 415)
-  BGL.glVertex2i(185, offset + 415)
-  BGL.glVertex2i(185, offset + 5)
-  BGL.glEnd()  
-  
-  r,g,b,a = INTtoFLOAT(buts.header)  
-  BGL.glColor4f(r-0.1,g-0.1,b-0.1,a)
-  BGL.glBegin(BGL.GL_POLYGON)
-  BGL.glVertex2i(5, offset + 415)
-  BGL.glVertex2i(5, offset + 431)
-  BGL.glVertex2i(185, offset + 431)
-  BGL.glVertex2i(185, offset + 415)
-  BGL.glEnd()  
-  
-  BGL.glDisable(BGL.GL_BLEND)
-  
-  BGL.glColor3f(1,1,1)
-  BGL.glRasterPos2i(10,offset + 419)
-  Draw.Text("Layer Manager HUHU", "small")
-  
-  BGL.glColor3f(1,1,1)
-  Draw.PushButton("Update", 98, 110, offset + 395, 60,16 , "Updates Layer Manager")
-  men = Draw.Menu(lsetmenu, 100, 26, offset + 10, 18,16 ,1, "Display a menu with Layer Sets")
-  Draw.PushButton("X", 99, 153, offset + 10, 18,16 , "Exit Layer Manager")
-  st = Draw.String("SET:", 101, 44, offset + 10, 110,16 ,curset,25, "Current Layer Set")
-  for i in range(20):
-    Draw.Toggle(str(i+1), i, 25, offset + 375-(18*i), 25, 16, toggles[i],"Turn this Layer ON and OFF")
-    Draw.PushButton("", i+20, 10, offset + 379-(18*i), 8, 8, "Solo this Layer")
-    Draw.PushButton("", i+60, 173, offset + 376-(18*i), 6, 6, "Select Objects in this Layer")
-    Draw.PushButton(names[i], i+40, 50, offset + 375 -(18*i), 120, 16, "Click to change Layer name")
-  
-
-def algosomething(filename):
-  print 'Saluton mondo!'
-
-def main():  
-  Draw.Register(gui, event, button_event)
+    if evt == 101:
+      st.val = st.val.replace(","," ")
+      count = 0
+      for item in self.layersets:
+        if item.find(self.curset) != -1:
+            tomodify = item
+            toindex = count
+        count = count + 1    
+      tomodify = tomodify.replace(self.curset,st.val)
+      self.layersets[toindex] = tomodify
+      self.layersets.sort()
+      self.layersets.reverse()
+      self.updatetxt()
+      self.curset = st.val
+      Draw.Redraw(1)
+      
+  def updatetxt(self):
+    #global txt
+    Text.unlink(self.txt)
+    self.txt = Text.New("layernames")
+    for i in range(20):
+      self.txt.write(self.names[i] +"\n")
+    for i in self.layersets:
+      self.txt.write(i +"\n")
+    
+  def INTtoFLOAT(self, rgba):
+    r = float(rgba[0] *10 /254) /10
+    g = float(rgba[1] *10 /254) /10
+    b = float(rgba[2] *10 /254) /10
+    a = float(rgba[3] *10 /254) /10
+    return [r,g,b,a]
+    
+  def gui(self):
+    #global st,men,lsetmenu,curset, offset
+    #lsetmenu = "Layer Sets%t"
+    lsetmenu = ""
+    for i in self.layersets:
+      lsetmenu = lsetmenu + "|    " + i[0:i.find(",")]
+    lsetmenu = lsetmenu + "|SAVE SET%x102|NEW SET FROM LAYERS%x101|NEW SET%x100"  
+    
+    theme = Blender.Window.Theme.Get()[0]
+    buts = theme.get('buts')    
+    r,g,b,a = self.INTtoFLOAT(buts.back)  
+    BGL.glClearColor(r+0.05,g+0.05,b+0.05,a)
+    BGL.glClear(BGL.GL_COLOR_BUFFER_BIT)
+    
+    
+    BGL.glEnable(BGL.GL_BLEND)
+    BGL.glBlendFunc(BGL.GL_SRC_ALPHA, BGL.GL_ONE_MINUS_SRC_ALPHA)
+    
+    r,g,b,a = self.INTtoFLOAT(buts.panel)
+    
+    BGL.glColor4f(r,g,b,a+0.1)
+    BGL.glBegin(BGL.GL_POLYGON)
+    BGL.glVertex2i(5, self.offset + 5)
+    BGL.glVertex2i(5, self.offset + 415)
+    BGL.glVertex2i(185, self.offset + 415)
+    BGL.glVertex2i(185, self.offset + 5)
+    BGL.glEnd()  
+    
+    r,g,b,a = self.INTtoFLOAT(buts.header)  
+    BGL.glColor4f(r-0.1,g-0.1,b-0.1,a)
+    BGL.glBegin(BGL.GL_POLYGON)
+    BGL.glVertex2i(5, self.offset + 415)
+    BGL.glVertex2i(5, self.offset + 431)
+    BGL.glVertex2i(185, self.offset + 431)
+    BGL.glVertex2i(185, self.offset + 415)
+    BGL.glEnd()  
+    
+    BGL.glDisable(BGL.GL_BLEND)
+    
+    BGL.glColor3f(1,1,1)
+    BGL.glRasterPos2i(10,self.offset + 419)
+    Draw.Text("Layer Manager HUHU", "small")
+    
+    BGL.glColor3f(1,1,1)
+    Draw.PushButton("Update", 98, 110, self.offset + 395, 60,16 , "Updates Layer Manager")
+    men = Draw.Menu(lsetmenu, 100, 26, self.offset + 10, 18,16 ,1, "Display a menu with Layer Sets")
+    Draw.PushButton("X", 99, 153, self.offset + 10, 18,16 , "Exit Layer Manager")
+    st = Draw.String("SET:", 101, 44, self.offset + 10, 110,16 ,self.curset,25, "Current Layer Set")
+    for i in range(20):
+      Draw.Toggle(str(i+1), i, 25, self.offset + 375-(18*i), 25, 16, self.toggles[i],"Turn this Layer ON and OFF")
+      Draw.PushButton("", i+20, 10, self.offset + 379-(18*i), 8, 8, "Solo this Layer")
+      Draw.PushButton("", i+60, 173, self.offset + 376-(18*i), 6, 6, "Select Objects in this Layer")
+      Draw.PushButton(self.names[i], i+40, 50, self.offset + 375 -(18*i), 120, 16, "Click to change Layer name")
+    
+  def algosomething(filename):
+    print 'Saluton mondo!'
+    
+def main():
+  layer_manager_objects = LayerManagerObjects()
+  Draw.Register(layer_manager_objects.gui, layer_manager_objects.event, layer_manager_objects.button_event)
   
   print '=========================='
   print Blender.Window.GetScreens()
