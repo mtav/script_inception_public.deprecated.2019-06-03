@@ -218,6 +218,7 @@ class LayerManagerObjects:
         else:  
           self.toggles[i-1] = 0
       Draw.Redraw(1)
+      Blender.Window.FileSelector(self.algosomething, "Import Bristol FDTD file...");
     
     #
     # Layer Sets Menu
@@ -383,7 +384,9 @@ class LayerManagerObjects:
       Draw.PushButton("", i+20, 10, self.offset + 379-(18*i), 8, 8, "Only this Layer")
       Draw.PushButton("", i+60, 173, self.offset + 376-(18*i), 6, 6, "Select Objects in this Layer")
       Draw.PushButton(self.names[i], i+40, 50, self.offset + 375 -(18*i), 120, 16, "Click to change Layer name")
-        
+  def algosomething(self):
+    print('hello')
+    
 def main():
   layer_manager_objects = LayerManagerObjects()
   Draw.Register(layer_manager_objects.gui, layer_manager_objects.event, layer_manager_objects.button_event)
@@ -392,6 +395,7 @@ def main():
   print Blender.Window.GetScreens()
   print Blender.Window.GetAreaID()
   print Blender.Window.GetAreaSize()
+  print Blender.Window.GetScreenInfo()
   print Blender.Text.Get()
   print '=========================='
   #~ Blender.Window.FileSelector(algosomething, "Import Bristol FDTD file...");
