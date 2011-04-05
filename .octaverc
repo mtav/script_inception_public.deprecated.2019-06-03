@@ -21,5 +21,8 @@ end
 STARTUPSCRIPT=[getuserdir(),filesep,'MATLAB',filesep,'startup.m']
 disp(['Running ',STARTUPSCRIPT,' ...']);
 run(STARTUPSCRIPT);
-startup()
+
+% This does not work on GNU Octave, version 3.2.4
+% startup()
+
 disp('...done');

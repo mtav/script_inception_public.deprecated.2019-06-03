@@ -1,6 +1,6 @@
 function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps)
-    % function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps)
-    %
+  % function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps)
+  %
   % format specification:
   % 1 iteration number for the first snapshot
   % 2 number of iterations between snapshots
@@ -24,51 +24,64 @@ function GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power
   % format case. The file consists of a matrix of numbers the first column and first row or which, gives the position of
   % the sample points in each direction. These files can be read into MathCad or to spreadsheet programs. .
 
-  
-  function snapshot(plane,P1,P2)
-    if plane == 1
-      plane_name='X';
-    elseif plane == 2
-      plane_name='Y';
-    else %plane == 3
-      plane_name='Z';
-    end
+  other_args = struct('FILE', FILE,...
+                      'first', first,...
+                      'repetition', repetition,...
+                      'E', E,...
+                      'H', H,...
+                      'J', J,...
+                      'power', power,...
+                      'eps', eps);
+                      
+  %other_args.first
 
-    fprintf(FILE,'SNAPSHOT **SNAPSHOT DEFINITION %s\n',plane_name);
-    fprintf(FILE,'{\n');
-    fprintf(FILE,'%d **FIRST\n', first);
-    fprintf(FILE,'%d **REPETITION\n', repetition);
-    fprintf(FILE,'%d **PLANE\n', plane);
-    fprintf(FILE,'%E **X1\n', P1(1));
-    fprintf(FILE,'%E **Y1\n', P1(2));
-    fprintf(FILE,'%E **Z1\n', P1(3));
-    fprintf(FILE,'%E **X2\n', P2(1));
-    fprintf(FILE,'%E **Y2\n', P2(2));
-    fprintf(FILE,'%E **Z2\n', P2(3));
-    fprintf(FILE,'%d **EX\n', E(1));
-    fprintf(FILE,'%d **EY\n', E(2));
-    fprintf(FILE,'%d **EZ\n', E(3));
-    fprintf(FILE,'%d **HX\n', H(1));
-    fprintf(FILE,'%d **HY\n', H(2));
-    fprintf(FILE,'%d **HZ\n', H(3));
-    fprintf(FILE,'%d **JX\n', J(1));
-    fprintf(FILE,'%d **JY\n', J(2));
-    fprintf(FILE,'%d **JZ\n', J(3));
-    fprintf(FILE,'%d **POW\n', power);
-    fprintf(FILE,'%d **EPS\n', eps);
-    fprintf(FILE,'}\n');
-    fprintf(FILE,'\n');
-  end
-  
   if P1(plane) == P2(plane)
-    snapshot(plane,P1,P2);
+    snapshot(other_args,plane,P1,P2);
   else
-    snapshot(1,[P1(1),P1(2),P1(3)],[P1(1),P2(2),P2(3)]);
-    snapshot(1,[P2(1),P1(2),P1(3)],[P2(1),P2(2),P2(3)]);
-    snapshot(2,[P1(1),P1(2),P1(3)],[P2(1),P1(2),P2(3)]);
-    snapshot(2,[P1(1),P2(2),P1(3)],[P2(1),P2(2),P2(3)]);
-    snapshot(3,[P1(1),P1(2),P1(3)],[P2(1),P2(2),P1(3)]);
-    snapshot(3,[P1(1),P1(2),P2(3)],[P2(1),P2(2),P2(3)]);
+    snapshot(other_args,1,[P1(1),P1(2),P1(3)],[P1(1),P2(2),P2(3)]);
+    snapshot(other_args,1,[P2(1),P1(2),P1(3)],[P2(1),P2(2),P2(3)]);
+    snapshot(other_args,2,[P1(1),P1(2),P1(3)],[P2(1),P1(2),P2(3)]);
+    snapshot(other_args,2,[P1(1),P2(2),P1(3)],[P2(1),P2(2),P2(3)]);
+    snapshot(other_args,3,[P1(1),P1(2),P1(3)],[P2(1),P2(2),P1(3)]);
+    snapshot(other_args,3,[P1(1),P1(2),P2(3)],[P2(1),P2(2),P2(3)]);
   end
+  %disp('TIME SNAPSHOT DONE')
+end
+
+function snapshot(other_args,plane,P1,P2)
+  if plane == 1
+    plane_name='X';
+  elseif plane == 2
+    plane_name='Y';
+  else %plane == 3
+    plane_name='Z';
+  end
+  %plane_name
   
+  %other_args.first
+
+  fprintf(other_args.FILE,'SNAPSHOT **SNAPSHOT DEFINITION %s\n',plane_name);
+  fprintf(other_args.FILE,'{\n');
+  fprintf(other_args.FILE,'%d **FIRST\n', other_args.first);
+  fprintf(other_args.FILE,'%d **REPETITION\n', other_args.repetition);
+  fprintf(other_args.FILE,'%d **PLANE\n', plane);
+  fprintf(other_args.FILE,'%E **X1\n', P1(1));
+  fprintf(other_args.FILE,'%E **Y1\n', P1(2));
+  fprintf(other_args.FILE,'%E **Z1\n', P1(3));
+  fprintf(other_args.FILE,'%E **X2\n', P2(1));
+  fprintf(other_args.FILE,'%E **Y2\n', P2(2));
+  fprintf(other_args.FILE,'%E **Z2\n', P2(3));
+  fprintf(other_args.FILE,'%d **EX\n', other_args.E(1));
+  fprintf(other_args.FILE,'%d **EY\n', other_args.E(2));
+  fprintf(other_args.FILE,'%d **EZ\n', other_args.E(3));
+  fprintf(other_args.FILE,'%d **HX\n', other_args.H(1));
+  fprintf(other_args.FILE,'%d **HY\n', other_args.H(2));
+  fprintf(other_args.FILE,'%d **HZ\n', other_args.H(3));
+  fprintf(other_args.FILE,'%d **JX\n', other_args.J(1));
+  fprintf(other_args.FILE,'%d **JY\n', other_args.J(2));
+  fprintf(other_args.FILE,'%d **JZ\n', other_args.J(3));
+  fprintf(other_args.FILE,'%d **POW\n', other_args.power);
+  fprintf(other_args.FILE,'%d **EPS\n', other_args.eps);
+  fprintf(other_args.FILE,'}\n');
+  fprintf(other_args.FILE,'\n');
 end

@@ -132,15 +132,15 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   else:
     thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ]
 
-  thicknessVector_Y_2 = thicknessVector_Y_1; thicknessVector_Y_2.reverse()
+  thicknessVector_Y_2 = thicknessVector_Y_1[:]; thicknessVector_Y_2.reverse()
   thicknessVector_Y = thicknessVector_Y_1 + thicknessVector_Y_2
   
   max_delta_Vector_Y_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ]
-  max_delta_Vector_Y_2 = max_delta_Vector_Y_1; max_delta_Vector_Y_2.reverse();
+  max_delta_Vector_Y_2 = max_delta_Vector_Y_1[:]; max_delta_Vector_Y_2.reverse();
   max_delta_Vector_Y = max_delta_Vector_Y_1 + max_delta_Vector_Y_2
 
-  print 'thicknessVector_Y = ', thicknessVector_Y
-  print 'max_delta_Vector_Y = ', max_delta_Vector_Y
+  #print 'thicknessVector_Y = ', thicknessVector_Y
+  #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
 
   thicknessVector_Z = [ Ymax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ]
   max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ]

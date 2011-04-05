@@ -165,8 +165,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       max_delta_Vector_Y = [ max_delta_Vector_Y_1, max_delta_Vector_Y_2 ];
 
       %disp(['thicknessVector_Y = ',thicknessVector_Y])
-      thicknessVector_Y
-      max_delta_Vector_Y
+      %thicknessVector_Y
+      %max_delta_Vector_Y
       %disp(['max_delta_Vector_Y = ',])
 
       thicknessVector_Z = [ Ymax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ];
@@ -235,7 +235,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       GEOshellscript([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.sh'], BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME);
 
       % .cmd file
-      GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME], BASENAME);
+      GEOcommand([DSTDIR,filesep,BASENAME,filesep,BASENAME,'.cmd'], BASENAME);
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       % .geo file
       disp('Writing GEO file...');
@@ -397,45 +397,48 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       power = 0;
       
       if SNAPSHOTS_ON == 1
-%                for iY = 1:length(Yplanes)
-%                        plane = 2;
-%                        P1 = [0, Yplanes(iY), 0];
-%                        P2 = [Xmax, Yplanes(iY), Ymax/2];
-%                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
-%                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
-%                end
-%                for iX = 1:length(Xplanes)
-%                        plane = 1;
-%                        P1 = [Xplanes(iX), 0, 0];
-%                        P2 = [Xplanes(iX), Zmax, Ymax/2];
-%                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
-%                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
-%                end
-%                for iZ = 1:length(Zplanes)
-%                        plane = 3;
-%                        P1 = [0, 0, Zplanes(iZ)];
-%                        P2 = [Xmax, Zmax, Zplanes(iZ)];
-%                        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
-%                        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
-%                end
-
-                plane = 1;
-                P1 = [pillar_centre_X, 0, 0];
-                P2 = [pillar_centre_X, Zmax, Ymax/2];
-                GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
-                GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
-
-                plane = 2;
-                P1 = [0, Zmax/2, 0];
-                P2 = [Xmax, Zmax/2, Ymax/2];
-                GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
-                GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
-
-                plane = 3;
-                P1 = [0, 0, Ymax/2-2*delta_center];
-                P2 = [Xmax, Zmax, Ymax/2-2*delta_center];
-                GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
-                GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
+        %disp('Writing snapshots')
+        %for iY = 1:length(Yplanes)
+            %plane = 2;
+            %P1 = [0, Yplanes(iY), 0];
+            %P2 = [Xmax, Yplanes(iY), Ymax/2];
+            %disp('Writing snapshots A')
+            %GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
+            %disp('Writing snapshots B')
+            %GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
+        %end
+        %for iX = 1:length(Xplanes)
+            %plane = 1;
+            %P1 = [Xplanes(iX), 0, 0];
+            %P2 = [Xplanes(iX), Zmax, Ymax/2];
+            %GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
+            %GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
+        %end
+        %for iZ = 1:length(Zplanes)
+            %plane = 3;
+            %P1 = [0, 0, Zplanes(iZ)];
+            %P2 = [Xmax, Zmax, Zplanes(iZ)];
+            %GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
+            %GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
+        %end
+        
+        plane = 1;
+        P1 = [pillar_centre_X, 0, 0];
+        P2 = [pillar_centre_X, Zmax, Ymax/2];
+        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
+        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
+        
+        plane = 2;
+        P1 = [0, Zmax/2, 0];
+        P2 = [Xmax, Zmax/2, Ymax/2];
+        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
+        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
+        
+        plane = 3;
+        P1 = [0, 0, Ymax/2-2*delta_center];
+        P2 = [Xmax, Zmax, Ymax/2-2*delta_center];
+        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, SNAPSHOTS_FREQUENCY, starting_sample, E, H, J);
+        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0);
           
       end
 
