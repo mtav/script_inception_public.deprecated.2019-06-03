@@ -153,11 +153,13 @@ def importBristolFDTD(filename):
     # structured_entries.boundaries;
     #########################
 
+    # TODO: Save the layer settings somewhere for reuse
     scene = Blender.Scene.GetCurrent();
+    Blender.Scene.GetCurrent().setLayers([8,9,10]);
     scene.update(0);
     Blender.Window.RedrawAll();
     Blender.Window.WaitCursor(0);
-    Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
+    #Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print('...done')
     #print Blender.Get('scriptsdir')
     #Blender.Run(Blender.Get('scriptsdir')+'/layer_manager.py')

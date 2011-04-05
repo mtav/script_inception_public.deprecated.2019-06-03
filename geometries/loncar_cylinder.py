@@ -9,7 +9,7 @@ from bristolFDTD_generator_functions import *
 from constants import *
 from meshing.subGridMultiLayer import *
 
-def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERATIONS=32000, print_holes_top=True, print_holes_bottom=True, HOLE_TYPE=1, pillar_radius_mum = 0.150/2.0, EXCITATION_FREQUENCY = get_c0()/637e-3, SNAPSHOTS_FREQUENCY=[],excitation_type=1):
+def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERATIONS=32000, print_holes_top=True, print_holes_bottom=True, HOLE_TYPE='cylinder', pillar_radius_mum = 0.150/2.0, EXCITATION_FREQUENCY = get_c0()/637e-3, SNAPSHOTS_FREQUENCY=[],excitation_type=1):
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   # description:
   #  function loncar_structure(BASENAME, DSTDIR, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY)
@@ -25,7 +25,7 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   # print_holes_top = True
   # print_holes_bottom = True
   print_pillar = True
-  print_podium = False
+  print_podium = True
   print_freqsnap = True
   print_timesnap = True
   print_epssnap = True
@@ -51,16 +51,26 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   # refractive indices
   n_Diamond = 2.4; #no unit
   n_Air = 1; #no unit
-  n_bottom_square=3.5214; #no unit
+  n_bottom_square = n_Diamond; #3.5214; #no unit
   # distance between holes
   d_holes_mum = 0.220; #mum
   # hole radius
   hole_radius_X = 0.28*d_holes_mum; #mum
   hole_radius_Z = pillar_radius_mum - (d_holes_mum-2*hole_radius_X); #mum
+  
+  print >>sys.stderr, 'hole_radius_X',hole_radius_X
+  print >>sys.stderr, 'hole_radius_Z',hole_radius_Z
+  print >>sys.stderr, 'd_holes_mum',d_holes_mum
+  print >>sys.stderr, 'pillar_radius_mum',pillar_radius_mum
+  
+  if hole_radius_Z<=0:
+    print >>sys.stderr, 'ERROR: negative hole_radius_Z = ',hole_radius_Z
+    return
+  
   # number of holes on bottom
-  bottom_N = 12; #no unit
+  bottom_N = 6; #no unit
   # number of holes on top
-  top_N = 12; #no unit
+  top_N = 3; #no unit
   # distance between 2 holes around cavity
   d_holes_cavity = 2*d_holes_mum; #mum
   Lcav = d_holes_cavity - d_holes_mum; # mum
@@ -68,7 +78,8 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   # top box offset
   top_box_offset=1; #mum
   #bottom square thickness
-  
+  h_bottom_square=0.5 # mum
+
   # ITERATIONS = 261600; #no unit
   # ITERATIONS = 32000; #no unit
   # ITERATIONS = 10; #no unit
@@ -88,9 +99,11 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   # max mesh intervals
-  delta_diamond = 0.5*Lambda/(15*n_Diamond)
+  #delta_diamond = 0.5*Lambda/(15*n_Diamond)
+  delta_diamond = Lambda/(10*n_Diamond);
   delta_hole = delta_diamond
-  delta_outside = 2*delta_diamond
+  #delta_outside = 2*delta_diamond
+  delta_outside = Lambda/(4*n_Air)
   delta_center = delta_diamond
   delta_boundary = delta_diamond
   
@@ -98,14 +111,16 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   center_radius = 2*delta_center
 
   # buffers (area outside pillar where mesh is fine)
-  x_buffer = 4*delta_diamond; #mum
-  y_buffer = 32*delta_diamond; #mum
-  z_buffer = 4*delta_diamond; #mum
+  X_buffer = 4*delta_diamond; #mum
+  Y_buffer = 32*delta_diamond; #mum
+  Z_buffer = 4*delta_diamond; #mum
 
   # dimension and position parameters
-  Ymax = 5*2*pillar_radius_mum; #2*(pillar_radius_mum + x_buffer + 4*delta_outside); #mum
   pillar_height = (bottom_N+top_N)*d_holes_mum + Lcav
-  Xmax = pillar_height; #mum
+  Xmax = h_bottom_square + pillar_height + X_buffer + top_box_offset; #mum
+  #Ymax = 5*2*pillar_radius_mum;
+  #Ymax = 2*(pillar_radius_mum + X_buffer + 4*delta_outside); #mum
+  Ymax = 2*(pillar_radius_mum + 4*delta_diamond + 4*delta_outside); #mum
   Zmax = Ymax; #mum
   
   pillar_centre_Y = Ymax/2
@@ -127,12 +142,14 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
 
   delta_min = min(max_delta_Vector_X)
 
-  if HOLE_TYPE == 1:
-    thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ]
-  elif HOLE_TYPE == 2:
-    thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ]
+  if HOLE_TYPE == 'cylinder':
+    thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-Z_buffer, Z_buffer, pillar_radius_mum-center_radius, center_radius ]
+  elif HOLE_TYPE == 'square_holes':
+    thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-Z_buffer, Z_buffer, pillar_radius_mum-center_radius, center_radius ]
+  elif HOLE_TYPE == 'rectangular_holes':
+    thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-Z_buffer, Z_buffer, pillar_radius_mum-center_radius, center_radius ]
   else:
-    thicknessVector_Y_1 = [ Zmax/2-pillar_radius_mum-z_buffer, z_buffer, pillar_radius_mum-center_radius, center_radius ]
+    print >>sys.stderr, "ERROR: Unknown HOLE_TYPE "+HOLE_TYPE
 
   thicknessVector_Y_2 = thicknessVector_Y_1[:]; thicknessVector_Y_2.reverse()
   thicknessVector_Y = thicknessVector_Y_1 + thicknessVector_Y_2
@@ -144,7 +161,7 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   #print 'thicknessVector_Y = ', thicknessVector_Y
   #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
 
-  thicknessVector_Z = [ Ymax/2-pillar_radius_mum-x_buffer, x_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ]
+  thicknessVector_Z = [ Ymax/2-pillar_radius_mum-X_buffer, X_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ]
   max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ]
   
   #Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
@@ -171,7 +188,7 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   pillar_height ]
   
   Yplanes = [ 0,
-  Zmax/2-pillar_radius_mum-z_buffer,
+  Zmax/2-pillar_radius_mum-Z_buffer,
   Zmax/2-pillar_radius_mum,
   Zmax/2-hole_radius_X,
   Zmax/2-2*delta_center,
@@ -181,11 +198,11 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   Zmax/2+2*delta_center,
   Zmax/2+hole_radius_X,
   Zmax/2+pillar_radius_mum,
-  Zmax/2+pillar_radius_mum+z_buffer,
+  Zmax/2+pillar_radius_mum+Z_buffer,
   Zmax ]
 
   Zplanes = [ 0,
-  Ymax/2-pillar_radius_mum-x_buffer,
+  Ymax/2-pillar_radius_mum-X_buffer,
   Ymax/2-pillar_radius_mum,
   Ymax/2-2*delta_center,
   Ymax/2-delta_center,
@@ -251,7 +268,15 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   
     # initialize current y
     X_current=0
-        
+    
+    if print_podium:
+      # create bottom block
+      L = [ 0, 0, 0 ]
+      U = [ X_current + h_bottom_square, Ymax, Zmax ]
+      GEOblock(out, L, U, pow(n_bottom_square,2), 0)
+
+    X_current = X_current + h_bottom_square;
+    
     if print_pillar:
       # create main pillar
       L = [ X_current, Ymax/2 - pillar_radius_mum, Zmax/2 - pillar_radius_mum ]
@@ -267,19 +292,21 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
         
         # create bottom holes
         for i in range(bottom_N):
-            if print_holes_bottom:
-                centre = [ X_current, Ymax/2, Zmax/2 ]
-                if HOLE_TYPE == 1:
-                  GEOcylinder(out, centre, 0, hole_radius_X, 2*pillar_radius_mum, permittivity, conductivity, 0)
-                elif HOLE_TYPE == 2:
-                  lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X]
-                  upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X]
-                  GEOblock(out, lower, upper, permittivity, conductivity)
-                else:
-                  lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z]
-                  upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z]
-                  GEOblock(out, lower, upper, permittivity, conductivity)
-            X_current = X_current + d_holes_mum
+          if print_holes_bottom:
+            centre = [ X_current, Ymax/2, Zmax/2 ]
+            if HOLE_TYPE == 'cylinder':
+              GEOcylinder(out, centre, 0, hole_radius_X, 2*pillar_radius_mum, permittivity, conductivity, 0)
+            elif HOLE_TYPE == 'square_holes':
+              lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X]
+              upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X]
+              GEOblock(out, lower, upper, permittivity, conductivity)
+            elif HOLE_TYPE == 'rectangular_holes':
+              lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z]
+              upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z]
+              GEOblock(out, lower, upper, permittivity, conductivity)
+            else:
+              print >>sys.stderr, "ERROR: Unknown HOLE_TYPE "+HOLE_TYPE
+          X_current = X_current + d_holes_mum
   
         X_current = X_current - d_holes_mum + d_holes_cavity
   
@@ -287,16 +314,18 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
         for i in range(top_N):
           if print_holes_top:
             centre = [ X_current, Ymax/2, Zmax/2 ]
-            if HOLE_TYPE == 1:
+            if HOLE_TYPE == 'cylinder':
               GEOcylinder(out, centre, 0, hole_radius_X, 2*pillar_radius_mum, permittivity, conductivity, 0)
-            elif HOLE_TYPE == 2:
+            elif HOLE_TYPE == 'square_holes':
               lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_X]
               upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_X]
               GEOblock(out, lower, upper, permittivity, conductivity)
-            else:
+            elif HOLE_TYPE == 'rectangular_holes':
               lower = [ X_current - hole_radius_X, Ymax/2 - pillar_radius_mum, Zmax/2 - hole_radius_Z]
               upper = [ X_current + hole_radius_X, Ymax/2 + pillar_radius_mum, Zmax/2 + hole_radius_Z]
               GEOblock(out, lower, upper, permittivity, conductivity)
+            else:
+              print >>sys.stderr, "ERROR: Unknown HOLE_TYPE "+HOLE_TYPE
           X_current = X_current + d_holes_mum
         
     #write box
@@ -458,7 +487,10 @@ def main(argv=None):
       raise Usage(msg)
     # more code, unchanged
     #print('hello')
-    in_filename = loncar_cylinder('test', os.getenv('TESTDIR'), 32000, 1, 1, 1, 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
+    #in_filename = loncar_cylinder('test', os.getenv('TESTDIR'), 32000, 1, 1, 'cylinder', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
+    #in_filename = loncar_cylinder('test', os.getenv('TESTDIR'), 32000, 1, 1, 'square_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
+    #in_filename = loncar_cylinder('test', os.getenv('TESTDIR'), 32000, 1, 1, 'rectangular_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
+    in_filename = loncar_cylinder('test', os.getenv('TESTDIR'), 32000, True, True, 'rectangular_holes', 1, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     print(in_filename)
     
   except Usage, err:

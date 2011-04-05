@@ -122,6 +122,10 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes
   % dimension and position parameters
   Xmax = 2*(pillar_radius + 4*delta_diamond + 4*delta_outside);%mum
   pillar_height = (bottom_N+top_N)*d_holes + Lcav;
+  h_bottom_square
+  pillar_height
+  y_buffer
+  top_box_offset
   Ymax = h_bottom_square + pillar_height + y_buffer + top_box_offset;%mum
   Zmax = Xmax;%mum
   
@@ -150,7 +154,7 @@ function INFILENAME = loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes
   thicknessVector_X = [ Xmax/2-pillar_radius-x_buffer, x_buffer, pillar_radius-center_radius, center_radius ];
   max_delta_Vector_X = [ delta_outside, delta_boundary, delta_diamond, delta_center ];
 
-    if HOLE_TYPE == 1
+  if HOLE_TYPE == 1
     thicknessVector_Z_1 = [ Zmax/2-pillar_radius-z_buffer, z_buffer, pillar_radius-hole_radius_y, hole_radius_y-center_radius, center_radius ];
   elseif HOLE_TYPE == 2
     thicknessVector_Z_1 = [ Zmax/2-pillar_radius-z_buffer, z_buffer, pillar_radius-hole_radius_y, hole_radius_y-center_radius, center_radius ];
