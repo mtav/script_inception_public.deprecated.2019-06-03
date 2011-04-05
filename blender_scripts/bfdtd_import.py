@@ -11,11 +11,15 @@ Tooltip: 'Import from Bristol FDTD'
 ###############################
 from bfdtd_parser import *;
 from FDTDGeometryObjects import *
+#import layer_manager
+#from Blender import Draw, BGL, Text, Scene, Window, Object
 
 ###############################
 # INITIALIZATIONS
 ###############################
-cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
+#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
+# official script data location :)
+cfgfile = Blender.Get("datadir")+'/BlenderImport.txt';
 
 ###############################
 # IMPORT FUNCTION
@@ -155,6 +159,19 @@ def importBristolFDTD(filename):
     Blender.Window.WaitCursor(0);
     Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print('...done')
+    #print Blender.Get('scriptsdir')
+    #Blender.Run(Blender.Get('scriptsdir')+'/layer_manager.py')
+    #layer_manager_objects = layer_manager.LayerManagerObjects()
+    #Draw.Register(layer_manager_objects.gui, layer_manager_objects.event, layer_manager_objects.button_event)
+    
+    #print '=========================='
+    #print Blender.Window.GetScreens()
+    #print Blender.Window.GetAreaID()
+    #print Blender.Window.GetAreaSize()
+    #print Blender.Text.Get()
+    #print '=========================='
+    #~ Blender.Window.FileSelector(algosomething, "Import Bristol FDTD file...");
+    #~ Blender.Run('~/.blender/scripts/bfdtd_import.py')
 
 ###############################
 # MAIN FUNCTION

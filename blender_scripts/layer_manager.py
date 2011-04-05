@@ -371,7 +371,7 @@ class LayerManagerObjects:
     
     BGL.glColor3f(1,1,1)
     BGL.glRasterPos2i(10,self.offset + 419)
-    Draw.Text("Layer Manager HUHU", "small")
+    Draw.Text("Layer Manager", "small")
     
     BGL.glColor3f(1,1,1)
     Draw.PushButton("Update", 98, 110, self.offset + 395, 60,16 , "Updates Layer Manager")
@@ -380,13 +380,10 @@ class LayerManagerObjects:
     st = Draw.String("SET:", 101, 44, self.offset + 10, 110,16 ,self.curset,25, "Current Layer Set")
     for i in range(20):
       Draw.Toggle(str(i+1), i, 25, self.offset + 375-(18*i), 25, 16, self.toggles[i],"Turn this Layer ON and OFF")
-      Draw.PushButton("", i+20, 10, self.offset + 379-(18*i), 8, 8, "Solo this Layer")
+      Draw.PushButton("", i+20, 10, self.offset + 379-(18*i), 8, 8, "Only this Layer")
       Draw.PushButton("", i+60, 173, self.offset + 376-(18*i), 6, 6, "Select Objects in this Layer")
       Draw.PushButton(self.names[i], i+40, 50, self.offset + 375 -(18*i), 120, 16, "Click to change Layer name")
-    
-  def algosomething(filename):
-    print 'Saluton mondo!'
-    
+        
 def main():
   layer_manager_objects = LayerManagerObjects()
   Draw.Register(layer_manager_objects.gui, layer_manager_objects.event, layer_manager_objects.button_event)
