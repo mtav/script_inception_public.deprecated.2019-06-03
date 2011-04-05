@@ -222,15 +222,12 @@ class pillar_1D:
     
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # Files to generate:
-    # .lst
     # .in
     # .sh
     # .cmd
     # .geo
     # .inp
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # .lst file
-    #~ copyfile(fullfile(getuserdir(),'MATLAB','entity.lst'),self.DSTDIR+os.sep+self.BASENAME)
     # .in file
     in_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.in'
     if self.verbose:
@@ -263,7 +260,6 @@ class pillar_1D:
       print('Writing GEO file '+geo_filename+' ...')
   
     # open file
-    
     with open(geo_filename, 'w') as out:
   
       # write header
@@ -489,28 +485,36 @@ def main(argv=None):
       opts, args = getopt.getopt(argv[1:], "h", ["help"])
     except getopt.error, msg:
       raise Usage(msg)
-    # more code, unchanged
-    #print('hello')
+    # main function
     #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'cylinder', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'square_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'rectangular_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, True, True, 'rectangular_holes', 1, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     
     P = pillar_1D()
-    P.BASENAME = 'test'
     P.DSTDIR = os.getenv('TESTDIR')
     P.ITERATIONS = 32000
     P.print_holes_top = True
     P.print_holes_bottom = True
-    P.HOLE_TYPE = 'rectangular_holes'
-    P.pillar_radius_mum = 1
     P.EXCITATION_FREQUENCY = get_c0()/0.637
     P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
     P.excitation_type = 1
-    in_filename = P.write()
     
-    print(in_filename)
+    P.HOLE_TYPE = 'cylinder'
+    P.BASENAME = P.HOLE_TYPE
+    P.pillar_radius_mum = 0.150/2.0
+    print(P.write())
     
+    P.HOLE_TYPE = 'square_holes'
+    P.BASENAME = P.HOLE_TYPE
+    P.pillar_radius_mum = 0.150/2.0
+    print(P.write())
+    
+    P.HOLE_TYPE = 'rectangular_holes'
+    P.BASENAME = P.HOLE_TYPE
+    P.pillar_radius_mum = 1
+    print(P.write())
+
   except Usage, err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"
