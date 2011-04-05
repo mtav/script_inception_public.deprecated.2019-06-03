@@ -53,9 +53,11 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   n_Air = 1; #no unit
   n_bottom_square = n_Diamond; #3.5214; #no unit
   # distance between holes
-  d_holes_mum = 0.220; #mum
+  #d_holes_mum = 0.220; #mum
+  d_holes_mum = Lambda/(4*n_Diamond)+Lambda/(4*n_Air);#mum
   # hole radius
-  hole_radius_X = 0.28*d_holes_mum; #mum
+  #hole_radius_X = 0.28*d_holes_mum; #mum
+  hole_radius_X = (Lambda/(4*n_Air))/2;#mum
   hole_radius_Z = pillar_radius_mum - (d_holes_mum-2*hole_radius_X); #mum
   
   print >>sys.stderr, 'hole_radius_X',hole_radius_X
@@ -72,7 +74,8 @@ def loncar_cylinder(BASENAME = 'loncar_structure', DSTDIR = getuserdir(), ITERAT
   # number of holes on top
   top_N = 3; #no unit
   # distance between 2 holes around cavity
-  d_holes_cavity = 2*d_holes_mum; #mum
+  #d_holes_cavity = 2*d_holes_mum; #mum
+  d_holes_cavity = Lambda/n_Diamond + 2*hole_radius_X;#mum
   Lcav = d_holes_cavity - d_holes_mum; # mum
   # d_holes_cavity = Lcav + d_holes_mum
   # top box offset
