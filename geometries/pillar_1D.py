@@ -14,13 +14,9 @@ class pillar_1D:
   def __init__(self):
     self.BASENAME = 'pillar_1D'
     self.DSTDIR = getuserdir()
-    self.ITERATIONS = 32000,
-    self.HOLE_TYPE = 'cylinder'
-    self.pillar_radius_mum = 0.150/2.0,
-    self.EXCITATION_FREQUENCY = get_c0()/637e-3
-    self.SNAPSHOTS_FREQUENCY = []
-    self.excitation_type = 1
+
     self.verbose = False
+
     self.print_mesh = True
     self.print_holes = True
     self.print_holes_top = True
@@ -33,12 +29,94 @@ class pillar_1D:
     self.print_epssnap = True
     self.print_excitation = True
     self.print_probes = True
+    
+    self.ITERATIONS = 32000,
+    self.HOLE_TYPE = 'cylinder'
+    self.pillar_radius_mum = 0.150/2.0
+    self.EXCITATION_FREQUENCY = get_c0()/637e-3
+    self.SNAPSHOTS_FREQUENCY = []
+    self.excitation_type = 1
+    self.h_bottom_square = 0.5 # mum #bottom square thickness
+
+    Lambda = get_c0()/self.EXCITATION_FREQUENCY
+
+    # refractive indices
+    self.n_Diamond = 2.4; #no unit
+    self.n_Air = 1; #no unit
+    self.n_bottom_square = self.n_Diamond; #3.5214; #no unit
+    # distance between holes
+    #self.d_holes_mum = 0.220; #mum
+    self.d_holes_mum = Lambda/(4*self.n_Diamond)+Lambda/(4*self.n_Air);#mum
+    # hole radius
+    #self.hole_radius_X = 0.28*self.d_holes_mum; #mum
+    self.hole_radius_X = (Lambda/(4*self.n_Air))/2;#mum
+    #print self.pillar_radius_mum
+    #print self.d_holes_mum
+    #print self.hole_radius_X
+    self.hole_radius_Z = self.pillar_radius_mum - (self.d_holes_mum-2*self.hole_radius_X); #mum
+
+    # number of holes on bottom
+    self.bottom_N = 6; #no unit
+    # number of holes on top
+    self.top_N = 3; #no unit
+    # distance between 2 holes around cavity
+    #self.d_holes_cavity = 2*self.d_holes_mum; #mum
+    self.d_holes_cavity = Lambda/self.n_Diamond + 2*self.hole_radius_X;#mum
+    self.Lcav = self.d_holes_cavity - self.d_holes_mum; # mum
+    # self.d_holes_cavity = self.Lcav + self.d_holes_mum
+    # top box offset
+    self.top_box_offset=1; #mum
+  
+    # self.ITERATIONS = 261600; #no unit
+    # self.ITERATIONS = 32000; #no unit
+    # self.ITERATIONS = 10; #no unit
+  
+    # self.ITERATIONS=1048400
+    self.FIRST=65400
+    self.REPETITION=524200
+    self.WALLTIME=360
+  
+    self.TIMESTEP=0.9; #mus
+    self.TIME_CONSTANT=4.000000E-09; #mus
+    self.AMPLITUDE=1.000000E+01; #V/mum???
+    self.TIME_OFFSET=2.700000E-08; #mus
+
+    # max mesh intervals
+    #self.delta_diamond = 0.5*Lambda/(15*self.n_Diamond)
+    self.delta_diamond = Lambda/(10*self.n_Diamond);
+    self.delta_hole = self.delta_diamond
+    #self.delta_outside = 2*self.delta_diamond
+    self.delta_outside = Lambda/(4*self.n_Air)
+    self.delta_center = self.delta_diamond
+    self.delta_boundary = self.delta_diamond
+
+    # center area where excitation takes place (for meshing)
+    self.center_radius = 2*self.delta_center
+  
+    # buffers (area outside pillar where mesh is fine)
+    self.X_buffer = 4*self.delta_diamond; #mum
+    self.Y_buffer = 32*self.delta_diamond; #mum
+    self.Z_buffer = 4*self.delta_diamond; #mum
+  
+    # dimension and position parameters
+    pillar_height = (self.bottom_N+self.top_N)*self.d_holes_mum + self.Lcav
+    
+    self.Xmax = self.h_bottom_square + pillar_height + self.X_buffer + self.top_box_offset; #mum
+    #self.Ymax = 5*2*self.pillar_radius_mum;
+    #self.Ymax = 2*(self.pillar_radius_mum + self.X_buffer + 4*self.delta_outside); #mum
+    self.Ymax = 2*(self.pillar_radius_mum + 4*self.delta_diamond + 4*self.delta_outside); #mum
+    self.Zmax = self.Ymax; #mum
+
+  def getPillarHeight(self):
+    return (self.bottom_N+self.top_N)*self.d_holes_mum + self.Lcav
+
+  def getLambda(self):
+    return get_c0()/self.EXCITATION_FREQUENCY
+
+  def setLambda(self,Lambda_mum):
+    self.EXCITATION_FREQUENCY = get_c0()/Lambda_mum
+
   def write(self):
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # arguments
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if self.verbose:
-      print('Reading input parameters...')
     
     if not os.path.isdir(self.DSTDIR):
       print('error: self.DSTDIR = '+self.DSTDIR+'is not a directory')
@@ -47,126 +125,67 @@ class pillar_1D:
     if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
       os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
     
-    Lambda = get_c0()/self.EXCITATION_FREQUENCY
+    #print >>sys.stderr, 'self.hole_radius_X',self.hole_radius_X
+    #print >>sys.stderr, 'self.hole_radius_Z',self.hole_radius_Z
+    #print >>sys.stderr, 'self.d_holes_mum',self.d_holes_mum
+    #print >>sys.stderr, 'self.pillar_radius_mum',self.pillar_radius_mum
     
-    # refractive indices
-    n_Diamond = 2.4; #no unit
-    n_Air = 1; #no unit
-    n_bottom_square = n_Diamond; #3.5214; #no unit
-    # distance between holes
-    #d_holes_mum = 0.220; #mum
-    d_holes_mum = Lambda/(4*n_Diamond)+Lambda/(4*n_Air);#mum
-    # hole radius
-    #hole_radius_X = 0.28*d_holes_mum; #mum
-    hole_radius_X = (Lambda/(4*n_Air))/2;#mum
-    hole_radius_Z = self.pillar_radius_mum - (d_holes_mum-2*hole_radius_X); #mum
-    
-    print >>sys.stderr, 'hole_radius_X',hole_radius_X
-    print >>sys.stderr, 'hole_radius_Z',hole_radius_Z
-    print >>sys.stderr, 'd_holes_mum',d_holes_mum
-    print >>sys.stderr, 'self.pillar_radius_mum',self.pillar_radius_mum
-    
-    if hole_radius_Z<=0:
-      print >>sys.stderr, 'ERROR: negative hole_radius_Z = ',hole_radius_Z
-      return
-    
-    # number of holes on bottom
-    bottom_N = 6; #no unit
-    # number of holes on top
-    top_N = 3; #no unit
-    # distance between 2 holes around cavity
-    #d_holes_cavity = 2*d_holes_mum; #mum
-    d_holes_cavity = Lambda/n_Diamond + 2*hole_radius_X;#mum
-    Lcav = d_holes_cavity - d_holes_mum; # mum
-    # d_holes_cavity = Lcav + d_holes_mum
-    # top box offset
-    top_box_offset=1; #mum
-    #bottom square thickness
-    h_bottom_square=0.5 # mum
-  
-    # self.ITERATIONS = 261600; #no unit
-    # self.ITERATIONS = 32000; #no unit
-    # self.ITERATIONS = 10; #no unit
-  
-    # self.ITERATIONS=1048400
-    FIRST=65400
-    REPETITION=524200
-    WALLTIME=360
-  
-    TIMESTEP=0.9; #mus
-    TIME_CONSTANT=4.000000E-09; #mus
-    AMPLITUDE=1.000000E+01; #V/mum???
-    TIME_OFFSET=2.700000E-08; #mus
-            
+    if self.hole_radius_Z<=0:
+      print >>sys.stderr, 'ERROR: negative self.hole_radius_Z = ',self.hole_radius_Z
+      sys.exit(-1)
+
+    if self.pillar_radius_mum<self.hole_radius_X:
+      print >>sys.stderr, 'ERROR: self.pillar_radius_mum = '+str(self.pillar_radius_mum)+' < self.hole_radius_X = '+str(self.hole_radius_X)
+      sys.exit(-1)      
+
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # additional calculations
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    # max mesh intervals
-    #delta_diamond = 0.5*Lambda/(15*n_Diamond)
-    delta_diamond = Lambda/(10*n_Diamond);
-    delta_hole = delta_diamond
-    #delta_outside = 2*delta_diamond
-    delta_outside = Lambda/(4*n_Air)
-    delta_center = delta_diamond
-    delta_boundary = delta_diamond
-    
-    # center area where excitation takes place (for meshing)
-    center_radius = 2*delta_center
-  
-    # buffers (area outside pillar where mesh is fine)
-    X_buffer = 4*delta_diamond; #mum
-    Y_buffer = 32*delta_diamond; #mum
-    Z_buffer = 4*delta_diamond; #mum
-  
-    # dimension and position parameters
-    pillar_height = (bottom_N+top_N)*d_holes_mum + Lcav
-    Xmax = h_bottom_square + pillar_height + X_buffer + top_box_offset; #mum
-    #Ymax = 5*2*self.pillar_radius_mum;
-    #Ymax = 2*(self.pillar_radius_mum + X_buffer + 4*delta_outside); #mum
-    Ymax = 2*(self.pillar_radius_mum + 4*delta_diamond + 4*delta_outside); #mum
-    Zmax = Ymax; #mum
-    
-    pillar_centre_Y = Ymax/2
-    pillar_centre_X = bottom_N*d_holes_mum + Lcav/2
-    pillar_centre_Z = Zmax/2
+        
+    pillar_centre_X = self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.Lcav/2
+    pillar_centre_Y = self.Ymax/2
+    pillar_centre_Z = self.Zmax/2
   
     # meshing parameters
     thicknessVector_X = [ ]
     max_delta_Vector_X = [ ]
     mesh_factor=1
-    for i in range(bottom_N):
-      thicknessVector_X += [ d_holes_mum/2 - hole_radius_X, 2*hole_radius_X, d_holes_mum/2 - hole_radius_X ]
-      max_delta_Vector_X += [ mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ]
-    thicknessVector_X += [ Lcav/2-center_radius, 2*center_radius, Lcav/2-center_radius ]
-    max_delta_Vector_X += [ mesh_factor*delta_diamond, mesh_factor*delta_center, mesh_factor*delta_diamond ]
-    for i in range(top_N):
-      thicknessVector_X += [ d_holes_mum/2 - hole_radius_X, 2*hole_radius_X, d_holes_mum/2 - hole_radius_X ]
-      max_delta_Vector_X += [ mesh_factor*delta_diamond, mesh_factor*delta_hole, mesh_factor*delta_diamond ]
+    for i in range(self.bottom_N):
+      thicknessVector_X += [ self.d_holes_mum/2 - self.hole_radius_X, 2*self.hole_radius_X, self.d_holes_mum/2 - self.hole_radius_X ]
+      max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_hole, mesh_factor*self.delta_diamond ]
+    thicknessVector_X += [ self.Lcav/2-self.center_radius, 2*self.center_radius, self.Lcav/2-self.center_radius ]
+    max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_center, mesh_factor*self.delta_diamond ]
+    for i in range(self.top_N):
+      thicknessVector_X += [ self.d_holes_mum/2 - self.hole_radius_X, 2*self.hole_radius_X, self.d_holes_mum/2 - self.hole_radius_X ]
+      max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_hole, mesh_factor*self.delta_diamond ]
   
     delta_min = min(max_delta_Vector_X)
   
     if self.HOLE_TYPE == 'cylinder':
-      thicknessVector_Y_1 = [ Zmax/2-self.pillar_radius_mum-Z_buffer, Z_buffer, self.pillar_radius_mum-center_radius, center_radius ]
+      thicknessVector_Y_1 = [ self.Zmax/2-self.pillar_radius_mum-self.Z_buffer, self.Z_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     elif self.HOLE_TYPE == 'square_holes':
-      thicknessVector_Y_1 = [ Zmax/2-self.pillar_radius_mum-Z_buffer, Z_buffer, self.pillar_radius_mum-center_radius, center_radius ]
+      thicknessVector_Y_1 = [ self.Zmax/2-self.pillar_radius_mum-self.Z_buffer, self.Z_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     elif self.HOLE_TYPE == 'rectangular_holes':
-      thicknessVector_Y_1 = [ Zmax/2-self.pillar_radius_mum-Z_buffer, Z_buffer, self.pillar_radius_mum-center_radius, center_radius ]
+      thicknessVector_Y_1 = [ self.Zmax/2-self.pillar_radius_mum-self.Z_buffer, self.Z_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     else:
       print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
   
     thicknessVector_Y_2 = thicknessVector_Y_1[:]; thicknessVector_Y_2.reverse()
     thicknessVector_Y = thicknessVector_Y_1 + thicknessVector_Y_2
     
-    max_delta_Vector_Y_1 = [ delta_outside, delta_boundary, delta_hole, delta_center ]
+    max_delta_Vector_Y_1 = [ self.delta_outside, self.delta_boundary, self.delta_hole, self.delta_center ]
     max_delta_Vector_Y_2 = max_delta_Vector_Y_1[:]; max_delta_Vector_Y_2.reverse();
     max_delta_Vector_Y = max_delta_Vector_Y_1 + max_delta_Vector_Y_2
   
     #print 'thicknessVector_Y = ', thicknessVector_Y
     #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
   
-    thicknessVector_Z = [ Ymax/2-self.pillar_radius_mum-X_buffer, X_buffer, self.pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ]
-    max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ]
+    thicknessVector_Z = [ self.Ymax/2.0-self.pillar_radius_mum-self.X_buffer,
+    self.X_buffer,
+    self.pillar_radius_mum-self.hole_radius_X,
+    self.hole_radius_X-self.center_radius,
+    self.center_radius ]
+    max_delta_Vector_Z = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
     
     #Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
     #print('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector))
@@ -177,6 +196,10 @@ class pillar_1D:
     #subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
     #print('============')
     
+    print max_delta_Vector_X; print thicknessVector_X
+    print max_delta_Vector_Y; print thicknessVector_Y
+    print max_delta_Vector_Z; print thicknessVector_Z
+    
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
@@ -184,33 +207,33 @@ class pillar_1D:
     # for the frequency snapshots
     
     Xplanes = [ 0,
-    bottom_N/2*d_holes_mum,
-    pillar_centre_X-delta_center,
+    self.bottom_N/2*self.d_holes_mum,
+    pillar_centre_X-self.delta_center,
     pillar_centre_X,
-    pillar_centre_X+delta_center,
-    bottom_N*d_holes_mum + Lcav + top_N/2*d_holes_mum,
+    pillar_centre_X+self.delta_center,
+    self.bottom_N*self.d_holes_mum + self.Lcav + self.top_N/2*self.d_holes_mum,
     pillar_height ]
     
     Yplanes = [ 0,
-    Zmax/2-self.pillar_radius_mum-Z_buffer,
-    Zmax/2-self.pillar_radius_mum,
-    Zmax/2-hole_radius_X,
-    Zmax/2-2*delta_center,
-    Zmax/2-delta_center,
-    Zmax/2,
-    Zmax/2+delta_center,
-    Zmax/2+2*delta_center,
-    Zmax/2+hole_radius_X,
-    Zmax/2+self.pillar_radius_mum,
-    Zmax/2+self.pillar_radius_mum+Z_buffer,
-    Zmax ]
+    self.Zmax/2-self.pillar_radius_mum-self.Z_buffer,
+    self.Zmax/2-self.pillar_radius_mum,
+    self.Zmax/2-self.hole_radius_X,
+    self.Zmax/2-2*self.delta_center,
+    self.Zmax/2-self.delta_center,
+    self.Zmax/2,
+    self.Zmax/2+self.delta_center,
+    self.Zmax/2+2*self.delta_center,
+    self.Zmax/2+self.hole_radius_X,
+    self.Zmax/2+self.pillar_radius_mum,
+    self.Zmax/2+self.pillar_radius_mum+self.Z_buffer,
+    self.Zmax ]
   
     Zplanes = [ 0,
-    Ymax/2-self.pillar_radius_mum-X_buffer,
-    Ymax/2-self.pillar_radius_mum,
-    Ymax/2-2*delta_center,
-    Ymax/2-delta_center,
-    Ymax/2 ]
+    self.Ymax/2-self.pillar_radius_mum-self.X_buffer,
+    self.Ymax/2-self.pillar_radius_mum,
+    self.Ymax/2-2*self.delta_center,
+    self.Ymax/2-self.delta_center,
+    self.Ymax/2 ]
     
     # for probes
     probes_X_vector = Xplanes[1:len(Xplanes)-1]
@@ -241,7 +264,7 @@ class pillar_1D:
     # WORKDIR = ['$HOME/loncar_structure','/',self.BASENAME]
     if self.verbose:
       print('Writing shellscript '+filename+' ...')
-    GEOshellscript(self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.sh', self.BASENAME, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME)
+    GEOshellscript(self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.sh', self.BASENAME, '$HOME/bin/fdtd', '$JOBDIR', self.WALLTIME)
     if self.verbose:
       print('...done')
   
@@ -272,65 +295,65 @@ class pillar_1D:
       if self.print_podium:
         # create bottom block
         L = [ 0, 0, 0 ]
-        U = [ X_current + h_bottom_square, Ymax, Zmax ]
-        GEOblock(out, L, U, pow(n_bottom_square,2), 0)
+        U = [ X_current + self.h_bottom_square, self.Ymax, self.Zmax ]
+        GEOblock(out, L, U, pow(self.n_bottom_square,2), 0)
   
-      X_current = X_current + h_bottom_square;
+      X_current = X_current + self.h_bottom_square;
       
       if self.print_pillar:
         # create main pillar
-        L = [ X_current, Ymax/2 - self.pillar_radius_mum, Zmax/2 - self.pillar_radius_mum ]
-        U = [ X_current + pillar_height, Ymax/2 + self.pillar_radius_mum, Zmax/2 + self.pillar_radius_mum ]
-        GEOblock(out, L, U, pow(n_Diamond,2), 0)
+        L = [ X_current, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum ]
+        U = [ X_current + pillar_height, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum ]
+        GEOblock(out, L, U, pow(self.n_Diamond,2), 0)
     
-      X_current = X_current + d_holes_mum/2
+      X_current = X_current + self.d_holes_mum/2
     
       if self.print_holes:
           # hole settings
-          permittivity = pow(n_Air,2)
+          permittivity = pow(self.n_Air,2)
           conductivity = 0
           
           # create bottom holes
-          for i in range(bottom_N):
+          for i in range(self.bottom_N):
             if self.print_holes_bottom:
-              centre = [ X_current, Ymax/2, Zmax/2 ]
+              centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
               if self.HOLE_TYPE == 'cylinder':
-                GEOcylinder(out, centre, 0, hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
+                GEOcylinder(out, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
               elif self.HOLE_TYPE == 'square_holes':
-                lower = [ X_current - hole_radius_X, Ymax/2 - self.pillar_radius_mum, Zmax/2 - hole_radius_X]
-                upper = [ X_current + hole_radius_X, Ymax/2 + self.pillar_radius_mum, Zmax/2 + hole_radius_X]
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_X]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_X]
                 GEOblock(out, lower, upper, permittivity, conductivity)
               elif self.HOLE_TYPE == 'rectangular_holes':
-                lower = [ X_current - hole_radius_X, Ymax/2 - self.pillar_radius_mum, Zmax/2 - hole_radius_Z]
-                upper = [ X_current + hole_radius_X, Ymax/2 + self.pillar_radius_mum, Zmax/2 + hole_radius_Z]
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
                 GEOblock(out, lower, upper, permittivity, conductivity)
               else:
                 print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
-            X_current = X_current + d_holes_mum
+            X_current = X_current + self.d_holes_mum
     
-          X_current = X_current - d_holes_mum + d_holes_cavity
+          X_current = X_current - self.d_holes_mum + self.d_holes_cavity
     
           # create top holes
-          for i in range(top_N):
+          for i in range(self.top_N):
             if self.print_holes_top:
-              centre = [ X_current, Ymax/2, Zmax/2 ]
+              centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
               if self.HOLE_TYPE == 'cylinder':
-                GEOcylinder(out, centre, 0, hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
+                GEOcylinder(out, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
               elif self.HOLE_TYPE == 'square_holes':
-                lower = [ X_current - hole_radius_X, Ymax/2 - self.pillar_radius_mum, Zmax/2 - hole_radius_X]
-                upper = [ X_current + hole_radius_X, Ymax/2 + self.pillar_radius_mum, Zmax/2 + hole_radius_X]
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_X]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_X]
                 GEOblock(out, lower, upper, permittivity, conductivity)
               elif self.HOLE_TYPE == 'rectangular_holes':
-                lower = [ X_current - hole_radius_X, Ymax/2 - self.pillar_radius_mum, Zmax/2 - hole_radius_Z]
-                upper = [ X_current + hole_radius_X, Ymax/2 + self.pillar_radius_mum, Zmax/2 + hole_radius_Z]
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
                 GEOblock(out, lower, upper, permittivity, conductivity)
               else:
                 print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
-            X_current = X_current + d_holes_mum
+            X_current = X_current + self.d_holes_mum
           
       #write box
       L = [ 0, 0, 0 ]
-      U = [ Xmax, Zmax, Ymax/2 ]
+      U = [ self.Xmax, self.Zmax, self.Ymax/2 ]
       GEObox(out, L, U)
     
       #write footer
@@ -351,16 +374,16 @@ class pillar_1D:
     with open(inp_filename, 'w') as out:
   
       if self.print_excitation:
-        P_Xm = [ pillar_centre_X-2*delta_center, pillar_centre_Y, pillar_centre_Z ]
-        P_Xp = [ pillar_centre_X+2*delta_center, pillar_centre_Y, pillar_centre_Z ]
-        P_Ym1 = [ pillar_centre_X, pillar_centre_Y-1*delta_center, pillar_centre_Z ]
-        P_Yp1 = [ pillar_centre_X, pillar_centre_Y+1*delta_center, pillar_centre_Z ]
-        P_Ym2 = [ pillar_centre_X, pillar_centre_Y-2*delta_center, pillar_centre_Z ]
-        P_Yp2 = [ pillar_centre_X, pillar_centre_Y+2*delta_center, pillar_centre_Z ]
-        P_Zm1 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z-1*delta_center ]
-        P_Zp1 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z+1*delta_center ]
-        P_Zm2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z-2*delta_center ]
-        P_Zp2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z+2*delta_center ]
+        P_Xm = [ pillar_centre_X-2*self.delta_center, pillar_centre_Y, pillar_centre_Z ]
+        P_Xp = [ pillar_centre_X+2*self.delta_center, pillar_centre_Y, pillar_centre_Z ]
+        P_Ym1 = [ pillar_centre_X, pillar_centre_Y-1*self.delta_center, pillar_centre_Z ]
+        P_Yp1 = [ pillar_centre_X, pillar_centre_Y+1*self.delta_center, pillar_centre_Z ]
+        P_Ym2 = [ pillar_centre_X, pillar_centre_Y-2*self.delta_center, pillar_centre_Z ]
+        P_Yp2 = [ pillar_centre_X, pillar_centre_Y+2*self.delta_center, pillar_centre_Z ]
+        P_Zm1 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z-1*self.delta_center ]
+        P_Zp1 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z+1*self.delta_center ]
+        P_Zm2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z-2*self.delta_center ]
+        P_Zp2 = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z+2*self.delta_center ]
         P_center = [ pillar_centre_X, pillar_centre_Y, pillar_centre_Z ]
         Ey = [ 0, 1, 0 ]
         Ez = [ 0, 0, 1 ]
@@ -368,13 +391,13 @@ class pillar_1D:
         type = 10
     
         if self.excitation_type == 1:
-          GEOexcitation(out, 7, P_Ym1, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, 7, P_Ym1, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         elif  self.excitation_type == 2:
-          GEOexcitation(out, 7, P_Zm1, P_center, Ez, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, 7, P_Zm1, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         elif  self.excitation_type == 3:
-          GEOexcitation(out, 7, P_Ym2, P_center, Ey, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, 7, P_Ym2, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         elif  self.excitation_type == 4:
-          GEOexcitation(out, 7, P_Zm2, P_center, Ez, H, type, TIME_CONSTANT, AMPLITUDE, TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, 7, P_Zm2, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         else:
           error('invalid direction')
     
@@ -391,14 +414,14 @@ class pillar_1D:
       flag_1 = 0
       flag_2 = 0
       id_character = 'id'
-      GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, self.ITERATIONS, TIMESTEP, id_character)
+      GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, self.ITERATIONS, self.TIMESTEP, id_character)
     
       if self.print_mesh:
         GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector)
           
       # frequency snapshots
-      first = FIRST
-      repetition = REPETITION
+      first = self.FIRST
+      repetition = self.REPETITION
       interpolate = 1
       real_dft = 0
       mod_only = 0
@@ -413,37 +436,37 @@ class pillar_1D:
         #for iY in range(len(Yplanes)):
           #plane = 2
           #P1 = [0, Yplanes[iY], 0]
-          #P2 = [Xmax, Yplanes[iY], Ymax/2]
+          #P2 = [self.Xmax, Yplanes[iY], self.Ymax/2]
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
         #for iX in range(len(Xplanes)):
           #plane = 1
           #P1 = [Xplanes[iX], 0, 0]
-          #P2 = [Xplanes[iX], Zmax, Ymax/2]
+          #P2 = [Xplanes[iX], self.Zmax, self.Ymax/2]
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
         #for iZ in range(len(Zplanes)):
           #plane = 3
           #P1 = [0, 0, Zplanes[iZ]]
-          #P2 = [Xmax, Zmax, Zplanes[iZ]]
+          #P2 = [self.Xmax, self.Zmax, Zplanes[iZ]]
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 1
         P1 = [pillar_centre_X, 0, 0]
-        P2 = [pillar_centre_X, Zmax, Ymax/2]
+        P2 = [pillar_centre_X, self.Zmax, self.Ymax/2]
         GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 2
-        P1 = [0, Zmax/2, 0]
-        P2 = [Xmax, Zmax/2, Ymax/2]
+        P1 = [0, self.Zmax/2, 0]
+        P2 = [self.Xmax, self.Zmax/2, self.Ymax/2]
         GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 3
-        P1 = [0, 0, Ymax/2-2*delta_center]
-        P2 = [Xmax, Zmax, Ymax/2-2*delta_center]
+        P1 = [0, 0, self.Ymax/2-2*self.delta_center]
+        P2 = [self.Xmax, self.Zmax, self.Ymax/2-2*self.delta_center]
         GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
     
@@ -491,28 +514,57 @@ def main(argv=None):
     #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'rectangular_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, True, True, 'rectangular_holes', 1, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
     
+    print('======== cylinder START ============')
     P = pillar_1D()
     P.DSTDIR = os.getenv('TESTDIR')
     P.ITERATIONS = 32000
     P.print_holes_top = True
     P.print_holes_bottom = True
-    P.EXCITATION_FREQUENCY = get_c0()/0.637
+    P.setLambda(0.637)
     P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
     P.excitation_type = 1
     
     P.HOLE_TYPE = 'cylinder'
     P.BASENAME = P.HOLE_TYPE
     P.pillar_radius_mum = 0.150/2.0
-    print(P.write())
+    P.print_podium = False;
+    P.h_bottom_square = 0;
     
+    P.d_holes_mum = 0.220; #mum
+    P.hole_radius_X = 0.28*P.d_holes_mum; #mum
+    P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
+    P.bottom_N = 12; #no unit
+    P.top_N = 12; #no unit
+    P.d_holes_cavity = 2*P.d_holes_mum; #mum
+    P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+    P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
+    P.delta_hole = P.delta_diamond
+    P.delta_outside = 2*P.delta_diamond
+    P.delta_center = P.delta_diamond
+    P.delta_boundary = P.delta_diamond
+    P.X_buffer = 4*P.delta_diamond; #mum
+    P.Y_buffer = 32*P.delta_diamond; #mum
+    P.Z_buffer = 4*P.delta_diamond; #mum
+    P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
+    P.Ymax = 5*2*P.pillar_radius_mum;
+    P.Zmax = P.Ymax; #mum
+    
+    print(P.write())
+
+    print('======== square_holes START ============')
     P.HOLE_TYPE = 'square_holes'
     P.BASENAME = P.HOLE_TYPE
     P.pillar_radius_mum = 0.150/2.0
+    P.print_podium = True;
+    P.h_bottom_square = 0.5;
     print(P.write())
     
+    print('======== rectangular_holes START ============')
     P.HOLE_TYPE = 'rectangular_holes'
     P.BASENAME = P.HOLE_TYPE
     P.pillar_radius_mum = 1
+    P.print_podium = True;
+    P.h_bottom_square = 0.5;
     print(P.write())
 
   except Usage, err:

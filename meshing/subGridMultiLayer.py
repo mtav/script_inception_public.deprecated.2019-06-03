@@ -29,7 +29,15 @@ def subGridMultiLayer(Section_MaxDeltaVector = [1.76, 2.1385, 2.3535, 1],Section
   
   if len(Section_MaxDeltaVector) != len(Section_ThicknessVector) :
     print('FATAL ERROR: The 2 input vectors do not have the same size.')
-    return
+    sys.exit(-1)
+
+  if min(Section_MaxDeltaVector)<0:
+    print('FATAL ERROR: Section_MaxDeltaVector contains negative values: '+str(Section_MaxDeltaVector))
+    sys.exit(-1)
+
+  if min(Section_ThicknessVector)<0:
+    print('FATAL ERROR: Section_ThicknessVector contains negative values: '+str(Section_ThicknessVector))
+    sys.exit(-1)
 
   totalHeight = sum(Section_ThicknessVector);
 
