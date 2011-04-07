@@ -363,6 +363,13 @@ class pillar_1D:
                 lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
                 upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
                 GEOblock(out, lower, upper, permittivity, conductivity)
+              elif self.HOLE_TYPE == 'rectangular_yagi':
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+                GEOblock(out, lower, upper, permittivity, conductivity)
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum]
+                GEOblock(out, lower, upper, permittivity, conductivity)
               else:
                 print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
             X_current = X_current + self.d_holes_mum
@@ -382,6 +389,13 @@ class pillar_1D:
               elif self.HOLE_TYPE == 'rectangular_holes':
                 lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
                 upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
+                GEOblock(out, lower, upper, permittivity, conductivity)
+              elif self.HOLE_TYPE == 'rectangular_yagi':
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+                GEOblock(out, lower, upper, permittivity, conductivity)
+                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
+                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum]
                 GEOblock(out, lower, upper, permittivity, conductivity)
               else:
                 print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
@@ -670,15 +684,15 @@ def rectangular_yagi(bottomN,topN):
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
   P.excitation_type = 1
   
-  P.HOLE_TYPE = 'rectangular_holes'
-  P.BASENAME = 'rectangular_yagi'+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.HOLE_TYPE = 'rectangular_yagi'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.pillar_radius_mum = 1
   P.print_podium = True
   P.h_bottom_square = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
   P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.hole_radius_Z = P.pillar_radius_mum + (P.d_holes_mum-2*P.hole_radius_X); #mum
+  P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
