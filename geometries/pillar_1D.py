@@ -311,6 +311,28 @@ class pillar_1D:
       print('...done')
     return(cmd_filename)
   
+  def addHole(self, FILE, X_current, permittivity, conductivity):
+    centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
+    if self.HOLE_TYPE == 'cylinder':
+      GEOcylinder(FILE, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
+    elif self.HOLE_TYPE == 'square_holes':
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_X]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_X]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+    elif self.HOLE_TYPE == 'rectangular_holes':
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+    elif self.HOLE_TYPE == 'rectangular_yagi':
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+    else:
+      print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+    
   def writeGEO(self):
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # .geo file
@@ -352,26 +374,7 @@ class pillar_1D:
           # create bottom holes
           for i in range(self.bottom_N):
             if self.print_holes_bottom:
-              centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
-              if self.HOLE_TYPE == 'cylinder':
-                GEOcylinder(out, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
-              elif self.HOLE_TYPE == 'square_holes':
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_X]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_X]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-              elif self.HOLE_TYPE == 'rectangular_holes':
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-              elif self.HOLE_TYPE == 'rectangular_yagi':
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-              else:
-                print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+              self.addHole(out,X_current, permittivity, conductivity)
             X_current = X_current + self.d_holes_mum
     
           X_current = X_current - self.d_holes_mum + self.d_holes_cavity
@@ -379,26 +382,7 @@ class pillar_1D:
           # create top holes
           for i in range(self.top_N):
             if self.print_holes_top:
-              centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
-              if self.HOLE_TYPE == 'cylinder':
-                GEOcylinder(out, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
-              elif self.HOLE_TYPE == 'square_holes':
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_X]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_X]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-              elif self.HOLE_TYPE == 'rectangular_holes':
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-              elif self.HOLE_TYPE == 'rectangular_yagi':
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-                lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-                upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum]
-                GEOblock(out, lower, upper, permittivity, conductivity)
-              else:
-                print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+              self.addHole(out,X_current, permittivity, conductivity)
             X_current = X_current + self.d_holes_mum
           
       #write box
