@@ -354,19 +354,6 @@ class pillar_1D:
       Z_left = self.Zmax/2.0 - self.pillar_radius_mum
       Z_right = self.Zmax/2.0 + self.pillar_radius_mum
       offset = X_current - self.hole_radius_X
-      #for i in range(self.Nvoxels):
-        ## bottom blocks
-        #lower = [ X_current + (i/N*(R-voxel_radius_X)), voxel_Ymin, self.Zmax/2 - self.pillar_radius_mum]
-        #upper = [ X_current + (i/N*(R-voxel_radius_X)) + 2*voxel_radius_X, voxel_Ymax, self.Zmax/2 - self.pillar_radius_mum + (D/R)*(i/(N-1)*(R-voxel_radius_X))]
-        #GEOblock(FILE, lower, upper, permittivity, conductivity)
-        ## top blocks
-        #lower = [ X_current + R + (i/N*(R-voxel_radius_X)), voxel_Ymin, self.Zmax/2 - self.pillar_radius_mum]
-        #upper = [ X_current + R + (i/N*(R-voxel_radius_X)) + 2*voxel_radius_X, voxel_Ymax, self.Zmax/2 - self.pillar_radius_mum + (D/R)*(2*R-(i/(N-1)*(R-voxel_radius_X)))]
-        #GEOblock(FILE, lower, upper, permittivity, conductivity)
-      ### middle block
-      #lower = [ X_current + R, voxel_Ymin, self.Zmax/2 - self.pillar_radius_mum]
-      #upper = [ X_current + R + 2*voxel_radius_X, voxel_Ymax, self.Zmax/2]# - self.pillar_radius_mum + D]
-      #GEOblock(FILE, lower, upper, permittivity, conductivity)
       for i in range(self.Nvoxels):
         # bottom left blocks
         lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
@@ -599,7 +586,7 @@ class pillar_1D:
     
     return(inp_filename)
 
-def cylinder():
+def cylinder(bottomN,topN):
   P = pillar_1D()
   print('======== cylinder START ============')
   P.DSTDIR = os.getenv('TESTDIR')
@@ -611,7 +598,7 @@ def cylinder():
   P.excitation_type = 1
   
   P.HOLE_TYPE = 'cylinder'
-  P.BASENAME = P.HOLE_TYPE
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.pillar_radius_mum = 0.150/2.0
   P.print_podium = False;
   P.h_bottom_square = 0;
@@ -619,8 +606,8 @@ def cylinder():
   P.d_holes_mum = 0.220; #mum
   P.hole_radius_X = 0.28*P.d_holes_mum; #mum
   P.hole_radius_Z = P.hole_radius_X
-  P.bottom_N = 12; #no unit
-  P.top_N = 12; #no unit
+  P.bottom_N = bottomN; #no unit
+  P.top_N = topN; #no unit
   P.d_holes_cavity = 2*P.d_holes_mum; #mum
   P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
   P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
@@ -639,7 +626,7 @@ def cylinder():
   
   P.write()
   
-def square_holes():
+def square_holes(bottomN,topN):
   P = pillar_1D()
   print('======== square_holes START ============')
   P.DSTDIR = os.getenv('TESTDIR')
@@ -651,7 +638,7 @@ def square_holes():
   P.excitation_type = 1
   
   P.HOLE_TYPE = 'square_holes'
-  P.BASENAME = P.HOLE_TYPE
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.pillar_radius_mum = 1
   P.print_podium = True
   P.h_bottom_square = 0.5 # mum #bottom square thickness
@@ -659,8 +646,8 @@ def square_holes():
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
   P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
   P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
-  P.bottom_N = 6; #no unit
-  P.top_N = 3; #no unit
+  P.bottom_N = bottomN; #no unit
+  P.top_N = topN; #no unit
   P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
   P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
@@ -860,8 +847,10 @@ def main(argv=None):
     print('======== default START ============')
     P.write()
     
-    cylinder()
-    square_holes()
+    cylinder(12,12)
+    cylinder(20,10)
+    square_holes(6,3)
+    square_holes(20,10)
     rectangular_holes(6,3)
     rectangular_holes(6,4)
     rectangular_holes(7,4)
