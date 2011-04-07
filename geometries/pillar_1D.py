@@ -556,6 +556,7 @@ def main(argv=None):
     P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
     P.Ymax = 5*2*P.pillar_radius_mum;
     P.Zmax = P.Ymax; #mum
+    P.center_radius = 2*P.delta_center
     
     print(P.write())
 
@@ -593,6 +594,7 @@ def main(argv=None):
     P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
     P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
     P.Zmax = P.Ymax; #mum
+    P.center_radius = 2*P.delta_center
 
     print(P.write())
     
@@ -630,6 +632,7 @@ def main(argv=None):
     P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
     P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
     P.Zmax = P.Ymax; #mum
+    P.center_radius = 2*P.delta_center
 
     print(P.write())
 
