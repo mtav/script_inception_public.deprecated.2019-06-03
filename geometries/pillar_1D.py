@@ -108,6 +108,17 @@ class pillar_1D:
     self.Ymax = 2*(self.pillar_radius_mum + 4*self.delta_diamond + 4*self.delta_outside); #mum
     self.Zmax = self.Ymax; #mum
 
+    ##############################
+    # 'private' variables
+    ##############################
+    self.delta_X_vector = []
+    self.delta_Y_vector = []
+    self.delta_Z_vector = []
+    self.probes_X_vector = []
+    self.probes_Y_vector = []
+    self.probes_Z_vector = []
+    self.probes_X_vector_center = []
+
   def getPillarHeight(self):
     return (self.bottom_N+self.top_N)*self.d_holes_mum + self.Lcav
 
@@ -128,11 +139,11 @@ class pillar_1D:
     return self.Zmax/2
 
   def write(self):
-    self.mesh()
+    #self.mesh()
     self.writeIN();
     self.writeSH();
     self.writeCMD();
-    self.writeGEO();
+    print self.writeGEO();
     self.writeINP();
   def mesh(self):
     
@@ -217,13 +228,13 @@ class pillar_1D:
     #print max_delta_Vector_Y; print thicknessVector_Y
     #print max_delta_Vector_Z; print thicknessVector_Z
     
-    delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
-    delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
-    delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
+    self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
+    self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
+    self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
   
     # for the frequency snapshots
     
-    Xplanes = [ 0,
+    self.Xplanes = [ 0,
     self.bottom_N/2*self.d_holes_mum,
     self.getPillarCenterX()-self.delta_center,
     self.getPillarCenterX(),
@@ -231,7 +242,7 @@ class pillar_1D:
     self.bottom_N*self.d_holes_mum + self.Lcav + self.top_N/2*self.d_holes_mum,
     self.getPillarHeight() ]
     
-    Yplanes = [ 0,
+    self.Yplanes = [ 0,
     self.Ymax/2-self.pillar_radius_mum-self.Y_buffer,
     self.Ymax/2-self.pillar_radius_mum,
     self.Ymax/2-self.hole_radius_X,
@@ -245,7 +256,7 @@ class pillar_1D:
     self.Ymax/2+self.pillar_radius_mum+self.Y_buffer,
     self.Ymax ]
   
-    Zplanes = [ 0,
+    self.Zplanes = [ 0,
     self.Zmax/2-self.pillar_radius_mum-self.Z_buffer,
     self.Zmax/2-self.pillar_radius_mum,
     self.Zmax/2-2*self.delta_center,
@@ -253,12 +264,12 @@ class pillar_1D:
     self.Zmax/2 ]
     
     # for probes
-    probes_X_vector = Xplanes[1:len(Xplanes)-1]
-    probes_Y_vector = Yplanes[1:8]
-    probes_Z_vector = Zplanes[1:4]
+    self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
+    self.probes_Y_vector = self.Yplanes[1:8]
+    self.probes_Z_vector = self.Zplanes[1:4]
     
-    probes_X_vector_center = Xplanes[2:5]
-    probes_Y_vector_center = [Yplanes[5],Yplanes[7]]
+    self.probes_X_vector_center = self.Xplanes[2:5]
+    self.probes_Y_vector_center = [self.Yplanes[5],self.Yplanes[7]]
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # Files to generate:
@@ -445,7 +456,7 @@ class pillar_1D:
       GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, self.ITERATIONS, self.TIMESTEP, id_character)
     
       if self.print_mesh:
-        GEOmesh(out, delta_X_vector, delta_Y_vector, delta_Z_vector)
+        GEOmesh(out, self.delta_X_vector, self.delta_Y_vector, self.delta_Z_vector)
           
       # frequency snapshots
       first = self.FIRST
@@ -461,22 +472,22 @@ class pillar_1D:
       power = 0
       
       if self.print_snaphots == 1:
-        #for iY in range(len(Yplanes)):
+        #for iY in range(len(self.Yplanes)):
           #plane = 2
-          #P1 = [0, Yplanes[iY], 0]
-          #P2 = [self.Xmax, Yplanes[iY], self.Ymax/2]
+          #P1 = [0, self.Yplanes[iY], 0]
+          #P2 = [self.Xmax, self.Yplanes[iY], self.Ymax/2]
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
-        #for iX in range(len(Xplanes)):
+        #for iX in range(len(self.Xplanes)):
           #plane = 1
-          #P1 = [Xplanes[iX], 0, 0]
-          #P2 = [Xplanes[iX], self.Zmax, self.Ymax/2]
+          #P1 = [self.Xplanes[iX], 0, 0]
+          #P2 = [self.Xplanes[iX], self.Zmax, self.Ymax/2]
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
-        #for iZ in range(len(Zplanes)):
+        #for iZ in range(len(self.Zplanes)):
           #plane = 3
-          #P1 = [0, 0, Zplanes[iZ]]
-          #P2 = [self.Xmax, self.Zmax, Zplanes[iZ]]
+          #P1 = [0, 0, self.Zplanes[iZ]]
+          #P2 = [self.Xmax, self.Zmax, self.Zplanes[iZ]]
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
     
@@ -505,18 +516,18 @@ class pillar_1D:
         H=[1,1,1]
         J=[0,0,0]
         power = 0
-        for iX in range(len(probes_X_vector)):
+        for iX in range(len(self.probes_X_vector)):
           # XZ probes
-          for iZ in range(len(probes_Z_vector)):
-            GEOprobe(out, [probes_X_vector[iX], Yplanes[5], probes_Z_vector[iZ]], step, E, H, J, power )
+          for iZ in range(len(self.probes_Z_vector)):
+            GEOprobe(out, [self.probes_X_vector[iX], self.Yplanes[5], self.probes_Z_vector[iZ]], step, E, H, J, power )
           # XY probes
-          for iY in range(len(probes_Y_vector)):
-            GEOprobe(out, [probes_X_vector[iX], probes_Y_vector[iY], Zplanes[4]], step, E, H, J, power )
+          for iY in range(len(self.probes_Y_vector)):
+            GEOprobe(out, [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[4]], step, E, H, J, power )
         
         # XY center probes
-        for iX in range(len(probes_X_vector_center)):
-          for iY in range(len(probes_Y_vector_center)):
-            GEOprobe(out, [probes_X_vector_center[iX], probes_Y_vector_center[iY], Zplanes[3]], step, E, H, J, power )
+        for iX in range(len(self.probes_X_vector_center)):
+          for iY in range(len(self.probes_Y_vector_center)):
+            GEOprobe(out, [self.probes_X_vector_center[iX], self.probes_Y_vector_center[iY], self.Zplanes[3]], step, E, H, J, power )
       
       #write footer
       out.write('end\n'); #end the file
@@ -566,7 +577,7 @@ def cylinder():
   P.Zmax = P.Ymax; #mum
   P.center_radius = 2*P.delta_center
   
-  print(P.write())
+  P.write()
   
 def square_holes():
   P = pillar_1D()
@@ -606,7 +617,7 @@ def square_holes():
   P.Zmax = P.Ymax; #mum
   P.center_radius = 2*P.delta_center
 
-  print(P.write())
+  P.write()
 
 def rectangular_holes(bottomN,topN):
   P = pillar_1D()
@@ -646,7 +657,7 @@ def rectangular_holes(bottomN,topN):
   P.Zmax = P.Ymax; #mum
   P.center_radius = 2*P.delta_center
 
-  print(P.write())
+  P.write()
 
 def rectangular_yagi(bottomN,topN):
   P = pillar_1D()
@@ -686,7 +697,7 @@ def rectangular_yagi(bottomN,topN):
   P.Zmax = P.Ymax; #mum
   P.center_radius = 2*P.delta_center
 
-  print(P.write())
+  P.write()
 
 def main(argv=None):
   if argv is None:
@@ -704,7 +715,8 @@ def main(argv=None):
 
     P = pillar_1D()
     print('======== default START ============')
-    print(P.write())
+    P.write()
+    
     cylinder()
     square_holes()
     rectangular_holes(6,3)
