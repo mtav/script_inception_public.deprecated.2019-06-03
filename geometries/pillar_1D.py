@@ -599,7 +599,7 @@ def cylinder(bottomN,topN):
   
   P.HOLE_TYPE = 'cylinder'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.pillar_radius_mum = 0.150/2.0
+  P.pillar_radius_mum = 0.100# 0.150/2.0
   P.print_podium = False;
   P.h_bottom_square = 0;
   
