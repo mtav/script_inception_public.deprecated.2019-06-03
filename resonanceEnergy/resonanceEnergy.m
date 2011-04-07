@@ -1,16 +1,16 @@
-function [ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy(nGaAs, nAlGaAs, n0, Lcav, radius)
+function [ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy(n_cavity, n_mirror, n_outside, Lcav, radius)
   %resonanceEnergy(3.521,2.973,1,253,radius)
   %input:
-  % nGaAs=3.521;%no unit
-  % nAlGaAs=2.973;%no unit
-  % n0 = 1; % air refractive index
+  % n_cavity=3.521;%no unit
+  % n_mirror=2.973;%no unit
+  % n_outside = 1; % air refractive index
   % Lcav = 253; % (nm)
   % radius (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
   %output:
   % E (meV)
   % lambda (nm)
   
-  neff = sqrt(2*nGaAs^4/(3*nGaAs^2-nAlGaAs^2)); % average refractive index
+  neff = get_neff(n_cavity, n_mirror); % average refractive index
 
   % Mode LPlm
   L = 0;
@@ -53,11 +53,11 @@ function [ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy
   b = 1 - (u.^2 ./ v'.^2); % = u^2/v^2
   w = sqrt(v'.^2 - u.^2);
 
-  lambda_vector = sqrt(b.*(neff^2-n0^2)+n0^2)*Lcav*(nGaAs/neff); % (nm)
+  lambda_vector = sqrt(b.*(neff^2-n_outside^2)+n_outside^2)*Lcav*(n_cavity/neff); % (nm)
   E_vector = (get_h()*get_c0()/get_e())./(lambda_vector.*10^(-9)); %energy (eV)
   E_vector = E_vector'*1000; % energy (meV)
   k0 = 2*pi./lambda_vector; % free space wave number
-  kn = k0.*sqrt(neff^2-n0^2); 
+  kn = k0.*sqrt(neff^2-n_outside^2); 
   radius_vector = v./(kn'*1000); % radius (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
   % lambda_vector = 10^9*get_h()*get_c0()./(E_vector*10^-3*get_e()); % nm
 
