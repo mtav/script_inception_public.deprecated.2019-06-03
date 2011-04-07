@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 #~ import sys
 #~ import os
 #~ import getopt
@@ -109,6 +110,8 @@ class pillar_1D:
     #self.Ymax = 2*(self.pillar_radius_mum + self.Y_buffer + 4*self.delta_outside); #mum
     self.Ymax = 2*(self.pillar_radius_mum + 4*self.delta_diamond + 4*self.delta_outside); #mum
     self.Zmax = self.Ymax; #mum
+
+    self.Nvoxels = 10
 
     ##############################
     # 'private' variables
@@ -342,11 +345,52 @@ class pillar_1D:
       GEOblock(FILE, lower, upper, permittivity, conductivity)
       GEOrotation(FILE, numpy.add(lower,upper)/2.0, [0,1,0], 45)
     elif self.HOLE_TYPE == 'triangular_yagi_voxel':
-      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum - (self.pillar_radius_mum - self.hole_radius_Z)]
-      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+      voxel_Ymin = self.Ymax/2.0 - self.pillar_radius_mum
+      voxel_Ymax = self.Ymax/2.0 + self.pillar_radius_mum
+      voxel_radius_X = self.hole_radius_X/( 2.*self.Nvoxels + 1.)
+      D = self.pillar_radius_mum - self.hole_radius_Z
+      R = self.hole_radius_X
+      N = self.Nvoxels
+      Z_left = self.Zmax/2.0 - self.pillar_radius_mum
+      Z_right = self.Zmax/2.0 + self.pillar_radius_mum
+      offset = X_current - self.hole_radius_X
+      #for i in range(self.Nvoxels):
+        ## bottom blocks
+        #lower = [ X_current + (i/N*(R-voxel_radius_X)), voxel_Ymin, self.Zmax/2 - self.pillar_radius_mum]
+        #upper = [ X_current + (i/N*(R-voxel_radius_X)) + 2*voxel_radius_X, voxel_Ymax, self.Zmax/2 - self.pillar_radius_mum + (D/R)*(i/(N-1)*(R-voxel_radius_X))]
+        #GEOblock(FILE, lower, upper, permittivity, conductivity)
+        ## top blocks
+        #lower = [ X_current + R + (i/N*(R-voxel_radius_X)), voxel_Ymin, self.Zmax/2 - self.pillar_radius_mum]
+        #upper = [ X_current + R + (i/N*(R-voxel_radius_X)) + 2*voxel_radius_X, voxel_Ymax, self.Zmax/2 - self.pillar_radius_mum + (D/R)*(2*R-(i/(N-1)*(R-voxel_radius_X)))]
+        #GEOblock(FILE, lower, upper, permittivity, conductivity)
+      ### middle block
+      #lower = [ X_current + R, voxel_Ymin, self.Zmax/2 - self.pillar_radius_mum]
+      #upper = [ X_current + R + 2*voxel_radius_X, voxel_Ymax, self.Zmax/2]# - self.pillar_radius_mum + D]
+      #GEOblock(FILE, lower, upper, permittivity, conductivity)
+      for i in range(self.Nvoxels):
+        # bottom left blocks
+        lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
+        upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
+        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        # top left blocks
+        lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
+        upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
+        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        # bottom right blocks
+        lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
+        upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
+        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        # top right blocks
+        lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
+        upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
+        GEOblock(FILE, lower, upper, permittivity, conductivity)
+      ## middle left block
+      lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
+      upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.pillar_radius_mum + D]
       GEOblock(FILE, lower, upper, permittivity, conductivity)
-      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum + (self.pillar_radius_mum - self.hole_radius_Z)]
+      ## middle right block
+      lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
+      upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right-D*(N + 1)/(N+1)]# - self.pillar_radius_mum + D]
       GEOblock(FILE, lower, upper, permittivity, conductivity)
     else:
       print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
@@ -770,11 +814,12 @@ def triangular_yagi_voxel(bottomN,topN):
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.pillar_radius_mum = 0.5
   P.print_podium = True
+  P.print_pillar = True
   P.h_bottom_square = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
   P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
+  P.hole_radius_Z = P.pillar_radius_mum - P.hole_radius_X; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
@@ -792,6 +837,8 @@ def triangular_yagi_voxel(bottomN,topN):
   P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
   P.Zmax = P.Ymax; #mum
   P.center_radius = 2*P.delta_center
+
+  P.Nvoxels = 10;
 
   P.write()
 
