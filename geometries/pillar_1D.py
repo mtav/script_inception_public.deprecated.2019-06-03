@@ -686,13 +686,13 @@ def rectangular_yagi(bottomN,topN):
   
   P.HOLE_TYPE = 'rectangular_yagi'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.pillar_radius_mum = 1
+  P.pillar_radius_mum = 0.5
   P.print_podium = True
   P.h_bottom_square = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
   P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
+  P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
