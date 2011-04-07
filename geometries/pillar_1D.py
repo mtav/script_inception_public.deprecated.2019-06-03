@@ -180,17 +180,39 @@ class pillar_1D:
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     # meshing parameters
+    
+    ###########################
+    # X direction
+    ###########################
+    mesh_factor=1
     thicknessVector_X = [ ]
     max_delta_Vector_X = [ ]
-    mesh_factor=1
+
+    # under the pillar
+    if h_bottom_square>0:
+      thicknessVector_Y = [ self.h_bottom_square ]
+      max_delta_Vector_Y = [ self.delta_bottom_square ]
+
+    # bottom part
     for i in range(self.bottom_N):
       thicknessVector_X += [ self.d_holes_mum/2 - self.hole_radius_X, 2*self.hole_radius_X, self.d_holes_mum/2 - self.hole_radius_X ]
       max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_hole, mesh_factor*self.delta_diamond ]
+    # cavity
     thicknessVector_X += [ self.Lcav/2-self.center_radius, 2*self.center_radius, self.Lcav/2-self.center_radius ]
     max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_center, mesh_factor*self.delta_diamond ]
+    # top part
     for i in range(self.top_N):
       thicknessVector_X += [ self.d_holes_mum/2 - self.hole_radius_X, 2*self.hole_radius_X, self.d_holes_mum/2 - self.hole_radius_X ]
       max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_hole, mesh_factor*self.delta_diamond ]
+    
+    # over the pillar
+    if y_buffer>0:
+      thicknessVector_X +=[ X_buffer ];
+      max_delta_Vector_X += [ delta_boundary ];
+    if top_box_offset>0:
+      thicknessVector_X +=[ top_box_offset ];
+      max_delta_Vector_X += [ delta_outside ];
+    ###########################
   
     delta_min = min(max_delta_Vector_X)
   
@@ -237,15 +259,19 @@ class pillar_1D:
     self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
     self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
   
-    # for the frequency snapshots
-    
-    self.Xplanes = [ 0,
-    self.bottom_N/2*self.d_holes_mum,
-    self.getPillarCenterX()-self.delta_center,
-    self.getPillarCenterX(),
-    self.getPillarCenterX()+self.delta_center,
-    self.bottom_N*self.d_holes_mum + self.Lcav + self.top_N/2*self.d_holes_mum,
-    self.getPillarHeight() ]
+    # for the snapshots
+    self.Xplanes = [ 0, # 0 / 0
+    self.h_bottom_square, # 1 / -
+    self.h_bottom_square + self.bottom_N/2*self.d_holes_mum, # 2 / 1
+    self.getPillarCenterX()-self.delta_center, # 3 / 2
+    self.getPillarCenterX(), # 4 / 3
+    self.getPillarCenterX()+self.delta_center, # 5 / 4
+    self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.Lcav + self.top_N/2*self.d_holes_mum, # 6 / 5
+    self.h_bottom_square + self.getPillarHeight(), # 7 / 6
+    self.h_bottom_square + self.getPillarHeight()+1*self.delta_boundary,# 8 / -
+    self.h_bottom_square + self.getPillarHeight()+8*self.delta_boundary, # 9 / -
+    self.h_bottom_square + self.getPillarHeight()+32*self.delta_boundary, # 10 / -
+    Xmax ] # 11 / -
     
     self.Yplanes = [ 0,
     self.Ymax/2-self.pillar_radius_mum-self.Y_buffer,
@@ -268,12 +294,20 @@ class pillar_1D:
     self.Zmax/2-self.delta_center,
     self.Zmax/2 ]
     
+    # remove duplicates (order of snapshots not important, in fact, ordered is better)
+    self.Xplanes = list(set(self.Xplanes))
+    self.Yplanes = list(set(self.Yplanes))
+    self.Zplanes = list(set(self.Zplanes))
+    
     # for probes
     self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
     self.probes_Y_vector = self.Yplanes[1:8]
     self.probes_Z_vector = self.Zplanes[1:4]
     
-    self.probes_X_vector_center = self.Xplanes[2:5]
+    self.probes_X_vector_center = [self.getPillarCenterX()-self.delta_center,
+    self.getPillarCenterX(),
+    self.getPillarCenterX()+self.delta_center]
+
     self.probes_Y_vector_center = [self.Yplanes[5],self.Yplanes[7]]
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
