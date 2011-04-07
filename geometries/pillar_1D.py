@@ -219,25 +219,25 @@ class pillar_1D:
     self.getPillarHeight() ]
     
     Yplanes = [ 0,
-    self.Zmax/2-self.pillar_radius_mum-self.Z_buffer,
-    self.Zmax/2-self.pillar_radius_mum,
-    self.Zmax/2-self.hole_radius_X,
-    self.Zmax/2-2*self.delta_center,
-    self.Zmax/2-self.delta_center,
-    self.Zmax/2,
-    self.Zmax/2+self.delta_center,
-    self.Zmax/2+2*self.delta_center,
-    self.Zmax/2+self.hole_radius_X,
-    self.Zmax/2+self.pillar_radius_mum,
-    self.Zmax/2+self.pillar_radius_mum+self.Z_buffer,
-    self.Zmax ]
-  
-    Zplanes = [ 0,
-    self.Ymax/2-self.pillar_radius_mum-self.X_buffer,
+    self.Ymax/2-self.pillar_radius_mum-self.Z_buffer,
     self.Ymax/2-self.pillar_radius_mum,
+    self.Ymax/2-self.hole_radius_X,
     self.Ymax/2-2*self.delta_center,
     self.Ymax/2-self.delta_center,
-    self.Ymax/2 ]
+    self.Ymax/2,
+    self.Ymax/2+self.delta_center,
+    self.Ymax/2+2*self.delta_center,
+    self.Ymax/2+self.hole_radius_X,
+    self.Ymax/2+self.pillar_radius_mum,
+    self.Ymax/2+self.pillar_radius_mum+self.Z_buffer,
+    self.Ymax ]
+  
+    Zplanes = [ 0,
+    self.Zmax/2-self.pillar_radius_mum-self.X_buffer,
+    self.Zmax/2-self.pillar_radius_mum,
+    self.Zmax/2-2*self.delta_center,
+    self.Zmax/2-self.delta_center,
+    self.Zmax/2 ]
     
     # for probes
     probes_X_vector = Xplanes[1:len(Xplanes)-1]
