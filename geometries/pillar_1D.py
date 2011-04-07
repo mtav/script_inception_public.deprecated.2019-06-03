@@ -806,7 +806,7 @@ def triangular_yagi_voxel(bottomN,topN):
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
   P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.hole_radius_Z = P.pillar_radius_mum - P.hole_radius_X; #mum
+  P.hole_radius_Z = P.pillar_radius_mum - 3*P.hole_radius_X; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
@@ -829,6 +829,47 @@ def triangular_yagi_voxel(bottomN,topN):
 
   P.write()
 
+def test(bottomN,topN):
+  P = pillar_1D()
+  P.bottom_N = bottomN
+  P.top_N = topN
+  P.HOLE_TYPE = 'cylinder'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.write()
+  P.HOLE_TYPE = 'square_holes'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.write()
+  P.HOLE_TYPE = 'rectangular_holes'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.write()
+  P.HOLE_TYPE = 'rectangular_yagi'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.write()
+  P.HOLE_TYPE = 'triangular_yagi'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.write()
+  P.HOLE_TYPE = 'triangular_yagi_voxel'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.write()
+
+def test2():
+  P = pillar_1D()
+  print('======== default START ============')
+  P.write()
+  
+  cylinder(12,12)
+  cylinder(20,10)
+  square_holes(6,3)
+  square_holes(20,10)
+  rectangular_holes(6,3)
+  rectangular_holes(6,4)
+  rectangular_holes(7,4)
+  rectangular_holes(7,5)
+  rectangular_holes(8,6)
+  rectangular_yagi(20,10)
+  triangular_yagi(20,10)
+  triangular_yagi_voxel(20,10)  
+
 def main(argv=None):
   if argv is None:
       argv = sys.argv
@@ -838,27 +879,8 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # main function
-    #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'cylinder', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
-    #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'square_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
-    #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, 1, 1, 'rectangular_holes', 0.150/2.0, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
-    #in_filename = pillar_1D('test', os.getenv('TESTDIR'), 32000, True, True, 'rectangular_holes', 1, get_c0()/0.637, [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1],1)
-
-    P = pillar_1D()
-    print('======== default START ============')
-    P.write()
-    
-    cylinder(12,12)
-    cylinder(20,10)
-    square_holes(6,3)
-    square_holes(20,10)
-    rectangular_holes(6,3)
-    rectangular_holes(6,4)
-    rectangular_holes(7,4)
-    rectangular_holes(7,5)
-    rectangular_holes(8,6)
-    rectangular_yagi(20,10)
-    triangular_yagi(20,10)
-    triangular_yagi_voxel(20,10)
+    test(20,10)
+    #test2()
     
   except Usage, err:
     print >>sys.stderr, err.msg
