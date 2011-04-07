@@ -95,8 +95,8 @@ class pillar_1D:
     self.center_radius = 2*self.delta_center
   
     # buffers (area outside pillar where mesh is fine)
-    self.X_buffer = 4*self.delta_diamond; #mum
-    self.Y_buffer = 32*self.delta_diamond; #mum
+    self.X_buffer = 32*self.delta_diamond; #mum
+    self.Y_buffer = 4*self.delta_diamond; #mum
     self.Z_buffer = 4*self.delta_diamond; #mum
   
     # dimension and position parameters
@@ -219,7 +219,7 @@ class pillar_1D:
     self.getPillarHeight() ]
     
     Yplanes = [ 0,
-    self.Ymax/2-self.pillar_radius_mum-self.Z_buffer,
+    self.Ymax/2-self.pillar_radius_mum-self.Y_buffer,
     self.Ymax/2-self.pillar_radius_mum,
     self.Ymax/2-self.hole_radius_X,
     self.Ymax/2-2*self.delta_center,
@@ -229,7 +229,7 @@ class pillar_1D:
     self.Ymax/2+2*self.delta_center,
     self.Ymax/2+self.hole_radius_X,
     self.Ymax/2+self.pillar_radius_mum,
-    self.Ymax/2+self.pillar_radius_mum+self.Z_buffer,
+    self.Ymax/2+self.pillar_radius_mum+self.Y_buffer,
     self.Ymax ]
   
     Zplanes = [ 0,
@@ -549,9 +549,10 @@ def main(argv=None):
     P.delta_outside = 2*P.delta_diamond
     P.delta_center = P.delta_diamond
     P.delta_boundary = P.delta_diamond
-    P.X_buffer = 4*P.delta_diamond; #mum
-    P.Y_buffer = 32*P.delta_diamond; #mum
+    P.X_buffer = 0; #mum
+    P.Y_buffer = 4*P.delta_diamond; #mum
     P.Z_buffer = 4*P.delta_diamond; #mum
+    P.top_box_offset = 0
     P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
     P.Ymax = 5*2*P.pillar_radius_mum;
     P.Zmax = P.Ymax; #mum
@@ -585,9 +586,10 @@ def main(argv=None):
     P.delta_outside = P.getLambda()/(4*P.n_Air)
     P.delta_center = P.delta_diamond
     P.delta_boundary = P.delta_diamond
-    P.X_buffer = 4*P.delta_diamond; #mum
-    P.Y_buffer = 32*P.delta_diamond; #mum
+    P.X_buffer = 32*P.delta_diamond; #mum
+    P.Y_buffer = 4*P.delta_diamond; #mum
     P.Z_buffer = 4*P.delta_diamond; #mum
+    P.top_box_offset = 1
     P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
     P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
     P.Zmax = P.Ymax; #mum
@@ -621,9 +623,10 @@ def main(argv=None):
     P.delta_outside = P.getLambda()/(4*P.n_Air)
     P.delta_center = P.delta_diamond
     P.delta_boundary = P.delta_diamond
-    P.X_buffer = 4*P.delta_diamond; #mum
-    P.Y_buffer = 32*P.delta_diamond; #mum
+    P.X_buffer = 32*P.delta_diamond; #mum
+    P.Y_buffer = 4*P.delta_diamond; #mum
     P.Z_buffer = 4*P.delta_diamond; #mum
+    P.top_box_offset = 1
     P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
     P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
     P.Zmax = P.Ymax; #mum
