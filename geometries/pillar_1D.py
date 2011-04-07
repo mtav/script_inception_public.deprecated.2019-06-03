@@ -8,6 +8,8 @@
 from bristolFDTD_generator_functions import *
 from constants import *
 from meshing.subGridMultiLayer import *
+import numpy
+from math import sqrt
 
 class pillar_1D:
   '''creates a 1D pillar with different kinds of irregularities'''
@@ -324,11 +326,27 @@ class pillar_1D:
       upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
       GEOblock(FILE, lower, upper, permittivity, conductivity)
     elif self.HOLE_TYPE == 'rectangular_yagi':
-      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum]
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum - (self.pillar_radius_mum - self.hole_radius_Z)]
       upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
       GEOblock(FILE, lower, upper, permittivity, conductivity)
       lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum + (self.pillar_radius_mum - self.hole_radius_Z)]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+    elif self.HOLE_TYPE == 'triangular_yagi':
+      lower = [ X_current - self.hole_radius_X/sqrt(2), self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum - self.hole_radius_X/sqrt(2)]
+      upper = [ X_current + self.hole_radius_X/sqrt(2), self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum + self.hole_radius_X/sqrt(2)]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOrotation(FILE, numpy.add(lower,upper)/2.0, [0,1,0], 45)
+      lower = [ X_current - self.hole_radius_X/sqrt(2), self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum - self.hole_radius_X/sqrt(2)]
+      upper = [ X_current + self.hole_radius_X/sqrt(2), self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum + self.hole_radius_X/sqrt(2)]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOrotation(FILE, numpy.add(lower,upper)/2.0, [0,1,0], 45)
+    elif self.HOLE_TYPE == 'triangular_yagi_voxel':
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum - (self.pillar_radius_mum - self.hole_radius_Z)]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
+      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
+      upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum + (self.pillar_radius_mum - self.hole_radius_Z)]
       GEOblock(FILE, lower, upper, permittivity, conductivity)
     else:
       print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
