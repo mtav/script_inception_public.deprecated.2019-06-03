@@ -76,8 +76,8 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       d_holes_mum = 0.220;%mum
       % hole radius
       hole_radius_X = 0.28*d_holes_mum;%mum
-      hole_radius_Z = pillar_radius_mum - (d_holes_mum-2*hole_radius_X);%mum
-      hole_radius_Z
+      %hole_radius_Z = pillar_radius_mum - (d_holes_mum-2*hole_radius_X);%mum
+      hole_radius_Z = hole_radius_X;
       % number of holes on bottom
       bottom_N = 12;%no unit
       % number of holes on top
@@ -170,7 +170,7 @@ function INFILENAME = loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_
       %max_delta_Vector_Y
       %disp(['max_delta_Vector_Y = ',])
 
-      thicknessVector_Z = [ Zmax/2-pillar_radius_mum-Z_buffer, Z_buffer, pillar_radius_mum-hole_radius_X, hole_radius_X-center_radius, center_radius ];
+      thicknessVector_Z = [ Zmax/2.0-pillar_radius_mum-Z_buffer, Z_buffer, pillar_radius_mum-hole_radius_Z, hole_radius_Z-center_radius, center_radius ];
       max_delta_Vector_Z = [ delta_outside, delta_boundary, delta_diamond, delta_diamond, delta_center ];
       
       [ delta_X_vector, local_delta_X_vector ] = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X);

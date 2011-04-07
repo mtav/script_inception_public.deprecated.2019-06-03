@@ -184,10 +184,10 @@ class pillar_1D:
     #print 'thicknessVector_Y = ', thicknessVector_Y
     #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
   
-    thicknessVector_Z = [ self.Ymax/2.0-self.pillar_radius_mum-self.Z_buffer,
+    thicknessVector_Z = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
     self.Z_buffer,
-    self.pillar_radius_mum-self.hole_radius_X,
-    self.hole_radius_X-self.center_radius,
+    self.pillar_radius_mum-self.hole_radius_Z,
+    self.hole_radius_Z-self.center_radius,
     self.center_radius ]
     max_delta_Vector_Z = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
     
@@ -539,7 +539,7 @@ def main(argv=None):
     
     P.d_holes_mum = 0.220; #mum
     P.hole_radius_X = 0.28*P.d_holes_mum; #mum
-    P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
+    P.hole_radius_Z = P.hole_radius_X
     P.bottom_N = 12; #no unit
     P.top_N = 12; #no unit
     P.d_holes_cavity = 2*P.d_holes_mum; #mum
