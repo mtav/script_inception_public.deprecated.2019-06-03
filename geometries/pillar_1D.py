@@ -104,7 +104,7 @@ class pillar_1D:
     
     self.Xmax = self.h_bottom_square + self.getPillarHeight() + self.X_buffer + self.top_box_offset; #mum
     #self.Ymax = 5*2*self.pillar_radius_mum;
-    #self.Ymax = 2*(self.pillar_radius_mum + self.X_buffer + 4*self.delta_outside); #mum
+    #self.Ymax = 2*(self.pillar_radius_mum + self.Y_buffer + 4*self.delta_outside); #mum
     self.Ymax = 2*(self.pillar_radius_mum + 4*self.delta_diamond + 4*self.delta_outside); #mum
     self.Zmax = self.Ymax; #mum
 
@@ -166,11 +166,11 @@ class pillar_1D:
     delta_min = min(max_delta_Vector_X)
   
     if self.HOLE_TYPE == 'cylinder':
-      thicknessVector_Y_1 = [ self.Zmax/2-self.pillar_radius_mum-self.Z_buffer, self.Z_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
+      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     elif self.HOLE_TYPE == 'square_holes':
-      thicknessVector_Y_1 = [ self.Zmax/2-self.pillar_radius_mum-self.Z_buffer, self.Z_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
+      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     elif self.HOLE_TYPE == 'rectangular_holes':
-      thicknessVector_Y_1 = [ self.Zmax/2-self.pillar_radius_mum-self.Z_buffer, self.Z_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
+      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     else:
       print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
   
@@ -184,8 +184,8 @@ class pillar_1D:
     #print 'thicknessVector_Y = ', thicknessVector_Y
     #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
   
-    thicknessVector_Z = [ self.Ymax/2.0-self.pillar_radius_mum-self.X_buffer,
-    self.X_buffer,
+    thicknessVector_Z = [ self.Ymax/2.0-self.pillar_radius_mum-self.Z_buffer,
+    self.Z_buffer,
     self.pillar_radius_mum-self.hole_radius_X,
     self.hole_radius_X-self.center_radius,
     self.center_radius ]
@@ -233,7 +233,7 @@ class pillar_1D:
     self.Ymax ]
   
     Zplanes = [ 0,
-    self.Zmax/2-self.pillar_radius_mum-self.X_buffer,
+    self.Zmax/2-self.pillar_radius_mum-self.Z_buffer,
     self.Zmax/2-self.pillar_radius_mum,
     self.Zmax/2-2*self.delta_center,
     self.Zmax/2-self.delta_center,
