@@ -503,7 +503,127 @@ class pillar_1D:
         print('...done')
     
     return(in_filename)
+
+def cylinder():
+  P = pillar_1D()
+  print('======== cylinder START ============')
+  P.DSTDIR = os.getenv('TESTDIR')
+  P.ITERATIONS = 32000
+  P.print_holes_top = True
+  P.print_holes_bottom = True
+  P.setLambda(0.637)
+  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.excitation_type = 1
   
+  P.HOLE_TYPE = 'cylinder'
+  P.BASENAME = P.HOLE_TYPE
+  P.pillar_radius_mum = 0.150/2.0
+  P.print_podium = False;
+  P.h_bottom_square = 0;
+  
+  P.d_holes_mum = 0.220; #mum
+  P.hole_radius_X = 0.28*P.d_holes_mum; #mum
+  P.hole_radius_Z = P.hole_radius_X
+  P.bottom_N = 12; #no unit
+  P.top_N = 12; #no unit
+  P.d_holes_cavity = 2*P.d_holes_mum; #mum
+  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
+  P.delta_hole = P.delta_diamond
+  P.delta_outside = 2*P.delta_diamond
+  P.delta_center = P.delta_diamond
+  P.delta_boundary = P.delta_diamond
+  P.X_buffer = 0; #mum
+  P.Y_buffer = 4*P.delta_diamond; #mum
+  P.Z_buffer = 4*P.delta_diamond; #mum
+  P.top_box_offset = 0
+  P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
+  P.Ymax = 5*2*P.pillar_radius_mum;
+  P.Zmax = P.Ymax; #mum
+  P.center_radius = 2*P.delta_center
+  
+  print(P.write())
+  
+def square_holes():
+  P = pillar_1D()
+  print('======== square_holes START ============')
+  P.DSTDIR = os.getenv('TESTDIR')
+  P.ITERATIONS = 32000
+  P.print_holes_top = True
+  P.print_holes_bottom = True
+  P.setLambda(0.637)
+  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.excitation_type = 1
+  
+  P.HOLE_TYPE = 'square_holes'
+  P.BASENAME = P.HOLE_TYPE
+  P.pillar_radius_mum = 1
+  P.print_podium = True
+  P.h_bottom_square = 0.5 # mum #bottom square thickness
+  
+  P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
+  P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
+  P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
+  P.bottom_N = 6; #no unit
+  P.top_N = 3; #no unit
+  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_hole = P.delta_diamond
+  P.delta_outside = P.getLambda()/(4*P.n_Air)
+  P.delta_center = P.delta_diamond
+  P.delta_boundary = P.delta_diamond
+  P.X_buffer = 32*P.delta_diamond; #mum
+  P.Y_buffer = 4*P.delta_diamond; #mum
+  P.Z_buffer = 4*P.delta_diamond; #mum
+  P.top_box_offset = 1
+  P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
+  P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
+  P.Zmax = P.Ymax; #mum
+  P.center_radius = 2*P.delta_center
+
+  print(P.write())
+
+def rectangular_holes():
+  P = pillar_1D()
+  print('======== rectangular_holes START ============')
+  P.DSTDIR = os.getenv('TESTDIR')
+  P.ITERATIONS = 32000
+  P.print_holes_top = True
+  P.print_holes_bottom = True
+  P.setLambda(0.637)
+  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.excitation_type = 1
+  
+  P.HOLE_TYPE = 'rectangular_holes'
+  P.BASENAME = P.HOLE_TYPE
+  P.pillar_radius_mum = 1
+  P.print_podium = True
+  P.h_bottom_square = 0.5 # mum #bottom square thickness
+  
+  P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
+  P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
+  P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
+  P.bottom_N = 6; #no unit
+  P.top_N = 3; #no unit
+  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_hole = P.delta_diamond
+  P.delta_outside = P.getLambda()/(4*P.n_Air)
+  P.delta_center = P.delta_diamond
+  P.delta_boundary = P.delta_diamond
+  P.X_buffer = 32*P.delta_diamond; #mum
+  P.Y_buffer = 4*P.delta_diamond; #mum
+  P.Z_buffer = 4*P.delta_diamond; #mum
+  P.top_box_offset = 1
+  P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
+  P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
+  P.Zmax = P.Ymax; #mum
+  P.center_radius = 2*P.delta_center
+
+  print(P.write())
+
 def main(argv=None):
   if argv is None:
       argv = sys.argv
@@ -521,121 +641,10 @@ def main(argv=None):
     P = pillar_1D()
     print('======== default START ============')
     print(P.write())
-    
-    print('======== cylinder START ============')
-    P.DSTDIR = os.getenv('TESTDIR')
-    P.ITERATIONS = 32000
-    P.print_holes_top = True
-    P.print_holes_bottom = True
-    P.setLambda(0.637)
-    P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-    P.excitation_type = 1
-    
-    P.HOLE_TYPE = 'cylinder'
-    P.BASENAME = P.HOLE_TYPE
-    P.pillar_radius_mum = 0.150/2.0
-    P.print_podium = False;
-    P.h_bottom_square = 0;
-    
-    P.d_holes_mum = 0.220; #mum
-    P.hole_radius_X = 0.28*P.d_holes_mum; #mum
-    P.hole_radius_Z = P.hole_radius_X
-    P.bottom_N = 12; #no unit
-    P.top_N = 12; #no unit
-    P.d_holes_cavity = 2*P.d_holes_mum; #mum
-    P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
-    P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
-    P.delta_hole = P.delta_diamond
-    P.delta_outside = 2*P.delta_diamond
-    P.delta_center = P.delta_diamond
-    P.delta_boundary = P.delta_diamond
-    P.X_buffer = 0; #mum
-    P.Y_buffer = 4*P.delta_diamond; #mum
-    P.Z_buffer = 4*P.delta_diamond; #mum
-    P.top_box_offset = 0
-    P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
-    P.Ymax = 5*2*P.pillar_radius_mum;
-    P.Zmax = P.Ymax; #mum
-    P.center_radius = 2*P.delta_center
-    
-    print(P.write())
-
-    print('======== square_holes START ============')
-    P.DSTDIR = os.getenv('TESTDIR')
-    P.ITERATIONS = 32000
-    P.print_holes_top = True
-    P.print_holes_bottom = True
-    P.setLambda(0.637)
-    P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-    P.excitation_type = 1
-    
-    P.HOLE_TYPE = 'square_holes'
-    P.BASENAME = P.HOLE_TYPE
-    P.pillar_radius_mum = 1
-    P.print_podium = True
-    P.h_bottom_square = 0.5 # mum #bottom square thickness
-    
-    P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-    P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
-    P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
-    P.bottom_N = 6; #no unit
-    P.top_N = 3; #no unit
-    P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-    P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
-    P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
-    P.delta_hole = P.delta_diamond
-    P.delta_outside = P.getLambda()/(4*P.n_Air)
-    P.delta_center = P.delta_diamond
-    P.delta_boundary = P.delta_diamond
-    P.X_buffer = 32*P.delta_diamond; #mum
-    P.Y_buffer = 4*P.delta_diamond; #mum
-    P.Z_buffer = 4*P.delta_diamond; #mum
-    P.top_box_offset = 1
-    P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
-    P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
-    P.Zmax = P.Ymax; #mum
-    P.center_radius = 2*P.delta_center
-
-    print(P.write())
-    
-    print('======== rectangular_holes START ============')
-    P.DSTDIR = os.getenv('TESTDIR')
-    P.ITERATIONS = 32000
-    P.print_holes_top = True
-    P.print_holes_bottom = True
-    P.setLambda(0.637)
-    P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-    P.excitation_type = 1
-    
-    P.HOLE_TYPE = 'rectangular_holes'
-    P.BASENAME = P.HOLE_TYPE
-    P.pillar_radius_mum = 1
-    P.print_podium = True
-    P.h_bottom_square = 0.5 # mum #bottom square thickness
-    
-    P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-    P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
-    P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
-    P.bottom_N = 6; #no unit
-    P.top_N = 3; #no unit
-    P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-    P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
-    P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
-    P.delta_hole = P.delta_diamond
-    P.delta_outside = P.getLambda()/(4*P.n_Air)
-    P.delta_center = P.delta_diamond
-    P.delta_boundary = P.delta_diamond
-    P.X_buffer = 32*P.delta_diamond; #mum
-    P.Y_buffer = 4*P.delta_diamond; #mum
-    P.Z_buffer = 4*P.delta_diamond; #mum
-    P.top_box_offset = 1
-    P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
-    P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
-    P.Zmax = P.Ymax; #mum
-    P.center_radius = 2*P.delta_center
-
-    print(P.write())
-
+    cylinder()
+    square_holes()
+    rectangular_holes()
+  
   except Usage, err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"
