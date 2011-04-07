@@ -913,8 +913,8 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # main function
-    test(20,10)
-    #test2()
+    #test(20,10)
+    test2()
     
   except Usage, err:
     print >>sys.stderr, err.msg
