@@ -139,21 +139,21 @@ class pillar_1D:
     return self.Zmax/2
 
   def write(self):
+    if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
+      os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
     #self.mesh()
     self.writeIN();
     self.writeSH();
     self.writeCMD();
     print self.writeGEO();
     self.writeINP();
+
   def mesh(self):
     
     if not os.path.isdir(self.DSTDIR):
       print('error: self.DSTDIR = '+self.DSTDIR+'is not a directory')
       return('error')
-       
-    if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
-      os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
-    
+
     #print >>sys.stderr, 'self.hole_radius_X',self.hole_radius_X
     #print >>sys.stderr, 'self.hole_radius_Z',self.hole_radius_Z
     #print >>sys.stderr, 'self.d_holes_mum',self.d_holes_mum
@@ -713,6 +713,86 @@ def rectangular_yagi(bottomN,topN):
 
   P.write()
 
+def triangular_yagi(bottomN,topN):
+  P = pillar_1D()
+  print('======== triangular_yagi START ============')
+  P.DSTDIR = os.getenv('TESTDIR')
+  P.ITERATIONS = 32000
+  P.print_holes_top = True
+  P.print_holes_bottom = True
+  P.setLambda(0.637)
+  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.excitation_type = 1
+  
+  P.HOLE_TYPE = 'triangular_yagi'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.pillar_radius_mum = 0.5
+  P.print_podium = True
+  P.h_bottom_square = 0.5 # mum #bottom square thickness
+  
+  P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
+  P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
+  P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
+  P.bottom_N = bottomN; #no unit
+  P.top_N = topN; #no unit
+  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_hole = P.delta_diamond
+  P.delta_outside = P.getLambda()/(4*P.n_Air)
+  P.delta_center = P.delta_diamond
+  P.delta_boundary = P.delta_diamond
+  P.X_buffer = 32*P.delta_diamond; #mum
+  P.Y_buffer = 4*P.delta_diamond; #mum
+  P.Z_buffer = 4*P.delta_diamond; #mum
+  P.top_box_offset = 1
+  P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
+  P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
+  P.Zmax = P.Ymax; #mum
+  P.center_radius = 2*P.delta_center
+
+  P.write()
+
+def triangular_yagi_voxel(bottomN,topN):
+  P = pillar_1D()
+  print('======== triangular_yagi_voxel START ============')
+  P.DSTDIR = os.getenv('TESTDIR')
+  P.ITERATIONS = 32000
+  P.print_holes_top = True
+  P.print_holes_bottom = True
+  P.setLambda(0.637)
+  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.excitation_type = 1
+  
+  P.HOLE_TYPE = 'triangular_yagi_voxel'
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.pillar_radius_mum = 0.5
+  P.print_podium = True
+  P.h_bottom_square = 0.5 # mum #bottom square thickness
+  
+  P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
+  P.hole_radius_X = (P.getLambda()/(4*P.n_Air))/2;#mum
+  P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
+  P.bottom_N = bottomN; #no unit
+  P.top_N = topN; #no unit
+  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_hole = P.delta_diamond
+  P.delta_outside = P.getLambda()/(4*P.n_Air)
+  P.delta_center = P.delta_diamond
+  P.delta_boundary = P.delta_diamond
+  P.X_buffer = 32*P.delta_diamond; #mum
+  P.Y_buffer = 4*P.delta_diamond; #mum
+  P.Z_buffer = 4*P.delta_diamond; #mum
+  P.top_box_offset = 1
+  P.Xmax = P.h_bottom_square + P.getPillarHeight() + P.X_buffer + P.top_box_offset; #mum
+  P.Ymax = 2*(P.pillar_radius_mum + 4*P.delta_diamond + 4*P.delta_outside); #mum
+  P.Zmax = P.Ymax; #mum
+  P.center_radius = 2*P.delta_center
+
+  P.write()
+
 def main(argv=None):
   if argv is None:
       argv = sys.argv
@@ -739,6 +819,8 @@ def main(argv=None):
     rectangular_holes(7,5)
     rectangular_holes(8,6)
     rectangular_yagi(20,10)
+    triangular_yagi(20,10)
+    triangular_yagi_voxel(20,10)
     
   except Usage, err:
     print >>sys.stderr, err.msg
