@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# TODO: Add comments to the different components, so they can be identified more easily later during the analysis process
+# TODO: Print function + print args into output files
+
 from __future__ import division
 #~ import sys
 #~ import os
@@ -141,6 +144,24 @@ class pillar_1D:
   def getLcavLarge():
     
   def setLcav():
+
+  # LcavLarge + 2*rh = dhcav
+  # Lcav + ( dh - 2*rh ) = LcavLarge
+  # Lcav = dhcav - dh
+  # Lcav = DistanceBetweenDefectPairs
+  # LcavLarge = DistanceBetweenDefectBorders
+  # dhcav = DistanceBetweenDefectCenters
+  # dh = d_holes_mum
+  # rh = hole_radius_X
+  # "distance between defect centers"
+  def getDistanceBetweenDefectCenters():
+  def setDistanceBetweenDefectCenters():
+  # "distance between defect borders"
+  def getDistanceBetweenDefectBorders():
+  def setDistanceBetweenDefectBorders():
+  # "distance between defect pairs"
+  def getDistanceBetweenDefectPairs():
+  def setDistanceBetweenDefectPairs():
     
 
   def getPillarCenterX(self):
