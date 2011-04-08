@@ -63,11 +63,7 @@ class pillar_1D:
     self.bottom_N = 6; #no unit
     # number of holes on top
     self.top_N = 3; #no unit
-    # distance between 2 holes around cavity
-    #self.d_holes_cavity = 2*self.d_holes_mum; #mum
-    self.d_holes_cavity = self.getLambda()/self.n_Diamond + 2*self.hole_radius_X;#mum
-    self.Lcav = self.d_holes_cavity - self.d_holes_mum; # mum
-    # self.d_holes_cavity = self.Lcav + self.d_holes_mum
+    # self.getDistInterHolesCavity() = self.Lcav + self.d_holes_mum
     # top box offset
     self.top_box_offset=1; #mum
   
@@ -133,6 +129,19 @@ class pillar_1D:
   def setLambda(self,Lambda_mum):
     self.EXCITATION_FREQUENCY = get_c0()/Lambda_mum
 
+  def getDistInterHolesCavity(self):
+    #self.getDistInterHolesCavity() = 2*self.d_holes_mum; #mum
+    #self.getDistInterHolesCavity() = self.getLambda()/self.n_Diamond + 2*self.hole_radius_X;#mum
+    return self.LcavLarge + 2*self.hole_radius_X
+
+  def getLcav():
+    #self.Lcav = self.getDistInterHolesCavity() - self.d_holes_mum; # mum
+    return self.LcavLarge - ()
+
+  def getLcavLarge():
+    
+  def setLcav():
+    
 
   def getPillarCenterX(self):
     return self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.Lcav/2
@@ -460,7 +469,7 @@ class pillar_1D:
               self.addHole(out,X_current, permittivity, conductivity)
             X_current = X_current + self.d_holes_mum
     
-          X_current = X_current - self.d_holes_mum + self.d_holes_cavity
+          X_current = X_current - self.d_holes_mum + self.getDistInterHolesCavity()
     
           # create top holes
           for i in range(self.top_N):
@@ -642,8 +651,8 @@ def cylinder(bottomN,topN):
   P.hole_radius_Z = P.hole_radius_X
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.d_holes_cavity = 2*P.d_holes_mum; #mum
-  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  #P.getDistInterHolesCavity() = 2*P.d_holes_mum; #mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
   P.delta_hole = P.delta_diamond
   P.delta_outside = 2*P.delta_diamond
@@ -682,9 +691,9 @@ def square_holes(bottomN,topN):
   P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
-  P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
+  P.delta_diamond = P.getLambda()/(10*P.n_Diamond)
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
   P.delta_center = P.delta_diamond
@@ -722,8 +731,8 @@ def rectangular_holes(bottomN,topN):
   P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
@@ -762,8 +771,8 @@ def rectangular_yagi(bottomN,topN):
   P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
@@ -802,8 +811,8 @@ def triangular_yagi(bottomN,topN):
   P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
@@ -843,8 +852,8 @@ def triangular_yagi_voxel(bottomN,topN):
   P.hole_radius_Z = P.pillar_radius_mum - 3*P.hole_radius_X; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.d_holes_cavity = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.d_holes_cavity - P.d_holes_mum; # mum
+  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
