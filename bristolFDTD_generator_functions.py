@@ -43,10 +43,10 @@ def planeNumberName(var):
 # GENERATOR FUNCTIONS
 ########################
 # mandatory objects
-def GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector):
+def GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector):
   ''' writes mesh to FILE '''
   # mesh X
-  FILE.write('XMESH **XMESH DEFINITION\n')
+  FILE.write('XMESH **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -58,7 +58,7 @@ def GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
 
   # mesh Y
-  FILE.write('YMESH **YMESH DEFINITION\n')
+  FILE.write('YMESH **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -70,7 +70,7 @@ def GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
 
   # mesh Z
-  FILE.write('ZMESH **ZMESH DEFINITION\n')
+  FILE.write('ZMESH **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -80,8 +80,8 @@ def GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
   FILE.write('\n')
 
-def GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, iterations, timestep, id_character):
-  FILE.write('FLAG  **PROGRAM CONTROL OPTIONS\n')
+def GEOflag(FILE, COMMENT, iteration_method, propagation_constant, flag_1, flag_2, iterations, timestep, id_character):
+  FILE.write('FLAG  **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -96,13 +96,13 @@ def GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, iterat
 
   FILE.write('\n')
 
-def GEOboundary(FILE, Xpos_bc, Xpos_param,\
+def GEOboundary(FILE, COMMENT, Xpos_bc, Xpos_param,\
                             Ypos_bc, Ypos_param,\
                             Zpos_bc, Zpos_param,\
                             Xneg_bc, Xneg_param,\
                             Yneg_bc, Yneg_param,\
                             Zneg_bc, Zneg_param):
-  FILE.write('BOUNDARY  **BOUNDARY DEFINITION\n')
+  FILE.write('BOUNDARY  **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -116,8 +116,8 @@ def GEOboundary(FILE, Xpos_bc, Xpos_param,\
 
   FILE.write('\n')
 
-def GEObox(FILE, lower, upper):
-  FILE.write('BOX  **BOX DEFINITION\n')
+def GEObox(FILE, COMMENT, lower, upper):
+  FILE.write('BOX  **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -132,14 +132,14 @@ def GEObox(FILE, lower, upper):
   FILE.write('\n')
 
 # geometry objects
-def GEOsphere(FILE, center, outer_radius, inner_radius, permittivity, conductivity):
+def GEOsphere(FILE, COMMENT, center, outer_radius, inner_radius, permittivity, conductivity):
   ''' sphere
   {
    1-5 Coordinates of the sphere ( xc yc zc r1 r2 )
    6 permittivity
    7 conductivity
   } '''
-  FILE.write('SPHERE  **SPHERE DEFINITION\n')
+  FILE.write('SPHERE  **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -154,8 +154,8 @@ def GEOsphere(FILE, center, outer_radius, inner_radius, permittivity, conductivi
 
   FILE.write('\n')
 
-def GEOblock(FILE, lower, upper, permittivity, conductivity):
-  FILE.write('BLOCK **Block Definition (XL,YL,ZL,XU,YU,ZU)\n')
+def GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity):
+  FILE.write('BLOCK **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -171,7 +171,7 @@ def GEOblock(FILE, lower, upper, permittivity, conductivity):
 
   FILE.write('\n')
 
-def GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_deg):
+def GEOcylinder(FILE, COMMENT, centre, inner_radius, outer_radius, H, permittivity, conductivity, angle_deg):
   ''' # cylinder
   # {
   # 1-7 Coordinates of the material volume ( xc yc zc r1 r2 h )
@@ -185,7 +185,7 @@ def GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, condu
   #
   # i.e. angle_deg = Angle of rotation in degrees around -Z=(0,0,-1) '''
 
-  FILE.write('CYLINDER **Cylinder Definition\n')
+  FILE.write('CYLINDER **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -203,11 +203,11 @@ def GEOcylinder(FILE, centre, inner_radius, outer_radius, H, permittivity, condu
   FILE.write('\n')
 
 
-def GEOrotation(FILE, axis_point, axis_direction, angle_degrees):
+def GEOrotation(FILE, COMMENT, axis_point, axis_direction, angle_degrees):
   # rotation structure. Actually affects previous geometry object in Prof. Railton's modified BrisFDTD. Not fully implemented yet.
   # Should be integrated into existing structures using a directional vector anyway, like in MEEP. BrisFDTD hacking required... :)
 
-  FILE.write('ROTATION **Rotation Definition, affects previous geometry object\n')
+  FILE.write('ROTATION **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -224,8 +224,8 @@ def GEOrotation(FILE, axis_point, axis_direction, angle_degrees):
 
 
 # excitation objects
-def GEOexcitation(FILE, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
-  FILE.write('EXCITATION **EXCITATION DEFINITION\n')
+def GEOexcitation(FILE, COMMENT, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
+  FILE.write('EXCITATION **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -257,7 +257,7 @@ def GEOexcitation(FILE, current_source, P1, P2, E, H, type, time_constant, ampli
 
 
 # measurement objects
-def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
+def GEOtime_snapshot(FILE, COMMENT, first, repetition, plane, P1, P2, E, H, J, power, eps):
   ''' # def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
   #
   # format specification:
@@ -293,12 +293,12 @@ def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps
       #~ plane_name='Z'
     #~ end
 
-    FILE.write("SNAPSHOT **SNAPSHOT DEFINITION %s\n" % plane_name)
+    FILE.write('SNAPSHOT **'+COMMENT+'\n')
     FILE.write('{\n')
 
     FILE.write("%d **FIRST\n" % first)
     FILE.write("%d **REPETITION\n" % repetition)
-    FILE.write("%d **PLANE\n" % plane_ID)
+    FILE.write("%d **PLANE %s\n" % (plane_ID, plane_name))
     FILE.write("%E **X1\n" % P1[0])
     FILE.write("%E **Y1\n" % P1[1])
     FILE.write("%E **Z1\n" % P1[2])
@@ -332,7 +332,7 @@ def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps
     snapshot(3,[P1[0],P1[1],P1[2]],[P2[0],P2[1],P1[2]])
     snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]])
 
-def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J):
+def GEOfrequency_snapshot(FILE, COMMENT, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J):
 
   def snapshot(plane,P1,P2, frequency):
     plane_ID, plane_name = planeNumberName(plane)
@@ -342,7 +342,7 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
       #~ plane_name='Y'
     #~ else: #plane == 3
       #~ plane_name='Z'
-    FILE.write("FREQUENCY_SNAPSHOT **SNAPSHOT DEFINITION %s\n" % plane_name)
+    FILE.write('FREQUENCY_SNAPSHOT **'+COMMENT+'\n')
     FILE.write('{\n')
 
     FILE.write("%d **FIRST\n" % first)
@@ -351,7 +351,7 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
     FILE.write("%d **REAL DFT\n" % real_dft)
     FILE.write("%d **MOD ONLY\n" % mod_only)
     FILE.write("%d **MOD ALL\n" % mod_all)
-    FILE.write("%d **PLANE\n" % plane_ID)
+    FILE.write("%d **PLANE %s\n" % (plane_ID, plane_name))
     FILE.write("%E **X1\n" % P1[0])
     FILE.write("%E **Y1\n" % P1[1])
     FILE.write("%E **Z1\n" % P1[2])
@@ -386,8 +386,8 @@ def GEOfrequency_snapshot(FILE, first, repetition, interpolate, real_dft, mod_on
       snapshot(3,[P1[0],P1[1],P1[2]],[P2[0],P2[1],P1[2]],frequency[i])
       snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]],frequency[i])
 
-def GEOprobe(FILE, position, step, E, H, J, power ):
-  FILE.write('PROBE **PROBE DEFINITION\n')
+def GEOprobe(FILE, COMMENT, position, step, E, H, J, power ):
+  FILE.write('PROBE **'+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -506,28 +506,29 @@ def main(argv=None):
       delta_X_vector = [11.25,21.25,31.25]
       delta_Y_vector = [12.25,22.25,32.25]
       delta_Z_vector = [13.25,23.25,33.25]
-      GEOmesh(FILE, delta_X_vector, delta_Y_vector, delta_Z_vector)
-      GEOflag(FILE, 70, 12.34, 24, 42, 1000, 0.755025, '_id_')
-      GEOboundary(FILE, 1.2, [3.4,3.4,3.4],\
+      COMMENT = 'example comment'
+      GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector)
+      GEOflag(FILE, COMMENT, 70, 12.34, 24, 42, 1000, 0.755025, '_id_')
+      GEOboundary(FILE, COMMENT, 1.2, [3.4,3.4,3.4],\
                                   5.6, [7.8,7.8,6.2],\
                                   9.10, [11.12,1,2],\
                                   13.14, [15.16,3,4],\
                                   17.18, [19.20,5,6],\
                                   21.22, [23.24,7.8,5.4])
-      GEObox(FILE, [1.2,3.4,5.6], [9.8,7.6,5.4])
-      GEOsphere(FILE, [1,2,3], 9, 8, 7, 6)
-      GEOblock(FILE, [1.1,2.2,3.3], [4.4,5.5,6.6], 600, 700)
-      GEOcylinder(FILE, [1.2,3.4,5.6], 77, 88, 99, 100, 0.02, 47.42)
-      GEOrotation(FILE, [1,2,3], [4,5,6], 56)
-      GEOexcitation(FILE, 77, [1,2,3], [4,5,6], [7,8,9], [77,88,99], 69, 12.36, 45.54, 78.87, 456, 1, 22, 333, 4444)
-      GEOtime_snapshot(FILE, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
-      GEOtime_snapshot(FILE, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
-      GEOtime_snapshot(FILE, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
-      GEOtime_snapshot(FILE, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
-      GEOtime_snapshot(FILE, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
-      GEOtime_snapshot(FILE, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
-      GEOfrequency_snapshot(FILE, 369, 852, 147, 258, 369, 987, 'x', [1,2,3], [1,2,3], [852,741,963], 147, [7,8,9],[4,5,6],[1,2,3])
-      GEOprobe(FILE, [1,2,3], 56, [5,6,7], [5,6,7], [5,6,7], 4564654 )
+      GEObox(FILE, COMMENT, [1.2,3.4,5.6], [9.8,7.6,5.4])
+      GEOsphere(FILE, COMMENT, [1,2,3], 9, 8, 7, 6)
+      GEOblock(FILE, COMMENT, [1.1,2.2,3.3], [4.4,5.5,6.6], 600, 700)
+      GEOcylinder(FILE, COMMENT, [1.2,3.4,5.6], 77, 88, 99, 100, 0.02, 47.42)
+      GEOrotation(FILE, COMMENT, [1,2,3], [4,5,6], 56)
+      GEOexcitation(FILE, COMMENT, 77, [1,2,3], [4,5,6], [7,8,9], [77,88,99], 69, 12.36, 45.54, 78.87, 456, 1, 22, 333, 4444)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOfrequency_snapshot(FILE, COMMENT, 369, 852, 147, 258, 369, 987, 'x', [1,2,3], [1,2,3], [852,741,963], 147, [7,8,9],[4,5,6],[1,2,3])
+      GEOprobe(FILE, COMMENT, [1,2,3], 56, [5,6,7], [5,6,7], [5,6,7], 4564654 )
       GEOcommand('tmp.bat', 'BASENAME')
       GEOin('tmp.in', ['file','list'])
       GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)

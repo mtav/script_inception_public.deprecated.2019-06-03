@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: Add comments to the different components, so they can be identified more easily later during the analysis process
 # TODO: Print function + print args into output files
 
 from __future__ import division
@@ -67,13 +66,11 @@ class pillar_1D:
     # number of holes on top
     self.top_N = 3; #no unit
 
-    # TODO: finish this
-    # distance between 2 holes around cavity
+    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Diamond
     # self.setDistanceBetweenDefectCentersInCavity(2*self.d_holes_mum) #mum
     # self.setDistanceBetweenDefectCentersInCavity(self.getLambda()/self.n_Diamond + 2*self.hole_radius_X) #mum
     # self.setDistanceBetweenDefectPairsInCavity(self.d_holes_cavity - self.d_holes_mum) # mum
     # self.setDistanceBetweenDefectCentersInCavity(self.getDistanceBetweenDefectPairsInCavity() + self.d_holes_mum)
-    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Diamond
 
     # top box offset
     self.top_box_offset=1; #mum
@@ -410,8 +407,6 @@ class pillar_1D:
     
   def writeSH(self):
     # .sh file
-    #TODO: improve this
-    # WORKDIR = ['$HOME/loncar_structure','/',self.BASENAME]
     sh_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.sh';
     if self.verbose:
       print('Writing shellscript '+sh_filename+' ...')
@@ -430,34 +425,34 @@ class pillar_1D:
       print('...done')
     return(cmd_filename)
   
-  def addHole(self, FILE, X_current, permittivity, conductivity):
+  def addHole(self, FILE, COMMENT, X_current, permittivity, conductivity):
     centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
     if self.HOLE_TYPE == 'cylinder':
-      GEOcylinder(FILE, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
+      GEOcylinder(FILE, COMMENT, centre, 0, self.hole_radius_X, 2*self.pillar_radius_mum, permittivity, conductivity, 0)
     elif self.HOLE_TYPE == 'square_holes':
       lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_X]
       upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_X]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
     elif self.HOLE_TYPE == 'rectangular_holes':
       lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
       upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
     elif self.HOLE_TYPE == 'rectangular_yagi':
       lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum - (self.pillar_radius_mum - self.hole_radius_Z)]
       upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.hole_radius_Z]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
       lower = [ X_current - self.hole_radius_X, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.hole_radius_Z]
       upper = [ X_current + self.hole_radius_X, self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum + (self.pillar_radius_mum - self.hole_radius_Z)]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
     elif self.HOLE_TYPE == 'triangular_yagi':
       lower = [ X_current - self.hole_radius_X/sqrt(2), self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum - self.hole_radius_X/sqrt(2)]
       upper = [ X_current + self.hole_radius_X/sqrt(2), self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum + self.hole_radius_X/sqrt(2)]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
-      GEOrotation(FILE, numpy.add(lower,upper)/2.0, [0,1,0], 45)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
+      GEOrotation(FILE, COMMENT, numpy.add(lower,upper)/2.0, [0,1,0], 45)
       lower = [ X_current - self.hole_radius_X/sqrt(2), self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum - self.hole_radius_X/sqrt(2)]
       upper = [ X_current + self.hole_radius_X/sqrt(2), self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum + self.hole_radius_X/sqrt(2)]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
-      GEOrotation(FILE, numpy.add(lower,upper)/2.0, [0,1,0], 45)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
+      GEOrotation(FILE, COMMENT, numpy.add(lower,upper)/2.0, [0,1,0], 45)
     elif self.HOLE_TYPE == 'triangular_yagi_voxel':
       voxel_Ymin = self.Ymax/2.0 - self.pillar_radius_mum
       voxel_Ymax = self.Ymax/2.0 + self.pillar_radius_mum
@@ -472,27 +467,27 @@ class pillar_1D:
         # bottom left blocks
         lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
         upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
         # top left blocks
         lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
         upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
         # bottom right blocks
         lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
         upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
-        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
         # top right blocks
         lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
         upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
-        GEOblock(FILE, lower, upper, permittivity, conductivity)
+        GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
       ## middle left block
       lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
       upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.pillar_radius_mum + D]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
       ## middle right block
       lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
       upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right-D*(N + 1)/(N+1)]# - self.pillar_radius_mum + D]
-      GEOblock(FILE, lower, upper, permittivity, conductivity)
+      GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
     else:
       print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
     
@@ -517,7 +512,7 @@ class pillar_1D:
         # create bottom block
         L = [ 0, 0, 0 ]
         U = [ X_current + self.h_bottom_square, self.Ymax, self.Zmax ]
-        GEOblock(out, L, U, pow(self.n_bottom_square,2), 0)
+        GEOblock(out, 'podium', L, U, pow(self.n_bottom_square,2), 0)
   
       X_current = X_current + self.h_bottom_square;
       
@@ -525,7 +520,7 @@ class pillar_1D:
         # create main pillar
         L = [ X_current, self.Ymax/2 - self.pillar_radius_mum, self.Zmax/2 - self.pillar_radius_mum ]
         U = [ X_current + self.getPillarHeight(), self.Ymax/2 + self.pillar_radius_mum, self.Zmax/2 + self.pillar_radius_mum ]
-        GEOblock(out, L, U, pow(self.n_Diamond,2), 0)
+        GEOblock(out, 'main pillar', L, U, pow(self.n_Diamond,2), 0)
     
       X_current = X_current + self.d_holes_mum/2
     
@@ -537,7 +532,7 @@ class pillar_1D:
           # create bottom holes
           for i in range(self.bottom_N):
             if self.print_holes_bottom:
-              self.addHole(out,X_current, permittivity, conductivity)
+              self.addHole(out, 'bottom hole', X_current, permittivity, conductivity)
             X_current = X_current + self.d_holes_mum
     
           X_current = X_current - self.d_holes_mum + self.getDistanceBetweenDefectCentersInCavity()
@@ -545,13 +540,13 @@ class pillar_1D:
           # create top holes
           for i in range(self.top_N):
             if self.print_holes_top:
-              self.addHole(out,X_current, permittivity, conductivity)
+              self.addHole(out, 'top hole', X_current, permittivity, conductivity)
             X_current = X_current + self.d_holes_mum
           
       #write box
       L = [ 0, 0, 0 ]
       U = [ self.Xmax, self.Zmax, self.Ymax/2 ]
-      GEObox(out, L, U)
+      GEObox(out, 'box', L, U)
     
       #write footer
       out.write('end\n'); #end the file
@@ -591,13 +586,13 @@ class pillar_1D:
         type = 10
     
         if self.excitation_type == 1:
-          GEOexcitation(out, 7, P_Ym1, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, '1 grid Y excitation', 7, P_Ym1, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         elif  self.excitation_type == 2:
-          GEOexcitation(out, 7, P_Zm1, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, '1 grid Z excitation', 7, P_Zm1, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         elif  self.excitation_type == 3:
-          GEOexcitation(out, 7, P_Ym2, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, '2 grid Y excitation', 7, P_Ym2, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         elif  self.excitation_type == 4:
-          GEOexcitation(out, 7, P_Zm2, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+          GEOexcitation(out, '2 grid Z excitation', 7, P_Zm2, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         else:
           error('invalid direction')
     
@@ -607,17 +602,17 @@ class pillar_1D:
       Xneg_bc = 2; Xneg_param = [1,1,0]
       Yneg_bc = 2; Yneg_param = [1,1,0]
       Zneg_bc = 2; Zneg_param = [1,1,0]
-      GEOboundary(out, Xpos_bc, Xpos_param, Ypos_bc, Ypos_param, Zpos_bc, Zpos_param, Xneg_bc, Xneg_param, Yneg_bc, Yneg_param, Zneg_bc, Zneg_param)
+      GEOboundary(out, 'boundary', Xpos_bc, Xpos_param, Ypos_bc, Ypos_param, Zpos_bc, Zpos_param, Xneg_bc, Xneg_param, Yneg_bc, Yneg_param, Zneg_bc, Zneg_param)
       
       iteration_method = 5
       propagation_constant = 0
       flag_1 = 0
       flag_2 = 0
       id_character = 'id'
-      GEOflag(out, iteration_method, propagation_constant, flag_1, flag_2, self.ITERATIONS, self.TIMESTEP, id_character)
+      GEOflag(out, 'flag', iteration_method, propagation_constant, flag_1, flag_2, self.ITERATIONS, self.TIMESTEP, id_character)
     
       if self.print_mesh:
-        GEOmesh(out, self.delta_X_vector, self.delta_Y_vector, self.delta_Z_vector)
+        GEOmesh(out, 'mesh', self.delta_X_vector, self.delta_Y_vector, self.delta_Z_vector)
           
       # frequency snapshots
       first = self.FIRST
@@ -655,20 +650,20 @@ class pillar_1D:
         plane = 1
         P1 = [self.getPillarCenterX(), 0, 0]
         P2 = [self.getPillarCenterX(), self.Zmax, self.Ymax/2]
-        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
+        GEOfrequency_snapshot(out, 'X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+        GEOtime_snapshot(out, 'X time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 2
         P1 = [0, self.Zmax/2, 0]
         P2 = [self.Xmax, self.Zmax/2, self.Ymax/2]
-        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
+        GEOfrequency_snapshot(out, 'Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+        GEOtime_snapshot(out, 'Y time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 3
         P1 = [0, 0, self.Ymax/2-2*self.delta_center]
         P2 = [self.Xmax, self.Zmax, self.Ymax/2-2*self.delta_center]
-        GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
+        GEOfrequency_snapshot(out, 'Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+        GEOtime_snapshot(out, 'Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
     
       if self.print_probes:
         # probes
@@ -680,15 +675,15 @@ class pillar_1D:
         for iX in range(len(self.probes_X_vector)):
           # XZ probes
           for iZ in range(len(self.probes_Z_vector)):
-            GEOprobe(out, [self.probes_X_vector[iX], self.Yplanes[5], self.probes_Z_vector[iZ]], step, E, H, J, power )
+            GEOprobe(out, '', [self.probes_X_vector[iX], self.Yplanes[5], self.probes_Z_vector[iZ]], step, E, H, J, power )
           # XY probes
           for iY in range(len(self.probes_Y_vector)):
-            GEOprobe(out, [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[4]], step, E, H, J, power )
+            GEOprobe(out, '', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[4]], step, E, H, J, power )
         
         # XY center probes
         for iX in range(len(self.probes_X_vector_center)):
           for iY in range(len(self.probes_Y_vector_center)):
-            GEOprobe(out, [self.probes_X_vector_center[iX], self.probes_Y_vector_center[iY], self.Zplanes[3]], step, E, H, J, power )
+            GEOprobe(out, '', [self.probes_X_vector_center[iX], self.probes_Y_vector_center[iY], self.Zplanes[3]], step, E, H, J, power )
       
       #write footer
       out.write('end\n'); #end the file
@@ -1001,7 +996,7 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # main function
-    test(os.getenv('TESTDIR'),20,10)
+    test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
     test2(os.getenv('TESTDIR'))
     
   except Usage, err:
