@@ -66,7 +66,14 @@ class pillar_1D:
     self.bottom_N = 6; #no unit
     # number of holes on top
     self.top_N = 3; #no unit
+
+    # TODO: finish this
+    # distance between 2 holes around cavity
+    #self.d_holes_cavity = 2*self.d_holes_mum; #mum
+    # self.d_holes_cavity = self.getLambda()/self.n_Diamond + 2*self.hole_radius_X;#mum
+    # self.Lcav = self.d_holes_cavity - self.d_holes_mum; # mum
     # self.getDistInterHolesCavity() = self.Lcav + self.d_holes_mum
+
     # top box offset
     self.top_box_offset=1; #mum
   
@@ -92,6 +99,7 @@ class pillar_1D:
     self.delta_outside = self.getLambda()/(4*self.n_Air)
     self.delta_center = self.delta_diamond
     self.delta_boundary = self.delta_diamond
+    self.delta_bottom_square = self.delta_diamond
 
     # center area where excitation takes place (for meshing)
     self.center_radius = 2*self.delta_center
@@ -176,12 +184,12 @@ class pillar_1D:
   def write(self):
     if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
       os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
-    #self.mesh()
-    self.writeIN();
-    self.writeSH();
-    self.writeCMD();
-    print self.writeGEO();
-    self.writeINP();
+    self.mesh()
+    self.writeIN()
+    self.writeSH()
+    self.writeCMD()
+    print self.writeGEO()
+    self.writeINP()
 
   def mesh(self):
     
@@ -218,10 +226,12 @@ class pillar_1D:
     thicknessVector_X = [ ]
     max_delta_Vector_X = [ ]
 
+    #print thicknessVector_X
     # under the pillar
-    if h_bottom_square>0:
-      thicknessVector_Y = [ self.h_bottom_square ]
-      max_delta_Vector_Y = [ self.delta_bottom_square ]
+    if self.h_bottom_square>0:
+      print('self.h_bottom_square = '+str(self.h_bottom_square))
+      thicknessVector_X += [ self.h_bottom_square ]
+      max_delta_Vector_X += [ self.delta_bottom_square ]
 
     # bottom part
     for i in range(self.bottom_N):
@@ -236,24 +246,39 @@ class pillar_1D:
       max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_hole, mesh_factor*self.delta_diamond ]
     
     # over the pillar
-    if y_buffer>0:
-      thicknessVector_X +=[ X_buffer ];
-      max_delta_Vector_X += [ delta_boundary ];
-    if top_box_offset>0:
-      thicknessVector_X +=[ top_box_offset ];
-      max_delta_Vector_X += [ delta_outside ];
+    if self.X_buffer>0:
+      print('self.X_buffer = '+str(self.X_buffer))
+      thicknessVector_X +=[ self.X_buffer ];
+      max_delta_Vector_X += [ self.delta_boundary ];
+    if self.top_box_offset>0:
+      print('self.top_box_offset = '+str(self.top_box_offset))
+      thicknessVector_X +=[ self.top_box_offset ];
+      max_delta_Vector_X += [ self.delta_outside ];
+      
+    print('==============')
+    print thicknessVector_X
+    print('==============')
+
     ###########################
   
     delta_min = min(max_delta_Vector_X)
   
+    # TODO: finish this
     if self.HOLE_TYPE == 'cylinder':
       thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     elif self.HOLE_TYPE == 'square_holes':
       thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     elif self.HOLE_TYPE == 'rectangular_holes':
       thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
+    elif self.HOLE_TYPE == 'rectangular_yagi':
+      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
+    elif self.HOLE_TYPE == 'triangular_yagi':
+      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
+    elif self.HOLE_TYPE == 'triangular_yagi_voxel':
+      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     else:
       print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+      sys.exit(-1)
   
     thicknessVector_Y_2 = thicknessVector_Y_1[:]; thicknessVector_Y_2.reverse()
     thicknessVector_Y = thicknessVector_Y_1 + thicknessVector_Y_2
@@ -264,6 +289,10 @@ class pillar_1D:
   
     #print 'thicknessVector_Y = ', thicknessVector_Y
     #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
+
+    print('==============')
+    print thicknessVector_Y
+    print('==============')
   
     thicknessVector_Z = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
     self.Z_buffer,
@@ -272,6 +301,9 @@ class pillar_1D:
     self.center_radius ]
     max_delta_Vector_Z = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
     
+    print('==============')
+    print thicknessVector_Z
+    print('==============')
     #Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
     #print('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector))
     #print('Section_FinalDeltaVector = '+str(Section_FinalDeltaVector))
@@ -281,12 +313,13 @@ class pillar_1D:
     #subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
     #print('============')
     
-    #print max_delta_Vector_X; print thicknessVector_X
-    #print max_delta_Vector_Y; print thicknessVector_Y
-    #print max_delta_Vector_Z; print thicknessVector_Z
-    
+    print max_delta_Vector_X; print thicknessVector_X
     self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
+
+    print max_delta_Vector_Y; print thicknessVector_Y
     self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
+
+    print max_delta_Vector_Z; print thicknessVector_Z
     self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
   
     # for the snapshots
@@ -301,7 +334,7 @@ class pillar_1D:
     self.h_bottom_square + self.getPillarHeight()+1*self.delta_boundary,# 8 / -
     self.h_bottom_square + self.getPillarHeight()+8*self.delta_boundary, # 9 / -
     self.h_bottom_square + self.getPillarHeight()+32*self.delta_boundary, # 10 / -
-    Xmax ] # 11 / -
+    self.Xmax ] # 11 / -
     
     self.Yplanes = [ 0,
     self.Ymax/2-self.pillar_radius_mum-self.Y_buffer,
@@ -650,10 +683,10 @@ class pillar_1D:
     
     return(inp_filename)
 
-def cylinder(bottomN,topN):
+def cylinder(DSTDIR, bottomN, topN):
   P = pillar_1D()
   print('======== cylinder START ============')
-  P.DSTDIR = os.getenv('TESTDIR')
+  P.DSTDIR = DSTDIR
   P.ITERATIONS = 32000
   P.print_holes_top = True
   P.print_holes_bottom = True
@@ -675,6 +708,7 @@ def cylinder(bottomN,topN):
   #P.getDistInterHolesCavity() = 2*P.d_holes_mum; #mum
   P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
+  P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
   P.delta_outside = 2*P.delta_diamond
   P.delta_center = P.delta_diamond
@@ -690,10 +724,10 @@ def cylinder(bottomN,topN):
   
   P.write()
   
-def square_holes(bottomN,topN):
+def square_holes(DSTDIR, bottomN, topN):
   P = pillar_1D()
   print('======== square_holes START ============')
-  P.DSTDIR = os.getenv('TESTDIR')
+  P.DSTDIR = DSTDIR
   P.ITERATIONS = 32000
   P.print_holes_top = True
   P.print_holes_bottom = True
@@ -715,6 +749,7 @@ def square_holes(bottomN,topN):
   #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
   P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond)
+  P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
   P.delta_center = P.delta_diamond
@@ -730,10 +765,10 @@ def square_holes(bottomN,topN):
 
   P.write()
 
-def rectangular_holes(bottomN,topN):
+def rectangular_holes(DSTDIR, bottomN, topN):
   P = pillar_1D()
   print('======== rectangular_holes START ============')
-  P.DSTDIR = os.getenv('TESTDIR')
+  P.DSTDIR = DSTDIR
   P.ITERATIONS = 32000
   P.print_holes_top = True
   P.print_holes_bottom = True
@@ -752,9 +787,10 @@ def rectangular_holes(bottomN,topN):
   P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
-  P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X #mum
+  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum # mum
+  P.delta_diamond = P.getLambda()/(10*P.n_Diamond)
+  P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
   P.delta_center = P.delta_diamond
@@ -770,10 +806,10 @@ def rectangular_holes(bottomN,topN):
 
   P.write()
 
-def rectangular_yagi(bottomN,topN):
+def rectangular_yagi(DSTDIR, bottomN, topN):
   P = pillar_1D()
   print('======== rectangular_yagi START ============')
-  P.DSTDIR = os.getenv('TESTDIR')
+  P.DSTDIR = DSTDIR
   P.ITERATIONS = 32000
   P.print_holes_top = True
   P.print_holes_bottom = True
@@ -795,6 +831,7 @@ def rectangular_yagi(bottomN,topN):
   #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
   P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
   P.delta_center = P.delta_diamond
@@ -810,10 +847,10 @@ def rectangular_yagi(bottomN,topN):
 
   P.write()
 
-def triangular_yagi(bottomN,topN):
+def triangular_yagi(DSTDIR, bottomN, topN):
   P = pillar_1D()
   print('======== triangular_yagi START ============')
-  P.DSTDIR = os.getenv('TESTDIR')
+  P.DSTDIR = DSTDIR
   P.ITERATIONS = 32000
   P.print_holes_top = True
   P.print_holes_bottom = True
@@ -835,6 +872,7 @@ def triangular_yagi(bottomN,topN):
   #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
   P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
   P.delta_center = P.delta_diamond
@@ -850,10 +888,10 @@ def triangular_yagi(bottomN,topN):
 
   P.write()
 
-def triangular_yagi_voxel(bottomN,topN):
+def triangular_yagi_voxel(DSTDIR, bottomN, topN):
   P = pillar_1D()
   print('======== triangular_yagi_voxel START ============')
-  P.DSTDIR = os.getenv('TESTDIR')
+  P.DSTDIR = DSTDIR
   P.ITERATIONS = 32000
   P.print_holes_top = True
   P.print_holes_bottom = True
@@ -876,6 +914,7 @@ def triangular_yagi_voxel(bottomN,topN):
   #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
   P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
+  P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
   P.delta_outside = P.getLambda()/(4*P.n_Air)
   P.delta_center = P.delta_diamond
@@ -916,8 +955,9 @@ def test(bottomN,topN):
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.write()
 
-def test2():
+def test2(DSTDIR):
   P = pillar_1D()
+  P.DSTDIR = DSTDIR
   print('======== default START ============')
   P.write()
   
@@ -943,8 +983,8 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # main function
-    #test(20,10)
-    test2()
+    #test(os.getenv('TESTDIR'),20,10)
+    test2(os.getenv('TESTDIR'))
     
   except Usage, err:
     print >>sys.stderr, err.msg

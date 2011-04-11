@@ -24,6 +24,11 @@ def subGridMultiLayer(Section_MaxDeltaVector = [1.76, 2.1385, 2.3535, 1],Section
   #  Section_MaxDeltaVector(new) = lambda(old)/16./indexVector(old)
   #  Section_ThicknessVector(new) = thicknessVector(old) '''
   
+  print Section_MaxDeltaVector
+  print Section_ThicknessVector
+  
+  # TODO: check for zeroes
+  
   Section_MaxDeltaVector = array(Section_MaxDeltaVector)
   Section_ThicknessVector = array(Section_ThicknessVector)
   
