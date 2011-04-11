@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # TODO: Print function + print args into output files
+# TODO: create FDTD object, store stuff in it and use its print function for output
 
 from __future__ import division
 #~ import sys
@@ -42,6 +43,8 @@ class pillar_1D:
 
     self.SNAPSHOTS_FREQUENCY = []
     self.excitation_type = 1
+    self.Ysymmetry = True
+    self.Zsymmetry = False
     self.h_bottom_square = 0.5 # mum #bottom square thickness
 
     #self.getLambda() = get_c0()/self.EXCITATION_FREQUENCY
@@ -226,6 +229,7 @@ class pillar_1D:
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     # meshing parameters
+    # TODO: adpapt mesh to excitation!!! excitation should go "into mesh", i.e. Y excitation=>cut box in Y plane, = Z excitation=>cut box in Z plane, Y+Z excitation=>do not cut box
     
     ###########################
     # X direction
@@ -273,28 +277,18 @@ class pillar_1D:
     delta_min = min(max_delta_Vector_X)
   
     # TODO: finish this
-    if self.HOLE_TYPE == 'cylinder':
-      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
-    elif self.HOLE_TYPE == 'square_holes':
-      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
-    elif self.HOLE_TYPE == 'rectangular_holes':
-      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
-    elif self.HOLE_TYPE == 'rectangular_yagi':
-      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
-    elif self.HOLE_TYPE == 'triangular_yagi':
-      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
-    elif self.HOLE_TYPE == 'triangular_yagi_voxel':
-      thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
-    else:
-      print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
-      sys.exit(-1)
-  
-    thicknessVector_Y_2 = thicknessVector_Y_1[:]; thicknessVector_Y_2.reverse()
-    thicknessVector_Y = thicknessVector_Y_1 + thicknessVector_Y_2
-    
+    thicknessVector_Y_1 = [ self.Ymax/2-self.pillar_radius_mum-self.Y_buffer, self.Y_buffer, self.pillar_radius_mum-self.center_radius, self.center_radius ]
     max_delta_Vector_Y_1 = [ self.delta_outside, self.delta_boundary, self.delta_hole, self.delta_center ]
+    
+    thicknessVector_Y_2 = thicknessVector_Y_1[:]; thicknessVector_Y_2.reverse()
     max_delta_Vector_Y_2 = max_delta_Vector_Y_1[:]; max_delta_Vector_Y_2.reverse();
-    max_delta_Vector_Y = max_delta_Vector_Y_1 + max_delta_Vector_Y_2
+    
+    if self.Ysymmetry:
+      thicknessVector_Y = thicknessVector_Y_1
+      max_delta_Vector_Y = max_delta_Vector_Y_1
+    else:
+      thicknessVector_Y = thicknessVector_Y_1 + thicknessVector_Y_2
+      max_delta_Vector_Y = max_delta_Vector_Y_1 + max_delta_Vector_Y_2
   
     #print 'thicknessVector_Y = ', thicknessVector_Y
     #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
@@ -304,12 +298,61 @@ class pillar_1D:
       print thicknessVector_Y
       print('==============')
   
-    thicknessVector_Z = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
-    self.Z_buffer,
-    self.pillar_radius_mum-self.hole_radius_Z,
-    self.hole_radius_Z-self.center_radius,
-    self.center_radius ]
-    max_delta_Vector_Z = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    if self.HOLE_TYPE == 'cylinder':
+      thicknessVector_Z_1 = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
+      self.Z_buffer,
+      self.pillar_radius_mum-self.hole_radius_Z,
+      self.hole_radius_Z-self.center_radius,
+      self.center_radius ]
+      max_delta_Vector_Z_1 = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    elif self.HOLE_TYPE == 'square_holes':
+      thicknessVector_Z_1 = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
+      self.Z_buffer,
+      self.pillar_radius_mum-self.hole_radius_Z,
+      self.hole_radius_Z-self.center_radius,
+      self.center_radius ]
+      max_delta_Vector_Z_1 = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    elif self.HOLE_TYPE == 'rectangular_holes':
+      thicknessVector_Z_1 = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
+      self.Z_buffer,
+      self.pillar_radius_mum-self.hole_radius_Z,
+      self.hole_radius_Z-self.center_radius,
+      self.center_radius ]
+      max_delta_Vector_Z_1 = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    elif self.HOLE_TYPE == 'rectangular_yagi':
+      thicknessVector_Z_1 = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
+      self.Z_buffer,
+      self.pillar_radius_mum-self.hole_radius_Z,
+      self.hole_radius_Z-self.center_radius,
+      self.center_radius ]
+      max_delta_Vector_Z_1 = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    elif self.HOLE_TYPE == 'triangular_yagi':
+      thicknessVector_Z_1 = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
+      self.Z_buffer,
+      self.pillar_radius_mum-self.hole_radius_Z,
+      self.hole_radius_Z-self.center_radius,
+      self.center_radius ]
+      max_delta_Vector_Z_1 = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    elif self.HOLE_TYPE == 'triangular_yagi_voxel':
+      thicknessVector_Z_1 = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
+      self.Z_buffer,
+      self.pillar_radius_mum-self.hole_radius_Z,
+      self.hole_radius_Z-self.center_radius,
+      self.center_radius ]
+      max_delta_Vector_Z_1 = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
+    else:
+      print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+      sys.exit(-1)
+
+    thicknessVector_Z_2 = thicknessVector_Z_1[:]; thicknessVector_Z_2.reverse()
+    max_delta_Vector_Z_2 = max_delta_Vector_Z_1[:]; max_delta_Vector_Z_2.reverse();
+    
+    if self.Zsymmetry:
+      thicknessVector_Z = thicknessVector_Z_1
+      max_delta_Vector_Z = max_delta_Vector_Z_1
+    else:
+      thicknessVector_Z = thicknessVector_Z_1 + thicknessVector_Z_2
+      max_delta_Vector_Z = max_delta_Vector_Z_1 + max_delta_Vector_Z_2
     
     if self.verbose:
       print('==============')
@@ -594,7 +637,8 @@ class pillar_1D:
         elif  self.excitation_type == 4:
           GEOexcitation(out, '2 grid Z excitation', 7, P_Zm2, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         else:
-          error('invalid direction')
+          print('FATAL ERROR: invalid direction')
+          sys.exit(-1)
     
       Xpos_bc = 2; Xpos_param = [1,1,0]
       Ypos_bc = 2; Ypos_param = [1,1,0]
