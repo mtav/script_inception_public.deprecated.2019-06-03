@@ -69,10 +69,11 @@ class pillar_1D:
 
     # TODO: finish this
     # distance between 2 holes around cavity
-    #self.d_holes_cavity = 2*self.d_holes_mum; #mum
-    # self.d_holes_cavity = self.getLambda()/self.n_Diamond + 2*self.hole_radius_X;#mum
-    # self.Lcav = self.d_holes_cavity - self.d_holes_mum; # mum
-    # self.getDistInterHolesCavity() = self.Lcav + self.d_holes_mum
+    # self.setDistanceBetweenDefectCentersInCavity(2*self.d_holes_mum) #mum
+    # self.setDistanceBetweenDefectCentersInCavity(self.getLambda()/self.n_Diamond + 2*self.hole_radius_X) #mum
+    # self.setDistanceBetweenDefectPairsInCavity(self.d_holes_cavity - self.d_holes_mum) # mum
+    # self.setDistanceBetweenDefectCentersInCavity(self.getDistanceBetweenDefectPairsInCavity() + self.d_holes_mum)
+    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Diamond
 
     # top box offset
     self.top_box_offset=1; #mum
@@ -110,7 +111,7 @@ class pillar_1D:
     self.Z_buffer = 4*self.delta_diamond; #mum
   
     # dimension and position parameters
-    #self.getPillarHeight() = (self.bottom_N+self.top_N)*self.d_holes_mum + self.Lcav
+    #self.getPillarHeight() = (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()
     
     self.Xmax = self.h_bottom_square + self.getPillarHeight() + self.X_buffer + self.top_box_offset; #mum
     #self.Ymax = 5*2*self.pillar_radius_mum;
@@ -132,7 +133,7 @@ class pillar_1D:
     self.probes_X_vector_center = []
 
   def getPillarHeight(self):
-    return (self.bottom_N+self.top_N)*self.d_holes_mum + self.Lcav
+    return (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()
 
   def getLambda(self):
     return get_c0()/self.EXCITATION_FREQUENCY
@@ -140,18 +141,19 @@ class pillar_1D:
   def setLambda(self,Lambda_mum):
     self.EXCITATION_FREQUENCY = get_c0()/Lambda_mum
 
-  def getDistInterHolesCavity(self):
-    #self.getDistInterHolesCavity() = 2*self.d_holes_mum; #mum
-    #self.getDistInterHolesCavity() = self.getLambda()/self.n_Diamond + 2*self.hole_radius_X;#mum
-    return self.LcavLarge + 2*self.hole_radius_X
+########################################################################
+  #def getDistanceBetweenDefectCentersInCavity(self):
+    #self.getDistanceBetweenDefectCentersInCavity() = 2*self.d_holes_mum; #mum
+    #self.getDistanceBetweenDefectCentersInCavity() = self.getLambda()/self.n_Diamond + 2*self.hole_radius_X;#mum
+    #return self.LcavLarge + 2*self.hole_radius_X
 
-  def getLcav():
-    #self.Lcav = self.getDistInterHolesCavity() - self.d_holes_mum; # mum
-    return self.LcavLarge - ()
+  #def getLcav():
+    #self.setDistanceBetweenDefectPairsInCavity(self.getDistanceBetweenDefectCentersInCavity() - self.d_holes_mum) # mum
+    #return self.LcavLarge + 2*rh - dh
 
-  def getLcavLarge():
+  #def getLcavLarge():
     
-  def setLcav():
+  #def setLcav():
 
   # LcavLarge + 2*rh = dhcav
   # Lcav + ( dh - 2*rh ) = LcavLarge
@@ -161,19 +163,28 @@ class pillar_1D:
   # dhcav = DistanceBetweenDefectCenters
   # dh = d_holes_mum
   # rh = hole_radius_X
-  # "distance between defect centers"
-  def getDistanceBetweenDefectCenters():
-  def setDistanceBetweenDefectCenters():
-  # "distance between defect borders"
-  def getDistanceBetweenDefectBorders():
-  def setDistanceBetweenDefectBorders():
-  # "distance between defect pairs"
-  def getDistanceBetweenDefectPairs():
-  def setDistanceBetweenDefectPairs():
+  
+  # "distance between defect centers in cavity"
+  def getDistanceBetweenDefectCentersInCavity(self):
+    return self.getDistanceBetweenDefectBordersInCavity() + 2*self.hole_radius_X
+  def setDistanceBetweenDefectCentersInCavity(self,value):
+    self.setDistanceBetweenDefectBordersInCavity(value - 2*self.hole_radius_X)
     
-
+  # "distance between defect borders in cavity"
+  def getDistanceBetweenDefectBordersInCavity(self):
+    return self.DistanceBetweenDefectBordersInCavity
+  def setDistanceBetweenDefectBordersInCavity(self,value):
+    self.DistanceBetweenDefectBordersInCavity = value
+  
+  # "distance between defect pairs in cavity"
+  def getDistanceBetweenDefectPairsInCavity(self):
+    return self.getDistanceBetweenDefectBordersInCavity() + 2*self.hole_radius_X - self.d_holes_mum
+  def setDistanceBetweenDefectPairsInCavity(self,value):
+    self.setDistanceBetweenDefectBordersInCavity(value - 2*self.hole_radius_X + self.d_holes_mum)
+    
+########################################################################
   def getPillarCenterX(self):
-    return self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.Lcav/2
+    return self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()/2
     
   def getPillarCenterY(self):
     return self.Ymax/2
@@ -238,7 +249,7 @@ class pillar_1D:
       thicknessVector_X += [ self.d_holes_mum/2 - self.hole_radius_X, 2*self.hole_radius_X, self.d_holes_mum/2 - self.hole_radius_X ]
       max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_hole, mesh_factor*self.delta_diamond ]
     # cavity
-    thicknessVector_X += [ self.Lcav/2-self.center_radius, 2*self.center_radius, self.Lcav/2-self.center_radius ]
+    thicknessVector_X += [ self.getDistanceBetweenDefectPairsInCavity()/2-self.center_radius, 2*self.center_radius, self.getDistanceBetweenDefectPairsInCavity()/2-self.center_radius ]
     max_delta_Vector_X += [ mesh_factor*self.delta_diamond, mesh_factor*self.delta_center, mesh_factor*self.delta_diamond ]
     # top part
     for i in range(self.top_N):
@@ -329,7 +340,7 @@ class pillar_1D:
     self.getPillarCenterX()-self.delta_center, # 3 / 2
     self.getPillarCenterX(), # 4 / 3
     self.getPillarCenterX()+self.delta_center, # 5 / 4
-    self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.Lcav + self.top_N/2*self.d_holes_mum, # 6 / 5
+    self.h_bottom_square + self.bottom_N*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity() + self.top_N/2*self.d_holes_mum, # 6 / 5
     self.h_bottom_square + self.getPillarHeight(), # 7 / 6
     self.h_bottom_square + self.getPillarHeight()+1*self.delta_boundary,# 8 / -
     self.h_bottom_square + self.getPillarHeight()+8*self.delta_boundary, # 9 / -
@@ -523,7 +534,7 @@ class pillar_1D:
               self.addHole(out,X_current, permittivity, conductivity)
             X_current = X_current + self.d_holes_mum
     
-          X_current = X_current - self.d_holes_mum + self.getDistInterHolesCavity()
+          X_current = X_current - self.d_holes_mum + self.getDistanceBetweenDefectCentersInCavity()
     
           # create top holes
           for i in range(self.top_N):
@@ -705,8 +716,8 @@ def cylinder(DSTDIR, bottomN, topN):
   P.hole_radius_Z = P.hole_radius_X
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = 2*P.d_holes_mum; #mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
+  P.setDistanceBetweenDefectCentersInCavity(2*P.d_holes_mum) #mum
+  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   P.delta_diamond = 0.5*P.getLambda()/(15*P.n_Diamond)
   P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
@@ -746,8 +757,8 @@ def square_holes(DSTDIR, bottomN, topN):
   P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
+  P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.hole_radius_X) #mum
+  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond)
   P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
@@ -787,8 +798,8 @@ def rectangular_holes(DSTDIR, bottomN, topN):
   P.hole_radius_Z = P.pillar_radius_mum - (P.d_holes_mum-2*P.hole_radius_X); #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X #mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum # mum
+  P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.hole_radius_X) #mum
+  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond)
   P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
@@ -828,8 +839,8 @@ def rectangular_yagi(DSTDIR, bottomN, topN):
   P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
+  P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.hole_radius_X) #mum
+  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
@@ -869,8 +880,8 @@ def triangular_yagi(DSTDIR, bottomN, topN):
   P.hole_radius_Z = P.pillar_radius_mum - 0.100; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
+  P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.hole_radius_X) #mum
+  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
@@ -911,8 +922,8 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN):
   P.hole_radius_Z = P.pillar_radius_mum - 3*P.hole_radius_X; #mum
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  #P.getDistInterHolesCavity() = P.getLambda()/P.n_Diamond + 2*P.hole_radius_X;#mum
-  P.Lcav = P.getDistInterHolesCavity() - P.d_holes_mum; # mum
+  P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.hole_radius_X) #mum
+  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   P.delta_diamond = P.getLambda()/(10*P.n_Diamond);
   P.delta_bottom_square = P.delta_diamond
   P.delta_hole = P.delta_diamond
@@ -932,8 +943,9 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN):
 
   P.write()
 
-def test(bottomN,topN):
+def test(DSTDIR,bottomN,topN):
   P = pillar_1D()
+  P.DSTDIR = DSTDIR
   P.bottom_N = bottomN
   P.top_N = topN
   P.HOLE_TYPE = 'cylinder'
@@ -961,18 +973,18 @@ def test2(DSTDIR):
   print('======== default START ============')
   P.write()
   
-  cylinder(12,12)
-  cylinder(20,10)
-  square_holes(6,3)
-  square_holes(20,10)
-  rectangular_holes(6,3)
-  rectangular_holes(6,4)
-  rectangular_holes(7,4)
-  rectangular_holes(7,5)
-  rectangular_holes(8,6)
-  rectangular_yagi(20,10)
-  triangular_yagi(20,10)
-  triangular_yagi_voxel(20,10)  
+  cylinder(DSTDIR,12,12)
+  cylinder(DSTDIR,20,10)
+  square_holes(DSTDIR,6,3)
+  square_holes(DSTDIR,20,10)
+  rectangular_holes(DSTDIR,6,3)
+  rectangular_holes(DSTDIR,6,4)
+  rectangular_holes(DSTDIR,7,4)
+  rectangular_holes(DSTDIR,7,5)
+  rectangular_holes(DSTDIR,8,6)
+  rectangular_yagi(DSTDIR,20,10)
+  triangular_yagi(DSTDIR,20,10)
+  triangular_yagi_voxel(DSTDIR,20,10)  
 
 def main(argv=None):
   if argv is None:
@@ -983,7 +995,7 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # main function
-    #test(os.getenv('TESTDIR'),20,10)
+    test(os.getenv('TESTDIR'),20,10)
     test2(os.getenv('TESTDIR'))
     
   except Usage, err:
