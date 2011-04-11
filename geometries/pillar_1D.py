@@ -240,7 +240,7 @@ class pillar_1D:
     #print thicknessVector_X
     # under the pillar
     if self.h_bottom_square>0:
-      print('self.h_bottom_square = '+str(self.h_bottom_square))
+      #print('self.h_bottom_square = '+str(self.h_bottom_square))
       thicknessVector_X += [ self.h_bottom_square ]
       max_delta_Vector_X += [ self.delta_bottom_square ]
 
@@ -258,17 +258,18 @@ class pillar_1D:
     
     # over the pillar
     if self.X_buffer>0:
-      print('self.X_buffer = '+str(self.X_buffer))
+      #print('self.X_buffer = '+str(self.X_buffer))
       thicknessVector_X +=[ self.X_buffer ];
       max_delta_Vector_X += [ self.delta_boundary ];
     if self.top_box_offset>0:
-      print('self.top_box_offset = '+str(self.top_box_offset))
+      #print('self.top_box_offset = '+str(self.top_box_offset))
       thicknessVector_X +=[ self.top_box_offset ];
       max_delta_Vector_X += [ self.delta_outside ];
       
-    print('==============')
-    print thicknessVector_X
-    print('==============')
+    if self.verbose:
+      print('==============')
+      print thicknessVector_X
+      print('==============')
 
     ###########################
   
@@ -301,9 +302,10 @@ class pillar_1D:
     #print 'thicknessVector_Y = ', thicknessVector_Y
     #print 'max_delta_Vector_Y = ', max_delta_Vector_Y
 
-    print('==============')
-    print thicknessVector_Y
-    print('==============')
+    if self.verbose:
+      print('==============')
+      print thicknessVector_Y
+      print('==============')
   
     thicknessVector_Z = [ self.Zmax/2.0-self.pillar_radius_mum-self.Z_buffer,
     self.Z_buffer,
@@ -312,9 +314,10 @@ class pillar_1D:
     self.center_radius ]
     max_delta_Vector_Z = [ self.delta_outside, self.delta_boundary, self.delta_diamond, self.delta_diamond, self.delta_center ]
     
-    print('==============')
-    print thicknessVector_Z
-    print('==============')
+    if self.verbose:
+      print('==============')
+      print thicknessVector_Z
+      print('==============')
     #Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
     #print('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector))
     #print('Section_FinalDeltaVector = '+str(Section_FinalDeltaVector))
@@ -324,13 +327,16 @@ class pillar_1D:
     #subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
     #print('============')
     
-    print max_delta_Vector_X; print thicknessVector_X
+    if self.verbose:
+      print max_delta_Vector_X; print thicknessVector_X
     self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
 
-    print max_delta_Vector_Y; print thicknessVector_Y
+    if self.verbose:
+      print max_delta_Vector_Y; print thicknessVector_Y
     self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
 
-    print max_delta_Vector_Z; print thicknessVector_Z
+    if self.verbose:
+      print max_delta_Vector_Z; print thicknessVector_Z
     self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
   
     # for the snapshots

@@ -7,7 +7,7 @@ import os
 import getopt
 from numpy import *
 
-def subGridMultiLayer(Section_MaxDeltaVector = [1.76, 2.1385, 2.3535, 1],Section_ThicknessVector = [1, 0.5, 1, 1]):
+def subGridMultiLayer(Section_MaxDeltaVector_in = [1.76, 2.1385, 2.3535, 1],Section_ThicknessVector_in = [1, 0.5, 1, 1]):
   ''' Create a list of thicknesses for meshing
   #
   # [Mesh_ThicknessVector,Section_FinalDeltaVector] = subGridMultiLayer(Section_MaxDeltaVector,Section_ThicknessVector)
@@ -24,10 +24,25 @@ def subGridMultiLayer(Section_MaxDeltaVector = [1.76, 2.1385, 2.3535, 1],Section
   #  Section_MaxDeltaVector(new) = lambda(old)/16./indexVector(old)
   #  Section_ThicknessVector(new) = thicknessVector(old) '''
   
-  print Section_MaxDeltaVector
-  print Section_ThicknessVector
+  # check lengths
+  if len(Section_ThicknessVector_in)!=len(Section_MaxDeltaVector_in):
+    print('FATAL ERROR: len(Section_ThicknessVector_in)!=len(Section_MaxDeltaVector_in)')
+    sys.exit(-1)
+        
+  if 0 in Section_ThicknessVector_in:
+    print('WARNING: Section_ThicknessVector_in contains zeroes')
   
-  # TODO: check for zeroes
+  Section_ThicknessVector = []
+  Section_MaxDeltaVector = []
+  for i in range(len(Section_ThicknessVector_in)):
+    if Section_ThicknessVector_in[i]!=0:
+      Section_ThicknessVector.append(Section_ThicknessVector_in[i])
+      Section_MaxDeltaVector.append(Section_MaxDeltaVector_in[i])
+      
+  # check for zeroes
+  if 0 in Section_MaxDeltaVector:
+    print('FATAL ERROR: Section_MaxDeltaVector contains zeroes : '+str(Section_MaxDeltaVector))
+    sys.exit(-1)
   
   Section_MaxDeltaVector = array(Section_MaxDeltaVector)
   Section_ThicknessVector = array(Section_ThicknessVector)
