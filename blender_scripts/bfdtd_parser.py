@@ -288,7 +288,7 @@ class Time_snapshot:
         idx = 0;
         self.first = float(entry.data[idx]); idx = idx+1;
         self.repetition = float(entry.data[idx]); idx = idx+1;
-        self.plane = float(entry.data[idx]); idx = idx+1;
+        self.plane = int(float(entry.data[idx])); idx = idx+1;
         self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;

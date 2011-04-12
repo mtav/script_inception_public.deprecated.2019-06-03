@@ -78,7 +78,22 @@ class LayerManagerObjects:
         #~ self.txt.write(i +"\n")
     
     # initialisation
-    self.DefaultLayers = ['box','mesh','time_snapshots','eps_snapshots','frequency_snapshots','excitations','probes','spheres','blocks','cylinders']
+    self.DefaultLayers =  ['box',
+    'spheres',
+    'blocks',
+    'cylinders',
+    'excitations',
+    'mesh',
+    'probes',
+    'time_snapshots_X',
+    'time_snapshots_Y',
+    'time_snapshots_Z',
+    'eps_snapshots_X',
+    'eps_snapshots_Y',
+    'eps_snapshots_Z',
+    'frequency_snapshots_X',
+    'frequency_snapshots_Y',
+    'frequency_snapshots_Z']
     
     self.txt = Text.New("layernames")
     for i in range(20):

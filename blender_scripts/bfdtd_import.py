@@ -9,17 +9,20 @@ Tooltip: 'Import from Bristol FDTD'
 ###############################
 # IMPORTS
 ###############################
-from bfdtd_parser import *;
+from bfdtd_parser import *
 from FDTDGeometryObjects import *
+from layer_manager import *
+from bristolFDTD_generator_functions import *
+
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
 
 ###############################
 # INITIALIZATIONS
 ###############################
-#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt';
+#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
 # official script data location :)
-cfgfile = Blender.Get("datadir")+'/BlenderImport.txt';
+cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
 
 ###############################
 # IMPORT FUNCTION
@@ -42,39 +45,41 @@ def importBristolFDTD(filename):
     
     Blender.Window.RedrawAll(); # This must be called before any SetActiveLayer calls!
     
+    layerManager = LayerManagerObjects()
+    
     # Box
-    Blender.Window.SetActiveLayer(1<<0);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('box'));
     FDTDGeometryObjects_obj.GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
     
     # mesh
-    Blender.Window.SetActiveLayer(1<<1);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
     FDTDGeometryObjects_obj.GEOmesh(False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
     
     # Time_snapshot (time or EPS)
     for time_snapshot in structured_entries.time_snapshot_list:
         if time_snapshot.eps == 0:
-            Blender.Window.SetActiveLayer(1<<2);
+            Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
             FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
         else:
-            Blender.Window.SetActiveLayer(1<<3);
+            Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
             FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
     # Frequency_snapshot
-    Blender.Window.SetActiveLayer(1<<4);
     for frequency_snapshot in structured_entries.frequency_snapshot_list:
+        Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
         FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
-    Blender.Window.SetActiveLayer(1<<5);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
         FDTDGeometryObjects_obj.GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
     # Probe
-    Blender.Window.SetActiveLayer(1<<6);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
     for probe in structured_entries.probe_list:
         # print('probe = ',Vector(probe.position))
         FDTDGeometryObjects_obj.GEOprobe(Vector(probe.position));
     
     # Sphere
-    Blender.Window.SetActiveLayer(1<<7);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
     for sphere in structured_entries.sphere_list:
         # variables
         center = Vector(sphere.center)
@@ -95,7 +100,7 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
         
     # Block
-    Blender.Window.SetActiveLayer(1<<8);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
     for block in structured_entries.block_list:
         # variables
         lower = Vector(block.lower)
@@ -124,7 +129,7 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
     
     # Cylinder
-    Blender.Window.SetActiveLayer(1<<9);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
     for cylinder in structured_entries.cylinder_list:
       
         # initialise rotation_matrix
@@ -155,7 +160,7 @@ def importBristolFDTD(filename):
 
     # TODO: Save the layer settings somewhere for reuse
     scene = Blender.Scene.GetCurrent();
-    Blender.Scene.GetCurrent().setLayers([8,9,10]);
+    Blender.Scene.GetCurrent().setLayers([layerManager.DefaultLayers.index('spheres'),layerManager.DefaultLayers.index('blocks'),layerManager.DefaultLayers.index('cylinders')]);
     scene.update(0);
     Blender.Window.RedrawAll();
     Blender.Window.WaitCursor(0);

@@ -471,14 +471,14 @@ class pillar_1D:
     Yplanes_1 = [ 0,
     self.Ymax/2-self.radius_Y_pillar_mum-self.thickness_Y_buffer,
     self.Ymax/2-self.radius_Y_pillar_mum,
-    self.Ymax/2-2*self.delta_Y_center,
+    self.Ymax/2-2*self.delta_Y_center,#3
     self.Ymax/2-self.delta_Y_center,#4
     self.Ymax/2 ]
     
     Zplanes_1 = [ 0,
     self.Zmax/2-self.radius_Z_pillar_mum-self.thickness_Z_buffer,
     self.Zmax/2-self.radius_Z_pillar_mum,
-    self.Zmax/2-self.radius_Z_hole,
+    self.Zmax/2-self.radius_Z_hole,#3
     self.Zmax/2-2*self.delta_Z_center,
     self.Zmax/2-self.delta_Z_center,#5
     self.Zmax/2 ]
