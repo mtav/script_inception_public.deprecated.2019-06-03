@@ -109,6 +109,7 @@ class Box:
 class Geometry_object:
     def __init__(self):
         self.rotation_list = [];
+        self.name = 'default name'
     def __str__(self):
         ret = '--->object rotation_list';
         for i in range(len(self.rotation_list)):
@@ -134,6 +135,7 @@ class Sphere(Geometry_object):
         ret += Geometry_object.__str__(self)
         return ret;
     def read_entry(self,entry):
+        self.name = entry.name
         self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
         self.outer_radius = float(entry.data[3]);
         self.inner_radius = float(entry.data[4]);
@@ -156,6 +158,7 @@ class Block(Geometry_object):
         ret += Geometry_object.__str__(self)
         return ret;
     def read_entry(self,entry):
+        self.name = entry.name
         self.lower = float_array(entry.data[0:3]);
         self.upper = float_array(entry.data[3:6]);
         self.permittivity = float(entry.data[6]);
@@ -182,6 +185,7 @@ class Cylinder(Geometry_object):
         ret += Geometry_object.__str__(self)
         return ret;
     def read_entry(self,entry):
+        self.name = entry.name
         self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
         self.inner_radius = float(entry.data[3]);
         self.outer_radius = float(entry.data[4]);
@@ -377,6 +381,7 @@ class Probe:
 class Entry:
   def __init__(self):
     self.type = '';
+    self.name = 'default name';
     self.data = [];
 
 class Structured_entries:
@@ -482,17 +487,32 @@ class Structured_entries:
       # print fulltext;
   
       # remove comments
-      pattern_stripcomments = re.compile("\*\*.*\n")
-      cleantext = pattern_stripcomments.sub("\n", fulltext);
+      pattern_stripcomments = re.compile("\*\*(?!name=).*\n")
+      cleantext = pattern_stripcomments.sub("\n", fulltext)
+      print(cleantext)
   
       # pattern_objects = re.compile("^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}");
-      pattern_objects = re.compile("(?P<type>\w+)\s*{(?P<data>[^{}]*)}",re.DOTALL)
+      #pattern_objects = re.compile("(?P<type>\w+)\s*(?P<name>(?<=\*\*name=)[^{}]*)?{(?P<data>[^{}]*)}",re.DOTALL)
+      pattern_objects = re.compile("(?P<type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
       objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
     
       entries = [];
       # process objects
       for i in range(len(objects)):
           type = objects[i]['type'];
+          if 'nameblob' in objects[i].keys():
+            #print objects[i]['nameblob']
+            if objects[i]['nameblob']:
+              #print 'OK'
+              pattern_nameblob = re.compile("\*\*name=(.*)")
+              m = pattern_nameblob.match(objects[i]['nameblob'])
+              name = m.group(1).strip()
+            else:
+              #print 'NOT OK'
+              name = ''
+          else:
+            #print 'NO NAME'
+            name = ''
           data = objects[i]['data'];
           
           # convert type to upper case and strip it
@@ -504,6 +524,7 @@ class Structured_entries:
           
           entry = Entry();
           entry.type = type;
+          entry.name = name;
           entry.data = data;
           entries.append(entry);
           
