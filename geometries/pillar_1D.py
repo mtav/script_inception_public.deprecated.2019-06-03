@@ -887,8 +887,8 @@ def square_holes(DSTDIR, bottomN, topN):
   P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_Y_outside); #mum
   P.Zmax = 2*(P.radius_Z_pillar_mum + 4*delta_diamond + 4*P.delta_Z_outside); #mum
 
-  dumpObj(P)
-  P.verbose = True
+  #dumpObj(P)
+  #P.verbose = True
   P.write()
 
 def rectangular_holes(DSTDIR, bottomN, topN):
