@@ -471,18 +471,18 @@ class pillar_1D:
     Yplanes_1 = [ 0,
     self.Ymax/2-self.radius_Y_pillar_mum-self.thickness_Y_buffer,
     self.Ymax/2-self.radius_Y_pillar_mum,
-    self.Ymax/2-self.radius_Y_hole,
     self.Ymax/2-2*self.delta_Y_center,
-    self.Ymax/2-self.delta_Y_center,
+    self.Ymax/2-self.delta_Y_center,#4
     self.Ymax/2 ]
-  
+    
     Zplanes_1 = [ 0,
     self.Zmax/2-self.radius_Z_pillar_mum-self.thickness_Z_buffer,
     self.Zmax/2-self.radius_Z_pillar_mum,
+    self.Zmax/2-self.radius_Z_hole,
     self.Zmax/2-2*self.delta_Z_center,
-    self.Zmax/2-self.delta_Z_center,
+    self.Zmax/2-self.delta_Z_center,#5
     self.Zmax/2 ]
-
+  
     if self.Ysymmetry:
       self.Yplanes = Yplanes_1
     else:
@@ -509,14 +509,19 @@ class pillar_1D:
     # for probes
     ########################################################################
     #self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
-    #self.probes_Y_vector = self.Yplanes[1:8]
-    #self.probes_Z_vector = self.Zplanes[1:4]
-    
+
     #self.probes_X_vector_center = [self.getPillarCenterX()-self.delta_X_center,
     #self.getPillarCenterX(),
     #self.getPillarCenterX()+self.delta_X_center]
 
+    #self.probes_Y_vector = self.Yplanes[1:8]
+    #self.probes_Z_vector = self.Zplanes[1:4]
+    
+
     #self.probes_Y_vector_center = [self.Yplanes[5],self.Yplanes[7]]
+
+    #if self.Ysymmetry:
+    #else:
     ########################################################################
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -823,10 +828,10 @@ class pillar_1D:
         for iX in range(len(self.probes_X_vector)):
           # XZ probes
           for iZ in range(len(self.probes_Z_vector)):
-            GEOprobe(out, '', [self.probes_X_vector[iX], self.Yplanes[5], self.probes_Z_vector[iZ]], step, E, H, J, power )
+            GEOprobe(out, '', [self.probes_X_vector[iX], self.Yplanes[4], self.probes_Z_vector[iZ]], step, E, H, J, power )
           # XY probes
           for iY in range(len(self.probes_Y_vector)):
-            GEOprobe(out, '', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[4]], step, E, H, J, power )
+            GEOprobe(out, '', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[5]], step, E, H, J, power )
         
         # XY center probes
         for iX in range(len(self.probes_X_vector_center)):
