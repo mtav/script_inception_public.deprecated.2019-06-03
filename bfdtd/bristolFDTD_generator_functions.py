@@ -46,7 +46,7 @@ def planeNumberName(var):
 def GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector):
   ''' writes mesh to FILE '''
   # mesh X
-  FILE.write('XMESH **'+COMMENT+'\n')
+  FILE.write('XMESH **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -58,7 +58,7 @@ def GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
 
   # mesh Y
-  FILE.write('YMESH **'+COMMENT+'\n')
+  FILE.write('YMESH **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -70,7 +70,7 @@ def GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector):
 
 
   # mesh Z
-  FILE.write('ZMESH **'+COMMENT+'\n')
+  FILE.write('ZMESH **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -81,7 +81,7 @@ def GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector):
   FILE.write('\n')
 
 def GEOflag(FILE, COMMENT, iteration_method, propagation_constant, flag_1, flag_2, iterations, timestep, id_character):
-  FILE.write('FLAG  **'+COMMENT+'\n')
+  FILE.write('FLAG  **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -102,7 +102,7 @@ def GEOboundary(FILE, COMMENT, Xpos_bc, Xpos_param,\
                             Xneg_bc, Xneg_param,\
                             Yneg_bc, Yneg_param,\
                             Zneg_bc, Zneg_param):
-  FILE.write('BOUNDARY  **'+COMMENT+'\n')
+  FILE.write('BOUNDARY  **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -117,7 +117,7 @@ def GEOboundary(FILE, COMMENT, Xpos_bc, Xpos_param,\
   FILE.write('\n')
 
 def GEObox(FILE, COMMENT, lower, upper):
-  FILE.write('BOX  **'+COMMENT+'\n')
+  FILE.write('BOX  **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -139,7 +139,7 @@ def GEOsphere(FILE, COMMENT, center, outer_radius, inner_radius, permittivity, c
    6 permittivity
    7 conductivity
   } '''
-  FILE.write('SPHERE  **'+COMMENT+'\n')
+  FILE.write('SPHERE  **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -155,7 +155,7 @@ def GEOsphere(FILE, COMMENT, center, outer_radius, inner_radius, permittivity, c
   FILE.write('\n')
 
 def GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity):
-  FILE.write('BLOCK **'+COMMENT+'\n')
+  FILE.write('BLOCK **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -185,7 +185,7 @@ def GEOcylinder(FILE, COMMENT, centre, inner_radius, outer_radius, H, permittivi
   #
   # i.e. angle_deg = Angle of rotation in degrees around -Z=(0,0,-1) '''
 
-  FILE.write('CYLINDER **'+COMMENT+'\n')
+  FILE.write('CYLINDER **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -207,7 +207,7 @@ def GEOrotation(FILE, COMMENT, axis_point, axis_direction, angle_degrees):
   # rotation structure. Actually affects previous geometry object in Prof. Railton's modified BrisFDTD. Not fully implemented yet.
   # Should be integrated into existing structures using a directional vector anyway, like in MEEP. BrisFDTD hacking required... :)
 
-  FILE.write('ROTATION **'+COMMENT+'\n')
+  FILE.write('ROTATION **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -225,7 +225,7 @@ def GEOrotation(FILE, COMMENT, axis_point, axis_direction, angle_degrees):
 
 # excitation objects
 def GEOexcitation(FILE, COMMENT, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
-  FILE.write('EXCITATION **'+COMMENT+'\n')
+  FILE.write('EXCITATION **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
@@ -293,7 +293,7 @@ def GEOtime_snapshot(FILE, COMMENT, first, repetition, plane, P1, P2, E, H, J, p
       #~ plane_name='Z'
     #~ end
 
-    FILE.write('SNAPSHOT **'+COMMENT+'\n')
+    FILE.write('SNAPSHOT **name='+COMMENT+'\n')
     FILE.write('{\n')
 
     FILE.write("%d **FIRST\n" % first)
@@ -342,7 +342,7 @@ def GEOfrequency_snapshot(FILE, COMMENT, first, repetition, interpolate, real_df
       #~ plane_name='Y'
     #~ else: #plane == 3
       #~ plane_name='Z'
-    FILE.write('FREQUENCY_SNAPSHOT **'+COMMENT+'\n')
+    FILE.write('FREQUENCY_SNAPSHOT **name='+COMMENT+'\n')
     FILE.write('{\n')
 
     FILE.write("%d **FIRST\n" % first)
@@ -387,7 +387,7 @@ def GEOfrequency_snapshot(FILE, COMMENT, first, repetition, interpolate, real_df
       snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]],frequency[i])
 
 def GEOprobe(FILE, COMMENT, position, step, E, H, J, power ):
-  FILE.write('PROBE **'+COMMENT+'\n')
+  FILE.write('PROBE **name='+COMMENT+'\n')
 
   FILE.write('{\n')
 
