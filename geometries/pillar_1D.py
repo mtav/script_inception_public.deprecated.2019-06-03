@@ -290,11 +290,9 @@ class pillar_1D:
       print >>sys.stderr, 'ERROR: self.radius_Z_pillar_mum = '+str(self.radius_Z_pillar_mum)+' < self.radius_Z_hole = '+str(self.radius_Z_hole)
       sys.exit(-1)
 
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # additional calculations
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    ########################################################################
     # meshing parameters
+    ########################################################################
     # TODO: adpapt mesh to excitation!!! excitation should go "into mesh", i.e. Y excitation=>cut box in Y plane, = Z excitation=>cut box in Z plane, Y+Z excitation=>do not cut box
     
     ###########################
@@ -336,11 +334,13 @@ class pillar_1D:
       print('==============')
       print 'thicknessVector_X = ', thicknessVector_X
       print('==============')
-
-    ###########################
   
     delta_min = min(max_delta_Vector_X)
+    ###########################
   
+    ###########################
+    # Y direction
+    ###########################
     # TODO: finish this
     thicknessVector_Y_1 = [ self.Ymax/2-self.radius_Y_pillar_mum-self.thickness_Y_buffer, self.thickness_Y_buffer, self.radius_Y_pillar_mum-self.radius_X_center, self.radius_X_center ]
     max_delta_Vector_Y_1 = [ self.delta_Y_outside, self.delta_Y_buffer, self.delta_Y_hole, self.delta_Y_center ]
@@ -362,7 +362,11 @@ class pillar_1D:
       print('==============')
       print 'thicknessVector_Y = ', thicknessVector_Y
       print('==============')
+    ###########################
   
+    ###########################
+    # Z direction
+    ###########################
     Z_BoxToBuffer = self.Zmax/2.0-self.radius_Z_pillar_mum-self.thickness_Z_buffer
     if self.HOLE_TYPE == 'cylinder':
       thicknessVector_Z_1 = [ Z_BoxToBuffer,
@@ -444,8 +448,13 @@ class pillar_1D:
     if self.verbose:
       print max_delta_Vector_Z; print thicknessVector_Z
     self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
+    ###########################
+    ########################################################################
   
-    # for the snapshots
+    ########################################################################
+    # for snapshots
+    ########################################################################
+
     self.Xplanes = [ 0, # 0 / 0
     self.thickness_X_bottomSquare, # 1 / -
     self.thickness_X_bottomSquare + self.bottom_N/2*self.d_holes_mum, # 2 / 1
@@ -459,42 +468,56 @@ class pillar_1D:
     self.thickness_X_bottomSquare + self.getPillarHeight()+32*self.delta_X_buffer, # 10 / -
     self.Xmax ] # 11 / -
     
-    self.Yplanes = [ 0,
+    Yplanes_1 = [ 0,
     self.Ymax/2-self.radius_Y_pillar_mum-self.thickness_Y_buffer,
     self.Ymax/2-self.radius_Y_pillar_mum,
     self.Ymax/2-self.radius_Y_hole,
     self.Ymax/2-2*self.delta_Y_center,
     self.Ymax/2-self.delta_Y_center,
-    self.Ymax/2,
-    self.Ymax/2+self.delta_Y_center,
-    self.Ymax/2+2*self.delta_Y_center,
-    self.Ymax/2+self.radius_Y_hole,
-    self.Ymax/2+self.radius_Y_pillar_mum,
-    self.Ymax/2+self.radius_Y_pillar_mum+self.thickness_Y_buffer,
-    self.Ymax ]
+    self.Ymax/2 ]
   
-    self.Zplanes = [ 0,
+    Zplanes_1 = [ 0,
     self.Zmax/2-self.radius_Z_pillar_mum-self.thickness_Z_buffer,
     self.Zmax/2-self.radius_Z_pillar_mum,
     self.Zmax/2-2*self.delta_Z_center,
     self.Zmax/2-self.delta_Z_center,
     self.Zmax/2 ]
+
+    if self.Ysymmetry:
+      self.Yplanes = Yplanes_1
+    else:
+      tmp = Yplanes_1[:]
+      tmp.reverse()
+      Yplanes_2 = [self.Ymax-x for x in tmp[1:]]
+      self.Yplanes = Yplanes_1 + Yplanes_2
+
+    if self.Zsymmetry:
+      self.Zplanes = Zplanes_1
+    else:
+      tmp = Zplanes_1[:]
+      tmp.reverse()
+      Zplanes_2 = [self.Zmax-x for x in tmp[1:]]
+      self.Zplanes = Zplanes_1 + Zplanes_2
     
     # remove duplicates (order of snapshots not important, in fact, ordered is better)
     self.Xplanes = list(set(self.Xplanes))
     self.Yplanes = list(set(self.Yplanes))
     self.Zplanes = list(set(self.Zplanes))
+    ########################################################################
     
+    ########################################################################
     # for probes
-    self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
-    self.probes_Y_vector = self.Yplanes[1:8]
-    self.probes_Z_vector = self.Zplanes[1:4]
+    ########################################################################
+    #self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
+    #self.probes_Y_vector = self.Yplanes[1:8]
+    #self.probes_Z_vector = self.Zplanes[1:4]
     
-    self.probes_X_vector_center = [self.getPillarCenterX()-self.delta_X_center,
-    self.getPillarCenterX(),
-    self.getPillarCenterX()+self.delta_X_center]
+    #self.probes_X_vector_center = [self.getPillarCenterX()-self.delta_X_center,
+    #self.getPillarCenterX(),
+    #self.getPillarCenterX()+self.delta_X_center]
 
-    self.probes_Y_vector_center = [self.Yplanes[5],self.Yplanes[7]]
+    #self.probes_Y_vector_center = [self.Yplanes[5],self.Yplanes[7]]
+    ########################################################################
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # Files to generate:
