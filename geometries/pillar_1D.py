@@ -757,21 +757,35 @@ class pillar_1D:
           #GEOfrequency_snapshot(out, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, first, repetition, plane, P1, P2, E, H, J, power,0)
     
+        if self.Ysymmetry:
+          Ylim = self.Ymax/2.0
+          Yoffset = 2*self.delta_Y_center
+        else:
+          Ylim = self.Ymax
+          Yoffset = 0
+
+        if self.Zsymmetry:
+          Zlim = self.Zmax/2.0
+          Zoffset = 2*self.delta_Z_center
+        else:
+          Zlim = self.Zmax
+          Zoffset = 0
+          
         plane = 1
         P1 = [self.getPillarCenterX(), 0, 0]
-        P2 = [self.getPillarCenterX(), self.Ymax, self.Zmax/2]
+        P2 = [self.getPillarCenterX(), Ylim, Zlim]
         GEOfrequency_snapshot(out, 'X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, 'X time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 2
-        P1 = [0, self.Ymax/2, 0]
-        P2 = [self.Xmax, self.Ymax/2, self.Zmax/2]
+        P1 = [0, self.Ymax/2-Yoffset, 0]
+        P2 = [self.Xmax, self.Ymax/2-Yoffset, Zlim]
         GEOfrequency_snapshot(out, 'Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, 'Y time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
     
         plane = 3
-        P1 = [0, 0, self.Zmax/2-2*self.delta_Z_center]
-        P2 = [self.Xmax, self.Ymax, self.Zmax/2-2*self.delta_Z_center]
+        P1 = [0, 0, self.Zmax/2-Zoffset]
+        P2 = [self.Xmax, Ylim, self.Zmax/2-Zoffset]
         GEOfrequency_snapshot(out, 'Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, 'Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
     
