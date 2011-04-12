@@ -9,10 +9,10 @@ Tooltip: 'Import from Bristol FDTD'
 ###############################
 # IMPORTS
 ###############################
-from bfdtd_parser import *
+from bfdtd.bfdtd_parser import *
 from FDTDGeometryObjects import *
 from layer_manager import *
-from bristolFDTD_generator_functions import *
+from bfdtd.bristolFDTD_generator_functions import *
 
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object

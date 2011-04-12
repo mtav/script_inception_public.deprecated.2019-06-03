@@ -9,8 +9,8 @@ from __future__ import division
 #~ import os
 #~ import getopt
 #~ from utilities.getuserdir import *
-from bristolFDTD_generator_functions import *
-from constants import *
+from bfdtd.bristolFDTD_generator_functions import *
+from constants.constants import *
 from meshing.subGridMultiLayer import *
 import numpy
 from math import sqrt
