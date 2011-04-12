@@ -833,12 +833,14 @@ def cylinder(DSTDIR, bottomN, topN):
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(0,4*delta_diamond,4*delta_diamond)
-  P.thickness_X_topBoxOffset = 0
+  P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
+  
   P.delta_X_bottomSquare = delta_diamond
+  P.thickness_X_topBoxOffset = 0
+
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
   P.Ymax = 5*2*P.radius_Y_pillar_mum;
   P.Zmax = P.Ymax; #mum
-  P.radius_X_center = 2*P.delta_X_center
   
   P.write()
   
@@ -860,8 +862,9 @@ def square_holes(DSTDIR, bottomN, topN):
   P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-  P.radius_X_hole = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.radius_Z_hole = P.radius_Z_pillar_mum - (P.d_holes_mum-2*P.radius_Z_hole); #mum
+  
+  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2,P.radius_Y_pillar_mum,P.radius_Z_pillar_mum - (P.d_holes_mum-2*P.radius_X_hole))
+  
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.radius_X_hole) #mum
@@ -872,12 +875,14 @@ def square_holes(DSTDIR, bottomN, topN):
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
+  P.setRadiusCenter(2*P.delta_X_center,P.radius_Y_pillar_mum,2*P.delta_X_center)
+  
   P.delta_X_bottomSquare = delta_diamond
   P.thickness_X_topBoxOffset = 1
+  
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
   P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_Y_outside); #mum
   P.Zmax = P.Ymax; #mum
-  P.setRadiusCenter(2*P.delta_X_center,P.radius_Y_pillar_mum,2*P.delta_X_center)
 
   P.write()
 
@@ -896,11 +901,11 @@ def rectangular_holes(DSTDIR, bottomN, topN):
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.setRadiusPillar(1,1)
   P.print_podium = True
-  P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-  P.radius_X_hole = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.radius_Z_hole = P.radius_Z_pillar_mum - (P.d_holes_mum-2*P.radius_Z_hole); #mum
+  
+  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2, P.radius_Y_pillar_mum, P.radius_Z_pillar_mum - (P.d_holes_mum-2*P.radius_X_hole))
+  
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.radius_X_hole) #mum
@@ -910,13 +915,16 @@ def rectangular_holes(DSTDIR, bottomN, topN):
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
-  P.setDeltaBoundary(delta_diamond,delta_diamond,delta_diamond)
+  P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
+  P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
+
+  P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   P.thickness_X_topBoxOffset = 1
+
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
   P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_Y_outside); #mum
   P.Zmax = P.Ymax; #mum
-  P.radius_X_center = 2*P.delta_center
 
   P.write()
 
@@ -935,13 +943,13 @@ def rectangular_yagi(DSTDIR, bottomN, topN):
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
   P.setRadiusPillar(0.5,0.5)
   P.print_podium = True
-  P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-  P.radius_X_hole = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.radius_Z_hole = P.radius_Z_pillar_mum - 0.100; #mum
+  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2,P.radius_Y_pillar_mum,P.radius_Z_pillar_mum - 0.100)
+  
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
+  
   P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.radius_X_hole) #mum
   # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   delta_diamond = P.getLambda()/(10*P.n_Diamond);
@@ -949,13 +957,16 @@ def rectangular_yagi(DSTDIR, bottomN, topN):
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
-  P.setDeltaBoundary(delta_diamond,delta_diamond,delta_diamond)
+  P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
+  P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
+  
+  P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   P.thickness_X_topBoxOffset = 1
+  
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
-  P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_outside); #mum
+  P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_Y_outside); #mum
   P.Zmax = P.Ymax; #mum
-  P.radius_X_center = 2*P.delta_center
 
   P.write()
 
@@ -977,24 +988,27 @@ def triangular_yagi(DSTDIR, bottomN, topN):
   P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-  P.radius_X_hole = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.radius_Z_hole = P.radius_Z_pillar_mum - 0.100; #mum
+  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2,P.radius_Y_pillar_mum,P.radius_Z_pillar_mum - 0.100)
+  
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
+  
   P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.radius_X_hole) #mum
   # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   delta_diamond = P.getLambda()/(10*P.n_Diamond);
-  P.delta_X_bottomSquare = delta_diamond
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
-  P.setDeltaBoundary(delta_diamond,delta_diamond,delta_diamond)
+  P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
+  P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
+
+  P.delta_X_bottomSquare = delta_diamond
   P.thickness_X_topBoxOffset = 1
+
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
   P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_Y_outside); #mum
   P.Zmax = P.Ymax; #mum
-  P.radius_X_center = 2*P.delta_center
 
   P.write()
 
@@ -1017,8 +1031,9 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN):
   P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
-  P.radius_X_hole = (P.getLambda()/(4*P.n_Air))/2;#mum
-  P.radius_Z_hole = P.radius_Z_pillar_mum - 3*P.radius_Z_hole; #mum
+  
+  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2,P.radius_Y_pillar_mum,P.radius_Z_pillar_mum - 3*P.radius_X_hole)
+  
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.radius_X_hole) #mum
@@ -1027,14 +1042,16 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN):
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air),P.getLambda()/(4*P.n_Air))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
-  P.setDeltaBoundary(delta_diamond,delta_diamond,delta_diamond)
+  P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
+  P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
+  
   P.delta_X_bottomSquare = delta_diamond
   P.thickness_X_topBoxOffset = 1
+
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
   P.Ymax = 2*(P.radius_Y_pillar_mum + 4*delta_diamond + 4*P.delta_Y_outside); #mum
   P.Zmax = P.Ymax; #mum
-  P.radius_X_center = 2*P.delta_center
 
   P.Nvoxels = 10;
 
