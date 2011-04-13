@@ -322,6 +322,28 @@ def test2(DSTDIR):
     triangular_yagi(DSTDIR,20,10,i)
     triangular_yagi_voxel(DSTDIR,20,10,i)
 
+def mission1(DSTDIR,excitationType):
+  os.mkdir(DSTDIR)
+  rectangular_holes(DSTDIR,6,3,excitationType)
+  rectangular_holes(DSTDIR,6,4,excitationType)
+  rectangular_holes(DSTDIR,7,4,excitationType)
+  rectangular_holes(DSTDIR,7,5,excitationType)
+  rectangular_holes(DSTDIR,8,6,excitationType)
+
+def mission2(DSTDIR,excitationType):
+  os.mkdir(DSTDIR)
+  rectangular_yagi(DSTDIR,20,10,excitationType)
+
+def mission3(DSTDIR,excitationType):
+  os.mkdir(DSTDIR)
+  cylinder(DSTDIR,12,12,excitationType)
+  cylinder(DSTDIR,20,10,excitationType)
+
+def mission4(DSTDIR,excitationType):
+  os.mkdir(DSTDIR)
+  triangular_yagi(DSTDIR,20,10,excitationType)
+  triangular_yagi_voxel(DSTDIR,20,10,excitationType)
+
 def main(argv=None):
   if argv is None:
       argv = sys.argv
@@ -331,8 +353,13 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
     # main function
-    test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
-    test2(os.getenv('TESTDIR'))
+    #test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
+    #test2(os.getenv('TESTDIR'))
+    excitationType = 1
+    mission1(os.getenv('DATADIR')+os.sep+'mission1',excitationType)
+    mission2(os.getenv('DATADIR')+os.sep+'mission2',excitationType)
+    mission3(os.getenv('DATADIR')+os.sep+'mission3',excitationType)
+    mission4(os.getenv('DATADIR')+os.sep+'mission4',excitationType)
     
   except Usage, err:
     print >>sys.stderr, err.msg
