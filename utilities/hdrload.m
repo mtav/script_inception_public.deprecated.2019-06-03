@@ -57,7 +57,8 @@ function [header, data] = hdrload(file)
   if ~isstr(line)
     disp('Warning: file contains no header and no data')
   end;
-  [data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
+  %sscanf(line, "%E","C");
+  [data, ncols, errmsg, nxtindex] = sscanf(line, "%E","C");
   
   % One slight problem, pointed out by Peter vanderWal: If the 
   % first character of the line is 'e', then this will scan as 
