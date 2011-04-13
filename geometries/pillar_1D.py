@@ -5,10 +5,6 @@
 # TODO: create FDTD object, store stuff in it and use its print function for output
 
 from __future__ import division
-#~ import sys
-#~ import os
-#~ import getopt
-#~ from utilities.getuserdir import *
 from bfdtd.bristolFDTD_generator_functions import *
 from constants.constants import *
 from meshing.subGridMultiLayer import *
@@ -20,11 +16,15 @@ from bfdtd.bfdtd_parser import *
 class pillar_1D:
   '''creates a 1D pillar with different kinds of irregularities'''
   def __init__(self):
+    
+    # filename stuff
     self.BASENAME = 'pillar_1D'
     self.DSTDIR = getuserdir()
 
+    # debugging stuff
     self.verbose = False
 
+    # switches
     self.print_mesh = True
     self.print_holes = True
     self.print_holes_top = True
@@ -37,68 +37,43 @@ class pillar_1D:
     self.print_epssnap = True
     self.print_excitation = True
     self.print_probes = True
-    
-    self.ITERATIONS = 32000
+
+    # other variables
     self.HOLE_TYPE = 'rectangular_holes'
-    self.radius_Y_pillar_mum = 0.200
-    self.radius_Z_pillar_mum = 1
-    self.setLambda(0.637)
-
-    self.SNAPSHOTS_FREQUENCY = []
-    self.excitation = Excitation()
-    self.Ysymmetry = True
-    self.Zsymmetry = False
-    self.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
-
-    #self.getLambda() = get_c0()/self.EXCITATION_FREQUENCY
-
-    # refractive indices
-    self.n_Diamond = 2.4; #no unit
-    self.n_Air = 1; #no unit
-    self.n_bottom_square = self.n_Diamond; #3.5214; #no unit
-    # distance between holes
-    #self.d_holes_mum = 0.220; #mum
-    self.d_holes_mum = self.getLambda()/(4*self.n_Diamond)+self.getLambda()/(4*self.n_Air);#mum
-    # hole radius
-    #self.radius_X_hole = 0.28*self.d_holes_mum; #mum
-    self.radius_X_hole = (self.getLambda()/(4*self.n_Air))/2;#mum
-    self.radius_Y_hole = self.radius_Y_pillar_mum
-    self.radius_Z_hole = self.radius_Z_pillar_mum - (self.d_holes_mum-2*self.radius_X_hole); #mum
-
-    # number of holes on bottom
-    self.bottom_N = 6; #no unit
-    # number of holes on top
-    self.top_N = 3; #no unit
-
-    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Diamond
-    # self.setDistanceBetweenDefectCentersInCavity(2*self.d_holes_mum) #mum
-    # self.setDistanceBetweenDefectCentersInCavity(self.getLambda()/self.n_Diamond + 2*self.radius_X_hole) #mum
-    # self.setDistanceBetweenDefectPairsInCavity(self.d_holes_cavity - self.d_holes_mum) # mum
-    # self.setDistanceBetweenDefectCentersInCavity(self.getDistanceBetweenDefectPairsInCavity() + self.d_holes_mum)
-
-    # top box offset
-    self.thickness_X_topBoxOffset=1; #mum
-  
-    # self.ITERATIONS = 261600; #no unit
-    # self.ITERATIONS = 32000; #no unit
-    # self.ITERATIONS = 10; #no unit
-  
-    # self.ITERATIONS=1048400
+    self.bottom_N = 6; # number of holes on bottom (no unit)
+    self.top_N = 3; # number of holes on top (no unit)
+    self.Nvoxels = 10
+    self.ITERATIONS = 32000
     self.FIRST=65400
     self.REPETITION=524200
     self.WALLTIME=360
-  
     self.TIMESTEP=0.9; #mus
     self.TIME_CONSTANT=4.000000E-09; #mus
     self.AMPLITUDE=1.000000E+01; #V/mum???
     self.TIME_OFFSET=2.700000E-08; #mus
+    self.SNAPSHOTS_FREQUENCY = []
+    self.setLambda(0.637)
+    self.excitation = Excitation()
+    self.Ysymmetry = True
+    self.Zsymmetry = False
+    
+    # refractive indices
+    self.n_Diamond = 2.4 #no unit
+    self.n_Air = 1 #no unit
+    self.n_bottom_square = self.n_Diamond # no unit
 
-    self.Nvoxels = 10
-    
-    # max mesh intervals
-    #delta_diamond = 0.5*self.getLambda()/(15*self.n_Diamond)
-    #delta_outside = 2*delta_diamond
-    
+    # distance between holes
+    self.d_holes_mum = self.getLambda()/(4*self.n_Diamond)+self.getLambda()/(4*self.n_Air) # in mum
+    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Diamond
+    # pillar radius
+    self.radius_Y_pillar_mum = 0.200
+    self.radius_Z_pillar_mum = 1
+    # hole radius
+    self.radius_X_hole = (self.getLambda()/(4*self.n_Air))/2 # in mum
+    self.radius_Y_hole = self.radius_Y_pillar_mum # in mum
+    self.radius_Z_hole = self.radius_Z_pillar_mum - (self.d_holes_mum-2*self.radius_X_hole) # in mum
+  
+    # deltas (max mesh intervals)
     self.delta_X_center = self.getLambda()/(16*self.n_Diamond)
     self.delta_Y_center = self.delta_X_center
     self.delta_Z_center = self.delta_X_center
@@ -122,28 +97,26 @@ class pillar_1D:
     self.delta_X_topBoxOffset = self.getLambda()/(1*self.n_Air)
     self.delta_X_bottomSquare = self.getLambda()/(8*self.n_Diamond)
 
+    # thickness of buffers (area outside pillar where mesh is fine)
+    self.thickness_X_buffer = 32*self.delta_X_buffer; #mum
+    self.thickness_Y_buffer = 4*self.delta_Y_buffer; #mum
+    self.thickness_Z_buffer = 4*self.delta_Z_buffer; #mum
+
+    # thickness of other
+    self.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
+    self.thickness_X_topBoxOffset = 1; #mum
+
     # center area where excitation takes place (for meshing)
     self.radius_X_center = 2*self.delta_X_center
     self.radius_Y_center = 2*self.delta_Y_center
     self.radius_Z_center = 2*self.delta_Z_center
   
-    # buffers (area outside pillar where mesh is fine)
-    self.thickness_X_buffer = 32*self.delta_X_buffer; #mum
-    self.thickness_Y_buffer = 4*self.delta_Y_buffer; #mum
-    self.thickness_Z_buffer = 4*self.delta_Z_buffer; #mum
-  
-    # dimension and position parameters
-    #self.getPillarHeight() = (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()
-    
+    # box dimensions
     self.Xmax = self.thickness_X_bottomSquare + self.getPillarHeight() + self.thickness_X_buffer + self.thickness_X_topBoxOffset; #mum
-    #self.Ymax = 5*2*self.radius_Y_pillar_mum;
-    #self.Ymax = 2*(self.radius_Y_pillar_mum + self.thickness_Y_buffer + 4*self.delta_Y_outside); #mum
     self.Ymax = 2*(self.radius_Y_pillar_mum + self.thickness_Y_buffer + 4*self.delta_Y_outside); #mum
     self.Zmax = 2*(self.radius_Z_pillar_mum + self.thickness_Z_buffer + 4*self.delta_Z_outside); #mum
 
-    ##############################
-    # 'private' variables
-    ##############################
+    # 'private' variables, set when mesh() is called
     self.delta_X_vector = []
     self.delta_Y_vector = []
     self.delta_Z_vector = []
@@ -299,28 +272,6 @@ class pillar_1D:
     self.thickness_Z_buffer = thickness_Z
 
 ########################################################################
-  #def getDistanceBetweenDefectCentersInCavity(self):
-    #self.getDistanceBetweenDefectCentersInCavity() = 2*self.d_holes_mum; #mum
-    #self.getDistanceBetweenDefectCentersInCavity() = self.getLambda()/self.n_Diamond + 2*self.radius_X_hole;#mum
-    #return self.LcavLarge + 2*self.radius_X_hole
-
-  #def getLcav():
-    #self.setDistanceBetweenDefectPairsInCavity(self.getDistanceBetweenDefectCentersInCavity() - self.d_holes_mum) # mum
-    #return self.LcavLarge + 2*rh - dh
-
-  #def getLcavLarge():
-    
-  #def setLcav():
-
-  # LcavLarge + 2*rh = dhcav
-  # Lcav + ( dh - 2*rh ) = LcavLarge
-  # Lcav = dhcav - dh
-  # Lcav = DistanceBetweenDefectPairs
-  # LcavLarge = DistanceBetweenDefectBorders
-  # dhcav = DistanceBetweenDefectCenters
-  # dh = d_holes_mum
-  # rh = radius_X_hole
-  
   # "distance between defect centers in cavity"
   def getDistanceBetweenDefectCentersInCavity(self):
     return self.getDistanceBetweenDefectBordersInCavity() + 2*self.radius_X_hole

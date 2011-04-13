@@ -323,7 +323,6 @@ def test2(DSTDIR):
     triangular_yagi_voxel(DSTDIR,20,10,i)
 
 def mission1(DSTDIR,excitationType):
-  os.mkdir(DSTDIR)
   rectangular_holes(DSTDIR,6,3,excitationType)
   rectangular_holes(DSTDIR,6,4,excitationType)
   rectangular_holes(DSTDIR,7,4,excitationType)
@@ -331,16 +330,13 @@ def mission1(DSTDIR,excitationType):
   rectangular_holes(DSTDIR,8,6,excitationType)
 
 def mission2(DSTDIR,excitationType):
-  os.mkdir(DSTDIR)
   rectangular_yagi(DSTDIR,20,10,excitationType)
 
 def mission3(DSTDIR,excitationType):
-  os.mkdir(DSTDIR)
   cylinder(DSTDIR,12,12,excitationType)
   cylinder(DSTDIR,20,10,excitationType)
 
 def mission4(DSTDIR,excitationType):
-  os.mkdir(DSTDIR)
   triangular_yagi(DSTDIR,20,10,excitationType)
   triangular_yagi_voxel(DSTDIR,20,10,excitationType)
 
