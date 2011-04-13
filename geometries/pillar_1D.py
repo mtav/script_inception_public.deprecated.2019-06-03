@@ -568,6 +568,18 @@ class pillar_1D:
       Zplanes_2 = [self.Zmax-x for x in tmp[1:]]
       self.Zplanes = Zplanes_1 + Zplanes_2
     
+    # remove any planes outside the box
+    def Xvalid(x):
+      return 0<=x and x<=self.Xmax
+    def Yvalid(y):
+      return 0<=y and y<=self.getYlim()
+    def Zvalid(z):
+      return 0<=z and z<=self.getZlim()
+
+    self.Xplanes = filter(Xvalid, self.Xplanes)
+    self.Yplanes = filter(Yvalid, self.Yplanes)
+    self.Zplanes = filter(Zvalid, self.Zplanes)
+    
     # remove duplicates (order of snapshots not important, in fact, ordered is better)
     self.Xplanes = list(set(self.Xplanes))
     self.Yplanes = list(set(self.Yplanes))

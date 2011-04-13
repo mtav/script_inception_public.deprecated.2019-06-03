@@ -273,6 +273,7 @@ def mission2(DSTDIR,excitationType):
   rectangular_yagi(DSTDIR,20,10,excitationType)
 
 def mission3(DSTDIR,excitationType):
+  cylinder(DSTDIR,12,12,excitationType)
   cylinder(DSTDIR,20,10,excitationType)
 
 def mission4(DSTDIR,excitationType):
