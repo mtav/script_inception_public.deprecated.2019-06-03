@@ -13,6 +13,11 @@ function plotgen(maxval,column,handles)
   %For Poynting vector plots in the same format use snap_poy_int.m
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
+  if isnan(maxval)
+    % TODO: search data for maximum value
+    maxval = 1;
+  end
+  
   %% Load geo file data
   Geoparms = geometryparms(handles.geofile);
   
@@ -103,8 +108,8 @@ function plotgen(maxval,column,handles)
   
   %colave = max(fin1(:,column));
   colfig = handles.colplot{column};
+  disp(['maxval=',num2str(maxval)]);
   if (modu == 1) || (handles.modulus == 1)
-      disp(['maxval=',num2str(maxval)]);
       caxis([0 maxval])
   else
       caxis([-maxval maxval])
@@ -118,6 +123,7 @@ function plotgen(maxval,column,handles)
   else
       shading flat
   end
+  % TODO: handle NaNs
   switch handles.plane
       case 1
           xlabel('z')
