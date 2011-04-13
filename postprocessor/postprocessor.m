@@ -342,7 +342,7 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   % handles    structure with handles and user data (see GUIDATA)
   
   if ~handles.isLoaded
-    error('Please load a file first')
+    disp('WARNING: Please load a file first')
     return
   end
   
