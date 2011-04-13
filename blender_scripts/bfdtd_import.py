@@ -49,34 +49,34 @@ def importBristolFDTD(filename):
     
     # Box
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('box'));
-    FDTDGeometryObjects_obj.GEObox(Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
+    FDTDGeometryObjects_obj.GEObox(structured_entries.box.name, Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
     
     # mesh
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
-    FDTDGeometryObjects_obj.GEOmesh(False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
+    FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.xmesh,structured_entries.ymesh,structured_entries.zmesh);
     
     # Time_snapshot (time or EPS)
     for time_snapshot in structured_entries.time_snapshot_list:
         if time_snapshot.eps == 0:
             Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-            FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+            FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
         else:
             Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-            FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+            FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
     # Frequency_snapshot
     for frequency_snapshot in structured_entries.frequency_snapshot_list:
         Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
-        FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+        FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
-        FDTDGeometryObjects_obj.GEOexcitation(Vector(excitation.P1), Vector(excitation.P2));
+        FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
     # Probe
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
     for probe in structured_entries.probe_list:
         # print('probe = ',Vector(probe.position))
-        FDTDGeometryObjects_obj.GEOprobe(Vector(probe.position));
+        FDTDGeometryObjects_obj.GEOprobe(probe.name, Vector(probe.position));
     
     # Sphere
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
@@ -97,7 +97,7 @@ def importBristolFDTD(filename):
           rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
           
         # create object
-        FDTDGeometryObjects_obj.GEOsphere_matrix(rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
         
     # Block
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
@@ -126,7 +126,7 @@ def importBristolFDTD(filename):
           rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
 
         # create object
-        FDTDGeometryObjects_obj.GEOblock_matrix(rotation_matrix, block.permittivity, block.conductivity);
+        FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
     
     # Cylinder
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
@@ -148,7 +148,7 @@ def importBristolFDTD(filename):
           rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
         
         # create object
-        FDTDGeometryObjects_obj.GEOcylinder_matrix(rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
+        FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
 
     #########################
     # Not yet implemented:

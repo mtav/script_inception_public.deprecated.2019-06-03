@@ -72,14 +72,14 @@ class FDTDGeometryObjects:
     ###############################
     # OBJECT CREATION FUNCTIONS
     ###############################
-    def GEOblock(self,lower, upper, permittivity, conductivity):
+    def GEOblock(self, name, lower, upper, permittivity, conductivity):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cube(1.0);
         mesh.materials = self.materials(permittivity, conductivity);
         for f in mesh.faces:
             f.mat = 0;
     
-        obj = scene.objects.new(mesh, 'block');
+        obj = scene.objects.new(mesh, name);
         pos = 0.5*(lower+upper);
         diag = upper-lower;
         obj.SizeX = abs(diag[0]);
@@ -89,7 +89,7 @@ class FDTDGeometryObjects:
         obj.transp = True; obj.wireMode = True;
         return;
     
-    def GEOblock_matrix(self,rotation_matrix, permittivity, conductivity):
+    def GEOblock_matrix(self, name, rotation_matrix, permittivity, conductivity):
         #~ Blender.Window.SetActiveLayer(1<<8);
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cube(1.0);
@@ -97,20 +97,20 @@ class FDTDGeometryObjects:
         for f in mesh.faces:
             f.mat = 0;
     
-        obj = scene.objects.new(mesh, 'block');
+        obj = scene.objects.new(mesh, name);
         obj.setMatrix(rotation_matrix);
         obj.transp = True; obj.wireMode = True;
         #~ obj.layers = [ 8 ];
         return;
     
-    def GEOcylinder(self,center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
+    def GEOcylinder(self, name, center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
         mesh.materials = self.materials(permittivity, conductivity);
         for f in mesh.faces:
             f.mat = 0;
     
-        obj = scene.objects.new(mesh, 'cylinder');
+        obj = scene.objects.new(mesh, name);
         obj.setLocation(center[0], center[1], center[2]);
         obj.RotX = angle_X;
         obj.RotY = angle_Y;
@@ -118,48 +118,48 @@ class FDTDGeometryObjects:
         obj.transp = True; obj.wireMode = True;
         return
     
-    def GEOcylinder_matrix(self,rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
+    def GEOcylinder_matrix(self, name, rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
         mesh.materials = self.materials(permittivity, conductivity);
         for f in mesh.faces:
             f.mat = 0;
     
-        obj = scene.objects.new(mesh, 'cylinder');
+        obj = scene.objects.new(mesh, name)
         obj.setMatrix(rotation_matrix);
         obj.transp = True; obj.wireMode = True;
         return
     
-    def GEOsphere(self,center, outer_radius, inner_radius, permittivity, conductivity):
+    def GEOsphere(self, name, center, outer_radius, inner_radius, permittivity, conductivity):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
         mesh.materials = self.materials(permittivity, conductivity);
         for f in mesh.faces:
             f.mat = 0;
     
-        obj = scene.objects.new(mesh, 'sphere');
+        obj = scene.objects.new(mesh, name)
         obj.setLocation(center[0], center[1], center[2]);
         obj.transp = True; obj.wireMode = True;
         return
     
-    def GEOsphere_matrix(self,rotation_matrix, outer_radius, inner_radius, permittivity, conductivity):
+    def GEOsphere_matrix(self, name, rotation_matrix, outer_radius, inner_radius, permittivity, conductivity):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
         mesh.materials = self.materials(permittivity, conductivity);
         for f in mesh.faces:
             f.mat = 0;
     
-        obj = scene.objects.new(mesh, 'sphere');
+        obj = scene.objects.new(mesh, name)
         obj.setMatrix(rotation_matrix);
         obj.transp = True; obj.wireMode = True;
         return
         
-    def GEObox(self,lower, upper):
+    def GEObox(self, name, lower, upper):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cube(1.0);
         mesh.faces.delete(0, range(len(mesh.faces)));
     
-        obj = scene.objects.new(mesh, 'box');
+        obj = scene.objects.new(mesh, name)
         pos = 0.5*(lower+upper);
         diag = upper-lower;
         
@@ -182,7 +182,7 @@ class FDTDGeometryObjects:
     
         return
     
-    def GEOmesh(self,full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
+    def GEOmesh(self, name, full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
         if len(delta_X_vector)<=0 or len(delta_Y_vector)<=0 or len(delta_Z_vector)<=0:
           return
         
@@ -315,7 +315,7 @@ class FDTDGeometryObjects:
                 edges[edge_idx] = [D, A]; edge_idx+=1;
                 
         # print(verts)
-        BPyAddMesh.add_mesh_simple('mesh', verts, edges, faces);
+        BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
         #~ bpy.data.meshes.new("Torus")
         
         obj = Blender.Object.GetSelected()[0];
@@ -328,7 +328,7 @@ class FDTDGeometryObjects:
     
         return
         
-    def GEOexcitation(self,P1, P2):
+    def GEOexcitation(self, name, P1, P2):
         # arrow dimensions:
         arrow_length = (P2-P1).length;
         cone_length = arrow_length/5.0;
@@ -353,7 +353,7 @@ class FDTDGeometryObjects:
         for f in mesh.faces:
             f.mat = 0;
     
-        arrow_cylinder_obj = scene.objects.new(mesh, 'excitation');
+        arrow_cylinder_obj = scene.objects.new(mesh, name)
         arrow_cylinder_obj.setMatrix(rotmat);
         arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
     
@@ -362,7 +362,7 @@ class FDTDGeometryObjects:
         for f in mesh.faces:
             f.mat = 0;
     
-        arrow_cone_obj = scene.objects.new(mesh, 'arrow_cone');
+        arrow_cone_obj = scene.objects.new(mesh, name)
         arrow_cone_obj.setMatrix(rotmat);
     
         arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
@@ -375,7 +375,7 @@ class FDTDGeometryObjects:
         
         return
     
-    def snapshot(self,plane, P1, P2, snapshot_type):
+    def snapshot(self, name, plane, P1, P2, snapshot_type):
     
         verts = [];
         if plane == 1:
@@ -402,13 +402,13 @@ class FDTDGeometryObjects:
         
         edges = [];
         faces = [ 0, 1, 2, 3 ];
-        name = 'snapshot';
-        if snapshot_type == 0:
-            name = 'freq_snapshot';
-        elif snapshot_type == 1:
-            name = 'time_snapshot';
-        else:
-            name = 'eps_snapshot';
+        #name = 'snapshot';
+        #if snapshot_type == 0:
+            #name = 'freq_snapshot';
+        #elif snapshot_type == 1:
+            #name = 'time_snapshot';
+        #else:
+            #name = 'eps_snapshot';
         
         # print("Adding plane at ", A, B, C, D)
         BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
@@ -421,19 +421,19 @@ class FDTDGeometryObjects:
         for f in mesh.faces:
             f.mat = snapshot_type;
     
-    def GEOfrequency_snapshot(self,plane, P1, P2):
-        self.snapshot(plane, P1, P2, 0);
+    def GEOfrequency_snapshot(self, name, plane, P1, P2):
+        self.snapshot(name, plane, P1, P2, 0);
         return
         
-    def GEOtime_snapshot(self,plane, P1, P2):
-        self.snapshot(plane, P1, P2, 1);
+    def GEOtime_snapshot(self, name, plane, P1, P2):
+        self.snapshot(name, plane, P1, P2, 1);
         return
     
-    def GEOeps_snapshot(self,plane, P1, P2):
-        self.snapshot(plane, P1, P2, 2);
+    def GEOeps_snapshot(self, name, plane, P1, P2):
+        self.snapshot(name, plane, P1, P2, 2);
         return
     
-    def GEOprobe(self,position):
+    def GEOprobe(self, name, position):
         scene = Blender.Scene.GetCurrent();
         
         #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
@@ -442,7 +442,7 @@ class FDTDGeometryObjects:
         
         mesh = Blender.Mesh.Primitives.Cube(probe_size);
     
-        obj = scene.objects.new(mesh, 'probe');
+        obj = scene.objects.new(mesh, name)
         # obj = Blender.Object.GetSelected()[0];
         obj.setLocation(position[0], position[1], position[2]);
         # obj.layers = [ 4 ];
