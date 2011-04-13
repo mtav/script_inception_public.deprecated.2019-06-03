@@ -239,101 +239,100 @@ class Rotation:
 
 # excitation objects
 class Excitation:
-    def __init__(self,
-                  name = 'excitation',
-                  current_source = 0,
-                  P1 = [0,0,0],
-                  P2 = [0,0,0],
-                  E = 0,
-                  H = 0,
-                  Type = 0,
-                  time_constant = 0,
-                  amplitude = 0,
-                  time_offset = 0,
-                  frequency = 0,
-                  param1 = 0,
-                  param2 = 0,
-                  param3 = 0,
-                  param4 = 0):
-
-        self.name = name
-        self.current_source = current_source
-        self.P1 = P1
-        self.P2 = P2
-        self.E = E
-        self.H = H
-        self.Type = Type
-        self.time_constant = time_constant
-        self.amplitude = amplitude
-        self.time_offset = time_offset
-        self.frequency = frequency
-        self.param1 = param1
-        self.param2 = param2
-        self.param3 = param3
-        self.param4 = param4
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n';
-        ret += 'current_source = ' + str(self.current_source) + '\n' +\
-        'P1 = ' + str(self.P1) + '\n' +\
-        'P2 = ' + str(self.P2) + '\n' +\
-        'E = ' + str(self.E) + '\n' +\
-        'H = ' + str(self.H) + '\n' +\
-        'Type = ' + str(self.Type) + '\n' +\
-        'time_constant = ' + str(self.time_constant) + '\n' +\
-        'amplitude = ' + str(self.amplitude) + '\n' +\
-        'time_offset = ' + str(self.time_offset) + '\n' +\
-        'frequency = ' + str(self.frequency) + '\n' +\
-        'param1 = ' + str(self.param1) + '\n' +\
-        'param2 = ' + str(self.param2) + '\n' +\
-        'param3 = ' + str(self.param3) + '\n' +\
-        'param4 = ' + str(self.param4);
-        return ret;
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        idx = 0;
-        self.current_source = float(entry.data[idx]); idx = idx+1;
-        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.Type = float(entry.data[idx]); idx = idx+1;
-        self.time_constant = float(entry.data[idx]); idx = idx+1;
-        self.amplitude = float(entry.data[idx]); idx = idx+1;
-        self.time_offset = float(entry.data[idx]); idx = idx+1;
-        self.frequency = float(entry.data[idx]); idx = idx+1;
-        self.param1 = float(entry.data[idx]); idx = idx+1;
-        self.param2 = float(entry.data[idx]); idx = idx+1;
-        self.param3 = float(entry.data[idx]); idx = idx+1;
-        self.param4 = float(entry.data[idx]); idx = idx+1;
-        return(0);
-    def write_entry(self, FILE):
-      FILE.write('EXCITATION **name='+self.name+'\n')
-      FILE.write('{\n')
-      FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
-      FILE.write("%E **X1\n" % self.P1[0])
-      FILE.write("%E **Y1\n" % self.P1[1])
-      FILE.write("%E **Z1\n" % self.P1[2])
-      FILE.write("%E **X2\n" % self.P2[0])
-      FILE.write("%E **Y2\n" % self.P2[1])
-      FILE.write("%E **Z2\n" % self.P2[2])
-      FILE.write("%d **EX\n" % self.E[0])
-      FILE.write("%d **EY\n" % self.E[1])
-      FILE.write("%d **EZ\n" % self.E[2])
-      FILE.write("%d **HX\n" % self.H[0])
-      FILE.write("%d **HY\n" % self.H[1])
-      FILE.write("%d **HZ\n" % self.H[2])
-      FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % self.Type)
-      FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
-      FILE.write("%E **AMPLITUDE\n" % self.amplitude)
-      FILE.write("%E **TIME OFFSET\n" % self.time_offset)
-      FILE.write("%E **FREQ (HZ)\n" % self.frequency)
-      FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
-      FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
-      FILE.write("%d **UNUSED PARAMETER\n" % self.param3)
-      FILE.write("%d **UNUSED PARAMETER\n" % self.param4)
-      FILE.write('}\n')
-      FILE.write('\n')
+  def __init__(self,
+                name = 'excitation',
+                current_source = 0,
+                P1 = [0,0,0],
+                P2 = [0,0,0],
+                E = [0,0,0],
+                H = [0,0,0],
+                Type = 0,
+                time_constant = 0,
+                amplitude = 0,
+                time_offset = 0,
+                frequency = 0,
+                param1 = 0,
+                param2 = 0,
+                param3 = 0,
+                param4 = 0):
+    self.name = name
+    self.current_source = current_source
+    self.P1 = P1
+    self.P2 = P2
+    self.E = E
+    self.H = H
+    self.Type = Type
+    self.time_constant = time_constant
+    self.amplitude = amplitude
+    self.time_offset = time_offset
+    self.frequency = frequency
+    self.param1 = param1
+    self.param2 = param2
+    self.param3 = param3
+    self.param4 = param4
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n';
+    ret += 'current_source = ' + str(self.current_source) + '\n' +\
+    'P1 = ' + str(self.P1) + '\n' +\
+    'P2 = ' + str(self.P2) + '\n' +\
+    'E = ' + str(self.E) + '\n' +\
+    'H = ' + str(self.H) + '\n' +\
+    'Type = ' + str(self.Type) + '\n' +\
+    'time_constant = ' + str(self.time_constant) + '\n' +\
+    'amplitude = ' + str(self.amplitude) + '\n' +\
+    'time_offset = ' + str(self.time_offset) + '\n' +\
+    'frequency = ' + str(self.frequency) + '\n' +\
+    'param1 = ' + str(self.param1) + '\n' +\
+    'param2 = ' + str(self.param2) + '\n' +\
+    'param3 = ' + str(self.param3) + '\n' +\
+    'param4 = ' + str(self.param4);
+    return ret;
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    idx = 0;
+    self.current_source = float(entry.data[idx]); idx = idx+1;
+    self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+    self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+    self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+    self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
+    self.Type = float(entry.data[idx]); idx = idx+1;
+    self.time_constant = float(entry.data[idx]); idx = idx+1;
+    self.amplitude = float(entry.data[idx]); idx = idx+1;
+    self.time_offset = float(entry.data[idx]); idx = idx+1;
+    self.frequency = float(entry.data[idx]); idx = idx+1;
+    self.param1 = float(entry.data[idx]); idx = idx+1;
+    self.param2 = float(entry.data[idx]); idx = idx+1;
+    self.param3 = float(entry.data[idx]); idx = idx+1;
+    self.param4 = float(entry.data[idx]); idx = idx+1;
+    return(0);
+  def write_entry(self, FILE):
+    FILE.write('EXCITATION **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
+    FILE.write("%E **X1\n" % self.P1[0])
+    FILE.write("%E **Y1\n" % self.P1[1])
+    FILE.write("%E **Z1\n" % self.P1[2])
+    FILE.write("%E **X2\n" % self.P2[0])
+    FILE.write("%E **Y2\n" % self.P2[1])
+    FILE.write("%E **Z2\n" % self.P2[2])
+    FILE.write("%d **EX\n" % self.E[0])
+    FILE.write("%d **EY\n" % self.E[1])
+    FILE.write("%d **EZ\n" % self.E[2])
+    FILE.write("%d **HX\n" % self.H[0])
+    FILE.write("%d **HY\n" % self.H[1])
+    FILE.write("%d **HZ\n" % self.H[2])
+    FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % self.Type)
+    FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
+    FILE.write("%E **AMPLITUDE\n" % self.amplitude)
+    FILE.write("%E **TIME OFFSET\n" % self.time_offset)
+    FILE.write("%E **FREQ (HZ)\n" % self.frequency)
+    FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
+    FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
+    FILE.write("%d **UNUSED PARAMETER\n" % self.param3)
+    FILE.write("%d **UNUSED PARAMETER\n" % self.param4)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 # measurement objects
 class Time_snapshot:

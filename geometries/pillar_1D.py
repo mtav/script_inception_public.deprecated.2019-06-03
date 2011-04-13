@@ -15,6 +15,7 @@ from meshing.subGridMultiLayer import *
 import numpy
 from math import sqrt
 from utilities.dumpObj import *
+from bfdtd.bfdtd_parser import *
 
 class pillar_1D:
   '''creates a 1D pillar with different kinds of irregularities'''
@@ -44,7 +45,7 @@ class pillar_1D:
     self.setLambda(0.637)
 
     self.SNAPSHOTS_FREQUENCY = []
-    self.excitation_type = 1
+    self.excitation = Excitation()
     self.Ysymmetry = True
     self.Zsymmetry = False
     self.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
@@ -186,11 +187,78 @@ class pillar_1D:
   def setLambda(self,Lambda_mum):
     self.EXCITATION_FREQUENCY = get_c0()/Lambda_mum
 
-  def setExcitationType(self, value):
-    self.excitation_type = value
+  def setExcitationType(self, excitationType):
+
+    # vars to set some parameters
+    P_Xm = [ self.getPillarCenterX()-2*self.delta_X_center, self.getPillarCenterY(), self.getPillarCenterZ() ]
+    P_Xp = [ self.getPillarCenterX()+2*self.delta_X_center, self.getPillarCenterY(), self.getPillarCenterZ() ]
+    P_Ym1 = [ self.getPillarCenterX(), self.getPillarCenterY()-1*self.delta_Y_center, self.getPillarCenterZ() ]
+    P_Yp1 = [ self.getPillarCenterX(), self.getPillarCenterY()+1*self.delta_Y_center, self.getPillarCenterZ() ]
+    P_Ym2 = [ self.getPillarCenterX(), self.getPillarCenterY()-2*self.delta_Y_center, self.getPillarCenterZ() ]
+    P_Yp2 = [ self.getPillarCenterX(), self.getPillarCenterY()+2*self.delta_Y_center, self.getPillarCenterZ() ]
+    P_Zm1 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()-1*self.delta_Z_center ]
+    P_Zp1 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()+1*self.delta_Z_center ]
+    P_Zm2 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()-2*self.delta_Z_center ]
+    P_Zp2 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()+2*self.delta_Z_center ]
+    P_center = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ() ]
+    Ey = [ 0, 1, 0 ]
+    Ez = [ 0, 0, 1 ]
+
+    # common parameters
+    self.excitation.current_source = current_source = 7
+    self.excitation.H = [ 0, 0, 0 ]
+    self.excitation.Type = 10
+    self.excitation.time_constant = self.TIME_CONSTANT
+    self.excitation.amplitude = self.AMPLITUDE
+    self.excitation.time_offset = self.TIME_OFFSET
+    self.excitation.frequency = self.EXCITATION_FREQUENCY
+    self.excitation.param1 = 0
+    self.excitation.param2 = 0
+    self.excitation.param3 = 0
+    self.excitation.param4 = 0
+    self.excitation.P2 = P_center
+  
+    # distinct parameters
+    if excitationType == 0:
+      self.excitation.name = 'P_Ym1 excitation'
+      self.excitation.P1 = P_Ym1
+      self.excitation.E = Ey
+      self.Ysymmetry = True
+      self.Zsymmetry = False
+    elif excitationType == 1:
+      self.excitation.name = 'P_Zm1 excitation'
+      self.excitation.P1 = P_Zm1
+      self.excitation.E = Ez
+      self.Ysymmetry = False
+      self.Zsymmetry = True
+    elif excitationType == 2:
+      self.excitation.name = 'P_Ym2 excitation'
+      self.excitation.P1 = P_Ym2
+      self.excitation.E = Ey
+      self.Ysymmetry = True
+      self.Zsymmetry = False
+    elif excitationType == 3:
+      self.excitation.name = 'P_Zm2 excitation'
+      self.excitation.P1 = P_Zm2
+      self.excitation.E = Ez
+      self.Ysymmetry = False
+      self.Zsymmetry = True
+    else:
+      print('FATAL ERROR: invalid direction : '+str(excitationType))
+      sys.exit(-1)
 
   def getExcitationType(self):
-    return 'ghgjhg'
+    if self.excitation.name == 'P_Ym1 excitation':
+      return 'Ym1'
+    elif self.excitation.name == 'P_Zm1 excitation':
+      return  'Zm1'
+    elif self.excitation.name == 'P_Ym2 excitation':
+      return  'Ym2'
+    elif self.excitation.name == 'P_Zm2 excitation':
+      return 'Zm2'
+    else:
+      print('FATAL ERROR: invalid direction' + self.excitation.name)
+      sys.exit(-1)
 
   def setRadiusPillarYZ(self,radius_Y,radius_Z):
     self.radius_Y_pillar_mum = radius_Y
@@ -752,37 +820,9 @@ class pillar_1D:
     with open(inp_filename, 'w') as out:
   
       if self.print_excitation:
-        ghjgjhgj
-        GEOexcitation(out, self.getExcitationType(), 7, P1, P2, E, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+        self.excitation.write_entry(out)
 
-        P_Xm = [ self.getPillarCenterX()-2*self.delta_X_center, self.getPillarCenterY(), self.getPillarCenterZ() ]
-        P_Xp = [ self.getPillarCenterX()+2*self.delta_X_center, self.getPillarCenterY(), self.getPillarCenterZ() ]
-        P_Ym1 = [ self.getPillarCenterX(), self.getPillarCenterY()-1*self.delta_Y_center, self.getPillarCenterZ() ]
-        P_Yp1 = [ self.getPillarCenterX(), self.getPillarCenterY()+1*self.delta_Y_center, self.getPillarCenterZ() ]
-        P_Ym2 = [ self.getPillarCenterX(), self.getPillarCenterY()-2*self.delta_Y_center, self.getPillarCenterZ() ]
-        P_Yp2 = [ self.getPillarCenterX(), self.getPillarCenterY()+2*self.delta_Y_center, self.getPillarCenterZ() ]
-        P_Zm1 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()-1*self.delta_Z_center ]
-        P_Zp1 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()+1*self.delta_Z_center ]
-        P_Zm2 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()-2*self.delta_Z_center ]
-        P_Zp2 = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ()+2*self.delta_Z_center ]
-        P_center = [ self.getPillarCenterX(), self.getPillarCenterY(), self.getPillarCenterZ() ]
-        Ey = [ 0, 1, 0 ]
-        Ez = [ 0, 0, 1 ]
-        H = [ 0, 0, 0 ]
-        type = 10
-    
-        if self.excitation_type == 0:
-          GEOexcitation(out, '1 grid Y excitation', 7, P_Ym1, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        elif  self.excitation_type == 1:
-          GEOexcitation(out, '1 grid Z excitation', 7, P_Zm1, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        elif  self.excitation_type == 2:
-          GEOexcitation(out, '2 grid Y excitation', 7, P_Ym2, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        elif  self.excitation_type == 3:
-          GEOexcitation(out, '2 grid Z excitation', 7, P_Zm2, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        else:
-          print('FATAL ERROR: invalid direction')
-          sys.exit(-1)
-    
+      # TODO: adapt this to symmetries
       Xpos_bc = 2; Xpos_param = [1,1,0]
       Ypos_bc = 2; Ypos_param = [1,1,0]
       Zpos_bc = 1; Zpos_param = [1,1,0]
@@ -904,7 +944,7 @@ def cylinder(DSTDIR, bottomN, topN, excitationType):
   P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'cylinder'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
   P.setRadiusPillarYZ(0.200,0.300)# 0.150/2.0
   P.print_podium = False;
   P.thickness_X_bottomSquare = 0;
@@ -947,7 +987,7 @@ def square_holes(DSTDIR, bottomN, topN, excitationType):
   P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'square_holes'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
   P.setRadiusPillarYZ(0.200,1)
   P.print_podium = True
   P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
@@ -992,7 +1032,7 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
   P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'rectangular_holes'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
   P.setRadiusPillarYZ(0.200,1)
   P.print_podium = True
   
@@ -1035,7 +1075,7 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'rectangular_yagi'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
   P.setRadiusPillarYZ(0.200,0.5)
   P.print_podium = True
   
@@ -1078,7 +1118,7 @@ def triangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'triangular_yagi'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
   P.setRadiusPillarYZ(0.200,0.5)
   P.print_podium = True
   P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
@@ -1123,7 +1163,7 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN, excitationType):
   P.Nvoxels = 10;
   
   P.HOLE_TYPE = 'triangular_yagi_voxel'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
   P.setRadiusPillarYZ(0.200,0.5)
   P.print_podium = True
   P.print_pillar = True
@@ -1165,22 +1205,22 @@ def test(DSTDIR,bottomN,topN):
   for i in range(4):
     P.setExcitationType(i)
     P.HOLE_TYPE = 'cylinder'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
     P.write()
     P.HOLE_TYPE = 'square_holes'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
     P.write()
     P.HOLE_TYPE = 'rectangular_holes'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
     P.write()
     P.HOLE_TYPE = 'rectangular_yagi'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
     P.write()
     P.HOLE_TYPE = 'triangular_yagi'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
     P.write()
     P.HOLE_TYPE = 'triangular_yagi_voxel'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
     P.write()
 
 def test2(DSTDIR):
