@@ -224,37 +224,36 @@ def GEOrotation(FILE, COMMENT, axis_point, axis_direction, angle_degrees):
 
 
 # excitation objects
-def GEOexcitation(FILE, COMMENT, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
-  FILE.write('EXCITATION **name='+COMMENT+'\n')
+#def GEOexcitation(FILE, COMMENT, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
+  #FILE.write('EXCITATION **name='+COMMENT+'\n')
 
-  FILE.write('{\n')
+  #FILE.write('{\n')
 
-  FILE.write("%d ** CURRENT SOURCE \n" % current_source)
-  FILE.write("%E **X1\n" % P1[0])
-  FILE.write("%E **Y1\n" % P1[1])
-  FILE.write("%E **Z1\n" % P1[2])
-  FILE.write("%E **X2\n" % P2[0])
-  FILE.write("%E **Y2\n" % P2[1])
-  FILE.write("%E **Z2\n" % P2[2])
-  FILE.write("%d **EX\n" % E[0])
-  FILE.write("%d **EY\n" % E[1])
-  FILE.write("%d **EZ\n" % E[2])
-  FILE.write("%d **HX\n" % H[0])
-  FILE.write("%d **HY\n" % H[1])
-  FILE.write("%d **HZ\n" % H[2])
-  FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % type)
-  FILE.write("%E **TIME CONSTANT\n" % time_constant)
-  FILE.write("%E **AMPLITUDE\n" % amplitude)
-  FILE.write("%E **TIME OFFSET\n" % time_offset)
-  FILE.write("%E **FREQ (HZ)\n" % frequency)
-  FILE.write("%d **UNUSED PARAMETER\n" % param1)
-  FILE.write("%d **UNUSED PARAMETER\n" % param2)
-  FILE.write("%d **UNUSED PARAMETER\n" % param3)
-  FILE.write("%d **UNUSED PARAMETER\n" % param4)
-  FILE.write('}\n')
+  #FILE.write("%d ** CURRENT SOURCE \n" % current_source)
+  #FILE.write("%E **X1\n" % P1[0])
+  #FILE.write("%E **Y1\n" % P1[1])
+  #FILE.write("%E **Z1\n" % P1[2])
+  #FILE.write("%E **X2\n" % P2[0])
+  #FILE.write("%E **Y2\n" % P2[1])
+  #FILE.write("%E **Z2\n" % P2[2])
+  #FILE.write("%d **EX\n" % E[0])
+  #FILE.write("%d **EY\n" % E[1])
+  #FILE.write("%d **EZ\n" % E[2])
+  #FILE.write("%d **HX\n" % H[0])
+  #FILE.write("%d **HY\n" % H[1])
+  #FILE.write("%d **HZ\n" % H[2])
+  #FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % type)
+  #FILE.write("%E **TIME CONSTANT\n" % time_constant)
+  #FILE.write("%E **AMPLITUDE\n" % amplitude)
+  #FILE.write("%E **TIME OFFSET\n" % time_offset)
+  #FILE.write("%E **FREQ (HZ)\n" % frequency)
+  #FILE.write("%d **UNUSED PARAMETER\n" % param1)
+  #FILE.write("%d **UNUSED PARAMETER\n" % param2)
+  #FILE.write("%d **UNUSED PARAMETER\n" % param3)
+  #FILE.write("%d **UNUSED PARAMETER\n" % param4)
+  #FILE.write('}\n')
 
-  FILE.write('\n')
-
+  #FILE.write('\n')
 
 # measurement objects
 def GEOtime_snapshot(FILE, COMMENT, first, repetition, plane, P1, P2, E, H, J, power, eps):

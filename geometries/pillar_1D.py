@@ -186,6 +186,12 @@ class pillar_1D:
   def setLambda(self,Lambda_mum):
     self.EXCITATION_FREQUENCY = get_c0()/Lambda_mum
 
+  def setExcitationType(self, value):
+    self.excitation_type = value
+
+  def getExcitationType(self):
+    return 'ghgjhg'
+
   def setRadiusPillarYZ(self,radius_Y,radius_Z):
     self.radius_Y_pillar_mum = radius_Y
     self.radius_Z_pillar_mum = radius_Z
@@ -746,6 +752,9 @@ class pillar_1D:
     with open(inp_filename, 'w') as out:
   
       if self.print_excitation:
+        ghjgjhgj
+        GEOexcitation(out, self.getExcitationType(), 7, P1, P2, E, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
+
         P_Xm = [ self.getPillarCenterX()-2*self.delta_X_center, self.getPillarCenterY(), self.getPillarCenterZ() ]
         P_Xp = [ self.getPillarCenterX()+2*self.delta_X_center, self.getPillarCenterY(), self.getPillarCenterZ() ]
         P_Ym1 = [ self.getPillarCenterX(), self.getPillarCenterY()-1*self.delta_Y_center, self.getPillarCenterZ() ]
@@ -762,13 +771,13 @@ class pillar_1D:
         H = [ 0, 0, 0 ]
         type = 10
     
-        if self.excitation_type == 1:
+        if self.excitation_type == 0:
           GEOexcitation(out, '1 grid Y excitation', 7, P_Ym1, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        elif  self.excitation_type == 2:
+        elif  self.excitation_type == 1:
           GEOexcitation(out, '1 grid Z excitation', 7, P_Zm1, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        elif  self.excitation_type == 3:
+        elif  self.excitation_type == 2:
           GEOexcitation(out, '2 grid Y excitation', 7, P_Ym2, P_center, Ey, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
-        elif  self.excitation_type == 4:
+        elif  self.excitation_type == 3:
           GEOexcitation(out, '2 grid Z excitation', 7, P_Zm2, P_center, Ez, H, type, self.TIME_CONSTANT, self.AMPLITUDE, self.TIME_OFFSET, self.EXCITATION_FREQUENCY, 0, 0, 0, 0)
         else:
           print('FATAL ERROR: invalid direction')
@@ -883,7 +892,7 @@ class pillar_1D:
     
     return(inp_filename)
 
-def cylinder(DSTDIR, bottomN, topN):
+def cylinder(DSTDIR, bottomN, topN, excitationType):
   P = pillar_1D()
   print('======== cylinder START ============')
   P.DSTDIR = DSTDIR
@@ -892,7 +901,7 @@ def cylinder(DSTDIR, bottomN, topN):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-  P.excitation_type = 1
+  P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'cylinder'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
@@ -926,7 +935,7 @@ def cylinder(DSTDIR, bottomN, topN):
   
   P.write()
   
-def square_holes(DSTDIR, bottomN, topN):
+def square_holes(DSTDIR, bottomN, topN, excitationType):
   P = pillar_1D()
   print('======== square_holes START ============')
   P.DSTDIR = DSTDIR
@@ -935,7 +944,7 @@ def square_holes(DSTDIR, bottomN, topN):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-  P.excitation_type = 1
+  P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'square_holes'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
@@ -971,7 +980,7 @@ def square_holes(DSTDIR, bottomN, topN):
   #P.verbose = True
   P.write()
 
-def rectangular_holes(DSTDIR, bottomN, topN):
+def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
   P = pillar_1D()
   print('======== rectangular_holes START ============')
   P.DSTDIR = DSTDIR
@@ -980,7 +989,7 @@ def rectangular_holes(DSTDIR, bottomN, topN):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-  P.excitation_type = 1
+  P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'rectangular_holes'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
@@ -1014,7 +1023,7 @@ def rectangular_holes(DSTDIR, bottomN, topN):
 
   P.write()
 
-def rectangular_yagi(DSTDIR, bottomN, topN):
+def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P = pillar_1D()
   print('======== rectangular_yagi START ============')
   P.DSTDIR = DSTDIR
@@ -1023,7 +1032,7 @@ def rectangular_yagi(DSTDIR, bottomN, topN):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-  P.excitation_type = 1
+  P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'rectangular_yagi'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
@@ -1057,7 +1066,7 @@ def rectangular_yagi(DSTDIR, bottomN, topN):
 
   P.write()
 
-def triangular_yagi(DSTDIR, bottomN, topN):
+def triangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P = pillar_1D()
   print('======== triangular_yagi START ============')
   P.DSTDIR = DSTDIR
@@ -1066,7 +1075,7 @@ def triangular_yagi(DSTDIR, bottomN, topN):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-  P.excitation_type = 1
+  P.setExcitationType(excitationType)
   
   P.HOLE_TYPE = 'triangular_yagi'
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
@@ -1100,7 +1109,7 @@ def triangular_yagi(DSTDIR, bottomN, topN):
 
   P.write()
 
-def triangular_yagi_voxel(DSTDIR, bottomN, topN):
+def triangular_yagi_voxel(DSTDIR, bottomN, topN, excitationType):
   P = pillar_1D()
   print('======== triangular_yagi_voxel START ============')
   P.DSTDIR = DSTDIR
@@ -1109,7 +1118,7 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-  P.excitation_type = 1
+  P.setExcitationType(excitationType)
 
   P.Nvoxels = 10;
   
@@ -1153,24 +1162,26 @@ def test(DSTDIR,bottomN,topN):
   P.DSTDIR = DSTDIR
   P.bottom_N = bottomN
   P.top_N = topN
-  P.HOLE_TYPE = 'cylinder'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.write()
-  P.HOLE_TYPE = 'square_holes'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.write()
-  P.HOLE_TYPE = 'rectangular_holes'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.write()
-  P.HOLE_TYPE = 'rectangular_yagi'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.write()
-  P.HOLE_TYPE = 'triangular_yagi'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.write()
-  P.HOLE_TYPE = 'triangular_yagi_voxel'
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)
-  P.write()
+  for i in range(4):
+    P.setExcitationType(i)
+    P.HOLE_TYPE = 'cylinder'
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.write()
+    P.HOLE_TYPE = 'square_holes'
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.write()
+    P.HOLE_TYPE = 'rectangular_holes'
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.write()
+    P.HOLE_TYPE = 'rectangular_yagi'
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.write()
+    P.HOLE_TYPE = 'triangular_yagi'
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.write()
+    P.HOLE_TYPE = 'triangular_yagi_voxel'
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'excitationType_'+P.getExcitationType()
+    P.write()
 
 def test2(DSTDIR):
   P = pillar_1D()
@@ -1178,18 +1189,19 @@ def test2(DSTDIR):
   print('======== default START ============')
   P.write()
   
-  cylinder(DSTDIR,12,12)
-  cylinder(DSTDIR,20,10)
-  square_holes(DSTDIR,6,3)
-  square_holes(DSTDIR,20,10)
-  rectangular_holes(DSTDIR,6,3)
-  rectangular_holes(DSTDIR,6,4)
-  rectangular_holes(DSTDIR,7,4)
-  rectangular_holes(DSTDIR,7,5)
-  rectangular_holes(DSTDIR,8,6)
-  rectangular_yagi(DSTDIR,20,10)
-  triangular_yagi(DSTDIR,20,10)
-  triangular_yagi_voxel(DSTDIR,20,10)  
+  for i in range(4):
+    cylinder(DSTDIR,12,12,i)
+    cylinder(DSTDIR,20,10,i)
+    square_holes(DSTDIR,6,3,i)
+    square_holes(DSTDIR,20,10,i)
+    rectangular_holes(DSTDIR,6,3,i)
+    rectangular_holes(DSTDIR,6,4,i)
+    rectangular_holes(DSTDIR,7,4,i)
+    rectangular_holes(DSTDIR,7,5,i)
+    rectangular_holes(DSTDIR,8,6,i)
+    rectangular_yagi(DSTDIR,20,10,i)
+    triangular_yagi(DSTDIR,20,10,i)
+    triangular_yagi_voxel(DSTDIR,20,10,i)
 
 def main(argv=None):
   if argv is None:

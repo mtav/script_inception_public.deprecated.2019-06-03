@@ -82,22 +82,22 @@ class Flag:
 class Boundaries:
     def __init__(self):
         self.name = 'boundary'
-        self.type = [0,0,0,0,0,0];
+        self.Type = [0,0,0,0,0,0];
         self.position = [0,0,0,0,0,0];
     def __str__(self):
         ret  = 'name = '+self.name+'\n';
-        ret += 'X+: type = '+str(self.type[0])+' position = '+str(self.position[0])+'\n';
-        ret += 'Y+: type = '+str(self.type[1])+' position = '+str(self.position[1])+'\n';
-        ret += 'Z+: type = '+str(self.type[2])+' position = '+str(self.position[2])+'\n';
-        ret += 'X-: type = '+str(self.type[3])+' position = '+str(self.position[3])+'\n';
-        ret += 'Y-: type = '+str(self.type[4])+' position = '+str(self.position[4])+'\n';
-        ret += 'Z-: type = '+str(self.type[5])+' position = '+str(self.position[5]);
+        ret += 'X+: Type = '+str(self.Type[0])+' position = '+str(self.position[0])+'\n';
+        ret += 'Y+: Type = '+str(self.Type[1])+' position = '+str(self.position[1])+'\n';
+        ret += 'Z+: Type = '+str(self.Type[2])+' position = '+str(self.position[2])+'\n';
+        ret += 'X-: Type = '+str(self.Type[3])+' position = '+str(self.position[3])+'\n';
+        ret += 'Y-: Type = '+str(self.Type[4])+' position = '+str(self.position[4])+'\n';
+        ret += 'Z-: Type = '+str(self.Type[5])+' position = '+str(self.position[5]);
         return ret;
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
         for i in range(6):
-            self.type[i] = entry.data[4*i];
+            self.Type[i] = entry.data[4*i];
             self.position[i] = entry.data[1+4*i:4+4*i];
         return(0);
 
@@ -239,22 +239,38 @@ class Rotation:
 
 # excitation objects
 class Excitation:
-    def __init__(self):
-        self.name = 'excitation'
-        self.current_source = 0;
-        self.P1 = [0,0,0];
-        self.P2 = [0,0,0];
-        self.E = 0;
-        self.H = 0;
-        self.type = 0;
-        self.time_constant = 0;
-        self.amplitude = 0;
-        self.time_offset = 0;
-        self.frequency = 0;
-        self.param1 = 0;
-        self.param2 = 0;
-        self.param3 = 0;
-        self.param4 = 0;
+    def __init__(self,
+                  name = 'excitation',
+                  current_source = 0,
+                  P1 = [0,0,0],
+                  P2 = [0,0,0],
+                  E = 0,
+                  H = 0,
+                  Type = 0,
+                  time_constant = 0,
+                  amplitude = 0,
+                  time_offset = 0,
+                  frequency = 0,
+                  param1 = 0,
+                  param2 = 0,
+                  param3 = 0,
+                  param4 = 0):
+
+        self.name = name
+        self.current_source = current_source
+        self.P1 = P1
+        self.P2 = P2
+        self.E = E
+        self.H = H
+        self.Type = Type
+        self.time_constant = time_constant
+        self.amplitude = amplitude
+        self.time_offset = time_offset
+        self.frequency = frequency
+        self.param1 = param1
+        self.param2 = param2
+        self.param3 = param3
+        self.param4 = param4
     def __str__(self):
         ret  = 'name = '+self.name+'\n';
         ret += 'current_source = ' + str(self.current_source) + '\n' +\
@@ -262,7 +278,7 @@ class Excitation:
         'P2 = ' + str(self.P2) + '\n' +\
         'E = ' + str(self.E) + '\n' +\
         'H = ' + str(self.H) + '\n' +\
-        'type = ' + str(self.type) + '\n' +\
+        'Type = ' + str(self.Type) + '\n' +\
         'time_constant = ' + str(self.time_constant) + '\n' +\
         'amplitude = ' + str(self.amplitude) + '\n' +\
         'time_offset = ' + str(self.time_offset) + '\n' +\
@@ -281,7 +297,7 @@ class Excitation:
         self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
         self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.type = float(entry.data[idx]); idx = idx+1;
+        self.Type = float(entry.data[idx]); idx = idx+1;
         self.time_constant = float(entry.data[idx]); idx = idx+1;
         self.amplitude = float(entry.data[idx]); idx = idx+1;
         self.time_offset = float(entry.data[idx]); idx = idx+1;
@@ -291,7 +307,33 @@ class Excitation:
         self.param3 = float(entry.data[idx]); idx = idx+1;
         self.param4 = float(entry.data[idx]); idx = idx+1;
         return(0);
-
+    def write_entry(self, FILE):
+      FILE.write('EXCITATION **name='+self.name+'\n')
+      FILE.write('{\n')
+      FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
+      FILE.write("%E **X1\n" % self.P1[0])
+      FILE.write("%E **Y1\n" % self.P1[1])
+      FILE.write("%E **Z1\n" % self.P1[2])
+      FILE.write("%E **X2\n" % self.P2[0])
+      FILE.write("%E **Y2\n" % self.P2[1])
+      FILE.write("%E **Z2\n" % self.P2[2])
+      FILE.write("%d **EX\n" % self.E[0])
+      FILE.write("%d **EY\n" % self.E[1])
+      FILE.write("%d **EZ\n" % self.E[2])
+      FILE.write("%d **HX\n" % self.H[0])
+      FILE.write("%d **HY\n" % self.H[1])
+      FILE.write("%d **HZ\n" % self.H[2])
+      FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % self.Type)
+      FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
+      FILE.write("%E **AMPLITUDE\n" % self.amplitude)
+      FILE.write("%E **TIME OFFSET\n" % self.time_offset)
+      FILE.write("%E **FREQ (HZ)\n" % self.frequency)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param3)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param4)
+      FILE.write('}\n')
+      FILE.write('\n')
 
 # measurement objects
 class Time_snapshot:
@@ -425,7 +467,7 @@ class Probe:
 class Entry:
   def __init__(self):
     self.name = 'entry';
-    self.type = '';
+    self.Type = '';
     self.data = [];
 
 class Structured_entries:
@@ -535,15 +577,15 @@ class Structured_entries:
       cleantext = pattern_stripcomments.sub("\n", fulltext)
       #print(cleantext)
   
-      # pattern_objects = re.compile("^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}");
-      #pattern_objects = re.compile("(?P<type>\w+)\s*(?P<name>(?<=\*\*name=)[^{}]*)?{(?P<data>[^{}]*)}",re.DOTALL)
-      pattern_objects = re.compile("(?P<type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
+      # pattern_objects = re.compile("^(?<Type>\w+).*?\{(?<data>[^\{\}]*?)\}");
+      #pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<name>(?<=\*\*name=)[^{}]*)?{(?P<data>[^{}]*)}",re.DOTALL)
+      pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
       objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
     
       entries = [];
       # process objects
       for i in range(len(objects)):
-          type = objects[i]['type'];
+          Type = objects[i]['Type'];
           name = ''
           if 'nameblob' in objects[i].keys():
             #print objects[i]['nameblob']
@@ -561,81 +603,81 @@ class Structured_entries:
             #name = ''
           data = objects[i]['data'];
           
-          # convert type to upper case and strip it
-          type = type.upper().strip();
+          # convert Type to upper case and strip it
+          Type = Type.upper().strip();
           # split data by spaces and new lines
           data = re.split('\s+',data);
           # remove empty lines from data
           data = filter(None, data);
           
           entry = Entry();
-          entry.type = type;
+          entry.Type = Type;
           entry.name = name;
           entry.data = data;
           entries.append(entry);
           
           # mandatory objects
-          if entry.type == 'XMESH':
+          if entry.Type == 'XMESH':
               self.xmesh = float_array(entry.data);
               xmesh_read = True;
-          elif entry.type == 'YMESH':
+          elif entry.Type == 'YMESH':
               self.ymesh = float_array(entry.data);
-          elif entry.type == 'ZMESH':
+          elif entry.Type == 'ZMESH':
               self.zmesh = float_array(entry.data);
-          elif entry.type == 'FLAG':
+          elif entry.Type == 'FLAG':
               self.flag.read_entry(entry);
-          elif entry.type == 'BOUNDARY':
+          elif entry.Type == 'BOUNDARY':
               self.boundaries.read_entry(entry);
-          elif entry.type == 'BOX':
+          elif entry.Type == 'BOX':
               self.box.read_entry(entry);
               box_read = True;
                   
           # geometry objects
-          elif entry.type == 'SPHERE':
+          elif entry.Type == 'SPHERE':
               sphere = Sphere();
               sphere.read_entry(entry);
               self.sphere_list.append(sphere);
               self.geometry_object_list.append(sphere);
-          elif entry.type == 'BLOCK':
+          elif entry.Type == 'BLOCK':
               block = Block();
               block.read_entry(entry);
               self.block_list.append(block);
               self.geometry_object_list.append(block);
-          elif entry.type == 'CYLINDER':
+          elif entry.Type == 'CYLINDER':
               cylinder = Cylinder();
               cylinder.read_entry(entry);
               self.cylinder_list.append(cylinder);
               self.geometry_object_list.append(cylinder);
-          elif entry.type == 'ROTATION':
+          elif entry.Type == 'ROTATION':
               rotation = Rotation();
               rotation.read_entry(entry);
               self.global_rotation_list.append(rotation);
               self.geometry_object_list[-1].rotation_list.append(rotation);
           
           # excitation objects
-          elif entry.type == 'EXCITATION':
+          elif entry.Type == 'EXCITATION':
               current_excitation = Excitation();
               current_excitation.read_entry(entry);
               self.excitation_list.append(current_excitation);
           
           # measurement objects
-          elif entry.type == 'FREQUENCY_SNAPSHOT':
+          elif entry.Type == 'FREQUENCY_SNAPSHOT':
               frequency_snapshot = Frequency_snapshot();
               frequency_snapshot.read_entry(entry);
               self.frequency_snapshot_list.append(frequency_snapshot);
               self.snapshot_list.append(frequency_snapshot);
-          elif entry.type == 'SNAPSHOT':
+          elif entry.Type == 'SNAPSHOT':
               time_snapshot = Time_snapshot();
               time_snapshot.read_entry(entry);
               self.time_snapshot_list.append(time_snapshot);
               self.snapshot_list.append(time_snapshot);
-          elif entry.type == 'PROBE':
+          elif entry.Type == 'PROBE':
               probe = Probe();
               probe.read_entry(entry);
               self.probe_list.append(probe);
   
           else:
-              print 'Unknown type: ', entry.type;
+              print 'Unknown Type: ', entry.Type;
 
       return [ xmesh_read, box_read ];
 
