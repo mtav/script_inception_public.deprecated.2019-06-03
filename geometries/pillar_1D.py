@@ -150,6 +150,7 @@ class pillar_1D:
     self.probes_Y_vector = []
     self.probes_Z_vector = []
     self.probes_X_vector_center = []
+    self.probes_Z_vector_center = []
 
   def getPillarHeight(self):
     return (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()
@@ -506,7 +507,12 @@ class pillar_1D:
     self.Zmax/2-2*self.delta_Z_center,
     self.Zmax/2-self.delta_Z_center,#5
     self.Zmax/2 ]
-  
+    
+    print 'self.delta_X_center = ', self.delta_X_center
+    print 'self.delta_Y_center = ', self.delta_Y_center
+    print 'self.delta_Z_center = ', self.delta_Z_center
+    print 'self.Zmax/2 =', self.Zmax/2
+    
     if self.Ysymmetry:
       self.Yplanes = Yplanes_1
     else:
@@ -527,6 +533,9 @@ class pillar_1D:
     self.Xplanes = list(set(self.Xplanes))
     self.Yplanes = list(set(self.Yplanes))
     self.Zplanes = list(set(self.Zplanes))
+    self.Xplanes.sort()
+    self.Yplanes.sort()
+    self.Zplanes.sort()
     ########################################################################
     
     ########################################################################
@@ -834,17 +843,24 @@ class pillar_1D:
         J=[0,0,0]
         power = 0
         for iX in range(len(self.probes_X_vector)):
+        #for iX in range(1):
           # XY probes
           for iY in range(len(self.probes_Y_vector)):
-            GEOprobe(out, '', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[5]], step, E, H, J, power )
+          #for iY in range(1):
+            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[0]], step, E, H, J, power )
+            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[1]], step, E, H, J, power )
+            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[2]], step, E, H, J, power )
+            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[3]], step, E, H, J, power )
+            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[4]], step, E, H, J, power )
+            GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[5]], step, E, H, J, power )
           # XZ probes
           for iZ in range(len(self.probes_Z_vector)):
-            GEOprobe(out, '', [self.probes_X_vector[iX], self.Yplanes[4], self.probes_Z_vector[iZ]], step, E, H, J, power )
+            GEOprobe(out, 'XZ probes', [self.probes_X_vector[iX], self.Yplanes[4], self.probes_Z_vector[iZ]], step, E, H, J, power )
         
-        # XY center probes
+        # XZ center probes
         for iX in range(len(self.probes_X_vector_center)):
           for iZ in range(len(self.probes_Z_vector_center)):
-            GEOprobe(out, '', [self.probes_X_vector_center[iX], self.Yplanes[3], self.probes_Z_vector_center[iZ]], step, E, H, J, power )
+            GEOprobe(out, 'XZ center probes', [self.probes_X_vector_center[iX], self.Yplanes[3], self.probes_Z_vector_center[iZ]], step, E, H, J, power )
       
       #write footer
       out.write('end\n'); #end the file

@@ -159,8 +159,14 @@ def importBristolFDTD(filename):
     #########################
 
     # TODO: Save the layer settings somewhere for reuse
-    scene = Blender.Scene.GetCurrent();
-    Blender.Scene.GetCurrent().setLayers([layerManager.DefaultLayers.index('spheres'),layerManager.DefaultLayers.index('blocks'),layerManager.DefaultLayers.index('cylinders')]);
+    scene = Blender.Scene.GetCurrent()
+    
+    layersOn = [layerManager.DefaultLayers.index('spheres')+1,layerManager.DefaultLayers.index('blocks')+1,layerManager.DefaultLayers.index('cylinders')+1]
+    print layersOn
+    #layersOn = [1,2,3]
+    #print layersOn
+    Blender.Scene.GetCurrent().setLayers(layersOn)
+    
     scene.update(0);
     Blender.Window.RedrawAll();
     Blender.Window.WaitCursor(0);
