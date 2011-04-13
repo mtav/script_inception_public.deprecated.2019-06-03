@@ -14,7 +14,7 @@ def cylinder(DSTDIR, bottomN, topN, excitationType):
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
   
   P.HOLE_TYPE = 'cylinder'
-  P.setRadiusPillarYZ(0.200,0.300)# 0.150/2.0
+  P.setRadiusPillarYZ(0.150/2.0,0.150/2.0)
   P.print_podium = False;
   P.thickness_X_bottomSquare = 0;
   
@@ -340,6 +340,10 @@ def mission4(DSTDIR,excitationType):
   triangular_yagi(DSTDIR,20,10,excitationType)
   triangular_yagi_voxel(DSTDIR,20,10,excitationType)
 
+#def loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_type):
+
+#def loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY):
+
 def main(argv=None):
   if argv is None:
       argv = sys.argv
@@ -351,12 +355,18 @@ def main(argv=None):
     # main function
     #test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
     #test2(os.getenv('TESTDIR'))
+    
     excitationType = 1
     mission1(os.getenv('DATADIR')+os.sep+'mission1',excitationType)
     mission2(os.getenv('DATADIR')+os.sep+'mission2',excitationType)
     mission3(os.getenv('DATADIR')+os.sep+'mission3',excitationType)
     mission4(os.getenv('DATADIR')+os.sep+'mission4',excitationType)
     
+    #loncar_cylinder('loncar_cyl_python', DSTDIR, 32000, True, True, 'cylinder', 0.150/2.0, 0.637, [get_c0()/0.637],excitationType)
+    #loncar_structure('loncar_rect_python', DSTDIR, 32000, True, True, 'rectangular_holes', 1, 0.637, [get_c0()/0.637], excitationType)
+
+    #cylinder(os.getenv('TESTDIR'), 12, 12, 0)
+
   except Usage, err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"

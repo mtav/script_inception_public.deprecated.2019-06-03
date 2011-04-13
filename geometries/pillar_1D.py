@@ -3,6 +3,9 @@
 
 # TODO: Print function + print args into output files
 # TODO: create FDTD object, store stuff in it and use its print function for output
+# TODO: Get semiconductor micropillars working with it (BIG PROBLEM: orthogonal cylinders, cylinder in X direction => requires voxelization or working rotation FDTD or geo/inp rotation function...)
+# TODO: enter a list of defect positions and sizes
+# TODO: automatic meshing
 
 from __future__ import division
 from bfdtd.bristolFDTD_generator_functions import *
@@ -128,7 +131,7 @@ class pillar_1D:
     self.probes_Z_vector_center = []
 
   def getPillarHeight(self):
-    return (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()
+    return (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectBordersInCavity()
 
   def getLambda(self):
     return get_c0()/self.EXCITATION_FREQUENCY
@@ -292,7 +295,7 @@ class pillar_1D:
     
 ########################################################################
   def getPillarCenterX(self):
-    return self.thickness_X_bottomSquare + self.bottom_N*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity()/2
+    return self.thickness_X_bottomSquare + self.bottom_N*self.d_holes_mum + self.getDistanceBetweenDefectBordersInCavity()/2
     
   def getPillarCenterY(self):
     return self.Ymax/2
@@ -355,15 +358,15 @@ class pillar_1D:
 
     # bottom part
     for i in range(self.bottom_N):
-      thicknessVector_X += [ self.d_holes_mum/2 - self.radius_X_hole, 2*self.radius_X_hole, self.d_holes_mum/2 - self.radius_X_hole ]
-      max_delta_Vector_X += [ self.delta_X_substrate, self.delta_X_hole, self.delta_X_substrate ]
+      thicknessVector_X += [ self.d_holes_mum - 2*self.radius_X_hole, 2*self.radius_X_hole ]
+      max_delta_Vector_X += [ self.delta_X_substrate, self.delta_X_hole ]
     # cavity
-    thicknessVector_X += [ self.getDistanceBetweenDefectPairsInCavity()/2-self.radius_X_center, 2*self.radius_X_center, self.getDistanceBetweenDefectPairsInCavity()/2-self.radius_X_center ]
+    thicknessVector_X += [ self.getDistanceBetweenDefectBordersInCavity()/2-self.radius_X_center, 2*self.radius_X_center, self.getDistanceBetweenDefectBordersInCavity()/2-self.radius_X_center ]
     max_delta_Vector_X += [ self.delta_X_substrate, self.delta_X_center, self.delta_X_substrate ]
     # top part
     for i in range(self.top_N):
-      thicknessVector_X += [ self.d_holes_mum/2 - self.radius_X_hole, 2*self.radius_X_hole, self.d_holes_mum/2 - self.radius_X_hole ]
-      max_delta_Vector_X += [ self.delta_X_substrate, self.delta_X_hole, self.delta_X_substrate ]
+      thicknessVector_X += [ 2*self.radius_X_hole, self.d_holes_mum - 2*self.radius_X_hole ]
+      max_delta_Vector_X += [ self.delta_X_hole, self.delta_X_substrate ]
     
     # over the pillar
     if self.thickness_X_buffer>0:
@@ -506,11 +509,11 @@ class pillar_1D:
 
     self.Xplanes = [ 0, # 0 / 0
     self.thickness_X_bottomSquare, # 1 / -
-    self.thickness_X_bottomSquare + self.bottom_N/2*self.d_holes_mum, # 2 / 1
+    self.thickness_X_bottomSquare + (self.bottom_N//2)*self.d_holes_mum, # 2 / 1
     self.getPillarCenterX()-self.delta_X_center, # 3 / 2
     self.getPillarCenterX(), # 4 / 3
     self.getPillarCenterX()+self.delta_X_center, # 5 / 4
-    self.thickness_X_bottomSquare + self.bottom_N*self.d_holes_mum + self.getDistanceBetweenDefectPairsInCavity() + self.top_N/2*self.d_holes_mum, # 6 / 5
+    self.thickness_X_bottomSquare + self.bottom_N*self.d_holes_mum + self.getDistanceBetweenDefectBordersInCavity() + (self.top_N//2)*self.d_holes_mum, # 6 / 5
     self.thickness_X_bottomSquare + self.getPillarHeight(), # 7 / 6
     self.thickness_X_bottomSquare + self.getPillarHeight()+1*self.delta_X_buffer,# 8 / -
     self.thickness_X_bottomSquare + self.getPillarHeight()+8*self.delta_X_buffer, # 9 / -
@@ -626,6 +629,7 @@ class pillar_1D:
     return(cmd_filename)
   
   def addHole(self, FILE, COMMENT, X_current, permittivity, conductivity):
+    ''' adds a hole centered at  X_current '''
     centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
     if self.HOLE_TYPE == 'cylinder':
       GEOcylinder(FILE, COMMENT, centre, 0, self.radius_X_hole, 2*self.radius_Y_pillar_mum, permittivity, conductivity, 0)
@@ -706,7 +710,7 @@ class pillar_1D:
       out.write('\n')
     
       # initialize current y
-      X_current=0
+      X_current = 0
       
       if self.print_podium:
         # create bottom block
@@ -722,7 +726,7 @@ class pillar_1D:
         U = [ X_current + self.getPillarHeight(), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum ]
         GEOblock(out, 'main pillar', L, U, pow(self.n_Diamond,2), 0)
     
-      X_current = X_current + self.d_holes_mum/2
+      X_current = X_current + (self.d_holes_mum - self.radius_X_hole)
     
       if self.print_holes:
           # hole settings
