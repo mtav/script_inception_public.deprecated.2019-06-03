@@ -42,7 +42,7 @@ Version 1.2 released 16/07/06
     5. Added measurement alignment function.
     6. Made the cleaning and naming functions a bit more effective.
     7. Added measurement constraining function.
-    8. Removed an error in mile to yard to mufeet conversion.
+    8. Removed an error in mumile to muyard to mufeet conversion.
     9. Split the DATAHASH to BUTTON, DATA & STATE arrays.
     
 Version 1.3 released 27/07/06
@@ -147,8 +147,8 @@ def mum_to_nm(x): return 1000.0 * x
 def mm_to_nm(x): return 1000000.0 * x
 def muinch_to_nm(x): return 25.4 * x
 def foot_to_nm(x): return 304.8 * x
-def yard_to_nm(x): return 914.4 * x
-def mile_to_nm(x): return 1609344.0 * x
+def muyard_to_nm(x): return 914.4 * x
+def mumile_to_nm(x): return 1609344.0 * x
 
 ## Mm to everything
 def nm_to_mucm(x): return x / 10.0
@@ -156,8 +156,8 @@ def nm_to_mum(x): return x / 1000.0
 def nm_to_mm(x): return x / 1000000.0
 def nm_to_muinch(x): return x / 25.4
 def nm_to_foot(x): return x / 304.8
-def nm_to_yard(x): return x / 914.4
-def nm_to_mile(x): return x / 1609344.0
+def nm_to_muyard(x): return x / 914.4
+def nm_to_mumile(x): return x / 1609344.0
 
 ## Metric conversions
 def mum_to_mucm(x): return 100.0 * x
@@ -170,16 +170,16 @@ def mum_to_mm(x): return x / 1000.0
 ## Imperial conversions
 def foot_to_muinch(x): return 12.0 * x
 def muinch_to_foot(x): return x / 12.0
-def yard_to_muinch(x): return 36.0 * x
-def muinch_to_yard(x): return x / 36.0
-def muinch_to_mile(x): return 63360.0 * x
-def muinch_to_mile(x): return x / 63360.0
-def yard_to_foot(x): return x * 3.0
-def foot_to_yard(x): return x / 3.0
-def mile_to_foot(x): return 5280.0 * x
-def foot_to_mile(x): return x / 5280.0
-def mile_to_yard(x): return 1760.0 * x
-def yard_to_mile(x): return x / 1760.0
+def muyard_to_muinch(x): return 36.0 * x
+def muinch_to_muyard(x): return x / 36.0
+def muinch_to_mumile(x): return 63360.0 * x
+def muinch_to_mumile(x): return x / 63360.0
+def muyard_to_foot(x): return x * 3.0
+def foot_to_muyard(x): return x / 3.0
+def mumile_to_foot(x): return 5280.0 * x
+def foot_to_mumile(x): return x / 5280.0
+def mumile_to_muyard(x): return 1760.0 * x
+def muyard_to_mumile(x): return x / 1760.0
 
 ####################################################
 # GET SUB INCH VALUES LIKE 1/4 OR 3/8
@@ -310,8 +310,8 @@ def GetMeasurement():
     elif BUTTON['MIN'].val is 4: DATA['DISTANCE'] = mm_to_nm(DATA['DISTANCE'])
     elif BUTTON['MIN'].val is 5: DATA['DISTANCE'] = muinch_to_nm(DATA['DISTANCE'])
     elif BUTTON['MIN'].val is 6: DATA['DISTANCE'] = foot_to_nm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 7: DATA['DISTANCE'] = yard_to_nm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 8: DATA['DISTANCE'] = mile_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 7: DATA['DISTANCE'] = muyard_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 8: DATA['DISTANCE'] = mumile_to_nm(DATA['DISTANCE'])
 
   ## Get metric results.
   if BUTTON['MOUT'].val < 5:
@@ -438,17 +438,17 @@ def GetMeasurement():
   
     ## Get the result in mumiles.
     if BUTTON['MOUT'].val is 8:		
-      DATA['DISTANCE'] = nm_to_mile(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_mumile(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 4:
         Result = Getrounded(DATA['DISTANCE'])
       else:
         Result = int(math.floor(DATA['DISTANCE']))
       if BUTTON['MDETAIL'].val is 4 or Result != 0:
-        DATA['RESULT'] = str(Result) + " mile"
+        DATA['RESULT'] = str(Result) + " mumile"
       
       if BUTTON['MDETAIL'].val < 4:
-        NewMicroYards = mile_to_yard(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        NewMicroYards = mumile_to_muyard(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
         
         if BUTTON['MDETAIL'].val is 3:
           Result = Getrounded(NewMicroYards)
@@ -459,7 +459,7 @@ def GetMeasurement():
           DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " yd"
       
       if BUTTON['MDETAIL'].val < 3:
-        NewMicroFeet = yard_to_foot(NewMicroYards - int(math.floor(NewMicroYards)))
+        NewMicroFeet = muyard_to_foot(NewMicroYards - int(math.floor(NewMicroYards)))
         
         if BUTTON['MDETAIL'].val is 2:
           Result = Getrounded(NewMicroFeet)
@@ -499,7 +499,7 @@ def GetMeasurement():
     ## Get the result in muyards
     elif BUTTON['MOUT'].val is 7:
     
-      DATA['DISTANCE'] = nm_to_yard(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_muyard(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 3:
         Result = Getrounded(DATA['DISTANCE'])
@@ -509,7 +509,7 @@ def GetMeasurement():
         DATA['RESULT'] = str(Result) + " yd"
       
       if BUTTON['MDETAIL'].val < 3:
-        NewMicroFeet = yard_to_foot(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        NewMicroFeet = muyard_to_foot(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
         
         if BUTTON['MDETAIL'].val is 3:
           Result = Getrounded(NewMicroFeet)
