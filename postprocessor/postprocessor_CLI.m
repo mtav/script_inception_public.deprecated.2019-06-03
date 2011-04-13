@@ -9,7 +9,7 @@ function postprocessor_CLI()
   if ~dirChosen
     return
   end
-  handles.Type = 1;
+  handles.Type = 2;
   handles.ProbeID = 1;
   handles.TimeSnapshotID = 1;
   handles.FrequencySnapshotID = 1;
@@ -21,6 +21,18 @@ function postprocessor_CLI()
   end
   handles.col = 1;
   handles.maxplotvalue = 1;
+
+  handles.interpolate = 1;
+  handles.autosave= 1;
+  handles.geometry= 1;
+  handles.modulus = 1;
+
+  handles.colour = 1;
+  %handles.greyscale = 0;
+
+  handles.surface = 0;
+  %handles.contour = 1;
+
   handles = generate_plot(handles);
 end
 

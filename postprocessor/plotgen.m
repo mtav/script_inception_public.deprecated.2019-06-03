@@ -14,10 +14,10 @@ function plotgen(maxval,column,handles)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   %% Load geo file data
-  Geoparms = geometryparms(handles);
+  Geoparms = geometryparms(handles.geofile);
   
   %% Load input file data
-  Inpparms = inputparms(handles);
+  Inpparms = inputparms(handles.inpfile);
   
   %% Determine size of snapshot
   ii=1; ValPrev = handles.fin1(ii,1); grid_j = 1;
@@ -45,7 +45,7 @@ function plotgen(maxval,column,handles)
   
   %% Load column of choice to data
   modu = 1;
-  if get(handles.checkbox_modulus,'Value') == 1
+  if handles.modulus == 1
       data = abs(handles.fin1(:,column));
   else
       data = handles.fin1(:,column);
@@ -67,7 +67,7 @@ function plotgen(maxval,column,handles)
   %% Create figure and plot data
   figure
   grey = 0;
-  if (get(handles.radiobutton_colour,'Value') > get(handles.radiobutton_greyscale,'Value'))
+  if (handles.colour)
       colormap(jet(256));
       grey = 0;
   else
@@ -76,21 +76,21 @@ function plotgen(maxval,column,handles)
   end
   
   if handles.plane == 1
-      if (get(handles.radiobutton_surface,'Value') > get(handles.radiobutton_contour,'Value')) 
+      if (handles.surface)
           %pcolor(i,j,k)
           surf(i,j,k)
       else
           contour(i,j,k)
       end
   elseif handles.plane == 2
-      if (get(handles.radiobutton_surface,'Value') > get(handles.radiobutton_contour,'Value')) 
+      if (handles.surface)
           %pcolor(i,j,k)
           surf(i,j,k)
       else
           contour(i,j,k)
       end
   else
-      if (get(handles.radiobutton_surface,'Value') > get(handles.radiobutton_contour,'Value')) 
+      if (handles.surface)
           %pcolor(j,i,k)
           surf(j,i,k)
       else
@@ -103,7 +103,7 @@ function plotgen(maxval,column,handles)
   
   %colave = max(fin1(:,column));
   colfig = handles.colplot{column};
-  if modu == 1 || get(handles.checkbox_modulus,'Value') == 1
+  if (modu == 1) || (handles.modulus == 1)
       disp(['maxval=',num2str(maxval)]);
       caxis([0 maxval])
   else
@@ -113,7 +113,7 @@ function plotgen(maxval,column,handles)
   AspectRatio = get(gca,'DataAspectRatio');
   AspectRatio(1) = AspectRatio(2);
   set(gca,'DataAspectRatio',AspectRatio);
-  if get(handles.checkbox_interpolate,'Value') == 1
+  if handles.interpolate == 1
       shading interp
   else
       shading flat
@@ -138,7 +138,7 @@ function plotgen(maxval,column,handles)
   hold on
   
   %% Plot Geometry Entities
-  if get(handles.checkbox_geometry,'Value') == 1
+  if handles.geometry == 1
       disp('DRAWING GEOMETRY')
       switch handles.plane
           case 1
@@ -213,7 +213,7 @@ function plotgen(maxval,column,handles)
       end
   end
   
-  if get(handles.checkbox_autosave,'Value') == 1
+  if handles.autosave == 1
       dim = length(handles.snapfile);
       if grey == 1
           figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];

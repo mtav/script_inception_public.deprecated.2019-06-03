@@ -1,6 +1,6 @@
-function Geo = geometryparms(handles)
+function Geo = geometryparms(geofile)
   %% Read in Geometry files
-  tab = readtextfile(handles.geofile);
+  tab = readtextfile(geofile);
   dim = size(tab);
   ii=1;
   Blocks = 0; Cyls = 0; Spheres = 0;

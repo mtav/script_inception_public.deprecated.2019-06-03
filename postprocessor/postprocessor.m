@@ -337,6 +337,17 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   max = str2double(max);
   guidata(hObject,handles);
   
+  handles.interpolate = get(handles.checkbox_interpolate,'Value');
+  handles.autosave= get(handles.checkbox_autosave,'Value');
+  handles.geometry= get(handles.checkbox_geometry,'Value');
+  handles.modulus = get(handles.checkbox_modulus,'Value');
+
+  handles.colour = get(handles.radiobutton_colour,'Value');
+  %handles.greyscale = 0;
+
+  handles.surface = get(handles.radiobutton_surface,'Value');
+  %handles.contour = 1;
+  
   plotgen(max,col,handles);
 end
 

@@ -1,6 +1,6 @@
-function Inp = inputparms(handles)
+function Inp = inputparms(inpfile)
   %% Read in input file
-  tab = readtextfile(handles.inpfile);
+  tab = readtextfile(inpfile);
   dim = size(tab);
   ii=1;
   FrSnaps = 0; Snaps = 0; Mesh = 0; Inp.SnapsTot = 0; Inp.FrSnapsTot = 0;
