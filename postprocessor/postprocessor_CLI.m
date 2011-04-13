@@ -33,7 +33,7 @@ function postprocessor_CLI()
   handles.surface = 0;
   %handles.contour = 1;
 
-  handles = generate_plot(handles);
+  [ handles, ok ] = generate_plot(handles);
 end
 
 function [handles, dirChosen] = browse(handles)
@@ -212,7 +212,7 @@ function [ handles, isLoaded ] = load_data(handles)
   isLoaded = 1;
 end
 
-function handles = generate_plot(handles)
+function [ handles, ok ] = generate_plot(handles)
   disp('function pushbutton_generate_plot_Callback(hObject, eventdata, handles)')
   % hObject    handle to pushbutton_generate_plot (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -227,5 +227,20 @@ function handles = generate_plot(handles)
   handles.dataname = handles.colplot(col);
   max = handles.maxplotvalue;
   
-  plotgen(max,col,handles);
+  if handles.Type == 1
+    error('No plot generator available yet for probes.')
+    ok = 0
+    return
+  elseif handles.Type == 2
+    handles.snapfile = handles.TimeSnapshotFile;
+    plotgen(max,col,handles);
+  elseif handles.Type == 3
+    handles.snapfile = handles.FrequencySnapshotFile;
+    plotgen(max,col,handles);
+  else
+    error('Unknown data type')
+    ok = 0
+    return
+  end
+  ok = 1;
 end
