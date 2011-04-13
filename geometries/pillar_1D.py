@@ -173,13 +173,13 @@ class pillar_1D:
 
   def getYoffset(self):
     if self.Ysymmetry:
-      return 2*self.delta_Y_center
+      return self.delta_Y_center
     else:
       return 0
 
   def getZoffset(self):
     if self.Zsymmetry:
-      return 2*self.delta_Z_center
+      return self.delta_Z_center
     else:
       return 0
 
@@ -509,10 +509,10 @@ class pillar_1D:
     self.Zmax/2-self.delta_Z_center,#5
     self.Zmax/2 ]
     
-    print 'self.delta_X_center = ', self.delta_X_center
-    print 'self.delta_Y_center = ', self.delta_Y_center
-    print 'self.delta_Z_center = ', self.delta_Z_center
-    print 'self.Zmax/2 =', self.Zmax/2
+    #print 'self.delta_X_center = ', self.delta_X_center
+    #print 'self.delta_Y_center = ', self.delta_Y_center
+    #print 'self.delta_Z_center = ', self.delta_Z_center
+    #print 'self.Zmax/2 =', self.Zmax/2
     
     if self.Ysymmetry:
       self.Yplanes = Yplanes_1
@@ -543,10 +543,8 @@ class pillar_1D:
     # for probes
     ########################################################################
     self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
-
-    self.probes_Y_vector = self.Yplanes[1:4]
-    self.probes_Z_vector = self.Zplanes[1:8]
-    
+    self.probes_Y_vector = self.Yplanes[1:len(self.Yplanes)-1]
+    self.probes_Z_vector = self.Zplanes[1:len(self.Zplanes)-1]
 
     self.probes_X_vector_center = [self.getPillarCenterX()-self.delta_X_center,
                                    self.getPillarCenterX(),
@@ -854,19 +852,20 @@ class pillar_1D:
         J=[0,0,0]
         power = 0
         for iX in range(len(self.probes_X_vector)):
-        #for iX in range(1):
           # XY probes
           for iY in range(len(self.probes_Y_vector)):
-          #for iY in range(1):
-            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[0]], step, E, H, J, power )
-            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[1]], step, E, H, J, power )
-            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[2]], step, E, H, J, power )
-            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[3]], step, E, H, J, power )
-            #GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[4]], step, E, H, J, power )
-            GEOprobe(out, 'XY probes', [self.probes_X_vector[iX], self.probes_Y_vector[iY], self.Zplanes[5]], step, E, H, J, power )
+            x = self.probes_X_vector[iX]
+            y = self.probes_Y_vector[iY]
+            z = self.Zmax/2-self.getZoffset()
+            if not(x in self.probes_X_vector_center ) or not(y in self.probes_Y_vector_center ) or not(z in self.probes_Z_vector_center ):
+              GEOprobe(out, 'XY probes', [x, y, z], step, E, H, J, power )
           # XZ probes
           for iZ in range(len(self.probes_Z_vector)):
-            GEOprobe(out, 'XZ probes', [self.probes_X_vector[iX], self.Yplanes[4], self.probes_Z_vector[iZ]], step, E, H, J, power )
+            x = self.probes_X_vector[iX]
+            y = self.Ymax/2-self.getYoffset()
+            z = self.probes_Z_vector[iZ]
+            if not(x in self.probes_X_vector_center ) or not(y in self.probes_Y_vector_center ) or not(z in self.probes_Z_vector_center ):
+              GEOprobe(out, 'XZ probes', [x, y, z], step, E, H, J, power )
         
         # center probes
         for iX in range(len(self.probes_X_vector_center)):
