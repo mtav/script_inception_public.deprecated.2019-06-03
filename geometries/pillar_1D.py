@@ -581,9 +581,17 @@ class pillar_1D:
     # for probes
     ########################################################################
     self.probes_X_vector = self.Xplanes[1:len(self.Xplanes)-1]
-    self.probes_Y_vector = self.Yplanes[1:len(self.Yplanes)-1]
-    self.probes_Z_vector = self.Zplanes[1:len(self.Zplanes)-1]
-
+    #self.probes_Y_vector = self.Yplanes[1:len(self.Yplanes)-1]
+    #self.probes_Z_vector = self.Zplanes[1:len(self.Zplanes)-1]
+    if self.Ysymmetry:
+      self.probes_Y_vector = [self.Yplanes[-2]]
+    else:
+      self.probes_Y_vector = [self.Yplanes[(len(self.Yplanes)-1)//2]]
+    if self.Zsymmetry:
+      self.probes_Z_vector = [self.Zplanes[-2]]
+    else:
+      self.probes_Z_vector = [self.Zplanes[(len(self.Zplanes)-1)//2]]
+      
     self.probes_X_vector_center = [self.getPillarCenterX()-self.delta_X_center,
                                    self.getPillarCenterX(),
                                    self.getPillarCenterX()+self.delta_X_center]
@@ -919,7 +927,8 @@ class pillar_1D:
             y = self.Ymax/2-self.getYoffset()
             z = self.probes_Z_vector[iZ]
             if not(x in self.probes_X_vector_center ) or not(y in self.probes_Y_vector_center ) or not(z in self.probes_Z_vector_center ):
-              GEOprobe(out, 'XZ probes', [x, y, z], step, E, H, J, power )
+              if not(x in self.probes_X_vector ) or not(y in self.probes_Y_vector ) or not(z == self.Zmax/2-self.getZoffset() ):
+                GEOprobe(out, 'XZ probes', [x, y, z], step, E, H, J, power )
         
         # center probes
         for iX in range(len(self.probes_X_vector_center)):

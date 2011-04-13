@@ -197,7 +197,7 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaSubstrate(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect))
-  P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
+  P.setDeltaCenter(delta_diamond/2,delta_diamond/2,delta_diamond/2)
   P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
   P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
@@ -212,9 +212,9 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
   P.setExcitationType(excitationType)
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
 
-  P.verbose = True
-  dumpObj(P)
+  #P.verbose = True
   P.write()
+  #dumpObj(P)
 
 def test(DSTDIR,bottomN,topN):
   P = pillar_1D()
