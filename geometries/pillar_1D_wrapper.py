@@ -106,16 +106,18 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
   
   P.HOLE_TYPE = 'rectangular_holes'
-  P.setRadiusPillarYZ(0.200,1)
+  P.setRadiusPillarYZ(0.5,0.5)
+
   P.print_podium = True
+  P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
   
-  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2, P.radius_Y_pillar_mum, P.radius_Z_pillar_mum - (P.d_holes_mum-2*P.radius_X_hole))
+  P.setRadiusHole((P.getLambda()/(4*P.n_Air))/2, P.radius_Y_pillar_mum, P.radius_Z_pillar_mum - (50e-3))
   
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
-  P.setDistanceBetweenDefectCentersInCavity(P.getLambda()/P.n_Diamond + 2*P.radius_X_hole) #mum
+  P.setDistanceBetweenDefectBordersInCavity(0.280) #mum
   # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   delta_diamond = P.getLambda()/(10*P.n_Diamond)
   P.delta_X_bottomSquare = delta_diamond
@@ -127,7 +129,6 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,4*delta_diamond)
   P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
 
-  P.thickness_X_bottomSquare = 0.5 # mum #bottom square thickness
   P.thickness_X_topBoxOffset = 1
 
   P.Xmax = P.thickness_X_bottomSquare + P.getPillarHeight() + P.thickness_X_buffer + P.thickness_X_topBoxOffset; #mum
@@ -150,7 +151,7 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
   
   P.HOLE_TYPE = 'rectangular_yagi'
-  P.setRadiusPillarYZ(0.200,0.5)
+  P.setRadiusPillarYZ(0.5,0.5)
   P.print_podium = True
   
   P.d_holes_mum = P.getLambda()/(4*P.n_Diamond)+P.getLambda()/(4*P.n_Air);#mum
