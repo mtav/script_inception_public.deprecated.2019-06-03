@@ -35,12 +35,16 @@ function [handles, dirChosen] = browse(handles)
     dirChosen = 0;
     return;
   end
-  handles = setWorkDir(handles,new_dir);
+  [handles, ok] = setWorkDir(handles,new_dir);
+  if ~ok
+    dirChosen = 0;
+    return
+  end
   dirChosen = 1;
   return;
 end
 
-function handles = setWorkDir(handles, new_dir)
+function [handles, ok] = setWorkDir(handles, new_dir)
   disp('function [handles] = setWorkDir(handles, new_dir)')
   handles.workdir = new_dir;
 
@@ -54,16 +58,30 @@ function handles = setWorkDir(handles, new_dir)
   data_files = [dir(fullfile(new_dir,'*.prn')); dir(fullfile(new_dir,'*.dat'))];
   handles.data_files = {data_files.name}; handles.data_files = handles.data_files';
   for idx=1:length(handles.data_files)
+    unknown = 1;
     if ~isempty(regexp(handles.data_files{idx},'^p.*id\.(prn|dat)$','ignorecase'))
       handles.ProbeList{end+1} = handles.data_files{idx};
+      unknown = 0;
     end
     if ~isempty(regexp(handles.data_files{idx},'^[xyz]\d+id\d\d\.(prn|dat)$','ignorecase'))
       handles.TimeSnapshotList{end+1} = handles.data_files{idx};
+      unknown = 0;
     end
-    if ~isempty(regexp(handles.data_files{idx},'^[xyz]ABid\d\d\.(prn|dat)$','ignorecase'))
+    if ~isempty(regexp(handles.data_files{idx},'^[xyz][a-z{|}~][a-z{]?id\d\d\.(prn|dat)$','ignorecase'))
       handles.FrequencySnapshotList{end+1} = handles.data_files{idx};
+      unknown = 0;
+    end
+    if unknown & isempty(regexp(handles.data_files{idx},'^ref\.(prn|dat)$','ignorecase'))
+      error(['unknown data : ',handles.data_files{idx}])
+      ok = 0;
+      return
     end
   end
+ 
+  disp([ 'length(handles.data_files)=', num2str(length(handles.data_files)) ])
+  disp([ 'length(handles.ProbeList)=', num2str(length(handles.ProbeList)) ])
+  disp([ 'length(handles.TimeSnapshotList)=', num2str(length(handles.TimeSnapshotList)) ])
+  disp([ 'length(handles.FrequencySnapshotList)=', num2str(length(handles.FrequencySnapshotList)) ])
  
   %prn_files = [dir(fullfile(new_dir,'*.prn')); dir(fullfile(new_dir,'*.dat'))];
   %handles.snaplist = {prn_files.name}; handles.snaplist = handles.snaplist';
@@ -96,6 +114,7 @@ function handles = setWorkDir(handles, new_dir)
   clear data_files geo_files inp_files;
   
   %handles.snaplist
+  ok = 1;
 end
 
 function [ handles, isLoaded ] = load_data(handles)
