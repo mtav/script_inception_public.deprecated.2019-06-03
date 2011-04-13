@@ -20,13 +20,13 @@ function postprocessor_CLI()
   if ~isLoaded
     return
   end
-  handles.col = 1;
+  handles.col = 3;
   handles.maxplotvalue = 1;
 
-  handles.interpolate = 1;
-  handles.autosave= 1;
-  handles.geometry= 1;
-  handles.modulus = 1;
+  handles.interpolate = 0;
+  handles.autosave= 0;
+  handles.geometry= 0;
+  handles.modulus = 0;
 
   handles.colour = 1;
   %handles.greyscale = 0;
