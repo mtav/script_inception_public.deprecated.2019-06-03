@@ -8,3 +8,20 @@ Reference stuff:
 
 To append to a cell array in octave (DO NOT DO a=[a,foo]):
  a{end+1}=664543
+
+to get a list of sample filenames for freq snapshots:
+filelist ={}; for numID=1:836; filelist{end+1} = numID_to_alphaID(numID, 'z', '_f.i.g.h.t_', mod(numID,100)); end;
+
+To test it:
+
+filelist ={}; for numID=1:836; filelist{end+1} = numID_to_alphaID(numID, 'z', '_f.i.g.h.t_', mod(numID,100)); end;
+FrequencySnapshotList = {};
+for idx=1:length(filelist)
+  disp(filelist{idx});
+  if ~isempty(regexp(filelist{idx},'^[xyz][a-z{|}~][a-z{]?.*\d\d\.(prn|dat)$','ignorecase'))
+    FrequencySnapshotList{end+1} = filelist{idx};
+    unknown = 0;
+  end
+end
+size(filelist)
+size(FrequencySnapshotList)

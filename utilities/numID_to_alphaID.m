@@ -24,13 +24,17 @@ function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe
   if exist('snap_time_number','var')==0
     snap_time_number = 0;
   end
+  %if snap_time_number<0 | snap_time_number>99
+    %error('snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!');
+  %end
 
   function ret = div(A,B)
     ret = idivide(int32(A),int32(B));
   end
 
+  %snap_time_number = mod(snap_time_number,100);
   ilo = mod(snap_time_number,10);
-  ihi = div(snap_time_number,10);
+  ihi = floor(snap_time_number/10);
   
   if numID<27
     alphaID = char(numID + double('a')-1);
