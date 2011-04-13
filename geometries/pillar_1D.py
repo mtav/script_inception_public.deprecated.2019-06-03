@@ -98,7 +98,6 @@ class pillar_1D:
     self.delta_Y_outside = self.delta_X_outside
     self.delta_Z_outside = self.delta_X_outside
     
-    self.delta_X_topBoxOffset = self.getLambda()/(1*self.n_Outside)
     self.delta_X_bottomSquare = self.getLambda()/(8*self.n_bottomSquare)
 
     # thickness of buffers (area outside pillar where mesh is fine)
@@ -377,7 +376,7 @@ class pillar_1D:
     if self.thickness_X_topBoxOffset>0:
       #print('self.thickness_X_topBoxOffset = '+str(self.thickness_X_topBoxOffset))
       thicknessVector_X +=[ self.thickness_X_topBoxOffset ];
-      max_delta_Vector_X += [ self.delta_X_topBoxOffset ];
+      max_delta_Vector_X += [ self.delta_X_outside ];
       
     if self.verbose:
       print('==============')
@@ -862,24 +861,24 @@ class pillar_1D:
       
       if self.print_snaphots == 1:
         
-        for iX in range(len(self.Xplanes)):
-          plane = 1
-          P1 = [self.Xplanes[iX], 0, 0]
-          P2 = [self.Xplanes[iX], self.getYlim(), self.getZlim()]
-          GEOfrequency_snapshot(out, 'X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-          GEOtime_snapshot(out, 'X time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
-        for iY in range(len(self.Yplanes)):
-          plane = 2
-          P1 = [0, self.Yplanes[iY], 0]
-          P2 = [self.Xmax, self.Yplanes[iY], self.getZlim()]
-          GEOfrequency_snapshot(out, 'Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-          GEOtime_snapshot(out, 'Y time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
-        for iZ in range(len(self.Zplanes)):
-          plane = 3
-          P1 = [0, 0, self.Zplanes[iZ]]
-          P2 = [self.Xmax, self.getYlim(), self.Zplanes[iZ]]
-          GEOfrequency_snapshot(out, 'Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-          GEOtime_snapshot(out, 'Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
+        #for iX in range(len(self.Xplanes)):
+          #plane = 1
+          #P1 = [self.Xplanes[iX], 0, 0]
+          #P2 = [self.Xplanes[iX], self.getYlim(), self.getZlim()]
+          #GEOfrequency_snapshot(out, 'X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+          #GEOtime_snapshot(out, 'X time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
+        #for iY in range(len(self.Yplanes)):
+          #plane = 2
+          #P1 = [0, self.Yplanes[iY], 0]
+          #P2 = [self.Xmax, self.Yplanes[iY], self.getZlim()]
+          #GEOfrequency_snapshot(out, 'Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+          #GEOtime_snapshot(out, 'Y time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
+        #for iZ in range(len(self.Zplanes)):
+          #plane = 3
+          #P1 = [0, 0, self.Zplanes[iZ]]
+          #P2 = [self.Xmax, self.getYlim(), self.Zplanes[iZ]]
+          #GEOfrequency_snapshot(out, 'Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+          #GEOtime_snapshot(out, 'Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
         
         plane = 1
         P1 = [self.getPillarCenterX(), 0, 0]
