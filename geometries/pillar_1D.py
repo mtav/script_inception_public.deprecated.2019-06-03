@@ -444,11 +444,12 @@ class pillar_1D:
       max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_substrate, self.delta_Z_hole, self.delta_Z_center ]
     elif self.HOLE_TYPE == 'rectangular_yagi':
       thicknessVector_Z_1 = [ Z_BoxToBuffer,
-      self.thickness_Z_buffer,
+      self.thickness_Z_buffer - (self.radius_Z_pillar_mum-self.radius_Z_hole),
+      self.radius_Z_pillar_mum-self.radius_Z_hole,
       self.radius_Z_pillar_mum-self.radius_Z_hole,
       self.radius_Z_hole-self.radius_Z_center,
       self.radius_Z_center ]
-      max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
+      max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
     elif self.HOLE_TYPE == 'triangular_yagi':
       thicknessVector_Z_1 = [ Z_BoxToBuffer,
       self.thickness_Z_buffer - (self.radius_Z_pillar_mum-self.radius_Z_hole),
@@ -459,11 +460,12 @@ class pillar_1D:
       max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
     elif self.HOLE_TYPE == 'triangular_yagi_voxel':
       thicknessVector_Z_1 = [ Z_BoxToBuffer,
-      self.thickness_Z_buffer,
+      self.thickness_Z_buffer - (self.radius_Z_pillar_mum-self.radius_Z_hole),
+      self.radius_Z_pillar_mum-self.radius_Z_hole,
       self.radius_Z_pillar_mum-self.radius_Z_hole,
       self.radius_Z_hole-self.radius_Z_center,
       self.radius_Z_center ]
-      max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
+      max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
     elif self.HOLE_TYPE == 'triangular_yagi_voxel_sym':
       thicknessVector_Z_1 = [ Z_BoxToBuffer,
       self.thickness_Z_buffer - (self.radius_Z_pillar_mum-self.radius_Z_hole),
@@ -703,7 +705,6 @@ class pillar_1D:
       upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right-D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
       GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
     elif self.HOLE_TYPE == 'triangular_yagi_voxel_sym':
-      # TODO: finish this
       voxel_Ymin = self.Ymax/2.0 - self.radius_Y_pillar_mum
       voxel_Ymax = self.Ymax/2.0 + self.radius_Y_pillar_mum
       voxel_radius_X = self.radius_X_hole/( 2.*self.Nvoxels + 1.)
@@ -715,28 +716,28 @@ class pillar_1D:
       offset = X_current - self.radius_X_hole
       for i in range(self.Nvoxels):
         # bottom left blocks
-        lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-        upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
+        lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left - D*(i + 1)/(N+1)]
+        upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left + D*(i + 1)/(N+1)]
         GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
         # top left blocks
-        lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-        upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
+        lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left - D*(i + 1)/(N+1)]
+        upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left + D*(i + 1)/(N+1)]
         GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
         # bottom right blocks
-        lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-        upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
+        lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_right + D*(i + 1)/(N+1)]
+        upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_right - D*(i + 1)/(N+1)]
         GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
         # top right blocks
-        lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-        upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
+        lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_right + D*(i + 1)/(N+1)]
+        upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_right - D*(i + 1)/(N+1)]
         GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
       ## middle left block
       lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left - D*(N + 1)/(N+1)]
       upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left + D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
       GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
       ## middle right block
-      lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_right - D*(N + 1)/(N+1)]
-      upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right + D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
+      lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_right + D*(N + 1)/(N+1)]
+      upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right - D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
       GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity)
     else:
       print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
