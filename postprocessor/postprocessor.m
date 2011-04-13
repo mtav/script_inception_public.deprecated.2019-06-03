@@ -97,6 +97,9 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   % Choose default command line output for postprocessor
   handles.output = hObject;
 
+  % to prevent errors on attempts to plot before loading
+  handles.isLoaded = 0;
+
   % Update handles structure
   % set(handles.label_working_directory,'String',handles.workdir)
   guidata(hObject, handles);
@@ -188,7 +191,9 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
     return
   end
   geofile = handles.geolist{val};
-  handles.geofile = [handles.workdir, filesep, geofile];
+  
+  handles.geofile = [handles.workdir, filesep, geofile]
+  
 
   val = get(handles.popupmenu_inputfile,'Value');
   if (val<1) | (length(handles.inplist)<val)
@@ -223,6 +228,9 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   columns = char(columns);
   set(handles.popupmenu_plotcolumn,'String',columns);
   set(handles.text11,'String',['Loaded data: ',snapfile]);
+  
+  handles.isLoaded = 1;
+  
   guidata(hObject,handles);
 end
 
@@ -333,6 +341,11 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   
+  if ~handles.isLoaded
+    error('Please load a file first')
+    return
+  end
+  
   col = get(handles.popupmenu_plotcolumn,'Value');
   col = col+2;
   handles.dataname = get(handles.popupmenu_plotcolumn,'String');
@@ -350,6 +363,8 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
 
   handles.surface = get(handles.radiobutton_surface,'Value');
   %handles.contour = 1;
+  
+  handles.geofile
   
   plotgen(max,col,handles);
 end
@@ -430,6 +445,8 @@ function pushbutton_browse_Callback(hObject, eventdata, handles)
   end
   
   [handles] = setWorkDir(handles, new_dir);
+  
+  handles.isLoaded = 0;
   
   guidata(hObject,handles);
 end

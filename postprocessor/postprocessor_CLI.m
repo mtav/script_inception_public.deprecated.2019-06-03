@@ -1,6 +1,7 @@
 function postprocessor_CLI()
   disp('function postprocessor_CLI()')
   handles = struct;
+  handles.isLoaded = 0;
   handles.workdir = pwd();
   handles.snaplist = {};
   handles.geolist = {};
@@ -42,6 +43,9 @@ function [handles, dirChosen] = browse(handles)
   % hObject    handle to pushbutton_browse (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
+
+  handles.isLoaded = 0;
+
   new_dir = uigetdir(handles.workdir);
   if new_dir == 0
     dirChosen = 0;
@@ -209,6 +213,7 @@ function [ handles, isLoaded ] = load_data(handles)
   columns = char(columns);
   handles.plotcolumn = columns; % all headers except the two first ones
   
+  handles.isLoaded = 1;
   isLoaded = 1;
 end
 
@@ -217,6 +222,11 @@ function [ handles, ok ] = generate_plot(handles)
   % hObject    handle to pushbutton_generate_plot (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
+
+  if ~handles.isLoaded
+    error('Please load a file first')
+    return
+  end
   
   %handles.colplot
   
