@@ -46,7 +46,8 @@ function [handles, dirChosen] = browse(handles)
 
   handles.isLoaded = 0;
 
-  new_dir = uigetdir(handles.workdir);
+  new_dir = CrossPlatformUigetdir();
+  disp(['new_dir = ',new_dir])
   if new_dir == 0
     dirChosen = 0;
     return;
@@ -107,11 +108,11 @@ function [handles, ok] = setWorkDir(handles, new_dir)
     
   geo_files = dir(fullfile(new_dir,'*.geo'));
   handles.geolist = {geo_files.name}; handles.geolist = handles.geolist';
-  geo_files = char(geo_files.name);
+  %geo_files = char(geo_files.name);
   
   inp_files = dir(fullfile(new_dir,'*.inp'));
   handles.inplist = {inp_files.name}; handles.inplist = handles.inplist';
-  inp_files = char(inp_files.name);
+  %inp_files = char(inp_files.name);
 
   %prn_files
   %disp(['prn_files=',prn_files(:)']);
