@@ -28,9 +28,9 @@ def subGridMultiLayer(Section_MaxDeltaVector_in = [1.76, 2.1385, 2.3535, 1],Sect
   if len(Section_ThicknessVector_in)!=len(Section_MaxDeltaVector_in):
     print('FATAL ERROR: len(Section_ThicknessVector_in)!=len(Section_MaxDeltaVector_in)')
     sys.exit(-1)
-        
-  if 0 in Section_ThicknessVector_in:
-    print('WARNING: Section_ThicknessVector_in contains zeroes')
+    
+  #if 0 in Section_ThicknessVector_in:
+    #print('WARNING: Section_ThicknessVector_in contains zeroes')
   
   Section_ThicknessVector = []
   Section_MaxDeltaVector = []
