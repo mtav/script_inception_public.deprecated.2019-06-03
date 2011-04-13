@@ -61,44 +61,45 @@ class pillar_1D:
     self.Zsymmetry = False
     
     # refractive indices
-    self.n_Diamond = 2.4 #no unit
-    self.n_Air = 1 #no unit
-    self.n_bottom_square = self.n_Diamond # no unit
+    self.n_Substrate = 2.4 #no unit
+    self.n_Defect = 1 #no unit
+    self.n_Outside = 1
+    self.n_bottomSquare = self.n_Substrate # no unit
 
     # distance between holes
-    self.d_holes_mum = self.getLambda()/(4*self.n_Diamond)+self.getLambda()/(4*self.n_Air) # in mum
-    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Diamond
+    self.d_holes_mum = self.getLambda()/(4*self.n_Substrate)+self.getLambda()/(4*self.n_Defect) # in mum
+    self.DistanceBetweenDefectBordersInCavity = self.getLambda()/self.n_Substrate
     # pillar radius
     self.radius_Y_pillar_mum = 0.200
     self.radius_Z_pillar_mum = 1
     # hole radius
-    self.radius_X_hole = (self.getLambda()/(4*self.n_Air))/2 # in mum
+    self.radius_X_hole = (self.getLambda()/(4*self.n_Defect))/2 # in mum
     self.radius_Y_hole = self.radius_Y_pillar_mum # in mum
     self.radius_Z_hole = self.radius_Z_pillar_mum - (self.d_holes_mum-2*self.radius_X_hole) # in mum
   
     # deltas (max mesh intervals)
-    self.delta_X_center = self.getLambda()/(16*self.n_Diamond)
+    self.delta_X_center = self.getLambda()/(16*self.n_Substrate)
     self.delta_Y_center = self.delta_X_center
     self.delta_Z_center = self.delta_X_center
 
-    self.delta_X_substrate = self.getLambda()/(10*self.n_Diamond)
+    self.delta_X_substrate = self.getLambda()/(10*self.n_Substrate)
     self.delta_Y_substrate = self.delta_X_substrate
     self.delta_Z_substrate = self.delta_X_substrate
 
     self.delta_X_hole = (2*self.radius_X_hole)/(2*self.Nvoxels+1)
-    self.delta_Y_hole = self.getLambda()/(4*self.n_Air)
+    self.delta_Y_hole = self.getLambda()/(4*self.n_Defect)
     self.delta_Z_hole = (self.radius_Z_pillar_mum - self.radius_Z_hole)/(self.Nvoxels+1)
     
-    self.delta_X_buffer = self.getLambda()/(7*self.n_Diamond)
+    self.delta_X_buffer = self.getLambda()/(7*self.n_Substrate)
     self.delta_Y_buffer = self.delta_X_buffer
     self.delta_Z_buffer = self.delta_X_buffer
     
-    self.delta_X_outside = self.getLambda()/(4*self.n_Air)
+    self.delta_X_outside = self.getLambda()/(4*self.n_Outside)
     self.delta_Y_outside = self.delta_X_outside
     self.delta_Z_outside = self.delta_X_outside
     
-    self.delta_X_topBoxOffset = self.getLambda()/(1*self.n_Air)
-    self.delta_X_bottomSquare = self.getLambda()/(8*self.n_Diamond)
+    self.delta_X_topBoxOffset = self.getLambda()/(1*self.n_Outside)
+    self.delta_X_bottomSquare = self.getLambda()/(8*self.n_bottomSquare)
 
     # thickness of buffers (area outside pillar where mesh is fine)
     self.thickness_X_buffer = 32*self.delta_X_buffer; #mum
@@ -716,7 +717,7 @@ class pillar_1D:
         # create bottom block
         L = [ 0, 0, 0 ]
         U = [ X_current + self.thickness_X_bottomSquare, self.Ymax, self.Zmax ]
-        GEOblock(out, 'podium', L, U, pow(self.n_bottom_square,2), 0)
+        GEOblock(out, 'podium', L, U, pow(self.n_bottomSquare,2), 0)
   
       X_current = X_current + self.thickness_X_bottomSquare;
       
@@ -724,13 +725,13 @@ class pillar_1D:
         # create main pillar
         L = [ X_current, self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum ]
         U = [ X_current + self.getPillarHeight(), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum ]
-        GEOblock(out, 'main pillar', L, U, pow(self.n_Diamond,2), 0)
+        GEOblock(out, 'main pillar', L, U, pow(self.n_Substrate,2), 0)
     
       X_current = X_current + (self.d_holes_mum - self.radius_X_hole)
     
       if self.print_holes:
           # hole settings
-          permittivity = pow(self.n_Air,2)
+          permittivity = pow(self.n_Defect,2)
           conductivity = 0
           
           # create bottom holes
