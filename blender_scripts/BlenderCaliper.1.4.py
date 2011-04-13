@@ -30,30 +30,30 @@ Run the script.
 Version 1.0 released 01/05/06
 
 Version 1.1 released 02/05/06
-	Bugs fixed:
-		1. Text objects were not created on the selected layers.
-	
+  Bugs fixed:
+    1. Text objects were not created on the selected layers.
+  
 Version 1.2 released 16/07/06
-	Bugs fixed and features added:
-		1. Text objects now resized as object not text size since the smallest text size was 0.1
-		2. Alignment of text and arrows crashed the script if objects were directly above each other.
-		3. Naming of some measurement objects in mesh mode was erroneous.
-		4. Draw.Create lists have been removed, for fixing error messages in 2.42
-		5. Added measurement alignment function.
-		6. Made the cleaning and naming functions a bit more effective.
-		7. Added measurement constraining function.
-		8. Removed an error in mile to yard to feet conversion.
-		9. Split the DATAHASH to BUTTON, DATA & STATE arrays.
-		
+  Bugs fixed and features added:
+    1. Text objects now resized as object not text size since the smallest text size was 0.1
+    2. Alignment of text and arrows crashed the script if objects were directly above each other.
+    3. Naming of some measurement objects in mesh mode was erroneous.
+    4. Draw.Create lists have been removed, for fixing error messages in 2.42
+    5. Added measurement alignment function.
+    6. Made the cleaning and naming functions a bit more effective.
+    7. Added measurement constraining function.
+    8. Removed an error in mile to yard to feet conversion.
+    9. Split the DATAHASH to BUTTON, DATA & STATE arrays.
+    
 Version 1.3 released 27/07/06
-	Bugs fixed and features added:
-		1. Due to changes in blender 2.42 the script didn't exit on ESC anymore.
-		2. Measurement between the furthest edges in a mesh was incorrect.
-		3. A wait cursor is now created whilst the script runs.
-		4. If you run the script whilst you are in editmode, the script will return you to it when done.
-		
+  Bugs fixed and features added:
+    1. Due to changes in blender 2.42 the script didn't exit on ESC anymore.
+    2. Measurement between the furthest edges in a mesh was incorrect.
+    3. A wait cursor is now created whilst the script runs.
+    4. If you run the script whilst you are in editmode, the script will return you to it when done.
+    
 Version 1.4 released 28/02/07
-	Made the script complient with blender 2.43
+  Made the script complient with blender 2.43
 """
 # --------------------------------------------------------------------------
 # ***** BEGIN GPL LICENSE BLOCK *****
@@ -89,40 +89,40 @@ VERSION ='1.4'
 
 ## Set button variables (settings in the gui)
 BUTTON = {
-	'TEXTBV': Draw.Create(0.000),
-	'TEXTEX': Draw.Create(0.00),
-	'TEXTSIZE': Draw.Create(0.30),
-	'TEXTOFFS': Draw.Create(0.2),
-	'OBCOL': Draw.Create(1),
-	'MOUT': Draw.Create(1),
-	'MIN': Draw.Create(1),
-	'MSCALE': Draw.Create(1.0),
-	'MCONSTRAIN': Draw.Create(1),
-	'MCONOBS': Draw.Create(1),
-	'MDECIMAL': Draw.Create(1),
-	'MDETAIL': Draw.Create(1),
-	'ARROW': Draw.Create(1),
-	'ARROWROT': Draw.Create(4),
-	'ARROWSIZE': Draw.Create(1.0),
-	'MAKETEXT': Draw.Create(1),
-	'MAKEARROW': Draw.Create(1),
-	'MAKECLEAN': Draw.Create(1),
-	'MEASURE': Draw.Create(1),
-	'MMODE': Draw.Create(1)
+  'TEXTBV': Draw.Create(0.000),
+  'TEXTEX': Draw.Create(0.00),
+  'TEXTSIZE': Draw.Create(0.30),
+  'TEXTOFFS': Draw.Create(0.2),
+  'OBCOL': Draw.Create(1),
+  'MOUT': Draw.Create(1),
+  'MIN': Draw.Create(1),
+  'MSCALE': Draw.Create(1.0),
+  'MCONSTRAIN': Draw.Create(1),
+  'MCONOBS': Draw.Create(1),
+  'MDECIMAL': Draw.Create(1),
+  'MDETAIL': Draw.Create(1),
+  'ARROW': Draw.Create(1),
+  'ARROWROT': Draw.Create(4),
+  'ARROWSIZE': Draw.Create(1.0),
+  'MAKETEXT': Draw.Create(1),
+  'MAKEARROW': Draw.Create(1),
+  'MAKECLEAN': Draw.Create(1),
+  'MEASURE': Draw.Create(1),
+  'MMODE': Draw.Create(1)
 }
 BUTTON['LAYERS'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 ## Set data variables (settings not in the gui)
 DATA = {
-	'RESULT': "b",
-	'DISTANCE': 0.0,
-	'LOC1': 0,
-	'LOC2': 0,
-	'MESSAGE': "a",
-	'OBNAME1': "a",
-	'OBNAME2': "a",
-	'MNAME1': "a",
-	'MNAME2': "a"
+  'RESULT': "b",
+  'DISTANCE': 0.0,
+  'LOC1': 0,
+  'LOC2': 0,
+  'MESSAGE': "a",
+  'OBNAME1': "a",
+  'OBNAME2': "a",
+  'MNAME1': "a",
+  'MNAME2': "a"
 }
 
 ## Set state variables (state of the blender file)
@@ -130,8 +130,8 @@ STATE = {}
 STATE['LAYERS'] = Window.ViewLayers()
 
 for a in range(len(STATE['LAYERS'])):
-	
-	BUTTON['LAYERS'][STATE['LAYERS'][a]] = 1
+  
+  BUTTON['LAYERS'][STATE['LAYERS'][a]] = 1
 
 ####################################################
 # BASIC FUNCTIONS
@@ -187,31 +187,31 @@ def yard_to_mile(x): return x / 1760.0
 
 def GetSubInch(subInch):
 
-	chkDiv = 0
-	
-	if BUTTON['MDECIMAL'].val is 2: subDiv = 4
-	elif BUTTON['MDECIMAL'].val is 3: subDiv = 8
-	elif BUTTON['MDECIMAL'].val is 4: subDiv = 16
-	elif BUTTON['MDECIMAL'].val is 5: subDiv = 32
-	elif BUTTON['MDECIMAL'].val is 6: subDiv = 64
-	else: subDiv = 2
+  chkDiv = 0
+  
+  if BUTTON['MDECIMAL'].val is 2: subDiv = 4
+  elif BUTTON['MDECIMAL'].val is 3: subDiv = 8
+  elif BUTTON['MDECIMAL'].val is 4: subDiv = 16
+  elif BUTTON['MDECIMAL'].val is 5: subDiv = 32
+  elif BUTTON['MDECIMAL'].val is 6: subDiv = 64
+  else: subDiv = 2
 
-	## Loop to increase the ammount of detail untill a limit is reached.
-	while chkDiv is 0 and subDiv > 2:
-		subDiv /= 2
-		inDiv = int(round(subInch * subDiv))
+  ## Loop to increase the ammount of detail untill a limit is reached.
+  while chkDiv is 0 and subDiv > 2:
+    subDiv /= 2
+    inDiv = int(round(subInch * subDiv))
 
-		## Check to make sure we've got an uneven nr (1 = uneven, 0 = even).
-		chkDiv = (inDiv % 2)
+    ## Check to make sure we've got an uneven nr (1 = uneven, 0 = even).
+    chkDiv = (inDiv % 2)
 
-	## If the difference is too small make an empty string.
-	if chkDiv is 0:
-		subStr = ""
-	## Make a nice measurement string to add.
-	else:
-		subStr = " " + str(inDiv) +"/" + str(subDiv)
-		
-	return subStr
+  ## If the difference is too small make an empty string.
+  if chkDiv is 0:
+    subStr = ""
+  ## Make a nice measurement string to add.
+  else:
+    subStr = " " + str(inDiv) +"/" + str(subDiv)
+    
+  return subStr
 
 ####################################################
 # GET THE EULER FOR THE NEW OBJECTS
@@ -219,31 +219,31 @@ def GetSubInch(subInch):
 
 def GetEuler(Loc1, Loc2, Distance):
 
-	## Get the location of the right verts to make the text face front.
-	if Loc1[0] > Loc2[0]:
-		LocX = Loc1[0]; LocY = Loc1[1]; LocZ = Loc2[2]
-	else:
-		LocX = Loc2[0]; LocY = Loc2[1]; LocZ = Loc1[2]
+  ## Get the location of the right verts to make the text face front.
+  if Loc1[0] > Loc2[0]:
+    LocX = Loc1[0]; LocY = Loc1[1]; LocZ = Loc2[2]
+  else:
+    LocX = Loc2[0]; LocY = Loc2[1]; LocZ = Loc1[2]
 
-	## Get the eulers needed to rotate the text correctly.
-	if round(LocY, 5) != round(LocX, 5):
-		EulZ = math.atan2(LocY,LocX)
-		EulY = math.asin(LocZ/(Distance * 0.5))
-	else:
-		EulZ = 0.0
-		EulY = (math.pi * 0.5)
+  ## Get the eulers needed to rotate the text correctly.
+  if round(LocY, 5) != round(LocX, 5):
+    EulZ = math.atan2(LocY,LocX)
+    EulY = math.asin(LocZ/(Distance * 0.5))
+  else:
+    EulZ = 0.0
+    EulY = (math.pi * 0.5)
 
-	## Make the euler for text rotation.
-	if BUTTON['ARROWROT'].val is 4:
-		NewEuler = Mathutils.Euler([(math.pi * 0.5),EulY,EulZ])
-	elif BUTTON['ARROWROT'].val is 3:
-		NewEuler = Mathutils.Euler([0,EulY,EulZ])
-	elif BUTTON['ARROWROT'].val is 2:
-		NewEuler = Mathutils.Euler([(math.pi * 0.5),-EulY,(math.pi +EulZ)])
-	elif BUTTON['ARROWROT'].val is 1:
-		NewEuler = Mathutils.Euler([0,-EulY,(math.pi + EulZ)])
+  ## Make the euler for text rotation.
+  if BUTTON['ARROWROT'].val is 4:
+    NewEuler = Mathutils.Euler([(math.pi * 0.5),EulY,EulZ])
+  elif BUTTON['ARROWROT'].val is 3:
+    NewEuler = Mathutils.Euler([0,EulY,EulZ])
+  elif BUTTON['ARROWROT'].val is 2:
+    NewEuler = Mathutils.Euler([(math.pi * 0.5),-EulY,(math.pi +EulZ)])
+  elif BUTTON['ARROWROT'].val is 1:
+    NewEuler = Mathutils.Euler([0,-EulY,(math.pi + EulZ)])
 
-	return NewEuler
+  return NewEuler
 
 ####################################################
 # SKIN THE NEW ARROW OBJECT
@@ -251,22 +251,22 @@ def GetEuler(Loc1, Loc2, Distance):
 
 def SkinObject(mez, VertList, FaceList, Distance):
 
-	## Loop through the list of all the vert locations and make verts.
-	skinVertList = []
-	for a in range(len(VertList)):
-		
-		if a < (len(VertList) / 2):
-			skinVertList.extend([NMesh.Vert(((VertList[a][0] * BUTTON['ARROWSIZE'].val) - (Distance / 2)), (VertList[a][1] * BUTTON['ARROWSIZE'].val), (VertList[a][2]) * BUTTON['ARROWSIZE'].val)])
-		else:
-			skinVertList.extend([NMesh.Vert(((VertList[a][0] * BUTTON['ARROWSIZE'].val) + (Distance / 2)), (VertList[a][1] * BUTTON['ARROWSIZE'].val), (VertList[a][2]) * BUTTON['ARROWSIZE'].val)])
-	mez.verts.extend(skinVertList)
+  ## Loop through the list of all the vert locations and make verts.
+  skinVertList = []
+  for a in range(len(VertList)):
+    
+    if a < (len(VertList) / 2):
+      skinVertList.extend([NMesh.Vert(((VertList[a][0] * BUTTON['ARROWSIZE'].val) - (Distance / 2)), (VertList[a][1] * BUTTON['ARROWSIZE'].val), (VertList[a][2]) * BUTTON['ARROWSIZE'].val)])
+    else:
+      skinVertList.extend([NMesh.Vert(((VertList[a][0] * BUTTON['ARROWSIZE'].val) + (Distance / 2)), (VertList[a][1] * BUTTON['ARROWSIZE'].val), (VertList[a][2]) * BUTTON['ARROWSIZE'].val)])
+  mez.verts.extend(skinVertList)
 
-	## Loop though the list of all the face indexes and make faces.
-	for a in range(len(FaceList)):
-		if len(FaceList[a]) is 4:
-			mez.faces.append(NMesh.Face([mez.verts[FaceList[a][0]], mez.verts[FaceList[a][1]], mez.verts[FaceList[a][2]], mez.verts[FaceList[a][3]]]))
-		elif len(FaceList[a]) is 3:
-			mez.faces.append(NMesh.Face([mez.verts[FaceList[a][0]], mez.verts[FaceList[a][1]], mez.verts[FaceList[a][2]]]))
+  ## Loop though the list of all the face indexes and make faces.
+  for a in range(len(FaceList)):
+    if len(FaceList[a]) is 4:
+      mez.faces.append(NMesh.Face([mez.verts[FaceList[a][0]], mez.verts[FaceList[a][1]], mez.verts[FaceList[a][2]], mez.verts[FaceList[a][3]]]))
+    elif len(FaceList[a]) is 3:
+      mez.faces.append(NMesh.Face([mez.verts[FaceList[a][0]], mez.verts[FaceList[a][1]], mez.verts[FaceList[a][2]]]))
 
 ####################################################
 # GET THE ROUNDED RESULT
@@ -274,345 +274,345 @@ def SkinObject(mez, VertList, FaceList, Distance):
 
 def Getrounded(Distance):
 
-	if BUTTON['MDECIMAL'].val is 1:
-		Result = int(round(Distance))
-	else:
-		Result = round(Distance, (BUTTON['MDECIMAL'].val -1))
-	return Result
+  if BUTTON['MDECIMAL'].val is 1:
+    Result = int(round(Distance))
+  else:
+    Result = round(Distance, (BUTTON['MDECIMAL'].val -1))
+  return Result
 
 ####################################################
 # GETTING THE MEASUREMENT FROM BLENDER UNITS
 ####################################################
 
 def GetMeasurement():
-	
-	## Constrain the measurement result.
-	if BUTTON['MCONSTRAIN'].val > 1 and BUTTON['MCONOBS'].val is 0:
-		Loc1 = DATA['LOC1']; Loc2 = DATA['LOC2']
-		if BUTTON['MCONSTRAIN'].val is 2:
-			DATA['DISTANCE'] = vertDist([0, 0, Loc1[2]], [0 ,0 ,Loc2[2]])
-		elif BUTTON['MCONSTRAIN'].val is 3:
-			DATA['DISTANCE'] = vertDist([0, Loc1[1], 0], [0 ,Loc2[1] ,0])
-		elif BUTTON['MCONSTRAIN'].val is 4:
-			DATA['DISTANCE'] = vertDist([Loc1[0], 0, 0], [Loc2[0] ,0 ,0])
+  
+  ## Constrain the measurement result.
+  if BUTTON['MCONSTRAIN'].val > 1 and BUTTON['MCONOBS'].val is 0:
+    Loc1 = DATA['LOC1']; Loc2 = DATA['LOC2']
+    if BUTTON['MCONSTRAIN'].val is 2:
+      DATA['DISTANCE'] = vertDist([0, 0, Loc1[2]], [0 ,0 ,Loc2[2]])
+    elif BUTTON['MCONSTRAIN'].val is 3:
+      DATA['DISTANCE'] = vertDist([0, Loc1[1], 0], [0 ,Loc2[1] ,0])
+    elif BUTTON['MCONSTRAIN'].val is 4:
+      DATA['DISTANCE'] = vertDist([Loc1[0], 0, 0], [Loc2[0] ,0 ,0])
 
-	## Get the measurement relative to the correct scale
-	DATA['DISTANCE'] = BUTTON['MSCALE'].val * DATA['DISTANCE']
+  ## Get the measurement relative to the correct scale
+  DATA['DISTANCE'] = BUTTON['MSCALE'].val * DATA['DISTANCE']
 
-	DATA['RESULT'] = ""
+  DATA['RESULT'] = ""
 
-	## If not blender units convert to millimeters.
-	if BUTTON['MOUT'].val != 9:
-		## Get the distance in mm to start with.
-		if BUTTON['MIN'].val is 1: DATA['DISTANCE'] = DATA['DISTANCE']
-		elif BUTTON['MIN'].val is 2: DATA['DISTANCE'] = cm_to_mm(DATA['DISTANCE'])
-		elif BUTTON['MIN'].val is 3: DATA['DISTANCE'] = m_to_mm(DATA['DISTANCE'])
-		elif BUTTON['MIN'].val is 4: DATA['DISTANCE'] = km_to_mm(DATA['DISTANCE'])
-		elif BUTTON['MIN'].val is 5: DATA['DISTANCE'] = inch_to_mm(DATA['DISTANCE'])
-		elif BUTTON['MIN'].val is 6: DATA['DISTANCE'] = foot_to_mm(DATA['DISTANCE'])
-		elif BUTTON['MIN'].val is 7: DATA['DISTANCE'] = yard_to_mm(DATA['DISTANCE'])
-		elif BUTTON['MIN'].val is 8: DATA['DISTANCE'] = mile_to_mm(DATA['DISTANCE'])
+  ## If not blender units convert to millimeters.
+  if BUTTON['MOUT'].val != 9:
+    ## Get the distance in mm to start with.
+    if BUTTON['MIN'].val is 1: DATA['DISTANCE'] = DATA['DISTANCE']
+    elif BUTTON['MIN'].val is 2: DATA['DISTANCE'] = cm_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 3: DATA['DISTANCE'] = m_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 4: DATA['DISTANCE'] = km_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 5: DATA['DISTANCE'] = inch_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 6: DATA['DISTANCE'] = foot_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 7: DATA['DISTANCE'] = yard_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 8: DATA['DISTANCE'] = mile_to_mm(DATA['DISTANCE'])
 
-	## Get metric results.
-	if BUTTON['MOUT'].val < 5:
-		
-		## Get the measurement result in kilometers.
-		if BUTTON['MOUT'].val is 4:		
-			DATA['DISTANCE'] = mm_to_km(DATA['DISTANCE'])
-			
-			if BUTTON['MDETAIL'].val is 4:
-				Result = Getrounded(DATA['DISTANCE'])
-			else:
-				Result = int(math.floor(DATA['DISTANCE']))
-				
-			if BUTTON['MDETAIL'].val is 4 or Result != 0:
-				DATA['RESULT'] = str(Result) + " km"
-			
-			if BUTTON['MDETAIL'].val < 4:
-				NewMeters = km_to_m(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
-				
-				if BUTTON['MDETAIL'].val is 3:
-					Result = Getrounded(NewMeters)
-				else:
-					Result = int(math.floor(NewMeters))
+  ## Get metric results.
+  if BUTTON['MOUT'].val < 5:
+    
+    ## Get the measurement result in kilometers.
+    if BUTTON['MOUT'].val is 4:		
+      DATA['DISTANCE'] = mm_to_km(DATA['DISTANCE'])
+      
+      if BUTTON['MDETAIL'].val is 4:
+        Result = Getrounded(DATA['DISTANCE'])
+      else:
+        Result = int(math.floor(DATA['DISTANCE']))
+        
+      if BUTTON['MDETAIL'].val is 4 or Result != 0:
+        DATA['RESULT'] = str(Result) + " km"
+      
+      if BUTTON['MDETAIL'].val < 4:
+        NewMeters = km_to_m(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        
+        if BUTTON['MDETAIL'].val is 3:
+          Result = Getrounded(NewMeters)
+        else:
+          Result = int(math.floor(NewMeters))
 
-				if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
-				elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-					DATA['RESULT'] = "0 mm"
-			
-			if BUTTON['MDETAIL'].val < 3:
-				NewCentimeters = m_to_cm(NewMeters - int(math.floor(NewMeters)))
-				
-				if BUTTON['MDETAIL'].val is 2:
-					Result = Getrounded(NewCentimeters)
-				else:
-					Result = int(math.floor(NewCentimeters))
+        if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+        elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
+          DATA['RESULT'] = "0 mm"
+      
+      if BUTTON['MDETAIL'].val < 3:
+        NewCentimeters = m_to_cm(NewMeters - int(math.floor(NewMeters)))
+        
+        if BUTTON['MDETAIL'].val is 2:
+          Result = Getrounded(NewCentimeters)
+        else:
+          Result = int(math.floor(NewCentimeters))
 
-				if Result != 0:
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " cm"
-				
-			if BUTTON['MDETAIL'].val is 1:
-				NewMillimeters = cm_to_mm(NewCentimeters - int(math.floor(NewCentimeters)))
-				
-				if BUTTON['MDETAIL'].val is 1:
-					Result = Getrounded(NewMillimeters)
-				else:
-					Result = int(math.floor(NewMillimeters))
+        if Result != 0:
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " cm"
+        
+      if BUTTON['MDETAIL'].val is 1:
+        NewMillimeters = cm_to_mm(NewCentimeters - int(math.floor(NewCentimeters)))
+        
+        if BUTTON['MDETAIL'].val is 1:
+          Result = Getrounded(NewMillimeters)
+        else:
+          Result = int(math.floor(NewMillimeters))
 
-				if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
-				elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-					DATA['RESULT'] = "0 mm"
-			
-		## Get the measurement result in meters.
-		elif BUTTON['MOUT'].val is 3:		
-		
-			DATA['DISTANCE'] = mm_to_m(DATA['DISTANCE'])
-			
-			if BUTTON['MDETAIL'].val is 3:
-				Result = Getrounded(DATA['DISTANCE'])
-			else:
-				Result = int(math.floor(DATA['DISTANCE']))
-				
-			if BUTTON['MDETAIL'].val is 3 or Result != 0:
-				DATA['RESULT'] = str(Result) + " m"
-			
-			if BUTTON['MDETAIL'].val < 3:
-				NewCentimeters = m_to_cm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
-				
-				if BUTTON['MDETAIL'].val is 2:
-					Result = Getrounded(NewCentimeters)
-				else:
-					Result = int(math.floor(NewCentimeters))
+        if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+        elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
+          DATA['RESULT'] = "0 mm"
+      
+    ## Get the measurement result in meters.
+    elif BUTTON['MOUT'].val is 3:		
+    
+      DATA['DISTANCE'] = mm_to_m(DATA['DISTANCE'])
+      
+      if BUTTON['MDETAIL'].val is 3:
+        Result = Getrounded(DATA['DISTANCE'])
+      else:
+        Result = int(math.floor(DATA['DISTANCE']))
+        
+      if BUTTON['MDETAIL'].val is 3 or Result != 0:
+        DATA['RESULT'] = str(Result) + " m"
+      
+      if BUTTON['MDETAIL'].val < 3:
+        NewCentimeters = m_to_cm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        
+        if BUTTON['MDETAIL'].val is 2:
+          Result = Getrounded(NewCentimeters)
+        else:
+          Result = int(math.floor(NewCentimeters))
 
-				if Result != 0:
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " cm"
-				
-			if BUTTON['MDETAIL'].val is 1:
-				NewMillimeters = cm_to_mm(NewCentimeters - int(math.floor(NewCentimeters)))
-				
-				if BUTTON['MDETAIL'].val is 1:
-					Result = Getrounded(NewMillimeters)
-				else:
-					Result = int(math.floor(NewMillimeters))
+        if Result != 0:
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " cm"
+        
+      if BUTTON['MDETAIL'].val is 1:
+        NewMillimeters = cm_to_mm(NewCentimeters - int(math.floor(NewCentimeters)))
+        
+        if BUTTON['MDETAIL'].val is 1:
+          Result = Getrounded(NewMillimeters)
+        else:
+          Result = int(math.floor(NewMillimeters))
 
-				if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
-				elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-					DATA['RESULT'] = "0 mm"
-			
-		## Get the measurement result in centimeters.
-		elif BUTTON['MOUT'].val is 2:
-		
-			DATA['DISTANCE'] = mm_to_cm(DATA['DISTANCE'])
-			
-			if BUTTON['MDETAIL'].val is 2:
-				Result = Getrounded(DATA['DISTANCE'])
-			else:
-				Result = int(math.floor(DATA['DISTANCE']))
-				
-			if BUTTON['MDETAIL'].val is 2 or Result != 0:
-				DATA['RESULT'] = str(Result) + " cm"
-				
-			if BUTTON['MDETAIL'].val is 1:
-				NewMillimeters = cm_to_mm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
-				
-				Result = Getrounded(NewMillimeters)
+        if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+        elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
+          DATA['RESULT'] = "0 mm"
+      
+    ## Get the measurement result in centimeters.
+    elif BUTTON['MOUT'].val is 2:
+    
+      DATA['DISTANCE'] = mm_to_cm(DATA['DISTANCE'])
+      
+      if BUTTON['MDETAIL'].val is 2:
+        Result = Getrounded(DATA['DISTANCE'])
+      else:
+        Result = int(math.floor(DATA['DISTANCE']))
+        
+      if BUTTON['MDETAIL'].val is 2 or Result != 0:
+        DATA['RESULT'] = str(Result) + " cm"
+        
+      if BUTTON['MDETAIL'].val is 1:
+        NewMillimeters = cm_to_mm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        
+        Result = Getrounded(NewMillimeters)
 
-				if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
-				elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-					DATA['RESULT'] = "0 mm"
-		
-		## Get the measurement result in millimeters.
-		else:
-			Result = Getrounded(DATA['DISTANCE'])
+        if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+        elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
+          DATA['RESULT'] = "0 mm"
+    
+    ## Get the measurement result in millimeters.
+    else:
+      Result = Getrounded(DATA['DISTANCE'])
 
-			DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
-			
-	## Get imperial results.
-	elif BUTTON['MOUT'].val < 9:
-		
-		DATA['RESULT'] = ""
-	
-		## Get the result in miles.
-		if BUTTON['MOUT'].val is 8:		
-			DATA['DISTANCE'] = mm_to_mile(DATA['DISTANCE'])
-			
-			if BUTTON['MDETAIL'].val is 4:
-				Result = Getrounded(DATA['DISTANCE'])
-			else:
-				Result = int(math.floor(DATA['DISTANCE']))
-			if BUTTON['MDETAIL'].val is 4 or Result != 0:
-				DATA['RESULT'] = str(Result) + " mile"
-			
-			if BUTTON['MDETAIL'].val < 4:
-				NewYards = mile_to_yard(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
-				
-				if BUTTON['MDETAIL'].val is 3:
-					Result = Getrounded(NewYards)
-				else:
-					Result = int(math.floor(NewYards))
+      DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+      
+  ## Get imperial results.
+  elif BUTTON['MOUT'].val < 9:
+    
+    DATA['RESULT'] = ""
+  
+    ## Get the result in miles.
+    if BUTTON['MOUT'].val is 8:		
+      DATA['DISTANCE'] = mm_to_mile(DATA['DISTANCE'])
+      
+      if BUTTON['MDETAIL'].val is 4:
+        Result = Getrounded(DATA['DISTANCE'])
+      else:
+        Result = int(math.floor(DATA['DISTANCE']))
+      if BUTTON['MDETAIL'].val is 4 or Result != 0:
+        DATA['RESULT'] = str(Result) + " mile"
+      
+      if BUTTON['MDETAIL'].val < 4:
+        NewYards = mile_to_yard(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        
+        if BUTTON['MDETAIL'].val is 3:
+          Result = Getrounded(NewYards)
+        else:
+          Result = int(math.floor(NewYards))
 
-				if Result != 0:
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " yd"
-			
-			if BUTTON['MDETAIL'].val < 3:
-				NewFeet = yard_to_foot(NewYards - int(math.floor(NewYards)))
-				
-				if BUTTON['MDETAIL'].val is 2:
-					Result = Getrounded(NewFeet)
-				else:
-					Result = int(math.floor(NewFeet))
+        if Result != 0:
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " yd"
+      
+      if BUTTON['MDETAIL'].val < 3:
+        NewFeet = yard_to_foot(NewYards - int(math.floor(NewYards)))
+        
+        if BUTTON['MDETAIL'].val is 2:
+          Result = Getrounded(NewFeet)
+        else:
+          Result = int(math.floor(NewFeet))
 
-				if Result != 0:
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " ft"
-				
-			if BUTTON['MDETAIL'].val is 1:		    
-			
-				NewInches = foot_to_inch(NewFeet - int(math.floor(NewFeet)))
-				
-				if math.ceil(NewInches) != 0:
-				
-					if BUTTON['MDECIMAL'].val is 1:
-						DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewInches))) + " in"
-					else:
-						## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
-						subInch = round(NewInches - int(math.floor(NewInches)), 2)
-				
-						Inches = int(math.floor(NewInches))
-					
-						if subInch is 1:
-							Inches = Inches + 1
-						if Inches < 1:
-							Inches = ""
-						else:
-							Inches = str(Inches)
-							
-						DATA['RESULT'] = DATA['RESULT'] + " " + Inches + GetSubInch(subInch) + " in"
-						
-				elif DATA['RESULT'] is "" or DATA['RESULT'] is " ":
-				
-					DATA['RESULT'] = "0 in"
-		
-		## Get the result in yards
-		elif BUTTON['MOUT'].val is 7:
-		
-			DATA['DISTANCE'] = mm_to_yard(DATA['DISTANCE'])
-			
-			if BUTTON['MDETAIL'].val is 3:
-				Result = Getrounded(DATA['DISTANCE'])
-			else:
-				Result = int(math.floor(DATA['DISTANCE']))
-			if BUTTON['MDETAIL'].val is 3 or Result != 0:
-				DATA['RESULT'] = str(Result) + " yd"
-			
-			if BUTTON['MDETAIL'].val < 3:
-				NewFeet = yard_to_foot(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
-				
-				if BUTTON['MDETAIL'].val is 3:
-					Result = Getrounded(NewFeet)
-				else:
-					Result = int(math.floor(NewFeet))
+        if Result != 0:
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " ft"
+        
+      if BUTTON['MDETAIL'].val is 1:		    
+      
+        NewInches = foot_to_inch(NewFeet - int(math.floor(NewFeet)))
+        
+        if math.ceil(NewInches) != 0:
+        
+          if BUTTON['MDECIMAL'].val is 1:
+            DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewInches))) + " in"
+          else:
+            ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+            subInch = round(NewInches - int(math.floor(NewInches)), 2)
+        
+            Inches = int(math.floor(NewInches))
+          
+            if subInch is 1:
+              Inches = Inches + 1
+            if Inches < 1:
+              Inches = ""
+            else:
+              Inches = str(Inches)
+              
+            DATA['RESULT'] = DATA['RESULT'] + " " + Inches + GetSubInch(subInch) + " in"
+            
+        elif DATA['RESULT'] is "" or DATA['RESULT'] is " ":
+        
+          DATA['RESULT'] = "0 in"
+    
+    ## Get the result in yards
+    elif BUTTON['MOUT'].val is 7:
+    
+      DATA['DISTANCE'] = mm_to_yard(DATA['DISTANCE'])
+      
+      if BUTTON['MDETAIL'].val is 3:
+        Result = Getrounded(DATA['DISTANCE'])
+      else:
+        Result = int(math.floor(DATA['DISTANCE']))
+      if BUTTON['MDETAIL'].val is 3 or Result != 0:
+        DATA['RESULT'] = str(Result) + " yd"
+      
+      if BUTTON['MDETAIL'].val < 3:
+        NewFeet = yard_to_foot(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        
+        if BUTTON['MDETAIL'].val is 3:
+          Result = Getrounded(NewFeet)
+        else:
+          Result = int(math.floor(NewFeet))
 
-				if Result != 0:
-					DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " ft"
-				
-			if BUTTON['MDETAIL'].val is 1:		    
-			
-				NewInches = foot_to_inch(NewFeet - int(math.floor(NewFeet)))
-				
-				if math.ceil(NewInches) != 0:
-				
-					if BUTTON['MDECIMAL'].val is 1:
-						DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewInches))) + " in"
-					else:
-						## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
-						subInch = round(NewInches - int(math.floor(NewInches)), 2)
-				
-						Inches = int(math.floor(NewInches))
-					
-						if subInch is 1:
-							Inches = Inches + 1
-						if Inches < 1:
-							Inches = ""
-						else:
-							Inches = str(Inches)
-							
-						DATA['RESULT'] = DATA['RESULT'] + " " + Inches + GetSubInch(subInch) + " in"
-						
-				elif DATA['RESULT'] is "" or DATA['RESULT'] is " ":
-				
-					DATA['RESULT'] = "0 in"
-			
-		## Get the result in feet
-		elif BUTTON['MOUT'].val is 6:
-		
-			DATA['DISTANCE'] = mm_to_foot(DATA['DISTANCE'])
-			
-			if BUTTON['MDETAIL'].val is 2:
-				Result = Getrounded(DATA['DISTANCE'])
-			else:
-				Result = int(math.floor(DATA['DISTANCE']))
-			if BUTTON['MDETAIL'].val is 2 or Result != 0:
-				DATA['RESULT'] = str(Result) + " ft"
-			
-			if BUTTON['MDETAIL'].val is 1:
-			
-				NewInches = foot_to_inch(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
-				
-				if math.ceil(NewInches) != 0:
-				
-					if BUTTON['MDECIMAL'].val is 1:
-						DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewInches))) + " in"
-					else:
-						## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
-						subInch = round(NewInches - int(math.floor(NewInches)), 2)
-				
-						Inches = int(math.floor(NewInches))
-					
-						if subInch is 1:
-							Inches = Inches + 1
-						if Inches < 1:
-							Inches = ""
-						else:
-							Inches = str(Inches)
-									
-						DATA['RESULT'] = DATA['RESULT'] + " " + Inches + GetSubInch(subInch) + " in"
-						
-				elif DATA['RESULT'] is "" or DATA['RESULT'] is " ":
-				
-					DATA['RESULT'] = "0 in"
-						
-		## Get the result in inches
-		else:
-			DATA['DISTANCE'] = mm_to_inch(DATA['DISTANCE'])
-			
-			if BUTTON['MDECIMAL'].val is 1:
-				DATA['RESULT'] = str(int(round(DATA['DISTANCE']))) + " in"
-			else:
-				## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
-				subInch = round(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])), 2)
-			
-				Inches = int(math.floor(DATA['DISTANCE']))
-				
-				if subInch is 1:
-					Inches = Inches + 1
-				if subInch is 0.0 and Inches is 0.0:
-					Inches = "0"
-				elif Inches < 1:
-					Inches = ""
-				else:
-					Inches = str(Inches)
-					
-				DATA['RESULT'] = Inches + GetSubInch(subInch) + " in"
-	
-	## Get straight blender unit result.
-	else:
-		DATA['RESULT'] = str(Getrounded(DATA['DISTANCE']))
-		
-	return DATA['RESULT']
+        if Result != 0:
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " ft"
+        
+      if BUTTON['MDETAIL'].val is 1:		    
+      
+        NewInches = foot_to_inch(NewFeet - int(math.floor(NewFeet)))
+        
+        if math.ceil(NewInches) != 0:
+        
+          if BUTTON['MDECIMAL'].val is 1:
+            DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewInches))) + " in"
+          else:
+            ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+            subInch = round(NewInches - int(math.floor(NewInches)), 2)
+        
+            Inches = int(math.floor(NewInches))
+          
+            if subInch is 1:
+              Inches = Inches + 1
+            if Inches < 1:
+              Inches = ""
+            else:
+              Inches = str(Inches)
+              
+            DATA['RESULT'] = DATA['RESULT'] + " " + Inches + GetSubInch(subInch) + " in"
+            
+        elif DATA['RESULT'] is "" or DATA['RESULT'] is " ":
+        
+          DATA['RESULT'] = "0 in"
+      
+    ## Get the result in feet
+    elif BUTTON['MOUT'].val is 6:
+    
+      DATA['DISTANCE'] = mm_to_foot(DATA['DISTANCE'])
+      
+      if BUTTON['MDETAIL'].val is 2:
+        Result = Getrounded(DATA['DISTANCE'])
+      else:
+        Result = int(math.floor(DATA['DISTANCE']))
+      if BUTTON['MDETAIL'].val is 2 or Result != 0:
+        DATA['RESULT'] = str(Result) + " ft"
+      
+      if BUTTON['MDETAIL'].val is 1:
+      
+        NewInches = foot_to_inch(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        
+        if math.ceil(NewInches) != 0:
+        
+          if BUTTON['MDECIMAL'].val is 1:
+            DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewInches))) + " in"
+          else:
+            ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+            subInch = round(NewInches - int(math.floor(NewInches)), 2)
+        
+            Inches = int(math.floor(NewInches))
+          
+            if subInch is 1:
+              Inches = Inches + 1
+            if Inches < 1:
+              Inches = ""
+            else:
+              Inches = str(Inches)
+                  
+            DATA['RESULT'] = DATA['RESULT'] + " " + Inches + GetSubInch(subInch) + " in"
+            
+        elif DATA['RESULT'] is "" or DATA['RESULT'] is " ":
+        
+          DATA['RESULT'] = "0 in"
+            
+    ## Get the result in inches
+    else:
+      DATA['DISTANCE'] = mm_to_inch(DATA['DISTANCE'])
+      
+      if BUTTON['MDECIMAL'].val is 1:
+        DATA['RESULT'] = str(int(round(DATA['DISTANCE']))) + " in"
+      else:
+        ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+        subInch = round(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])), 2)
+      
+        Inches = int(math.floor(DATA['DISTANCE']))
+        
+        if subInch is 1:
+          Inches = Inches + 1
+        if subInch is 0.0 and Inches is 0.0:
+          Inches = "0"
+        elif Inches < 1:
+          Inches = ""
+        else:
+          Inches = str(Inches)
+          
+        DATA['RESULT'] = Inches + GetSubInch(subInch) + " in"
+  
+  ## Get straight blender unit result.
+  else:
+    DATA['RESULT'] = str(Getrounded(DATA['DISTANCE']))
+    
+  return DATA['RESULT']
 
 ####################################################
 # TRANSFORMATIONS TO GET GLOBAL COORDS
@@ -620,1112 +620,1112 @@ def GetMeasurement():
 
 # Apply a matrix to a vert and return a vector.
 def apply_transform(vert, matrix):
-	x, y, z = vert
-	xloc, yloc, zloc = matrix[3][0], matrix[3][1], matrix[3][2]
-	return Mathutils.Vector(
-	x*matrix[0][0] + y*matrix[1][0] + z*matrix[2][0] + xloc,
-	x*matrix[0][1] + y*matrix[1][1] + z*matrix[2][1] + yloc,
-	x*matrix[0][2] + y*matrix[1][2] + z*matrix[2][2] + zloc)
+  x, y, z = vert
+  xloc, yloc, zloc = matrix[3][0], matrix[3][1], matrix[3][2]
+  return Mathutils.Vector(
+  x*matrix[0][0] + y*matrix[1][0] + z*matrix[2][0] + xloc,
+  x*matrix[0][1] + y*matrix[1][1] + z*matrix[2][1] + yloc,
+  x*matrix[0][2] + y*matrix[1][2] + z*matrix[2][2] + zloc)
 
 # Apply a matrix to a normal and return a vector.
 def normal_transform(norm, matrix):
-	matrix = matrix.rotationPart()
-	x, y, z = norm
-	return Mathutils.Vector(
-	x*matrix[0][0] + y*matrix[1][0] + z*matrix[2][0],
-	x*matrix[0][1] + y*matrix[1][1] + z*matrix[2][1],
-	x*matrix[0][2] + y*matrix[1][2] + z*matrix[2][2])
+  matrix = matrix.rotationPart()
+  x, y, z = norm
+  return Mathutils.Vector(
+  x*matrix[0][0] + y*matrix[1][0] + z*matrix[2][0],
+  x*matrix[0][1] + y*matrix[1][1] + z*matrix[2][1],
+  x*matrix[0][2] + y*matrix[1][2] + z*matrix[2][2])
 
 ####################################################
 # GET THE MIDPOINT OF A FACE
 ####################################################
-	
+  
 def getMidF(face, obName):
 
-	## Get the object matrix for applying
-	tarObj = Object.Get(obName)
-	
-	ObMatrix = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+  ## Get the object matrix for applying
+  tarObj = Object.Get(obName)
+  
+  ObMatrix = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
 
-	## Set the midpoint variable.
-	midLoc = [0.0,0.0,0.0]
-	
-	## Loop through the verts.
-	for a in range(len(face.v)):
-	
-		## Get the global vert position by applying the matrix.
-		vertCo = apply_transform(face.v[a].co, ObMatrix)
-	
-		## Loop through the midLoc and add the vert coordinates.
-		for b in range(len(midLoc)):
-			midLoc[b] += vertCo[b]
-		
-	## Loop through the midLoc and divide by the nr of verts.
-	for a in range(len(midLoc)):
-		midLoc[a] /= len(face.v)
-	
-	## Return the midpoint of the face.
-	return midLoc
-	
+  ## Set the midpoint variable.
+  midLoc = [0.0,0.0,0.0]
+  
+  ## Loop through the verts.
+  for a in range(len(face.v)):
+  
+    ## Get the global vert position by applying the matrix.
+    vertCo = apply_transform(face.v[a].co, ObMatrix)
+  
+    ## Loop through the midLoc and add the vert coordinates.
+    for b in range(len(midLoc)):
+      midLoc[b] += vertCo[b]
+    
+  ## Loop through the midLoc and divide by the nr of verts.
+  for a in range(len(midLoc)):
+    midLoc[a] /= len(face.v)
+  
+  ## Return the midpoint of the face.
+  return midLoc
+  
 ####################################################
 # EDGE LENGTH FUNCTION
 ####################################################
 
 ## Function for getting the distance between two points.
 def vertDist(v1, v2):
-	return Mathutils.Vector(v1[0]-v2[0], v1[1]-v2[1], v1[2]-v2[2]).length
-	
+  return Mathutils.Vector(v1[0]-v2[0], v1[1]-v2[1], v1[2]-v2[2]).length
+  
 ####################################################
 # REMOVE OLD OBJECTS
 ####################################################
 
 def RemoveOldObs(One, Two, Three):
 
-	## Get the scene
-	scene = Blender.Scene.GetCurrent()
+  ## Get the scene
+  scene = Blender.Scene.GetCurrent()
 
-	## Get a list of all objects with the namestring in their names	
-	ObjectList = [ob for ob in Blender.Scene.GetCurrent().getChildren() if str(One) + str(Two) + str(Three)  in ob.getName() or str(Two) + str(One) + str(Three) in ob.getName()]
-	
-	## Loop through all the objects in the list
-	for a in range(len(ObjectList)):
+  ## Get a list of all objects with the namestring in their names	
+  ObjectList = [ob for ob in Blender.Scene.GetCurrent().getChildren() if str(One) + str(Two) + str(Three)  in ob.getName() or str(Two) + str(One) + str(Three) in ob.getName()]
+  
+  ## Loop through all the objects in the list
+  for a in range(len(ObjectList)):
 
-		## Unlink the object from the scene
-		scene.unlink(ObjectList[a])
-	
+    ## Unlink the object from the scene
+    scene.unlink(ObjectList[a])
+  
 ####################################################
 # DRAW A LINE AND TEXT 
 ####################################################
 
 def DrawTitle(Text, Pos):
 
-	BGL.glColor3f(0.7, 0.7 , 0.8)		# Light edge
-	BGL.glRectf(4, (Pos - 4), 267, (Pos -3))
+  BGL.glColor3f(0.7, 0.7 , 0.8)		# Light edge
+  BGL.glRectf(4, (Pos - 4), 267, (Pos -3))
 
-	BGL.glColor3f(0.9, 0.9, 0.95)
-	BGL.glRasterPos2d(20, Pos)
-	Draw.Text(Text, "small")
-	
+  BGL.glColor3f(0.9, 0.9, 0.95)
+  BGL.glRasterPos2d(20, Pos)
+  Draw.Text(Text, "small")
+  
 ####################################################
 # GETTING THE TWO CLOSEST Edges 
 ####################################################
-	
+  
 def GetObjectVerts():
 
-	Succes = False
-	
-	## Create a list of all selected mesh objects
-	DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected() if ob.getType() == 'Mesh']
-	
-	## Check to make sure there's 2 mesh objects selected
-	if len(DATA['OBJECTLIST']) is 2:
-	
-		## Get the names of the first mesh object.
-		DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
-		
-		DATA['MNAME1'] = Object.Get(DATA['OBNAME1']).getData(1)
+  Succes = False
+  
+  ## Create a list of all selected mesh objects
+  DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected() if ob.getType() == 'Mesh']
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if len(DATA['OBJECTLIST']) is 2:
+  
+    ## Get the names of the first mesh object.
+    DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
+    
+    DATA['MNAME1'] = Object.Get(DATA['OBNAME1']).getData(1)
 
-		me = NMesh.GetRaw(DATA['MNAME1'])
-		
-		## Get the object matrix for applying
-		tarObj = Object.Get(DATA['OBNAME1'])
+    me = NMesh.GetRaw(DATA['MNAME1'])
+    
+    ## Get the object matrix for applying
+    tarObj = Object.Get(DATA['OBNAME1'])
 
-		ObMatrix1 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
-		
-		## Get the names of the second mesh object.
-		DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
-		DATA['MNAME2'] = Object.Get(DATA['OBNAME2']).getData(1)
+    ObMatrix1 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+    
+    ## Get the names of the second mesh object.
+    DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
+    DATA['MNAME2'] = Object.Get(DATA['OBNAME2']).getData(1)
 
-		me2 = NMesh.GetRaw(DATA['MNAME2'])
-		
-		## Get the object matrix for applying
-		tarObj = Object.Get(DATA['OBNAME2'])
-	
-		ObMatrix2 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+    me2 = NMesh.GetRaw(DATA['MNAME2'])
+    
+    ## Get the object matrix for applying
+    tarObj = Object.Get(DATA['OBNAME2'])
+  
+    ObMatrix2 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
 
-		## Loop through the faces of the object.
-		for a in range(len(me.verts)):
-		
-			PosOne = Mathutils.MidpointVecs(apply_transform(me.verts[a].co, ObMatrix1), apply_transform(me.verts[a].co, ObMatrix1))
+    ## Loop through the faces of the object.
+    for a in range(len(me.verts)):
+    
+      PosOne = Mathutils.MidpointVecs(apply_transform(me.verts[a].co, ObMatrix1), apply_transform(me.verts[a].co, ObMatrix1))
 
-			## Loop through the faces of the object.
-			for b in range(len(me2.verts)):
+      ## Loop through the faces of the object.
+      for b in range(len(me2.verts)):
 
-				## Get the position of the midpoint of this face
-				PosTwo = Mathutils.MidpointVecs(apply_transform(me2.verts[b].co, ObMatrix2), apply_transform(me2.verts[b].co, ObMatrix2))
+        ## Get the position of the midpoint of this face
+        PosTwo = Mathutils.MidpointVecs(apply_transform(me2.verts[b].co, ObMatrix2), apply_transform(me2.verts[b].co, ObMatrix2))
 
-				## Calculate the distance between the two midpoints
-				CurDist = vertDist(PosOne, PosTwo)
+        ## Calculate the distance between the two midpoints
+        CurDist = vertDist(PosOne, PosTwo)
 
-				## Getting the closest point
-				if BUTTON['MEASURE'].val is 6:
+        ## Getting the closest point
+        if BUTTON['MEASURE'].val is 6:
 
-					## See whether it's the first measurement or if the points are closer.
-					if a is 0 and b is 0 or DATA['DISTANCE'] > CurDist:
+          ## See whether it's the first measurement or if the points are closer.
+          if a is 0 and b is 0 or DATA['DISTANCE'] > CurDist:
 
-						DATA['LOC1'] = PosOne
-						DATA['LOC2'] = PosTwo
-						DATA['DISTANCE'] = CurDist
-						Succes = True
+            DATA['LOC1'] = PosOne
+            DATA['LOC2'] = PosTwo
+            DATA['DISTANCE'] = CurDist
+            Succes = True
 
-				## Getting the furthest point	
-				else:
-					## See whether it's the first measurement or if the points are closer.
-					if a is 0 and b is 0 or DATA['DISTANCE'] < CurDist:
+        ## Getting the furthest point	
+        else:
+          ## See whether it's the first measurement or if the points are closer.
+          if a is 0 and b is 0 or DATA['DISTANCE'] < CurDist:
 
-						DATA['LOC1'] = PosOne
-						DATA['LOC2'] = PosTwo
-						DATA['DISTANCE'] = CurDist
-						Succes = True
-						
-		if Succes is False:
-			DATA['RESULT'] = "One of your two meshes has no verts!"
-						
-	else:
-		DATA['RESULT'] = "No two mesh objects selected!"
-		
-	return Succes
-	
+            DATA['LOC1'] = PosOne
+            DATA['LOC2'] = PosTwo
+            DATA['DISTANCE'] = CurDist
+            Succes = True
+            
+    if Succes is False:
+      DATA['RESULT'] = "One of your two meshes has no verts!"
+            
+  else:
+    DATA['RESULT'] = "No two mesh objects selected!"
+    
+  return Succes
+  
 ####################################################
 # GETTING THE TWO CLOSEST EDGES
 ####################################################
-	
+  
 def GetObjectEdges():
 
-	Succes = False
-	
-	## Create a list of all selected mesh objects
-	DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected() if ob.getType() == 'Mesh']
-	
-	## Check to make sure there's 2 mesh objects selected
-	if len(DATA['OBJECTLIST']) is 2:
-	
-		## Get the names of the first mesh object.
-		DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
-		
-		DATA['MNAME1'] = Object.Get(DATA['OBNAME1']).getData(1)
+  Succes = False
+  
+  ## Create a list of all selected mesh objects
+  DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected() if ob.getType() == 'Mesh']
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if len(DATA['OBJECTLIST']) is 2:
+  
+    ## Get the names of the first mesh object.
+    DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
+    
+    DATA['MNAME1'] = Object.Get(DATA['OBNAME1']).getData(1)
 
-		me = NMesh.GetRaw(DATA['MNAME1'])
-		
-		## Get the object matrix for applying
-		tarObj = Object.Get(DATA['OBNAME1'])
+    me = NMesh.GetRaw(DATA['MNAME1'])
+    
+    ## Get the object matrix for applying
+    tarObj = Object.Get(DATA['OBNAME1'])
 
-		ObMatrix1 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
-		
-		## Get the names of the second mesh object.
-		DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
-		DATA['MNAME2'] = Object.Get(DATA['OBNAME2']).getData(1)
+    ObMatrix1 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+    
+    ## Get the names of the second mesh object.
+    DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
+    DATA['MNAME2'] = Object.Get(DATA['OBNAME2']).getData(1)
 
-		me2 = NMesh.GetRaw(DATA['MNAME2'])
-		
-		## Get the object matrix for applying
-		tarObj = Object.Get(DATA['OBNAME2'])
-	
-		ObMatrix2 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+    me2 = NMesh.GetRaw(DATA['MNAME2'])
+    
+    ## Get the object matrix for applying
+    tarObj = Object.Get(DATA['OBNAME2'])
+  
+    ObMatrix2 = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
 
-		## Loop through the faces of the object.
-		for a in range(len(me.edges)):
-		
-			PosOne = Mathutils.MidpointVecs(apply_transform(me.edges[a].v1.co, ObMatrix1), apply_transform(me.edges[a].v2.co, ObMatrix1))
+    ## Loop through the faces of the object.
+    for a in range(len(me.edges)):
+    
+      PosOne = Mathutils.MidpointVecs(apply_transform(me.edges[a].v1.co, ObMatrix1), apply_transform(me.edges[a].v2.co, ObMatrix1))
 
-			## Loop through the faces of the object.
-			for b in range(len(me2.edges)):
+      ## Loop through the faces of the object.
+      for b in range(len(me2.edges)):
 
-				## Get the position of the midpoint of this face
-				PosTwo = Mathutils.MidpointVecs(apply_transform(me2.edges[b].v1.co, ObMatrix2), apply_transform(me2.edges[b].v2.co, ObMatrix2))
+        ## Get the position of the midpoint of this face
+        PosTwo = Mathutils.MidpointVecs(apply_transform(me2.edges[b].v1.co, ObMatrix2), apply_transform(me2.edges[b].v2.co, ObMatrix2))
 
-				## Calculate the distance between the two midpoints
-				CurDist = vertDist(PosOne, PosTwo)
+        ## Calculate the distance between the two midpoints
+        CurDist = vertDist(PosOne, PosTwo)
 
-				## Getting the closest point
-				if BUTTON['MEASURE'].val is 4:
+        ## Getting the closest point
+        if BUTTON['MEASURE'].val is 4:
 
-					## See whether it's the first measurement or if the points are closer.
-					if a is 0 and b is 0 or DATA['DISTANCE'] > CurDist:
+          ## See whether it's the first measurement or if the points are closer.
+          if a is 0 and b is 0 or DATA['DISTANCE'] > CurDist:
 
-						DATA['LOC1'] = PosOne
-						DATA['LOC2'] = PosTwo
-						DATA['DISTANCE'] = CurDist
-						Succes = True
+            DATA['LOC1'] = PosOne
+            DATA['LOC2'] = PosTwo
+            DATA['DISTANCE'] = CurDist
+            Succes = True
 
-				## Getting the furthest point	
-				else:
-					## See whether it's the first measurement or if the points are closer.
-					if a is 0 and b is 0 or DATA['DISTANCE'] < CurDist:
+        ## Getting the furthest point	
+        else:
+          ## See whether it's the first measurement or if the points are closer.
+          if a is 0 and b is 0 or DATA['DISTANCE'] < CurDist:
 
-						DATA['LOC1'] = PosOne
-						DATA['LOC2'] = PosTwo
-						DATA['DISTANCE'] = CurDist
-						Succes = True
-						
-		if Succes is False:
-			DATA['RESULT'] = "One of your two meshes has no edges!"
-			
-	else:
-		DATA['RESULT'] = "No two mesh objects selected!"
-	return Succes
-	
+            DATA['LOC1'] = PosOne
+            DATA['LOC2'] = PosTwo
+            DATA['DISTANCE'] = CurDist
+            Succes = True
+            
+    if Succes is False:
+      DATA['RESULT'] = "One of your two meshes has no edges!"
+      
+  else:
+    DATA['RESULT'] = "No two mesh objects selected!"
+  return Succes
+  
 ####################################################
 # GETTING THE TWO CLOSEST FACES 
 ####################################################
-	
+  
 def GetObjectFaces():
 
-	Succes = False
-	
-	## Create a list of all selected mesh objects
-	DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected() if ob.getType() == 'Mesh']
-	
-	## Check to make sure there's 2 mesh objects selected
-	if len(DATA['OBJECTLIST']) is 2:
-	
-		## Get the names of the first mesh object.
-		DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
-		
-		DATA['MNAME1'] = Object.Get(DATA['OBNAME1']).getData(1)
+  Succes = False
+  
+  ## Create a list of all selected mesh objects
+  DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected() if ob.getType() == 'Mesh']
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if len(DATA['OBJECTLIST']) is 2:
+  
+    ## Get the names of the first mesh object.
+    DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
+    
+    DATA['MNAME1'] = Object.Get(DATA['OBNAME1']).getData(1)
 
-		me = NMesh.GetRaw(DATA['MNAME1'])
+    me = NMesh.GetRaw(DATA['MNAME1'])
 
-		## Loop through the faces of the object.
-		for a in range(len(me.faces)):
+    ## Loop through the faces of the object.
+    for a in range(len(me.faces)):
 
-			## Check to make sure the face has the required nr of verts.
-			if len(me.faces[a].v) is 3 or len(me.faces[a].v) is 4:
+      ## Check to make sure the face has the required nr of verts.
+      if len(me.faces[a].v) is 3 or len(me.faces[a].v) is 4:
 
-				## Get the position of the midpoint of this face
-				PosOne = getMidF(me.faces[a], DATA['OBNAME1'])
-				
-				## Get the names of the second mesh object.
-				DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
-				DATA['MNAME2'] = Object.Get(DATA['OBNAME2']).getData(1)
+        ## Get the position of the midpoint of this face
+        PosOne = getMidF(me.faces[a], DATA['OBNAME1'])
+        
+        ## Get the names of the second mesh object.
+        DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
+        DATA['MNAME2'] = Object.Get(DATA['OBNAME2']).getData(1)
 
-				me2 = NMesh.GetRaw(DATA['MNAME2'])
+        me2 = NMesh.GetRaw(DATA['MNAME2'])
 
-				## Loop through the faces of the object.
-				for b in range(len(me2.faces)):
+        ## Loop through the faces of the object.
+        for b in range(len(me2.faces)):
 
-					## Check to make sure the face has the required nr of verts.
-					if len(me2.faces[b].v) is 3 or len(me2.faces[b].v) is 4:
+          ## Check to make sure the face has the required nr of verts.
+          if len(me2.faces[b].v) is 3 or len(me2.faces[b].v) is 4:
 
-						## Get the position of the midpoint of this face
-						PosTwo = getMidF(me2.faces[b], DATA['OBNAME2'])
-					
-						## Calculate the distance between the two midpoints
-						CurDist = vertDist(PosOne, PosTwo)
-						
-						## Getting the closest point
-						if BUTTON['MEASURE'].val is 2:
-						
-							## See whether it's the first measurement or if the points are closer.
-							if a is 0 and b is 0 or DATA['DISTANCE'] > CurDist:
+            ## Get the position of the midpoint of this face
+            PosTwo = getMidF(me2.faces[b], DATA['OBNAME2'])
+          
+            ## Calculate the distance between the two midpoints
+            CurDist = vertDist(PosOne, PosTwo)
+            
+            ## Getting the closest point
+            if BUTTON['MEASURE'].val is 2:
+            
+              ## See whether it's the first measurement or if the points are closer.
+              if a is 0 and b is 0 or DATA['DISTANCE'] > CurDist:
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								Succes = True
-								
-						## Getting the furthest point	
-						else:
-						
-							## See whether it's the first measurement or if the points are closer.
-							if a is 0 and b is 0 or DATA['DISTANCE'] < CurDist:
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                Succes = True
+                
+            ## Getting the furthest point	
+            else:
+            
+              ## See whether it's the first measurement or if the points are closer.
+              if a is 0 and b is 0 or DATA['DISTANCE'] < CurDist:
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								Succes = True
-								
-		if Succes is False:
-			DATA['RESULT'] = "One of your two meshes has no faces!"
-			
-	else:
-		DATA['RESULT'] = "No two mesh objects selected!"
-	return Succes
-		
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                Succes = True
+                
+    if Succes is False:
+      DATA['RESULT'] = "One of your two meshes has no faces!"
+      
+  else:
+    DATA['RESULT'] = "No two mesh objects selected!"
+  return Succes
+    
 ####################################################
 # GETTING THE OBJECT CENTERS
 ####################################################
-	
+  
 def GetObjectCenters():
 
-	Succes = False
-	
-	## Create a list of all selected mesh objects
-	DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected()]
-	
-	## Check to make sure there's 2 mesh objects selected
-	if len(DATA['OBJECTLIST']) is 2:
-	
-		## Get the names of the first mesh object.
-		DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
-		
-		## Get the position of the midpoint of this face
-		DATA['LOC1'] = Object.Get(DATA['OBNAME1']).getLocation()
-				
-		## Get the names of the second mesh object.
-		DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
+  Succes = False
+  
+  ## Create a list of all selected mesh objects
+  DATA['OBJECTLIST'] = [ob for ob in Blender.Object.GetSelected()]
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if len(DATA['OBJECTLIST']) is 2:
+  
+    ## Get the names of the first mesh object.
+    DATA['OBNAME1'] = DATA['OBJECTLIST'][0].getName()
+    
+    ## Get the position of the midpoint of this face
+    DATA['LOC1'] = Object.Get(DATA['OBNAME1']).getLocation()
+        
+    ## Get the names of the second mesh object.
+    DATA['OBNAME2'] = DATA['OBJECTLIST'][1].getName()
 
-		## Get the position of the midpoint of this face
-		DATA['LOC2'] = Object.Get(DATA['OBNAME2']).getLocation()
-					
-		## Calculate the distance between the two midpoints
-		DATA['DISTANCE'] = vertDist(DATA['LOC1'], DATA['LOC2'])
-		
-		Succes = True
-		
-	if Succes is False:
-		DATA['RESULT'] = "No two objects selected!"
-		
-	return Succes
-		
+    ## Get the position of the midpoint of this face
+    DATA['LOC2'] = Object.Get(DATA['OBNAME2']).getLocation()
+          
+    ## Calculate the distance between the two midpoints
+    DATA['DISTANCE'] = vertDist(DATA['LOC1'], DATA['LOC2'])
+    
+    Succes = True
+    
+  if Succes is False:
+    DATA['RESULT'] = "No two objects selected!"
+    
+  return Succes
+    
 ####################################################
 # GETTING THE TWO MESH FACES
 ####################################################
-	
+  
 def GetMeshFaces():
 
-	Succes = False
-	
-	## Check to make sure there's 2 mesh objects selected
-	if Object.GetSelected()[0].getType() == 'Mesh':
-	
-		## Get the selected object
-		DATA['OBNAME1'] = Object.GetSelected()[0].getName()
+  Succes = False
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if Object.GetSelected()[0].getType() == 'Mesh':
+  
+    ## Get the selected object
+    DATA['OBNAME1'] = Object.GetSelected()[0].getName()
 
-		## Get the name of the mesh of the selected object
-		DATA['MNAME1'] = Object.GetSelected()[0].getData(1)
+    ## Get the name of the mesh of the selected object
+    DATA['MNAME1'] = Object.GetSelected()[0].getData(1)
 
-		me = NMesh.GetRaw(DATA['MNAME1'])
+    me = NMesh.GetRaw(DATA['MNAME1'])
 
-		## Get the two selected faces.
-		if BUTTON['MEASURE'].val is 8:
-			
-			## Create a list of all faces
-			FaceList = []
-			for f in me.faces:
-			  if f.sel:
-				FaceList.append(f)
+    ## Get the two selected faces.
+    if BUTTON['MEASURE'].val is 8:
+      
+      ## Create a list of all faces
+      FaceList = []
+      for f in me.faces:
+        if f.sel:
+          FaceList.append(f)
 
-			if len(FaceList) is 2:
+      if len(FaceList) is 2:
 
-				for a in range(len(me.faces)):
+        for a in range(len(me.faces)):
 
-					if me.faces[a] is FaceList[0]:
+          if me.faces[a] is FaceList[0]:
 
-						for b in range(len(me.faces)):
+            for b in range(len(me.faces)):
 
-							if me.faces[b] is FaceList[1]:
-								## Get the position of the midpoint of this face
-								PosOne = getMidF(me.faces[a], DATA['OBNAME1'])
+              if me.faces[b] is FaceList[1]:
+                ## Get the position of the midpoint of this face
+                PosOne = getMidF(me.faces[a], DATA['OBNAME1'])
 
-								## Get the position of the midpoint of this face
-								PosTwo = getMidF(me.faces[b], DATA['OBNAME1'])
+                ## Get the position of the midpoint of this face
+                PosTwo = getMidF(me.faces[b], DATA['OBNAME1'])
 
-								## Calculate the distance between the two midpoints
-								CurDist = vertDist(PosOne, PosTwo)
+                ## Calculate the distance between the two midpoints
+                CurDist = vertDist(PosOne, PosTwo)
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True
-								
-			else:
-				DATA['RESULT'] = "No two faces selected!"
-				
-		## Get the closest or furthest faces.
-		else:
-		
-			if len(me.faces) > 1:
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True
+                
+      else:
+        DATA['RESULT'] = "No two faces selected!"
+        
+    ## Get the closest or furthest faces.
+    else:
+    
+      if len(me.faces) > 1:
 
-				## Loop through the faces of the object.
-				for a in range(len(me.faces)):
+        ## Loop through the faces of the object.
+        for a in range(len(me.faces)):
 
-					## Check to make sure the face has the required nr of verts.
-					if len(me.faces[a].v) is 3 or len(me.faces[a].v) is 4:
+          ## Check to make sure the face has the required nr of verts.
+          if len(me.faces[a].v) is 3 or len(me.faces[a].v) is 4:
 
-						## Get the position of the midpoint of this face
-						PosOne = getMidF(me.faces[a], DATA['OBNAME1'])
+            ## Get the position of the midpoint of this face
+            PosOne = getMidF(me.faces[a], DATA['OBNAME1'])
 
-						## Loop through the faces of the object.
-						for b in range(len(me.faces)):
+            ## Loop through the faces of the object.
+            for b in range(len(me.faces)):
 
-							## Check to make sure the face has the required nr of verts.
-							if len(me.faces[b].v) is 3 or len(me.faces[b].v) is 4:
+              ## Check to make sure the face has the required nr of verts.
+              if len(me.faces[b].v) is 3 or len(me.faces[b].v) is 4:
 
-								## Get the position of the midpoint of this face
-								PosTwo = getMidF(me.faces[b], DATA['OBNAME1'])
+                ## Get the position of the midpoint of this face
+                PosTwo = getMidF(me.faces[b], DATA['OBNAME1'])
 
-								## Calculate the distance between the two midpoints
-								CurDist = vertDist(PosOne, PosTwo)
+                ## Calculate the distance between the two midpoints
+                CurDist = vertDist(PosOne, PosTwo)
 
-								## Getting the closest point
-								if BUTTON['MEASURE'].val is 9:
+                ## Getting the closest point
+                if BUTTON['MEASURE'].val is 9:
 
-									## See whether it's the first measurement or if the points are closer.
-									if a is 0 and b is 1 or DATA['DISTANCE'] > CurDist and a != b:
+                  ## See whether it's the first measurement or if the points are closer.
+                  if a is 0 and b is 1 or DATA['DISTANCE'] > CurDist and a != b:
 
-										DATA['LOC1'] = PosOne
-										DATA['LOC2'] = PosTwo
-										DATA['DISTANCE'] = CurDist
-										DATA['OBNAME2'] = str(a) + str(b)
-										Succes = True
+                    DATA['LOC1'] = PosOne
+                    DATA['LOC2'] = PosTwo
+                    DATA['DISTANCE'] = CurDist
+                    DATA['OBNAME2'] = str(a) + str(b)
+                    Succes = True
 
-								## Getting the furthest point	
-								else:
+                ## Getting the furthest point	
+                else:
 
-									## See whether it's the first measurement or if the points are closer.
-									if a is 0 and b is 1 or DATA['DISTANCE'] < CurDist and a != b:
+                  ## See whether it's the first measurement or if the points are closer.
+                  if a is 0 and b is 1 or DATA['DISTANCE'] < CurDist and a != b:
 
-										DATA['LOC1'] = PosOne
-										DATA['LOC2'] = PosTwo
-										DATA['DISTANCE'] = CurDist
-										DATA['OBNAME2'] = str(a) + str(b)
-										Succes = True
-			else:
-				DATA['RESULT'] = "Not enough faces for measurement!"
+                    DATA['LOC1'] = PosOne
+                    DATA['LOC2'] = PosTwo
+                    DATA['DISTANCE'] = CurDist
+                    DATA['OBNAME2'] = str(a) + str(b)
+                    Succes = True
+      else:
+        DATA['RESULT'] = "Not enough faces for measurement!"
 
-	else:
-		DATA['RESULT'] = "No mesh object selected!"
-	return Succes
-	
+  else:
+    DATA['RESULT'] = "No mesh object selected!"
+  return Succes
+  
 ####################################################
 # GETTING THE TWO MESH EDGES
 ####################################################
-	
+  
 def GetMeshEdges():
 
-	Succes = False
-	
-	## Check to make sure there's 2 mesh objects selected
-	if Object.GetSelected()[0].getType() == 'Mesh':
-	
-		## Get the selected object
-		DATA['OBNAME1'] = Object.GetSelected()[0].getName()
+  Succes = False
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if Object.GetSelected()[0].getType() == 'Mesh':
+  
+    ## Get the selected object
+    DATA['OBNAME1'] = Object.GetSelected()[0].getName()
 
-		## Get the name of the mesh of the selected object
-		DATA['MNAME1'] = Object.GetSelected()[0].getData(1)
+    ## Get the name of the mesh of the selected object
+    DATA['MNAME1'] = Object.GetSelected()[0].getData(1)
 
-		## Get the object matrix for applying
-		tarObj = Object.Get(DATA['OBNAME1'])
+    ## Get the object matrix for applying
+    tarObj = Object.Get(DATA['OBNAME1'])
 
-		ObMatrix = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
-		
-		me = NMesh.GetRaw(DATA['MNAME1'])
+    ObMatrix = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+    
+    me = NMesh.GetRaw(DATA['MNAME1'])
 
-		## Get the two selected faces.
-		if BUTTON['MEASURE'].val is 11:
-			
-			## Create a list of sel edges
-			SEL = NMesh.EdgeFlags['SELECT']
-			EdgeList = []
-			for f in me.edges:
-			  if f.flag & SEL:
-				EdgeList.append(f)
+    ## Get the two selected faces.
+    if BUTTON['MEASURE'].val is 11:
+      
+      ## Create a list of sel edges
+      SEL = NMesh.EdgeFlags['SELECT']
+      EdgeList = []
+      for f in me.edges:
+        if f.flag & SEL:
+          EdgeList.append(f)
 
-			if len(EdgeList) is 2:
+      if len(EdgeList) is 2:
 
-				for a in range(len(me.edges)):
+        for a in range(len(me.edges)):
 
-					if me.edges[a] is EdgeList[0]:
+          if me.edges[a] is EdgeList[0]:
 
-						for b in range(len(me.edges)):
+            for b in range(len(me.edges)):
 
-							if me.edges[b] is EdgeList[1]:
-								PosOne = Mathutils.MidpointVecs(apply_transform(me.edges[a].v1.co, ObMatrix), apply_transform(me.edges[a].v2.co, ObMatrix))
+              if me.edges[b] is EdgeList[1]:
+                PosOne = Mathutils.MidpointVecs(apply_transform(me.edges[a].v1.co, ObMatrix), apply_transform(me.edges[a].v2.co, ObMatrix))
 
-								PosTwo = Mathutils.MidpointVecs(apply_transform(me.edges[b].v1.co, ObMatrix), apply_transform(me.edges[b].v2.co, ObMatrix))
+                PosTwo = Mathutils.MidpointVecs(apply_transform(me.edges[b].v1.co, ObMatrix), apply_transform(me.edges[b].v2.co, ObMatrix))
 
-								## Calculate the distance between the two midpoints
-								CurDist = vertDist(PosOne, PosTwo)
+                ## Calculate the distance between the two midpoints
+                CurDist = vertDist(PosOne, PosTwo)
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True					
-			else:
-				DATA['RESULT'] = "No two edges selected!"
-				
-		## Get the closest or furthest faces.
-		else:
-		
-			if len(me.edges) > 1:
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True					
+      else:
+        DATA['RESULT'] = "No two edges selected!"
+        
+    ## Get the closest or furthest faces.
+    else:
+    
+      if len(me.edges) > 1:
 
-				## Loop through the faces of the object.
-				for a in range(len(me.edges)):
+        ## Loop through the faces of the object.
+        for a in range(len(me.edges)):
 
-					PosOne = Mathutils.MidpointVecs(apply_transform(me.edges[a].v1.co, ObMatrix), apply_transform(me.edges[a].v2.co, ObMatrix))
+          PosOne = Mathutils.MidpointVecs(apply_transform(me.edges[a].v1.co, ObMatrix), apply_transform(me.edges[a].v2.co, ObMatrix))
 
-					## Loop through the faces of the object.
-					for b in range(len(me.edges)):
+          ## Loop through the faces of the object.
+          for b in range(len(me.edges)):
 
-						PosTwo = Mathutils.MidpointVecs(apply_transform(me.edges[b].v1.co, ObMatrix), apply_transform(me.edges[b].v2.co, ObMatrix))
+            PosTwo = Mathutils.MidpointVecs(apply_transform(me.edges[b].v1.co, ObMatrix), apply_transform(me.edges[b].v2.co, ObMatrix))
 
-						## Calculate the distance between the two midpoints
-						CurDist = vertDist(PosOne, PosTwo)
+            ## Calculate the distance between the two midpoints
+            CurDist = vertDist(PosOne, PosTwo)
 
-						## Getting the closest point
-						if BUTTON['MEASURE'].val is 12:
+            ## Getting the closest point
+            if BUTTON['MEASURE'].val is 12:
 
-							## See whether it's the first measurement or if the points are closer.
-							if a is 0 and b is 1 or DATA['DISTANCE'] > CurDist and a != b:
+              ## See whether it's the first measurement or if the points are closer.
+              if a is 0 and b is 1 or DATA['DISTANCE'] > CurDist and a != b:
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True
 
-						## Getting the furthest point	
-						else:
+            ## Getting the furthest point	
+            else:
 
-							## See whether it's the first measurement or if the points are closer.
-							if a is 0 and b is 1 or DATA['DISTANCE'] < CurDist and a != b:
+              ## See whether it's the first measurement or if the points are closer.
+              if a is 0 and b is 1 or DATA['DISTANCE'] < CurDist and a != b:
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True
-				
-			else:
-				DATA['RESULT'] = "Not enough edges for measurement!"
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True
+        
+      else:
+        DATA['RESULT'] = "Not enough edges for measurement!"
 
-	else:
-		DATA['RESULT'] = "No mesh object selected!"
-	return Succes
-		
+  else:
+    DATA['RESULT'] = "No mesh object selected!"
+  return Succes
+    
 ####################################################
 # GETTING THE TWO MESH VERTS
 ####################################################
-	
+  
 def GetMeshVerts():
 
-	Succes = False
-	
-	## Check to make sure there's 2 mesh objects selected
-	if Object.GetSelected()[0].getType() == 'Mesh':
-	
-		## Get the selected object
-		DATA['OBNAME1'] = Object.GetSelected()[0].getName()
+  Succes = False
+  
+  ## Check to make sure there's 2 mesh objects selected
+  if Object.GetSelected()[0].getType() == 'Mesh':
+  
+    ## Get the selected object
+    DATA['OBNAME1'] = Object.GetSelected()[0].getName()
 
-		## Get the name of the mesh of the selected object
-		DATA['MNAME1'] = Object.GetSelected()[0].getData(1)
+    ## Get the name of the mesh of the selected object
+    DATA['MNAME1'] = Object.GetSelected()[0].getData(1)
 
-		## Get the object matrix for applying
-		tarObj = Object.Get(DATA['OBNAME1'])
+    ## Get the object matrix for applying
+    tarObj = Object.Get(DATA['OBNAME1'])
 
-		ObMatrix = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
-		
-		me = NMesh.GetRaw(DATA['MNAME1'])
+    ObMatrix = Mathutils.Matrix(tarObj.getMatrix('worldspace'))
+    
+    me = NMesh.GetRaw(DATA['MNAME1'])
 
-		## Get the two selected faces.
-		if BUTTON['MEASURE'].val is 14:
-			
-			## Create a list of sel verts
-			VertList = []
-			for f in me.verts:
-			  if f.sel is 1:
-				VertList.append(f)
+    ## Get the two selected faces.
+    if BUTTON['MEASURE'].val is 14:
+      
+      ## Create a list of sel verts
+      VertList = []
+      for f in me.verts:
+        if f.sel is 1:
+          VertList.append(f)
 
-			if len(VertList) is 2:
+      if len(VertList) is 2:
 
-				for a in range(len(me.verts)):
+        for a in range(len(me.verts)):
 
-					if me.verts[a] is VertList[0]:
+          if me.verts[a] is VertList[0]:
 
-						for b in range(len(me.verts)):
+            for b in range(len(me.verts)):
 
-							if me.verts[b] is VertList[1]:
-								PosOne = Mathutils.MidpointVecs(apply_transform(me.verts[a].co, ObMatrix), apply_transform(me.verts[a].co, ObMatrix))
+              if me.verts[b] is VertList[1]:
+                PosOne = Mathutils.MidpointVecs(apply_transform(me.verts[a].co, ObMatrix), apply_transform(me.verts[a].co, ObMatrix))
 
-								PosTwo = Mathutils.MidpointVecs(apply_transform(me.verts[b].co, ObMatrix), apply_transform(me.verts[b].co, ObMatrix))
+                PosTwo = Mathutils.MidpointVecs(apply_transform(me.verts[b].co, ObMatrix), apply_transform(me.verts[b].co, ObMatrix))
 
-								## Calculate the distance between the two midpoints
-								CurDist = vertDist(PosOne, PosTwo)
+                ## Calculate the distance between the two midpoints
+                CurDist = vertDist(PosOne, PosTwo)
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True
-								
-			else:
-				DATA['RESULT'] = "No two verts selected!"
-			
-		## Get the closest or furthest faces.
-		else:
-		
-			if len(me.verts) > 1:
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True
+                
+      else:
+        DATA['RESULT'] = "No two verts selected!"
+      
+    ## Get the closest or furthest faces.
+    else:
+    
+      if len(me.verts) > 1:
 
-				## Loop through the faces of the object.
-				for a in range(len(me.verts)):
+        ## Loop through the faces of the object.
+        for a in range(len(me.verts)):
 
-					PosOne = Mathutils.MidpointVecs(apply_transform(me.verts[a].co, ObMatrix), apply_transform(me.verts[a].co, ObMatrix))
+          PosOne = Mathutils.MidpointVecs(apply_transform(me.verts[a].co, ObMatrix), apply_transform(me.verts[a].co, ObMatrix))
 
-					## Loop through the faces of the object.
-					for b in range(len(me.verts)):
+          ## Loop through the faces of the object.
+          for b in range(len(me.verts)):
 
-						PosTwo = Mathutils.MidpointVecs(apply_transform(me.verts[b].co, ObMatrix), apply_transform(me.verts[b].co, ObMatrix))
+            PosTwo = Mathutils.MidpointVecs(apply_transform(me.verts[b].co, ObMatrix), apply_transform(me.verts[b].co, ObMatrix))
 
-						## Calculate the distance between the two midpoints
-						CurDist = vertDist(PosOne, PosTwo)
+            ## Calculate the distance between the two midpoints
+            CurDist = vertDist(PosOne, PosTwo)
 
-						## Getting the closest point
-						if BUTTON['MEASURE'].val is 15:
+            ## Getting the closest point
+            if BUTTON['MEASURE'].val is 15:
 
-							## See whether it's the first measurement or if the points are closer.
-							if a is 0 and b is 1 or DATA['DISTANCE'] > CurDist and a != b:
+              ## See whether it's the first measurement or if the points are closer.
+              if a is 0 and b is 1 or DATA['DISTANCE'] > CurDist and a != b:
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True
 
-						## Getting the furthest point	
-						else:
+            ## Getting the furthest point	
+            else:
 
-							## See whether it's the first measurement or if the points are closer.
-							if a is 0 and b is 1 or DATA['DISTANCE'] < CurDist and a != b:
+              ## See whether it's the first measurement or if the points are closer.
+              if a is 0 and b is 1 or DATA['DISTANCE'] < CurDist and a != b:
 
-								DATA['LOC1'] = PosOne
-								DATA['LOC2'] = PosTwo
-								DATA['DISTANCE'] = CurDist
-								DATA['OBNAME2'] = str(a) + str(b)
-								Succes = True
-				
-			else:
-				DATA['RESULT'] = "Not enough verts for measurement!"
+                DATA['LOC1'] = PosOne
+                DATA['LOC2'] = PosTwo
+                DATA['DISTANCE'] = CurDist
+                DATA['OBNAME2'] = str(a) + str(b)
+                Succes = True
+        
+      else:
+        DATA['RESULT'] = "Not enough verts for measurement!"
 
-	else:
-		DATA['MESSAGE'] = "No mesh object selected!"
-	return Succes
-	
+  else:
+    DATA['MESSAGE'] = "No mesh object selected!"
+  return Succes
+  
 ####################################################
 # THE SCRIPT
 ####################################################
 
 def run():
 
-	Window.WaitCursor(1)
+  Window.WaitCursor(1)
 
-	in_emode = int(Window.EditMode())
-	if in_emode: Window.EditMode(0)
+  in_emode = int(Window.EditMode())
+  if in_emode: Window.EditMode(0)
 
-	CheckThis = False
-	MType = "M" + str(BUTTON['MEASURE'].val)
+  CheckThis = False
+  MType = "M" + str(BUTTON['MEASURE'].val)
 
-	## Get the scene
-	scene = Blender.Scene.GetCurrent()
-	scene.update()
-	
-	## Get the distance between two closest faces!
-	if BUTTON['MEASURE'].val is 1:
-		CheckThis = GetObjectCenters()
-		
-	## Get the distance between two closest faces!
-	elif BUTTON['MEASURE'].val is 2 or BUTTON['MEASURE'].val is 3:
-		CheckThis = GetObjectFaces()
-		
-	## Get the distance between two closest faces!
-	elif BUTTON['MEASURE'].val is 4 or BUTTON['MEASURE'].val is 5:
-		CheckThis = GetObjectEdges()
-		
-	## Get the distance between two closest faces!
-	elif BUTTON['MEASURE'].val is 6 or BUTTON['MEASURE'].val is 7:
-		CheckThis = GetObjectVerts()
-		
-	## Get the distance between two closest faces!
-	elif BUTTON['MEASURE'].val >= 8 and BUTTON['MEASURE'].val <= 10:
-		CheckThis = GetMeshFaces()
-		
-	## Get the distance between two closest faces!
-	elif BUTTON['MEASURE'].val >= 11 and BUTTON['MEASURE'].val <= 13:
-		CheckThis = GetMeshEdges()
-		
-	## Get the distance between two closest faces!
-	elif BUTTON['MEASURE'].val >= 14 and BUTTON['MEASURE'].val <= 16:
-		CheckThis = GetMeshVerts()
-		
-	if CheckThis:
-		
-		## Constrain the measurement result.
-		if BUTTON['MCONSTRAIN'].val > 1 and BUTTON['MCONOBS'].val is 1:
-			if BUTTON['MCONSTRAIN'].val is 2:
-				DATA['LOC2'] = [DATA['LOC1'][0], DATA['LOC1'][1], DATA['LOC2'][2]]
-			elif BUTTON['MCONSTRAIN'].val is 3:
-				DATA['LOC2'] = [DATA['LOC1'][0], DATA['LOC2'][1], DATA['LOC1'][2]]
-			elif BUTTON['MCONSTRAIN'].val is 4:
-				DATA['LOC2'] = [DATA['LOC2'][0], DATA['LOC1'][1], DATA['LOC1'][2]]
-				
-			DATA['DISTANCE'] = vertDist(DATA['LOC1'], DATA['LOC2'])
-			
-		## Get the location of the midpoint between measured points.	
-		midLoc = Mathutils.MidpointVecs(Mathutils.Vector(DATA['LOC1']), Mathutils.Vector(DATA['LOC2']))
-				
-		## Create a sting for naming the measurement objects
-		ObNameString = DATA['OBNAME1'].replace('.', '') + DATA['OBNAME2'].replace('.', '') + MType
-		
-		## Remove all previous objects with the name sting.
-		if BUTTON['MAKECLEAN'].val is 1:
-			RemoveOldObs(DATA['OBNAME1'].replace('.', ''), DATA['OBNAME2'].replace('.', ''), MType)
-		
-		## Get the layers used for render
-		SetLayer = []
-		for a in range(20):
-			if int(str(BUTTON['LAYERS'][a])) is 1:
-				SetLayer.append(a)
-				
-		## Get the matrix of the object to get the correct vert positions.
-		ObMatrix = Mathutils.Matrix(Mathutils.TranslationMatrix(midLoc))
-		ObMatrix.invert()
+  ## Get the scene
+  scene = Blender.Scene.GetCurrent()
+  scene.update()
+  
+  ## Get the distance between two closest faces!
+  if BUTTON['MEASURE'].val is 1:
+    CheckThis = GetObjectCenters()
+    
+  ## Get the distance between two closest faces!
+  elif BUTTON['MEASURE'].val is 2 or BUTTON['MEASURE'].val is 3:
+    CheckThis = GetObjectFaces()
+    
+  ## Get the distance between two closest faces!
+  elif BUTTON['MEASURE'].val is 4 or BUTTON['MEASURE'].val is 5:
+    CheckThis = GetObjectEdges()
+    
+  ## Get the distance between two closest faces!
+  elif BUTTON['MEASURE'].val is 6 or BUTTON['MEASURE'].val is 7:
+    CheckThis = GetObjectVerts()
+    
+  ## Get the distance between two closest faces!
+  elif BUTTON['MEASURE'].val >= 8 and BUTTON['MEASURE'].val <= 10:
+    CheckThis = GetMeshFaces()
+    
+  ## Get the distance between two closest faces!
+  elif BUTTON['MEASURE'].val >= 11 and BUTTON['MEASURE'].val <= 13:
+    CheckThis = GetMeshEdges()
+    
+  ## Get the distance between two closest faces!
+  elif BUTTON['MEASURE'].val >= 14 and BUTTON['MEASURE'].val <= 16:
+    CheckThis = GetMeshVerts()
+    
+  if CheckThis:
+    
+    ## Constrain the measurement result.
+    if BUTTON['MCONSTRAIN'].val > 1 and BUTTON['MCONOBS'].val is 1:
+      if BUTTON['MCONSTRAIN'].val is 2:
+        DATA['LOC2'] = [DATA['LOC1'][0], DATA['LOC1'][1], DATA['LOC2'][2]]
+      elif BUTTON['MCONSTRAIN'].val is 3:
+        DATA['LOC2'] = [DATA['LOC1'][0], DATA['LOC2'][1], DATA['LOC1'][2]]
+      elif BUTTON['MCONSTRAIN'].val is 4:
+        DATA['LOC2'] = [DATA['LOC2'][0], DATA['LOC1'][1], DATA['LOC1'][2]]
+        
+      DATA['DISTANCE'] = vertDist(DATA['LOC1'], DATA['LOC2'])
+      
+    ## Get the location of the midpoint between measured points.	
+    midLoc = Mathutils.MidpointVecs(Mathutils.Vector(DATA['LOC1']), Mathutils.Vector(DATA['LOC2']))
+        
+    ## Create a sting for naming the measurement objects
+    ObNameString = DATA['OBNAME1'].replace('.', '') + DATA['OBNAME2'].replace('.', '') + MType
+    
+    ## Remove all previous objects with the name sting.
+    if BUTTON['MAKECLEAN'].val is 1:
+      RemoveOldObs(DATA['OBNAME1'].replace('.', ''), DATA['OBNAME2'].replace('.', ''), MType)
+    
+    ## Get the layers used for render
+    SetLayer = []
+    for a in range(20):
+      if int(str(BUTTON['LAYERS'][a])) is 1:
+        SetLayer.append(a)
+        
+    ## Get the matrix of the object to get the correct vert positions.
+    ObMatrix = Mathutils.Matrix(Mathutils.TranslationMatrix(midLoc))
+    ObMatrix.invert()
 
-		## Transform the vert positions to get the correct pos relative to the object centre.
-		LocalLoc1 = apply_transform(DATA['LOC1'], ObMatrix)
-		LocalLoc2 = apply_transform(DATA['LOC2'], ObMatrix)
-		
-		if DATA['DISTANCE'] > 0:
-			## Get the euler for the object rotation.
-			NewEuler = GetEuler(LocalLoc1, LocalLoc2, DATA['DISTANCE'])
-		else:
-			NewEuler = [0.0,0.0,0.0]
-				
-		if BUTTON['MAKEARROW'].val is 1 or BUTTON['MAKETEXT'].val is 1:
-		
-			## Attempt to get the material.
-			try:
-				NewMaterial = Material.Get("Measurement")
-			## If it doesn't exist, create it.
-			except:
-				## New material
-				NewMaterial = Material.New('Measurement')
-				if BUTTON['OBCOL'].val is 1:
-					NewMaterial.rgbCol = [0.0, 0.0, 0.0]
-				elif BUTTON['OBCOL'].val is 2:
-					NewMaterial.rgbCol = [1.0, 1.0, 1.0]
-				elif BUTTON['OBCOL'].val is 3:
-					NewMaterial.rgbCol = [1.0, 0.0, 0.0]
-				elif BUTTON['OBCOL'].val is 4:
-					NewMaterial.rgbCol = [1.0, 0.5, 0.0]
-				elif BUTTON['OBCOL'].val is 5:
-					NewMaterial.rgbCol = [1.0, 1.0, 0.0]
-				elif BUTTON['OBCOL'].val is 6:
-					NewMaterial.rgbCol = [0.0, 1.0, 0.0]
-				elif BUTTON['OBCOL'].val is 7:
-					NewMaterial.rgbCol = [0.0, 1.0, 1.0]
-				elif BUTTON['OBCOL'].val is 8:
-					NewMaterial.rgbCol = [0.0, 0.0, 1.0]
-				elif BUTTON['OBCOL'].val is 8:
-					NewMaterial.rgbCol = [1.0, 0.0, 1.0]
-				NewMaterial.mode |= Material.Modes.SHADELESS
-				NewMaterial.mode &= ~Material.Modes.TRACEABLE
-				NewMaterial.mode &= ~Material.Modes.SHADOW
-				NewMaterial.mode &= ~Material.Modes.SHADOWBUF
-				
-		## Make the arrow if required.
-		if BUTTON['MAKEARROW'].val is 1:
-			
-			## Make a new mesh
-			NewObject = Object.New('Mesh')
-			NewObject.setName(ObNameString)
-			NewObject.setLocation(midLoc[0], midLoc[1], midLoc[2])
-			scene.link(NewObject)
-			NewObject.layers = SetLayer
-		
-			NewObject.setEuler((NewEuler[0], NewEuler[1], NewEuler[2]))
-	
-			mez = NewObject.getData()
-			
-			mez.setMaterials([NewMaterial])
-		
-			## Add the verts and faces.
-			SkinObject(mez, Vlist[BUTTON['ARROW'].val], Flist[BUTTON['ARROW'].val], DATA['DISTANCE'])
+    ## Transform the vert positions to get the correct pos relative to the object centre.
+    LocalLoc1 = apply_transform(DATA['LOC1'], ObMatrix)
+    LocalLoc2 = apply_transform(DATA['LOC2'], ObMatrix)
+    
+    if DATA['DISTANCE'] > 0:
+      ## Get the euler for the object rotation.
+      NewEuler = GetEuler(LocalLoc1, LocalLoc2, DATA['DISTANCE'])
+    else:
+      NewEuler = [0.0,0.0,0.0]
+        
+    if BUTTON['MAKEARROW'].val is 1 or BUTTON['MAKETEXT'].val is 1:
+    
+      ## Attempt to get the material.
+      try:
+        NewMaterial = Material.Get("Measurement")
+      ## If it doesn't exist, create it.
+      except:
+        ## New material
+        NewMaterial = Material.New('Measurement')
+        if BUTTON['OBCOL'].val is 1:
+          NewMaterial.rgbCol = [0.0, 0.0, 0.0]
+        elif BUTTON['OBCOL'].val is 2:
+          NewMaterial.rgbCol = [1.0, 1.0, 1.0]
+        elif BUTTON['OBCOL'].val is 3:
+          NewMaterial.rgbCol = [1.0, 0.0, 0.0]
+        elif BUTTON['OBCOL'].val is 4:
+          NewMaterial.rgbCol = [1.0, 0.5, 0.0]
+        elif BUTTON['OBCOL'].val is 5:
+          NewMaterial.rgbCol = [1.0, 1.0, 0.0]
+        elif BUTTON['OBCOL'].val is 6:
+          NewMaterial.rgbCol = [0.0, 1.0, 0.0]
+        elif BUTTON['OBCOL'].val is 7:
+          NewMaterial.rgbCol = [0.0, 1.0, 1.0]
+        elif BUTTON['OBCOL'].val is 8:
+          NewMaterial.rgbCol = [0.0, 0.0, 1.0]
+        elif BUTTON['OBCOL'].val is 8:
+          NewMaterial.rgbCol = [1.0, 0.0, 1.0]
+        NewMaterial.mode |= Material.Modes.SHADELESS
+        NewMaterial.mode &= ~Material.Modes.TRACEABLE
+        NewMaterial.mode &= ~Material.Modes.SHADOW
+        NewMaterial.mode &= ~Material.Modes.SHADOWBUF
+        
+    ## Make the arrow if required.
+    if BUTTON['MAKEARROW'].val is 1:
+      
+      ## Make a new mesh
+      NewObject = Object.New('Mesh')
+      NewObject.setName(ObNameString)
+      NewObject.setLocation(midLoc[0], midLoc[1], midLoc[2])
+      scene.link(NewObject)
+      NewObject.layers = SetLayer
+    
+      NewObject.setEuler((NewEuler[0], NewEuler[1], NewEuler[2]))
+  
+      mez = NewObject.getData()
+      
+      mez.setMaterials([NewMaterial])
+    
+      ## Add the verts and faces.
+      SkinObject(mez, Vlist[BUTTON['ARROW'].val], Flist[BUTTON['ARROW'].val], DATA['DISTANCE'])
 
-			## Make the faces of the arrow smooth.			.
-			for a in mez.faces:
-				a.smooth = 1
-			
-			## Switch autosmooth on for the mesh.
-			mez.mode |= NMesh.Modes.AUTOSMOOTH
-		
-			mez.update()
-				
-		## Get the appropriate measurement.		
-		DATA['RESULT'] = GetMeasurement()
-		
-		## Create the measurement object if wanted.
-		if BUTTON['MAKETEXT'].val is 1:
-		
-			## Create the text object for the new measurement data.
- 			txt = Text3d.New("Measurement")
- 			txt.setText(DATA['RESULT'])	
- 			txt.setYoffset(BUTTON['TEXTOFFS'].val)
- 			txt.setAlignment(Text3d.MIDDLE)
- 			txt.setExtrudeBevelDepth(BUTTON['TEXTBV'].val)
- 			txt.setExtrudeDepth(BUTTON['TEXTEX'].val)
- 			NewObject = Object.New('Text')
- 			NewObject.setName(ObNameString)
- 			NewObject.link(txt)
- 			NewObject.setLocation(midLoc[0], midLoc[1], midLoc[2])
- 			NewObject.setEuler((NewEuler[0], NewEuler[1], NewEuler[2]))
- 			NewObject.setSize(BUTTON['TEXTSIZE'].val, BUTTON['TEXTSIZE'].val, BUTTON['TEXTSIZE'].val)
- 			NewObject.makeDisplayList()
- 			NewObject.setMaterials([NewMaterial])
- 			NewObject.colbits = 0x01
- 			scene.link(NewObject)
-  			NewObject.layers = SetLayer
+      ## Make the faces of the arrow smooth.			.
+      for a in mez.faces:
+        a.smooth = 1
+      
+      ## Switch autosmooth on for the mesh.
+      mez.mode |= NMesh.Modes.AUTOSMOOTH
+    
+      mez.update()
+        
+    ## Get the appropriate measurement.		
+    DATA['RESULT'] = GetMeasurement()
+    
+    ## Create the measurement object if wanted.
+    if BUTTON['MAKETEXT'].val is 1:
+    
+      ## Create the text object for the new measurement data.
+      txt = Text3d.New("Measurement")
+      txt.setText(DATA['RESULT'])	
+      txt.setYoffset(BUTTON['TEXTOFFS'].val)
+      txt.setAlignment(Text3d.MIDDLE)
+      txt.setExtrudeBevelDepth(BUTTON['TEXTBV'].val)
+      txt.setExtrudeDepth(BUTTON['TEXTEX'].val)
+      NewObject = Object.New('Text')
+      NewObject.setName(ObNameString)
+      NewObject.link(txt)
+      NewObject.setLocation(midLoc[0], midLoc[1], midLoc[2])
+      NewObject.setEuler((NewEuler[0], NewEuler[1], NewEuler[2]))
+      NewObject.setSize(BUTTON['TEXTSIZE'].val, BUTTON['TEXTSIZE'].val, BUTTON['TEXTSIZE'].val)
+      NewObject.makeDisplayList()
+      NewObject.setMaterials([NewMaterial])
+      NewObject.colbits = 0x01
+      scene.link(NewObject)
+      NewObject.layers = SetLayer
 
-		## Succesful measurement message.
-		DATA['MESSAGE'] = "Measurement executed succesfully"
-		
-		## Update the scene
-		scene.update()
-		## Redraw all windows
-		Window.RedrawAll()
-					
-	## If there's no two mesh objects selected generate an error message.
-	else:
-		DATA['MESSAGE'] = "An error occured!"
-	
-	if in_emode: Window.EditMode(1)
-	
-	Window.WaitCursor(0)
-	
+    ## Succesful measurement message.
+    DATA['MESSAGE'] = "Measurement executed succesfully"
+    
+    ## Update the scene
+    scene.update()
+    ## Redraw all windows
+    Window.RedrawAll()
+          
+  ## If there's no two mesh objects selected generate an error message.
+  else:
+    DATA['MESSAGE'] = "An error occured!"
+  
+  if in_emode: Window.EditMode(1)
+  
+  Window.WaitCursor(0)
+  
 ####################################################
 # DRAW THE GUI
 ####################################################
 
 def gui():
 
-	#############################################################
-	# Backgrounds
-	#############################################################
+  #############################################################
+  # Backgrounds
+  #############################################################
 
-	BGL.glClearColor(0.5, 0.5, 0.5, 0.0)
-	BGL.glClear(BGL.GL_COLOR_BUFFER_BIT)
+  BGL.glClearColor(0.5, 0.5, 0.5, 0.0)
+  BGL.glClear(BGL.GL_COLOR_BUFFER_BIT)
 
-	BGL.glColor3f(0, 0, 0)			# Black background
-	BGL.glRectf(1, 1, 269, 456)
+  BGL.glColor3f(0, 0, 0)			# Black background
+  BGL.glRectf(1, 1, 269, 456)
 
-	BGL.glColor3f(0.7, 0.7, 0.8)		# Light background
-	BGL.glRectf(2, 2, 268, 455)
+  BGL.glColor3f(0.7, 0.7, 0.8)		# Light background
+  BGL.glRectf(2, 2, 268, 455)
 
-	BGL.glColor3f(0.5, 0.5, 0.5)			# Grey
-	BGL.glRectf(3, 3, 267, 454)
+  BGL.glColor3f(0.5, 0.5, 0.5)			# Grey
+  BGL.glRectf(3, 3, 267, 454)
 
-	BGL.glColor3f(0.45, 0.45, 0.45)			# Grey
-	BGL.glRectf(10, 365, 259, 415)
+  BGL.glColor3f(0.45, 0.45, 0.45)			# Grey
+  BGL.glRectf(10, 365, 259, 415)
 
-	#############################################################
-	# TEXT
-	#############################################################	
-	
-	BGL.glColor3f(0.7, 0.7, 0.8)
-	BGL.glRasterPos2d(20, 440)
-	Draw.Text("Blender Caliper " + str(VERSION) + " (c)")
-	
-	DrawTitle("results and messages", 420)
+  #############################################################
+  # TEXT
+  #############################################################	
+  
+  BGL.glColor3f(0.7, 0.7, 0.8)
+  BGL.glRasterPos2d(20, 440)
+  Draw.Text("Blender Caliper " + str(VERSION) + " (c)")
+  
+  DrawTitle("results and messages", 420)
 
-	BGL.glColor3f(1.0, 1.0, 1.0)
-	BGL.glRasterPos2d(20, 395)
+  BGL.glColor3f(1.0, 1.0, 1.0)
+  BGL.glRasterPos2d(20, 395)
 
-	if DATA['MESSAGE'] != "a":
-		Draw.Text(str(DATA['MESSAGE']))
-		
-		if DATA['RESULT'] != "a":
-			BGL.glRasterPos2d(20, 375)
-			Draw.Text(str(DATA['RESULT']))
+  if DATA['MESSAGE'] != "a":
+    Draw.Text(str(DATA['MESSAGE']))
+    
+    if DATA['RESULT'] != "a":
+      BGL.glRasterPos2d(20, 375)
+      Draw.Text(str(DATA['RESULT']))
 
-	else:
-		Draw.Text("Select your objects, and settings,")
-		BGL.glRasterPos2d(20, 375)
-		Draw.Text("and click on MEASURE.")
-	
-	#############################################################
-	# BUTTONS
-	#############################################################
-	
-	DrawTitle("object settings", 350)
+  else:
+    Draw.Text("Select your objects, and settings,")
+    BGL.glRasterPos2d(20, 375)
+    Draw.Text("and click on MEASURE.")
+  
+  #############################################################
+  # BUTTONS
+  #############################################################
+  
+  DrawTitle("object settings", 350)
 
-	BUTTON['MAKETEXT'] = Draw.Toggle("Text", 2, 20, 325, 70, 20, BUTTON['MAKETEXT'].val, "Make a 3d text object to display the measurement result.")
+  BUTTON['MAKETEXT'] = Draw.Toggle("Text", 2, 20, 325, 70, 20, BUTTON['MAKETEXT'].val, "Make a 3d text object to display the measurement result.")
 
-	BUTTON['MAKEARROW'] = Draw.Toggle("Arrow", 2, 100, 325, 70, 20, BUTTON['MAKEARROW'].val, "Make a 3d arrow object to display the measurement result.")
-	
-	BUTTON['MAKECLEAN'] = Draw.Toggle("Clean", 2, 180, 325, 70, 20, BUTTON['MAKECLEAN'].val, "Try to remove the previous measurement objects between these two points (may not work if your object names are very long).")
-	
-	## Layer selection buttons
-	BUTTON['LAYERS'][1] = Draw.Toggle(" ", 2, 20, 310, 14, 10, int(str(BUTTON['LAYERS'][1])), "Create the objects on layer 1")
-	BUTTON['LAYERS'][2] = Draw.Toggle(" ", 2, 34, 310, 14, 10, int(str(BUTTON['LAYERS'][2])), "Create the objects on layer 2")
-	BUTTON['LAYERS'][3] = Draw.Toggle(" ", 2, 48, 310, 14, 10, int(str(BUTTON['LAYERS'][3])), "Create the objects on layer 3")
-	BUTTON['LAYERS'][4] = Draw.Toggle(" ", 2, 62, 310, 14, 10, int(str(BUTTON['LAYERS'][4])), "Create the objects on layer 4")
-	BUTTON['LAYERS'][5] = Draw.Toggle(" ", 2, 76, 310, 14, 10, int(str(BUTTON['LAYERS'][5])), "Create the objects on layer 5")
-	
-	BUTTON['LAYERS'][6] = Draw.Toggle(" ", 2, 100, 310, 14, 10, int(str(BUTTON['LAYERS'][6])), "Create the objects on layer 6")
-	BUTTON['LAYERS'][7] = Draw.Toggle(" ", 2, 114, 310, 14, 10, int(str(BUTTON['LAYERS'][7])), "Create the objects on layer 7")
-	BUTTON['LAYERS'][8] = Draw.Toggle(" ", 2, 128, 310, 14, 10, int(str(BUTTON['LAYERS'][8])), "Create the objects on layer 8")
-	BUTTON['LAYERS'][9] = Draw.Toggle(" ", 2, 142, 310, 14, 10, int(str(BUTTON['LAYERS'][9])), "Create the objects on layer 9")
-	BUTTON['LAYERS'][10] = Draw.Toggle(" ", 2, 156, 310, 14, 10,int(str(BUTTON['LAYERS'][10])), "Create the objects on layer 10")
-	
-	BUTTON['LAYERS'][11] = Draw.Toggle(" ", 2, 20, 300, 14, 10, int(str(BUTTON['LAYERS'][11])), "Create the objects on layer 11")
-	BUTTON['LAYERS'][12] = Draw.Toggle(" ", 2, 34, 300, 14, 10, int(str(BUTTON['LAYERS'][12])), "Create the objects on layer 12")
-	BUTTON['LAYERS'][13] = Draw.Toggle(" ", 2, 48, 300, 14, 10, int(str(BUTTON['LAYERS'][13])), "Create the objects on layer 13")
-	BUTTON['LAYERS'][14] = Draw.Toggle(" ", 2, 62, 300, 14, 10, int(str(BUTTON['LAYERS'][14])), "Create the objects on layer 14")
-	BUTTON['LAYERS'][15] = Draw.Toggle(" ", 2, 76, 300, 14, 10, int(str(BUTTON['LAYERS'][15])), "Create the objects on layer 15")
-	
-	BUTTON['LAYERS'][16] = Draw.Toggle(" ", 2, 100, 300, 14, 10, int(str(BUTTON['LAYERS'][16])), "Create the objects on layer 16")
-	BUTTON['LAYERS'][17] = Draw.Toggle(" ", 2, 114, 300, 14, 10, int(str(BUTTON['LAYERS'][17])), "Create the objects on layer 17")
-	BUTTON['LAYERS'][18] = Draw.Toggle(" ", 2, 128, 300, 14, 10, int(str(BUTTON['LAYERS'][18])), "Create the objects on layer 18")
-	BUTTON['LAYERS'][19] = Draw.Toggle(" ", 2, 142, 300, 14, 10, int(str(BUTTON['LAYERS'][19])), "Create the objects on layer 19")
-	BUTTON['LAYERS'][20] = Draw.Toggle(" ", 2, 156, 300, 14, 10, int(str(BUTTON['LAYERS'][20])), "Create the objects on layer 20")
-	
-	## Measurement material color selector
-	types = "Object color %t|Black %x1|White %x2|Red %x3|Orange %x4|Yellow %x5|Green %x6|Cyan %x7|Blue %x8|Magenta %x9"
-	
-	BUTTON['OBCOL'] = Draw.Menu(types, 2, 180, 300, 70, 20, BUTTON['OBCOL'].val, "The initial color of the measurement material.")
-	
-	## Arrow settings.
-	DrawTitle("arrow style", 285)
-	
-	## Measurement type drowdown menu
-	types = "Arrow type %t|Flat line %x1|Flat arrow %x2|Square line %x3|Round line %x4|Square arrow %x5|Square arrow bevelled %x6|Round arrow %x7|Round arrow bevelled %x8|Cross %x9|Cross bevelled %x10|Double edge %x11|Pointy quad %x12"
-	
-	BUTTON['ARROW'] = Draw.Menu(types, 2, 20, 260, 70, 20, BUTTON['ARROW'].val, "The style of arrow to create.")
+  BUTTON['MAKEARROW'] = Draw.Toggle("Arrow", 2, 100, 325, 70, 20, BUTTON['MAKEARROW'].val, "Make a 3d arrow object to display the measurement result.")
+  
+  BUTTON['MAKECLEAN'] = Draw.Toggle("Clean", 2, 180, 325, 70, 20, BUTTON['MAKECLEAN'].val, "Try to remove the previous measurement objects between these two points (may not work if your object names are very long).")
+  
+  ## Layer selection buttons
+  BUTTON['LAYERS'][1] = Draw.Toggle(" ", 2, 20, 310, 14, 10, int(str(BUTTON['LAYERS'][1])), "Create the objects on layer 1")
+  BUTTON['LAYERS'][2] = Draw.Toggle(" ", 2, 34, 310, 14, 10, int(str(BUTTON['LAYERS'][2])), "Create the objects on layer 2")
+  BUTTON['LAYERS'][3] = Draw.Toggle(" ", 2, 48, 310, 14, 10, int(str(BUTTON['LAYERS'][3])), "Create the objects on layer 3")
+  BUTTON['LAYERS'][4] = Draw.Toggle(" ", 2, 62, 310, 14, 10, int(str(BUTTON['LAYERS'][4])), "Create the objects on layer 4")
+  BUTTON['LAYERS'][5] = Draw.Toggle(" ", 2, 76, 310, 14, 10, int(str(BUTTON['LAYERS'][5])), "Create the objects on layer 5")
+  
+  BUTTON['LAYERS'][6] = Draw.Toggle(" ", 2, 100, 310, 14, 10, int(str(BUTTON['LAYERS'][6])), "Create the objects on layer 6")
+  BUTTON['LAYERS'][7] = Draw.Toggle(" ", 2, 114, 310, 14, 10, int(str(BUTTON['LAYERS'][7])), "Create the objects on layer 7")
+  BUTTON['LAYERS'][8] = Draw.Toggle(" ", 2, 128, 310, 14, 10, int(str(BUTTON['LAYERS'][8])), "Create the objects on layer 8")
+  BUTTON['LAYERS'][9] = Draw.Toggle(" ", 2, 142, 310, 14, 10, int(str(BUTTON['LAYERS'][9])), "Create the objects on layer 9")
+  BUTTON['LAYERS'][10] = Draw.Toggle(" ", 2, 156, 310, 14, 10,int(str(BUTTON['LAYERS'][10])), "Create the objects on layer 10")
+  
+  BUTTON['LAYERS'][11] = Draw.Toggle(" ", 2, 20, 300, 14, 10, int(str(BUTTON['LAYERS'][11])), "Create the objects on layer 11")
+  BUTTON['LAYERS'][12] = Draw.Toggle(" ", 2, 34, 300, 14, 10, int(str(BUTTON['LAYERS'][12])), "Create the objects on layer 12")
+  BUTTON['LAYERS'][13] = Draw.Toggle(" ", 2, 48, 300, 14, 10, int(str(BUTTON['LAYERS'][13])), "Create the objects on layer 13")
+  BUTTON['LAYERS'][14] = Draw.Toggle(" ", 2, 62, 300, 14, 10, int(str(BUTTON['LAYERS'][14])), "Create the objects on layer 14")
+  BUTTON['LAYERS'][15] = Draw.Toggle(" ", 2, 76, 300, 14, 10, int(str(BUTTON['LAYERS'][15])), "Create the objects on layer 15")
+  
+  BUTTON['LAYERS'][16] = Draw.Toggle(" ", 2, 100, 300, 14, 10, int(str(BUTTON['LAYERS'][16])), "Create the objects on layer 16")
+  BUTTON['LAYERS'][17] = Draw.Toggle(" ", 2, 114, 300, 14, 10, int(str(BUTTON['LAYERS'][17])), "Create the objects on layer 17")
+  BUTTON['LAYERS'][18] = Draw.Toggle(" ", 2, 128, 300, 14, 10, int(str(BUTTON['LAYERS'][18])), "Create the objects on layer 18")
+  BUTTON['LAYERS'][19] = Draw.Toggle(" ", 2, 142, 300, 14, 10, int(str(BUTTON['LAYERS'][19])), "Create the objects on layer 19")
+  BUTTON['LAYERS'][20] = Draw.Toggle(" ", 2, 156, 300, 14, 10, int(str(BUTTON['LAYERS'][20])), "Create the objects on layer 20")
+  
+  ## Measurement material color selector
+  types = "Object color %t|Black %x1|White %x2|Red %x3|Orange %x4|Yellow %x5|Green %x6|Cyan %x7|Blue %x8|Magenta %x9"
+  
+  BUTTON['OBCOL'] = Draw.Menu(types, 2, 180, 300, 70, 20, BUTTON['OBCOL'].val, "The initial color of the measurement material.")
+  
+  ## Arrow settings.
+  DrawTitle("arrow style", 285)
+  
+  ## Measurement type drowdown menu
+  types = "Arrow type %t|Flat line %x1|Flat arrow %x2|Square line %x3|Round line %x4|Square arrow %x5|Square arrow bevelled %x6|Round arrow %x7|Round arrow bevelled %x8|Cross %x9|Cross bevelled %x10|Double edge %x11|Pointy quad %x12"
+  
+  BUTTON['ARROW'] = Draw.Menu(types, 2, 20, 260, 70, 20, BUTTON['ARROW'].val, "The style of arrow to create.")
 
-	## The alignment of both the arrow and the text objects.
-	types = "Arrow alignment %t|Bottom %x1|Rear %x2|Top %x3|Front %x4"
-	BUTTON['ARROWROT'] = Draw.Menu(types, 2, 100, 260, 70, 20, BUTTON['ARROWROT'].val, "The alignment of both the arrow and the text.")
+  ## The alignment of both the arrow and the text objects.
+  types = "Arrow alignment %t|Bottom %x1|Rear %x2|Top %x3|Front %x4"
+  BUTTON['ARROWROT'] = Draw.Menu(types, 2, 100, 260, 70, 20, BUTTON['ARROWROT'].val, "The alignment of both the arrow and the text.")
 
-	## The relative scale of the measurement
-	BUTTON['ARROWSIZE'] = Draw.Number("scale: ", 2, 180, 260, 70, 20, BUTTON['ARROWSIZE'].val, 0.01, 100.0, "The size of your arrow (length is defined by the measurement).")
-	
-	## Text settings.
-	DrawTitle("text style", 245)
-	
-	## Beveling
-	BUTTON['TEXTBV'] = Draw.Number("Bevel: ", 2, 20, 220, 110, 20, BUTTON['TEXTBV'].val, 0.000, 1.0, "The bevel depth of the 3d text.")	
+  ## The relative scale of the measurement
+  BUTTON['ARROWSIZE'] = Draw.Number("scale: ", 2, 180, 260, 70, 20, BUTTON['ARROWSIZE'].val, 0.01, 100.0, "The size of your arrow (length is defined by the measurement).")
+  
+  ## Text settings.
+  DrawTitle("text style", 245)
+  
+  ## Beveling
+  BUTTON['TEXTBV'] = Draw.Number("Bevel: ", 2, 20, 220, 110, 20, BUTTON['TEXTBV'].val, 0.000, 1.0, "The bevel depth of the 3d text.")	
 
-	## Extrusion
-	BUTTON['TEXTEX'] = Draw.Number("Ext: ", 2, 140, 220, 110, 20, BUTTON['TEXTEX'].val, 0.00, 10.0, "The depth of the 3d text.")
-	
-	## Clipend setting
-	BUTTON['TEXTSIZE'] = Draw.Number("Size: ", 2, 20, 195, 110, 20, BUTTON['TEXTSIZE'].val, 0.01, 100.0, "The size of the measurement text.")
-	
-	## Clipend setting
-	BUTTON['TEXTOFFS'] = Draw.Number("Offset: ", 2, 140, 195, 110, 20, BUTTON['TEXTOFFS'].val, 0.00, 100.0, "The distance of the text above the line.")
-	
-	## Measurement settings
-	DrawTitle("measurement settings", 180)
-	
-	## Measurement type drowdown menu
-	types = "Measure the distance in %t|Two objects %x1|Two meshes %x2|One mesh %x3"
-	
-	BUTTON['MMODE'] = Draw.Menu(types, 2, 20, 155, 110, 20, BUTTON['MMODE'].val, "What object type(s) to measure the distance between or in.")
+  ## Extrusion
+  BUTTON['TEXTEX'] = Draw.Number("Ext: ", 2, 140, 220, 110, 20, BUTTON['TEXTEX'].val, 0.00, 10.0, "The depth of the 3d text.")
+  
+  ## Clipend setting
+  BUTTON['TEXTSIZE'] = Draw.Number("Size: ", 2, 20, 195, 110, 20, BUTTON['TEXTSIZE'].val, 0.01, 100.0, "The size of the measurement text.")
+  
+  ## Clipend setting
+  BUTTON['TEXTOFFS'] = Draw.Number("Offset: ", 2, 140, 195, 110, 20, BUTTON['TEXTOFFS'].val, 0.00, 100.0, "The distance of the text above the line.")
+  
+  ## Measurement settings
+  DrawTitle("measurement settings", 180)
+  
+  ## Measurement type drowdown menu
+  types = "Measure the distance in %t|Two objects %x1|Two meshes %x2|One mesh %x3"
+  
+  BUTTON['MMODE'] = Draw.Menu(types, 2, 20, 155, 110, 20, BUTTON['MMODE'].val, "What object type(s) to measure the distance between or in.")
 
-	if BUTTON['MMODE'].val is 1:
-		BUTTON['MEASURE'].val = 1
-		types = "Measure the distance between %t|The centers %x1"
-		
-	elif BUTTON['MMODE'].val is 2:
-		if BUTTON['MEASURE'].val < 2 or BUTTON['MEASURE'].val > 7:
-			BUTTON['MEASURE'].val = 2
-		types = "Measure the distance between %t|Closest faces %x2|Furthest faces %x3|Closest edges %x4|Furthest edges %x5|Closest verts %x6|Furthest verts %x7"
-		
-	elif BUTTON['MMODE'].val is 3:
-		if BUTTON['MEASURE'].val < 8:
-			BUTTON['MEASURE'].val = 8
-			
-		types = "Measure the distance between %t|Selected faces %x8|Closest faces %x9|Furthest faces %x10|Selected edges %x11|Closest edges %x12|Furthest edges %x13|Selected verts %x14|Closest verts %x15|Furthest verts %x16"
-	
-	BUTTON['MEASURE'] = Draw.Menu(types, 2, 140, 155, 110, 20, BUTTON['MEASURE'].val, "What two points to measure between.")
-	
-	## Contraining the measurement
-	types = "Constrain the measurement %t|Not constrained %x1|Z axis %x2|Y axis %x3|X axis %x4"
-	BUTTON['MCONSTRAIN'] = Draw.Menu(types, 2, 20, 130, 110, 20, BUTTON['MCONSTRAIN'].val, "Constrain the measurement along an axis.")
-	
-	## Constrain the objects along the measurement axis
-	if BUTTON['MCONSTRAIN'].val > 1:
-		BUTTON['MCONOBS'] = Draw.Toggle("Constrain obs", 2, 140, 130, 110, 20, BUTTON['MCONOBS'].val, "Constrain the measurement objects.")
-	
-	## Measurement output
-	DrawTitle("output style", 115)
+  if BUTTON['MMODE'].val is 1:
+    BUTTON['MEASURE'].val = 1
+    types = "Measure the distance between %t|The centers %x1"
+    
+  elif BUTTON['MMODE'].val is 2:
+    if BUTTON['MEASURE'].val < 2 or BUTTON['MEASURE'].val > 7:
+      BUTTON['MEASURE'].val = 2
+    types = "Measure the distance between %t|Closest faces %x2|Furthest faces %x3|Closest edges %x4|Furthest edges %x5|Closest verts %x6|Furthest verts %x7"
+    
+  elif BUTTON['MMODE'].val is 3:
+    if BUTTON['MEASURE'].val < 8:
+      BUTTON['MEASURE'].val = 8
+      
+    types = "Measure the distance between %t|Selected faces %x8|Closest faces %x9|Furthest faces %x10|Selected edges %x11|Closest edges %x12|Furthest edges %x13|Selected verts %x14|Closest verts %x15|Furthest verts %x16"
+  
+  BUTTON['MEASURE'] = Draw.Menu(types, 2, 140, 155, 110, 20, BUTTON['MEASURE'].val, "What two points to measure between.")
+  
+  ## Contraining the measurement
+  types = "Constrain the measurement %t|Not constrained %x1|Z axis %x2|Y axis %x3|X axis %x4"
+  BUTTON['MCONSTRAIN'] = Draw.Menu(types, 2, 20, 130, 110, 20, BUTTON['MCONSTRAIN'].val, "Constrain the measurement along an axis.")
+  
+  ## Constrain the objects along the measurement axis
+  if BUTTON['MCONSTRAIN'].val > 1:
+    BUTTON['MCONOBS'] = Draw.Toggle("Constrain obs", 2, 140, 130, 110, 20, BUTTON['MCONOBS'].val, "Constrain the measurement objects.")
+  
+  ## Measurement output
+  DrawTitle("output style", 115)
 
-	## Measurement type drowdown menu
-	types = "Measurement output type %t|Millimeters %x1|Centimeters %x2|Meters %x3|Kilometers %x4|Inches %x5|Feet %x6|Yards %x7|Miles %x8|Blender Units %x9"
-	
-	BUTTON['MOUT'] = Draw.Menu(types, 2, 20, 90, 110, 20, BUTTON['MOUT'].val, "The base scale for measurement output.")
+  ## Measurement type drowdown menu
+  types = "Measurement output type %t|Millimeters %x1|Centimeters %x2|Meters %x3|Kilometers %x4|Inches %x5|Feet %x6|Yards %x7|Miles %x8|Blender Units %x9"
+  
+  BUTTON['MOUT'] = Draw.Menu(types, 2, 20, 90, 110, 20, BUTTON['MOUT'].val, "The base scale for measurement output.")
 
-	GoInches = 0
-	
-	if BUTTON['MOUT'].val != 9:
-	
-		if BUTTON['MOUT'].val < 5:
-			One = "mm"
-			Two = "cm"
-			Three = "m"
-			Four = "km"
-		else:
-			One = "inch"
-			Two = "feet"
-			Three = "yards"
-			Four = "miles"
-			if BUTTON['MDETAIL'].val is 1:
-				GoInches = 1
+  GoInches = 0
+  
+  if BUTTON['MOUT'].val != 9:
+  
+    if BUTTON['MOUT'].val < 5:
+      One = "mm"
+      Two = "cm"
+      Three = "m"
+      Four = "km"
+    else:
+      One = "inch"
+      Two = "feet"
+      Three = "yards"
+      Four = "miles"
+      if BUTTON['MDETAIL'].val is 1:
+        GoInches = 1
 
-		## Make sure the levels of detail match the scales we're working in.
-		if BUTTON['MOUT'].val is 1 or BUTTON['MOUT'].val is 5:
+    ## Make sure the levels of detail match the scales we're working in.
+    if BUTTON['MOUT'].val is 1 or BUTTON['MOUT'].val is 5:
 
-			BUTTON['MDETAIL'].val = 1
-			GoInches = 1
+      BUTTON['MDETAIL'].val = 1
+      GoInches = 1
 
-		elif BUTTON['MOUT'].val is 2 or BUTTON['MOUT'].val is 6:
+    elif BUTTON['MOUT'].val is 2 or BUTTON['MOUT'].val is 6:
 
-			if BUTTON['MDETAIL'].val > 2:
-				BUTTON['MDETAIL'].val = 2
-			types = "Measurement levels %t|" + One + " %x1|" + Two + " %x2"
+      if BUTTON['MDETAIL'].val > 2:
+        BUTTON['MDETAIL'].val = 2
+      types = "Measurement levels %t|" + One + " %x1|" + Two + " %x2"
 
-		elif BUTTON['MOUT'].val is 3 or BUTTON['MOUT'].val is 7:
+    elif BUTTON['MOUT'].val is 3 or BUTTON['MOUT'].val is 7:
 
-			if BUTTON['MDETAIL'].val > 3:
-				BUTTON['MDETAIL'].val = 3
-			types = "Measurement levels %t|" + One + " %x1|" + Two + " %x2|" + Three + "%x3"
+      if BUTTON['MDETAIL'].val > 3:
+        BUTTON['MDETAIL'].val = 3
+      types = "Measurement levels %t|" + One + " %x1|" + Two + " %x2|" + Three + "%x3"
 
-		elif BUTTON['MOUT'].val is 4 or BUTTON['MOUT'].val is 8:
-			types = "Measurement levels %t|" + One + " %x1|" + Two + " %x2|" + Three + "%x3|" + Four + "%x4"
+    elif BUTTON['MOUT'].val is 4 or BUTTON['MOUT'].val is 8:
+      types = "Measurement levels %t|" + One + " %x1|" + Two + " %x2|" + Three + "%x3|" + Four + "%x4"
 
-		if BUTTON['MOUT'].val != 1 and BUTTON['MOUT'].val != 5:
-		
-			BUTTON['MDETAIL'] = Draw.Menu(types, 2, 140, 90, 50, 20, BUTTON['MDETAIL'].val, "The smallest increment to display a measurement in.")
-		
-	if BUTTON['MOUT'].val > 4 and GoInches is 1:
-		types = "Measurement detail %t|1 %x1|1 1/2 %x2|1 1/4 %x3|1 1/8 %x4|1 1/16 %x5|1 1/32 %x6"
-	else:
-		types = "Measurement detail %t|1 %x1|0.1 %x2|0.01 %x3|0.001 %x4|0.0001 %x5|0.00001 %x6"
+    if BUTTON['MOUT'].val != 1 and BUTTON['MOUT'].val != 5:
+    
+      BUTTON['MDETAIL'] = Draw.Menu(types, 2, 140, 90, 50, 20, BUTTON['MDETAIL'].val, "The smallest increment to display a measurement in.")
+    
+  if BUTTON['MOUT'].val > 4 and GoInches is 1:
+    types = "Measurement detail %t|1 %x1|1 1/2 %x2|1 1/4 %x3|1 1/8 %x4|1 1/16 %x5|1 1/32 %x6"
+  else:
+    types = "Measurement detail %t|1 %x1|0.1 %x2|0.01 %x3|0.001 %x4|0.0001 %x5|0.00001 %x6"
 
-	BUTTON['MDECIMAL'] = Draw.Menu(types, 2, 200, 90, 50, 20, BUTTON['MDECIMAL'].val, "The smallest measurement in your smallest increment.")
+  BUTTON['MDECIMAL'] = Draw.Menu(types, 2, 200, 90, 50, 20, BUTTON['MDECIMAL'].val, "The smallest measurement in your smallest increment.")
 
-	## Measurement input.
-	DrawTitle("input style", 75)
-	
-	if BUTTON['MOUT'].val != 9:
-		## Measurement type drowdown menu
-		types = "Measurement input type %t|Millimeters %x1|Centimeters %x2|Meters %x3|Kilometers %x4|Inches %x5|Feet %x6|Yards %x7|Miles %x8"
-	
-		BUTTON['MIN'] = Draw.Menu(types, 2, 20, 50, 110, 20, BUTTON['MIN'].val, "The base scale for one blender unit.")
+  ## Measurement input.
+  DrawTitle("input style", 75)
+  
+  if BUTTON['MOUT'].val != 9:
+    ## Measurement type drowdown menu
+    types = "Measurement input type %t|Millimeters %x1|Centimeters %x2|Meters %x3|Kilometers %x4|Inches %x5|Feet %x6|Yards %x7|Miles %x8"
+  
+    BUTTON['MIN'] = Draw.Menu(types, 2, 20, 50, 110, 20, BUTTON['MIN'].val, "The base scale for one blender unit.")
 
 
-	## The relative scale of the measurement
-	BUTTON['MSCALE'] = Draw.Number("scale: ", 2, 140, 50, 110, 20, BUTTON['MSCALE'].val, 0.001, 100.0, "The size of 1 blender unit in your base scale.")
-	
-	## mayor functions
-	DrawTitle("mayor functions", 35)
-	
-	## Reset gui button
-	Draw.Button("MEASURE", 1, 20, 10, 110, 20, "Run the script!")
-	
-	## Exit button
-	Draw.Button("EXIT", 5, 140, 10, 110, 20, "Exit the script!")
+  ## The relative scale of the measurement
+  BUTTON['MSCALE'] = Draw.Number("scale: ", 2, 140, 50, 110, 20, BUTTON['MSCALE'].val, 0.001, 100.0, "The size of 1 blender unit in your base scale.")
+  
+  ## mayor functions
+  DrawTitle("mayor functions", 35)
+  
+  ## Reset gui button
+  Draw.Button("MEASURE", 1, 20, 10, 110, 20, "Run the script!")
+  
+  ## Exit button
+  Draw.Button("EXIT", 5, 140, 10, 110, 20, "Exit the script!")
 
 ####################################################
 # CHECK FOR THE ESCAPE KEY
@@ -1733,7 +1733,7 @@ def gui():
 
 ## Close down the script in case the esc key was hit.
 def event(evt, val):
-	if (evt == Draw.ESCKEY and not val): Draw.Exit()
+  if (evt == Draw.ESCKEY and not val): Draw.Exit()
 
 ####################################################
 # ACTION AFTER THE BUTTON HAS BEEN PRESSED
@@ -1741,19 +1741,19 @@ def event(evt, val):
 
 ## Global BUTTON
 def bevent(evt):
-	## Run the script
-	if (evt is  1):
-		run()
-		Draw.Redraw()
-		
-	## Redraw interface
-	if (evt is  2):
-		Draw.Redraw()
+  ## Run the script
+  if (evt is  1):
+    run()
+    Draw.Redraw()
+    
+  ## Redraw interface
+  if (evt is  2):
+    Draw.Redraw()
 
-	## Exit the script
-	if (evt is  5):
-		Draw.Exit()
-		
+  ## Exit the script
+  if (evt is  5):
+    Draw.Exit()
+    
 ####################################################
 # REGISTER THE FUNCTIONS
 ####################################################
