@@ -24,6 +24,11 @@ function plotgen(maxval,column,handles)
   %% Load input file data
   Inpparms = inputparms(handles.inpfile);
   
+  %[ entries, structured_entries ] = GEO_INP_reader({handles.geofile,handles.inpfile})
+  [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
+  FDTDobj.box.lower
+  FDTDobj.box.upper
+  
   %% Determine size of snapshot
   ii=1; ValPrev = handles.fin1(ii,1); grid_j = 1;
   while ii<handles.gr(1)
@@ -128,15 +133,18 @@ function plotgen(maxval,column,handles)
       case 1
           xlabel('z')
           ylabel('y')
-          axis([Geoparms.Box.Zl Geoparms.Box.Zu Geoparms.Box.Yl Geoparms.Box.Yu])
+          foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(2) FDTDobj.box.upper(2)]
+          axis(foo)
       case 2
           xlabel('z')
           ylabel('x')
-          axis([Geoparms.Box.Zl Geoparms.Box.Zu Geoparms.Box.Xl Geoparms.Box.Xu])
+          foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(1) FDTDobj.box.upper(1)]
+          axis(foo)
       case 3
           xlabel('x')
           ylabel('y')
-          axis([Geoparms.Box.Xl Geoparms.Box.Xu Geoparms.Box.Yl Geoparms.Box.Yu])
+          foo = [FDTDobj.box.lower(1) FDTDobj.box.upper(1) FDTDobj.box.lower(2) FDTDobj.box.upper(2)]
+          axis(foo)
   end
   titlesnap = strread(handles.snapfile,'%s','delimiter','\\');
   title([char(titlesnap(length(titlesnap))) ': ' char(handles.colplot(column))],'FontWeight','bold');

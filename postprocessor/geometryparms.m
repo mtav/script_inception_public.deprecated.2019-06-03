@@ -1,7 +1,8 @@
 function Geo = geometryparms(geofile)
   %% Read in Geometry files
-  tab = readtextfile(geofile);
-  dim = size(tab);
+  geofile
+  tab = readtextfile(geofile)
+  dim = size(tab)
   ii=1;
   Blocks = 0; Cyls = 0; Spheres = 0;
   
@@ -27,12 +28,25 @@ function Geo = geometryparms(geofile)
       end
       if strcmp(tab(ii,1:3),'BOX')
           ii=ii+2;
-          Geo.Box.Xl = str2double(tab(ii,1:13));ii=ii+1;
-          Geo.Box.Yl = str2double(tab(ii,1:13));ii=ii+1;
-          Geo.Box.Zl = str2double(tab(ii,1:13));ii=ii+1;
-          Geo.Box.Xu = str2double(tab(ii,1:13));ii=ii+1;
-          Geo.Box.Yu = str2double(tab(ii,1:13));ii=ii+1;
+          Geo.Box.Xl = str2double(tab(ii,1:13));
+          ii=ii+1;
+          Geo.Box.Yl = str2double(tab(ii,1:13));
+          ii=ii+1;
+          Geo.Box.Zl = str2double(tab(ii,1:13));
+          ii=ii+1;
+          Geo.Box.Xu = str2double(tab(ii,1:13));
+          ii=ii+1;
+          Geo.Box.Yu = str2double(tab(ii,1:13));
+          ii=ii+1;
           Geo.Box.Zu = str2double(tab(ii,1:13));
+          
+          Geo.Box.Xl
+          Geo.Box.Yl
+          Geo.Box.Zl
+          Geo.Box.Xu
+          Geo.Box.Yu
+          Geo.Box.Zu
+          
       end
       if strcmp(tab(ii,1:6),'SPHERE')
           Spheres = Spheres+1; ii=ii+2;
