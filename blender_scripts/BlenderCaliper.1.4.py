@@ -42,7 +42,7 @@ Version 1.2 released 16/07/06
     5. Added measurement alignment function.
     6. Made the cleaning and naming functions a bit more effective.
     7. Added measurement constraining function.
-    8. Removed an error in mile to yard to feet conversion.
+    8. Removed an error in mile to yard to mufeet conversion.
     9. Split the DATAHASH to BUTTON, DATA & STATE arrays.
     
 Version 1.3 released 27/07/06
@@ -141,39 +141,39 @@ for a in range(len(STATE['LAYERS'])):
 # ALL MEASUREMENT CONVERSIONS
 ####################################################
 
-## Everything to mm
-def cm_to_mm(x): return 10.0 * x
-def m_to_mm(x): return 1000.0 * x
-def km_to_mm(x): return 1000000.0 * x
-def inch_to_mm(x): return 25.4 * x
-def foot_to_mm(x): return 304.8 * x
-def yard_to_mm(x): return 914.4 * x
-def mile_to_mm(x): return 1609344.0 * x
+## Everything to nm
+def mucm_to_nm(x): return 10.0 * x
+def mum_to_nm(x): return 1000.0 * x
+def mm_to_nm(x): return 1000000.0 * x
+def muinch_to_nm(x): return 25.4 * x
+def foot_to_nm(x): return 304.8 * x
+def yard_to_nm(x): return 914.4 * x
+def mile_to_nm(x): return 1609344.0 * x
 
 ## Mm to everything
-def mm_to_cm(x): return x / 10.0
-def mm_to_m(x): return x / 1000.0
-def mm_to_km(x): return x / 1000000.0
-def mm_to_inch(x): return x / 25.4
-def mm_to_foot(x): return x / 304.8
-def mm_to_yard(x): return x / 914.4
-def mm_to_mile(x): return x / 1609344.0
+def nm_to_mucm(x): return x / 10.0
+def nm_to_mum(x): return x / 1000.0
+def nm_to_mm(x): return x / 1000000.0
+def nm_to_muinch(x): return x / 25.4
+def nm_to_foot(x): return x / 304.8
+def nm_to_yard(x): return x / 914.4
+def nm_to_mile(x): return x / 1609344.0
 
 ## Metric conversions
-def m_to_cm(x): return 100.0 * x
-def cm_to_m(x): return x / 100.0
-def km_to_cm(x): return 100000.0 * x
-def cm_to_km(x): return x / 100000.0
-def km_to_m(x): return 1000.0 * x
-def m_to_km(x): return x / 1000.0
+def mum_to_mucm(x): return 100.0 * x
+def mucm_to_mum(x): return x / 100.0
+def mm_to_mucm(x): return 100000.0 * x
+def mucm_to_mm(x): return x / 100000.0
+def mm_to_mum(x): return 1000.0 * x
+def mum_to_mm(x): return x / 1000.0
 
 ## Imperial conversions
-def foot_to_inch(x): return 12.0 * x
-def inch_to_foot(x): return x / 12.0
-def yard_to_inch(x): return 36.0 * x
-def inch_to_yard(x): return x / 36.0
-def inch_to_mile(x): return 63360.0 * x
-def inch_to_mile(x): return x / 63360.0
+def foot_to_muinch(x): return 12.0 * x
+def muinch_to_foot(x): return x / 12.0
+def yard_to_muinch(x): return 36.0 * x
+def muinch_to_yard(x): return x / 36.0
+def muinch_to_mile(x): return 63360.0 * x
+def muinch_to_mile(x): return x / 63360.0
 def yard_to_foot(x): return x * 3.0
 def foot_to_yard(x): return x / 3.0
 def mile_to_foot(x): return 5280.0 * x
@@ -303,22 +303,22 @@ def GetMeasurement():
 
   ## If not blender units convert to millimeters.
   if BUTTON['MOUT'].val != 9:
-    ## Get the distance in mm to start with.
+    ## Get the distance in nm to start with.
     if BUTTON['MIN'].val is 1: DATA['DISTANCE'] = DATA['DISTANCE']
-    elif BUTTON['MIN'].val is 2: DATA['DISTANCE'] = cm_to_mm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 3: DATA['DISTANCE'] = m_to_mm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 4: DATA['DISTANCE'] = km_to_mm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 5: DATA['DISTANCE'] = inch_to_mm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 6: DATA['DISTANCE'] = foot_to_mm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 7: DATA['DISTANCE'] = yard_to_mm(DATA['DISTANCE'])
-    elif BUTTON['MIN'].val is 8: DATA['DISTANCE'] = mile_to_mm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 2: DATA['DISTANCE'] = mucm_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 3: DATA['DISTANCE'] = mum_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 4: DATA['DISTANCE'] = mm_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 5: DATA['DISTANCE'] = muinch_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 6: DATA['DISTANCE'] = foot_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 7: DATA['DISTANCE'] = yard_to_nm(DATA['DISTANCE'])
+    elif BUTTON['MIN'].val is 8: DATA['DISTANCE'] = mile_to_nm(DATA['DISTANCE'])
 
   ## Get metric results.
   if BUTTON['MOUT'].val < 5:
     
     ## Get the measurement result in kilometers.
     if BUTTON['MOUT'].val is 4:		
-      DATA['DISTANCE'] = mm_to_km(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_mm(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 4:
         Result = Getrounded(DATA['DISTANCE'])
@@ -326,10 +326,10 @@ def GetMeasurement():
         Result = int(math.floor(DATA['DISTANCE']))
         
       if BUTTON['MDETAIL'].val is 4 or Result != 0:
-        DATA['RESULT'] = str(Result) + " km"
+        DATA['RESULT'] = str(Result) + " mm"
       
       if BUTTON['MDETAIL'].val < 4:
-        NewMicrometers = km_to_m(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        NewMicrometers = mm_to_mum(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
         
         if BUTTON['MDETAIL'].val is 3:
           Result = Getrounded(NewMicrometers)
@@ -337,12 +337,12 @@ def GetMeasurement():
           Result = int(math.floor(NewMicrometers))
 
         if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " nm"
         elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-          DATA['RESULT'] = "0 mm"
+          DATA['RESULT'] = "0 nm"
       
       if BUTTON['MDETAIL'].val < 3:
-        NewMicroCentimeters = m_to_cm(NewMicrometers - int(math.floor(NewMicrometers)))
+        NewMicroCentimeters = mum_to_mucm(NewMicrometers - int(math.floor(NewMicrometers)))
         
         if BUTTON['MDETAIL'].val is 2:
           Result = Getrounded(NewMicroCentimeters)
@@ -350,10 +350,10 @@ def GetMeasurement():
           Result = int(math.floor(NewMicroCentimeters))
 
         if Result != 0:
-          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " cm"
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mucm"
         
       if BUTTON['MDETAIL'].val is 1:
-        NewNanometers = cm_to_mm(NewMicroCentimeters - int(math.floor(NewMicroCentimeters)))
+        NewNanometers = mucm_to_nm(NewMicroCentimeters - int(math.floor(NewMicroCentimeters)))
         
         if BUTTON['MDETAIL'].val is 1:
           Result = Getrounded(NewNanometers)
@@ -361,14 +361,14 @@ def GetMeasurement():
           Result = int(math.floor(NewNanometers))
 
         if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " nm"
         elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-          DATA['RESULT'] = "0 mm"
+          DATA['RESULT'] = "0 nm"
       
     ## Get the measurement result in meters.
     elif BUTTON['MOUT'].val is 3:		
     
-      DATA['DISTANCE'] = mm_to_m(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_mum(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 3:
         Result = Getrounded(DATA['DISTANCE'])
@@ -376,10 +376,10 @@ def GetMeasurement():
         Result = int(math.floor(DATA['DISTANCE']))
         
       if BUTTON['MDETAIL'].val is 3 or Result != 0:
-        DATA['RESULT'] = str(Result) + " m"
+        DATA['RESULT'] = str(Result) + " mum"
       
       if BUTTON['MDETAIL'].val < 3:
-        NewMicroCentimeters = m_to_cm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        NewMicroCentimeters = mum_to_mucm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
         
         if BUTTON['MDETAIL'].val is 2:
           Result = Getrounded(NewMicroCentimeters)
@@ -387,10 +387,10 @@ def GetMeasurement():
           Result = int(math.floor(NewMicroCentimeters))
 
         if Result != 0:
-          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " cm"
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mucm"
         
       if BUTTON['MDETAIL'].val is 1:
-        NewNanometers = cm_to_mm(NewMicroCentimeters - int(math.floor(NewMicroCentimeters)))
+        NewNanometers = mucm_to_nm(NewMicroCentimeters - int(math.floor(NewMicroCentimeters)))
         
         if BUTTON['MDETAIL'].val is 1:
           Result = Getrounded(NewNanometers)
@@ -398,14 +398,14 @@ def GetMeasurement():
           Result = int(math.floor(NewNanometers))
 
         if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " nm"
         elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-          DATA['RESULT'] = "0 mm"
+          DATA['RESULT'] = "0 nm"
       
     ## Get the measurement result in centimeters.
     elif BUTTON['MOUT'].val is 2:
     
-      DATA['DISTANCE'] = mm_to_cm(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_mucm(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 2:
         Result = Getrounded(DATA['DISTANCE'])
@@ -413,32 +413,32 @@ def GetMeasurement():
         Result = int(math.floor(DATA['DISTANCE']))
         
       if BUTTON['MDETAIL'].val is 2 or Result != 0:
-        DATA['RESULT'] = str(Result) + " cm"
+        DATA['RESULT'] = str(Result) + " mucm"
         
       if BUTTON['MDETAIL'].val is 1:
-        NewNanometers = cm_to_mm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        NewNanometers = mucm_to_nm(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
         
         Result = Getrounded(NewNanometers)
 
         if Result != 0 and DATA['RESULT'] != " " and DATA['RESULT'] != "":
-          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+          DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " nm"
         elif DATA['RESULT'] is " " or DATA['RESULT'] is "":
-          DATA['RESULT'] = "0 mm"
+          DATA['RESULT'] = "0 nm"
     
     ## Get the measurement result in millimeters.
     else:
       Result = Getrounded(DATA['DISTANCE'])
 
-      DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " mm"
+      DATA['RESULT'] = DATA['RESULT'] + " " + str(Result) + " nm"
       
   ## Get imperial results.
   elif BUTTON['MOUT'].val < 9:
     
     DATA['RESULT'] = ""
   
-    ## Get the result in miles.
+    ## Get the result in mumiles.
     if BUTTON['MOUT'].val is 8:		
-      DATA['DISTANCE'] = mm_to_mile(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_mile(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 4:
         Result = Getrounded(DATA['DISTANCE'])
@@ -471,14 +471,14 @@ def GetMeasurement():
         
       if BUTTON['MDETAIL'].val is 1:		    
       
-        NewMicroInches = foot_to_inch(NewMicroFeet - int(math.floor(NewMicroFeet)))
+        NewMicroInches = foot_to_muinch(NewMicroFeet - int(math.floor(NewMicroFeet)))
         
         if math.ceil(NewMicroInches) != 0:
         
           if BUTTON['MDECIMAL'].val is 1:
             DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewMicroInches))) + " in"
           else:
-            ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+            ## Get the measurement smaller than muinches and nicely rounded so it doesn't go into too much detail.
             subInch = round(NewMicroInches - int(math.floor(NewMicroInches)), 2)
         
             MicroInches = int(math.floor(NewMicroInches))
@@ -496,10 +496,10 @@ def GetMeasurement():
         
           DATA['RESULT'] = "0 in"
     
-    ## Get the result in yards
+    ## Get the result in muyards
     elif BUTTON['MOUT'].val is 7:
     
-      DATA['DISTANCE'] = mm_to_yard(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_yard(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 3:
         Result = Getrounded(DATA['DISTANCE'])
@@ -521,14 +521,14 @@ def GetMeasurement():
         
       if BUTTON['MDETAIL'].val is 1:		    
       
-        NewMicroInches = foot_to_inch(NewMicroFeet - int(math.floor(NewMicroFeet)))
+        NewMicroInches = foot_to_muinch(NewMicroFeet - int(math.floor(NewMicroFeet)))
         
         if math.ceil(NewMicroInches) != 0:
         
           if BUTTON['MDECIMAL'].val is 1:
             DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewMicroInches))) + " in"
           else:
-            ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+            ## Get the measurement smaller than muinches and nicely rounded so it doesn't go into too much detail.
             subInch = round(NewMicroInches - int(math.floor(NewMicroInches)), 2)
         
             MicroInches = int(math.floor(NewMicroInches))
@@ -546,10 +546,10 @@ def GetMeasurement():
         
           DATA['RESULT'] = "0 in"
       
-    ## Get the result in feet
+    ## Get the result in mufeet
     elif BUTTON['MOUT'].val is 6:
     
-      DATA['DISTANCE'] = mm_to_foot(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_foot(DATA['DISTANCE'])
       
       if BUTTON['MDETAIL'].val is 2:
         Result = Getrounded(DATA['DISTANCE'])
@@ -560,14 +560,14 @@ def GetMeasurement():
       
       if BUTTON['MDETAIL'].val is 1:
       
-        NewMicroInches = foot_to_inch(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
+        NewMicroInches = foot_to_muinch(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])))
         
         if math.ceil(NewMicroInches) != 0:
         
           if BUTTON['MDECIMAL'].val is 1:
             DATA['RESULT'] = DATA['RESULT'] + " " + str(int(round(NewMicroInches))) + " in"
           else:
-            ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+            ## Get the measurement smaller than muinches and nicely rounded so it doesn't go into too much detail.
             subInch = round(NewMicroInches - int(math.floor(NewMicroInches)), 2)
         
             MicroInches = int(math.floor(NewMicroInches))
@@ -585,14 +585,14 @@ def GetMeasurement():
         
           DATA['RESULT'] = "0 in"
             
-    ## Get the result in inches
+    ## Get the result in muinches
     else:
-      DATA['DISTANCE'] = mm_to_inch(DATA['DISTANCE'])
+      DATA['DISTANCE'] = nm_to_muinch(DATA['DISTANCE'])
       
       if BUTTON['MDECIMAL'].val is 1:
         DATA['RESULT'] = str(int(round(DATA['DISTANCE']))) + " in"
       else:
-        ## Get the measurement smaller than inches and nicely rounded so it doesn't go into too much detail.
+        ## Get the measurement smaller than muinches and nicely rounded so it doesn't go into too much detail.
         subInch = round(DATA['DISTANCE'] - int(math.floor(DATA['DISTANCE'])), 2)
       
         MicroInches = int(math.floor(DATA['DISTANCE']))
@@ -1661,15 +1661,15 @@ def gui():
   if BUTTON['MOUT'].val != 9:
   
     if BUTTON['MOUT'].val < 5:
-      One = "mm"
-      Two = "cm"
-      Three = "m"
-      Four = "km"
+      One = "nm"
+      Two = "mucm"
+      Three = "mum"
+      Four = "mm"
     else:
-      One = "inch"
-      Two = "feet"
-      Three = "yards"
-      Four = "miles"
+      One = "muinch"
+      Two = "mufeet"
+      Three = "muyards"
+      Four = "mumiles"
       if BUTTON['MDETAIL'].val is 1:
         GoMicroInches = 1
 
