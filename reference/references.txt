@@ -1,0 +1,10 @@
+Reference stuff:
+================
+
+  % extract blocks
+  pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
+  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+
+
+To append to a cell array in octave (DO NOT DO a=[a,foo]):
+ a{end+1}=664543
