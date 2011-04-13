@@ -7,6 +7,7 @@ import getopt
 #~ import utilities.getuserdir
 from utilities.getuserdir import *
 from bfdtd.bfdtd_parser import *
+from utilities.common import fixLowerUpper
 
 def planeNumberName(var):
   S=['X','Y','Z']
@@ -118,6 +119,8 @@ def GEOboundary(FILE, COMMENT, Xpos_bc, Xpos_param,\
   FILE.write('\n')
 
 def GEObox(FILE, COMMENT, lower, upper):
+  lower, upper = fixLowerUpper(lower, upper)
+  
   FILE.write('BOX  **name='+COMMENT+'\n')
 
   FILE.write('{\n')
@@ -156,6 +159,8 @@ def GEOsphere(FILE, COMMENT, center, outer_radius, inner_radius, permittivity, c
   FILE.write('\n')
 
 def GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity):
+  lower, upper = fixLowerUpper(lower, upper)
+
   FILE.write('BLOCK **name='+COMMENT+'\n')
 
   FILE.write('{\n')
@@ -258,6 +263,8 @@ def GEOrotation(FILE, COMMENT, axis_point, axis_direction, angle_degrees):
 
 # measurement objects
 def GEOtime_snapshot(FILE, COMMENT, first, repetition, plane, P1, P2, E, H, J, power, eps):
+  P1, P2 = fixLowerUpper(P1, P2)
+
   ''' # def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
   #
   # format specification:
@@ -333,6 +340,7 @@ def GEOtime_snapshot(FILE, COMMENT, first, repetition, plane, P1, P2, E, H, J, p
     snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]])
 
 def GEOfrequency_snapshot(FILE, COMMENT, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J):
+  P1, P2 = fixLowerUpper(P1, P2)
 
   def snapshot(plane,P1,P2, frequency):
     plane_ID, plane_name = planeNumberName(plane)

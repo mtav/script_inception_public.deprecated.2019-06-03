@@ -307,6 +307,7 @@ class Excitation:
     self.param4 = float(entry.data[idx]); idx = idx+1;
     return(0);
   def write_entry(self, FILE):
+    self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
     FILE.write('EXCITATION **name='+self.name+'\n')
     FILE.write('{\n')
     FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
