@@ -7,15 +7,15 @@ from geometries.triangular_yagi import *
 from geometries.triangular_yagi_voxel import *
 from geometries.triangular_yagi_voxel_sym import *
 
-def cylinder(DSTDIR, bottomN, topN, excitationType):
+def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== cylinder START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = 32000
+  P.ITERATIONS = iterations
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
-  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.SNAPSHOTS_FREQUENCY = freq_snapshots
   
   P.HOLE_TYPE = 'cylinder'
   P.setRadiusPillarYZ(0.150/2.0,0.150/2.0)
@@ -51,15 +51,15 @@ def cylinder(DSTDIR, bottomN, topN, excitationType):
 
   P.write()
   
-def cylinder_mission3(DSTDIR, bottomN, topN, excitationType):
+def cylinder_mission3(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== cylinder_mission3 START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = 32000
+  P.ITERATIONS = iterations
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
-  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.SNAPSHOTS_FREQUENCY = freq_snapshots
 
   P.HOLE_TYPE = 'cylinder'
 
@@ -109,15 +109,15 @@ def cylinder_mission3(DSTDIR, bottomN, topN, excitationType):
   P.verbose = True
   P.write()
 
-def square_holes(DSTDIR, bottomN, topN, excitationType):
+def square_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== square_holes START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = 32000
+  P.ITERATIONS = iterations
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
-  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.SNAPSHOTS_FREQUENCY = freq_snapshots
   
   P.HOLE_TYPE = 'square_holes'
   
@@ -157,15 +157,15 @@ def square_holes(DSTDIR, bottomN, topN, excitationType):
 
   P.write()
 
-def rectangular_holes(DSTDIR, bottomN, topN, excitationType):
+def rectangular_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== rectangular_holes START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = 32000
+  P.ITERATIONS = iterations
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
-  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.SNAPSHOTS_FREQUENCY = freq_snapshots
   
   P.HOLE_TYPE = 'rectangular_holes'
   
@@ -262,24 +262,24 @@ def test2(DSTDIR):
     triangular_yagi(DSTDIR,20,10,i)
     triangular_yagi_voxel(DSTDIR,20,10,i)
 
-def mission1(DSTDIR,excitationType):
-  rectangular_holes(DSTDIR,6,3,excitationType)
-  rectangular_holes(DSTDIR,6,4,excitationType)
-  rectangular_holes(DSTDIR,7,4,excitationType)
-  rectangular_holes(DSTDIR,7,5,excitationType)
-  rectangular_holes(DSTDIR,8,6,excitationType)
+def mission1(DSTDIR,excitationType,iterations,freq_snapshots):
+  rectangular_holes(DSTDIR,6,3,excitationType,iterations,freq_snapshots)
+  rectangular_holes(DSTDIR,6,4,excitationType,iterations,freq_snapshots)
+  rectangular_holes(DSTDIR,7,4,excitationType,iterations,freq_snapshots)
+  rectangular_holes(DSTDIR,7,5,excitationType,iterations,freq_snapshots)
+  rectangular_holes(DSTDIR,8,6,excitationType,iterations,freq_snapshots)
 
-def mission2(DSTDIR,excitationType):
-  rectangular_yagi(DSTDIR,20,10,excitationType)
+def mission2(DSTDIR,excitationType,iterations,freq_snapshots):
+  rectangular_yagi(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
 
-def mission3(DSTDIR,excitationType):
-  cylinder(DSTDIR,12,12,excitationType)
-  cylinder(DSTDIR,20,10,excitationType)
+def mission3(DSTDIR,excitationType,iterations,freq_snapshots):
+  cylinder(DSTDIR,12,12,excitationType,iterations,freq_snapshots)
+  cylinder(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
 
-def mission4(DSTDIR,excitationType):
-  triangular_yagi(DSTDIR,20,10,excitationType)
-  triangular_yagi_voxel(DSTDIR,20,10,excitationType)
-  triangular_yagi_voxel_sym(DSTDIR,20,10,excitationType)
+def mission4(DSTDIR,excitationType,iterations,freq_snapshots):
+  triangular_yagi(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
+  triangular_yagi_voxel(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
+  triangular_yagi_voxel_sym(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
 
 #def loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_type):
 
@@ -297,14 +297,16 @@ def main(argv=None):
     #test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
     #test2(os.getenv('TESTDIR'))
     
-    excitationType = 1
-    mission1(os.getenv('DATADIR')+os.sep+'mission1',excitationType)
-    mission2(os.getenv('DATADIR')+os.sep+'mission2',excitationType)
-    mission3(os.getenv('DATADIR')+os.sep+'mission3',excitationType)
-    mission4(os.getenv('DATADIR')+os.sep+'mission4',excitationType)
+    freq_snapshots = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+    for excitationType in range(4):
+      for iterations in [10,32000,261600,300000,1048400]:
+        mission1(os.getenv('DATADIR')+os.sep+'mission1',excitationType,iterations,freq_snapshots)
+        mission2(os.getenv('DATADIR')+os.sep+'mission2',excitationType,iterations,freq_snapshots)
+        mission3(os.getenv('DATADIR')+os.sep+'mission3',excitationType,iterations,freq_snapshots)
+        mission4(os.getenv('DATADIR')+os.sep+'mission4',excitationType,iterations,freq_snapshots)
     
-    #loncar_cylinder('loncar_cyl_python', DSTDIR, 32000, True, True, 'cylinder', 0.150/2.0, 0.637, [get_c0()/0.637],excitationType)
-    #loncar_structure('loncar_rect_python', DSTDIR, 32000, True, True, 'rectangular_holes', 1, 0.637, [get_c0()/0.637], excitationType)
+    #loncar_cylinder('loncar_cyl_python', DSTDIR, iterations, True, True, 'cylinder', 0.150/2.0, 0.637, [get_c0()/0.637],excitationType)
+    #loncar_structure('loncar_rect_python', DSTDIR, iterations, True, True, 'rectangular_holes', 1, 0.637, [get_c0()/0.637], excitationType)
 
     #cylinder(os.getenv('TESTDIR'), 12, 12, 0)
 

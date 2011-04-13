@@ -1,14 +1,14 @@
 from geometries.pillar_1D import *
 
-def triangular_yagi_voxel_sym(DSTDIR, bottomN, topN, excitationType):
+def triangular_yagi_voxel_sym(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== triangular_yagi_voxel_sym START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = 32000
+  P.ITERATIONS = iterations
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
-  P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+  P.SNAPSHOTS_FREQUENCY = freq_snapshots
 
   P.Nvoxels = 10;
   
