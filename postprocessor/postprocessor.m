@@ -1,4 +1,5 @@
 function varargout = postprocessor(varargin)
+  disp('function varargout = postprocessor(varargin)')
   %
   % usage examples:
   % postprocessor
@@ -104,7 +105,8 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   % uiwait(handles.figure1);
 end
 
-function varargout = postprocessor_OutputFcn(hObject, eventdata, handles) 
+function varargout = postprocessor_OutputFcn(hObject, eventdata, handles)
+  disp('function varargout = postprocessor_OutputFcn(hObject, eventdata, handles)')
   % --- Outputs from this function are returned to the command line.
   % varargout  cell array for returning output args (see VARARGOUT);
   % hObject    handle to figure
@@ -116,6 +118,7 @@ function varargout = postprocessor_OutputFcn(hObject, eventdata, handles)
 end
 
 function popupmenu_inputsnapshot_Callback(hObject, eventdata, handles)
+  disp('function popupmenu_inputsnapshot_Callback(hObject, eventdata, handles)')
   % --- Executes on selection change in popupmenu_inputsnapshot.
   % hObject    handle to popupmenu_inputsnapshot (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -126,6 +129,7 @@ function popupmenu_inputsnapshot_Callback(hObject, eventdata, handles)
 end
 
 function popupmenu_inputsnapshot_CreateFcn(hObject, eventdata, handles)
+  disp('function popupmenu_inputsnapshot_CreateFcn(hObject, eventdata, handles)')
   % --- Executes during object creation, after setting all properties.
   % hObject    handle to popupmenu_inputsnapshot (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -139,6 +143,7 @@ function popupmenu_inputsnapshot_CreateFcn(hObject, eventdata, handles)
 end
 
 function popupmenu_inputfile_Callback(hObject, eventdata, handles)
+  disp('function popupmenu_inputfile_Callback(hObject, eventdata, handles)')
   % --- Executes on selection change in popupmenu_inputfile.
   % hObject    handle to popupmenu_inputfile (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -149,6 +154,7 @@ function popupmenu_inputfile_Callback(hObject, eventdata, handles)
 end
 
 function popupmenu_inputfile_CreateFcn(hObject, eventdata, handles)
+  disp('function popupmenu_inputfile_CreateFcn(hObject, eventdata, handles)')
   % --- Executes during object creation, after setting all properties.
   % hObject    handle to popupmenu_inputfile (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -162,6 +168,7 @@ function popupmenu_inputfile_CreateFcn(hObject, eventdata, handles)
 end
 
 function pushbutton_load_data_Callback(hObject, eventdata, handles)
+  disp('function pushbutton_load_data_Callback(hObject, eventdata, handles)')
   % --- Executes on button press in pushbutton_load_data.
   % hObject    handle to pushbutton_load_data (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -206,6 +213,7 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
 end
 
 function popupmenu_geometryfile_Callback(hObject, eventdata, handles)
+  disp('function popupmenu_geometryfile_Callback(hObject, eventdata, handles)')
   % --- Executes on selection change in popupmenu_geometryfile.
   % hObject    handle to popupmenu_geometryfile (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -216,6 +224,7 @@ function popupmenu_geometryfile_Callback(hObject, eventdata, handles)
 end
 
 function popupmenu_geometryfile_CreateFcn(hObject, eventdata, handles)
+  disp('function popupmenu_geometryfile_CreateFcn(hObject, eventdata, handles)')
   % --- Executes during object creation, after setting all properties.
   % hObject    handle to popupmenu_geometryfile (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -229,6 +238,7 @@ function popupmenu_geometryfile_CreateFcn(hObject, eventdata, handles)
 end
 
 function popupmenu_plotcolumn_Callback(hObject, eventdata, handles)
+  disp('function popupmenu_plotcolumn_Callback(hObject, eventdata, handles)')
   % --- Executes on selection change in popupmenu_plotcolumn.
   % hObject    handle to popupmenu_plotcolumn (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -242,6 +252,7 @@ function popupmenu_plotcolumn_Callback(hObject, eventdata, handles)
 end
 
 function popupmenu_plotcolumn_CreateFcn(hObject, eventdata, handles)
+  disp('function popupmenu_plotcolumn_CreateFcn(hObject, eventdata, handles)')
   % hObject    handle to popupmenu_plotcolumn (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    empty - handles not created until after all CreateFcns called
@@ -254,17 +265,17 @@ function popupmenu_plotcolumn_CreateFcn(hObject, eventdata, handles)
 end
 
 function edit_maxplotvalue_Callback(hObject, eventdata, handles)
+  disp('function edit_maxplotvalue_Callback(hObject, eventdata, handles)')
   % hObject    handle to edit_maxplotvalue (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   
   % Hints: get(hObject,'String') returns contents of edit_maxplotvalue as text
   %        str2double(get(hObject,'String')) returns contents of edit_maxplotvalue as a double
-  
-  
 end
 
 function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)
+  disp('function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)')
   % --- Executes during object creation, after setting all properties.
   % hObject    handle to edit_maxplotvalue (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -278,6 +289,7 @@ function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)
 end
 
 function radiobutton7_Callback(hObject, eventdata, handles)
+  disp('function radiobutton7_Callback(hObject, eventdata, handles)')
   % --- Executes on button press in radiobutton7.
   % hObject    handle to radiobutton7 (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -290,6 +302,7 @@ function radiobutton7_Callback(hObject, eventdata, handles)
 end
 
 function radiobutton8_Callback(hObject, eventdata, handles)
+  disp('function radiobutton8_Callback(hObject, eventdata, handles)')
   % hObject    handle to radiobutton8 (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
@@ -301,6 +314,7 @@ function radiobutton8_Callback(hObject, eventdata, handles)
 end
 
 function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
+  disp('function pushbutton_generate_plot_Callback(hObject, eventdata, handles)')
   % hObject    handle to pushbutton_generate_plot (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
@@ -316,6 +330,7 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
 end
 
 function edit3_Callback(hObject, eventdata, handles)
+  disp('function edit3_Callback(hObject, eventdata, handles)')
   % hObject    handle to edit3 (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
@@ -325,6 +340,7 @@ function edit3_Callback(hObject, eventdata, handles)
 end
 
 function [handles] = setWorkDir(handles, new_dir)
+  disp('function [handles] = setWorkDir(handles, new_dir)')
   handles.workdir = new_dir;
 
   set(handles.label_working_directory,'String',new_dir);
@@ -357,6 +373,7 @@ function [handles] = setWorkDir(handles, new_dir)
 end
 
 function edit3_CreateFcn(hObject, eventdata, handles)
+  disp('function edit3_CreateFcn(hObject, eventdata, handles)')
   % --- Executes during object creation, after setting all properties.
   % hObject    handle to edit3 (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -370,6 +387,7 @@ function edit3_CreateFcn(hObject, eventdata, handles)
 end
 
 function pushbutton_browse_Callback(hObject, eventdata, handles)
+  disp('function pushbutton_browse_Callback(hObject, eventdata, handles)')
   % --- Executes on button press in pushbutton_browse.
   % hObject    handle to pushbutton_browse (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -386,6 +404,7 @@ function pushbutton_browse_Callback(hObject, eventdata, handles)
 end
 
 function edit4_Callback(hObject, eventdata, handles)
+  disp('function edit4_Callback(hObject, eventdata, handles)')
   % hObject    handle to edit4 (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
@@ -421,7 +440,7 @@ function checkbox_interpolate_Callback(hObject, eventdata, handles)
 end
 
 function checkbox_autosave_Callback(hObject, eventdata, handles)
-  disp('checkbox_autosave_Callback(hObject, eventdata, handles)')
+  disp('function checkbox_autosave_Callback(hObject, eventdata, handles)')
   % --- Executes on button press in checkbox_autosave.
   % hObject    handle to checkbox_autosave (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
