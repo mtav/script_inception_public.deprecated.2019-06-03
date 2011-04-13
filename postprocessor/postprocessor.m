@@ -365,9 +365,15 @@ function [handles] = setWorkDir(handles, new_dir)
   %     disp('no .prn files found');
   % end
 
-  set(handles.popupmenu_inputsnapshot,'String',prn_files);
-  set(handles.popupmenu_geometryfile,'String',geo_files);
-  set(handles.popupmenu_inputfile,'String',inp_files);
+  if length(prn_files)>0
+    set(handles.popupmenu_inputsnapshot,'String',prn_files);
+  end
+  if length(geo_files)>0
+    set(handles.popupmenu_geometryfile,'String',geo_files);
+  end
+  if length(inp_files)>0
+    set(handles.popupmenu_inputfile,'String',inp_files);
+  end
 
   clear prn_files geo_files inp_files
 end
