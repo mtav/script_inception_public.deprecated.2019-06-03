@@ -451,11 +451,12 @@ class pillar_1D:
       self.radius_Z_center ]
       max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
     elif self.HOLE_TYPE == 'triangular_yagi':
+      radius_Z_piercer = self.radius_X_hole
       thicknessVector_Z_1 = [ Z_BoxToBuffer,
-      self.thickness_Z_buffer - (self.radius_Z_pillar_mum-self.radius_Z_hole),
-      self.radius_Z_pillar_mum-self.radius_Z_hole,
-      self.radius_Z_pillar_mum-self.radius_Z_hole,
-      self.radius_Z_hole-self.radius_Z_center,
+      self.thickness_Z_buffer - radius_Z_piercer,
+      radius_Z_piercer,
+      radius_Z_piercer,
+      (self.radius_Z_pillar_mum - radius_Z_piercer)-self.radius_Z_center,
       self.radius_Z_center ]
       max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
     elif self.HOLE_TYPE == 'triangular_yagi_voxel':

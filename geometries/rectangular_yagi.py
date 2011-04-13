@@ -9,6 +9,8 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P.print_holes_bottom = True
   P.setLambda(0.637)
   P.SNAPSHOTS_FREQUENCY = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
+
+  P.Nvoxels = 10;
   
   P.HOLE_TYPE = 'rectangular_yagi'
   
@@ -24,6 +26,7 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   
   P.setRadiusPillarYZ(0.5,0.5)
   P.print_podium = True
+  P.print_pillar = True
   
   P.d_holes_mum = P.getLambda()/(2*n_Eff);#mum
   radius_Z_piercer = 0.100
@@ -33,7 +36,6 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P.top_N = topN; #no unit
   
   P.setDistanceBetweenDefectBordersInCavity(P.getLambda()/n_Eff)
-  # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
   delta_diamond = P.getLambda()/(10*P.n_Substrate);
   P.delta_X_bottomSquare = delta_diamond
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
@@ -41,7 +43,6 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType):
   P.setDeltaOutside(P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
-  #P.setThicknessBuffer(32*delta_diamond, 4*delta_diamond, radius_Z_piercer)
   P.setThicknessBuffer(32*delta_diamond,4*delta_diamond,12*delta_diamond)
   P.setRadiusCenter(2*P.delta_X_center,2*P.delta_Y_center,2*P.delta_Z_center)
   
