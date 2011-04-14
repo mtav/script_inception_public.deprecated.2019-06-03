@@ -63,8 +63,19 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   % handles    structure with handles and user data (see GUIDATA)
   % varargin   command line arguments to postprocessor (see VARARGIN)
 
-  disp(['nargin=',num2str(nargin)]);
-  disp(['nargout=',num2str(nargout)]);
+  % Choose default command line output for postprocessor
+  handles.output = hObject;
+
+  % to prevent errors on attempts to plot before loading
+  handles.isLoaded = 0;
+
+  disp('=== ARGUMENT INFO ===')
+  disp(['nargin = ',num2str(nargin)]);
+  disp(['nargout = ',num2str(nargout)]);
+  for k = 1:length(varargin)
+    disp(varargin{k});
+  end
+  disp('=====================')
 
   if nargin>4
     disp('We have input');
@@ -73,32 +84,17 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   % set default value
   new_dir = pwd();
 
-    % disp(varargin{1});
-    % disp(varargin{2});
-    % disp(varargin{3});
-
   % CLI input arg handling
   if nargin > 3
-    for k = 1:length(varargin)
-      disp(varargin{k});
-    end
-
     if exist(varargin{1}{1},'dir')
       new_dir = varargin{1}{1};
     else
-      errordlg({'Input argument must be a valid',...
-           'folder'},'Input Argument Error!')
+      errordlg({'Input argument must be a valid folder'},'Input Argument Error!');
       return
     end
   end
 
-  [handles] = setWorkDir(handles, new_dir);
-
-  % Choose default command line output for postprocessor
-  handles.output = hObject;
-
-  % to prevent errors on attempts to plot before loading
-  handles.isLoaded = 0;
+  [handles] = setupWorkDir(handles, new_dir);
 
   % Update handles structure
   % set(handles.label_working_directory,'String',handles.workdir)
@@ -378,43 +374,32 @@ function edit3_Callback(hObject, eventdata, handles)
   %        str2double(get(hObject,'String')) returns contents of edit3 as a double
 end
 
-function [handles] = setWorkDir(handles, new_dir)
-  disp('function [handles] = setWorkDir(handles, new_dir)')
-  handles.workdir = new_dir;
+function [handles] = setupWorkDir(handles, new_dir)
+  [handles, ok] = PP_setWorkDir(handles,new_dir);
+  if ~ok
+    return
+  end
 
-  set(handles.label_working_directory,'String',new_dir);
+  set(handles.label_working_directory,'String',handles.workdir);
 
-  handles.snaplist = {};
-  handles.geolist = {};
-  handles.inplist = {};
-
-  prn_files = [dir(fullfile(new_dir,'*.prn')); dir(fullfile(new_dir,'*.dat'))];
+  if length(handles.ProbeList)>0
+    set(handles.popupmenu_inputsnapshot,'String',handles.ProbeList);
+  else
+    set(handles.popupmenu_inputsnapshot,'String',{''});
+  end
   
-  handles.snaplist = {prn_files.name}';
-  prn_files = char(prn_files.name);
-  geo_files = dir(fullfile(new_dir,'*.geo'));
-  handles.geolist = {geo_files.name}';
-  geo_files = char(geo_files.name);
-  inp_files = dir(fullfile(new_dir,'*.inp'));
-  handles.inplist = {inp_files.name}';
-  inp_files = char(inp_files.name);
-
-  % disp(['prn_files=',prn_files]);
-  % if(prn_files=='')
-  %     disp('no .prn files found');
-  % end
-
-  if length(prn_files)>0
-    set(handles.popupmenu_inputsnapshot,'String',prn_files);
+  if length(handles.geolist)>0
+    set(handles.popupmenu_geometryfile,'String',handles.geolist);
+  else
+    set(handles.popupmenu_geometryfile,'String',{''});
   end
-  if length(geo_files)>0
-    set(handles.popupmenu_geometryfile,'String',geo_files);
-  end
-  if length(inp_files)>0
-    set(handles.popupmenu_inputfile,'String',inp_files);
+  
+  if length(handles.inplist)>0
+    set(handles.popupmenu_inputfile,'String',handles.inplist);
+  else
+    set(handles.popupmenu_inputfile,'String',{''});  
   end
 
-  clear prn_files geo_files inp_files
 end
 
 function edit3_CreateFcn(hObject, eventdata, handles)

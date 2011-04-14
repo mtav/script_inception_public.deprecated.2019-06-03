@@ -7,6 +7,7 @@ function postprocessor_CLI()
   handles.geolist = {};
   handles.inplist = {};
 
+  % browse
   [handles, dirChosen] = PP_browse(handles);
   if ~dirChosen
     return
@@ -18,10 +19,13 @@ function postprocessor_CLI()
   handles.FrequencySnapshotID = 1;
   handles.geometryfile = 1;
   handles.inputfile = 1;
+  
+  % load data
   [ handles, isLoaded ] = PP_load_data(handles);
   if ~isLoaded
     return
   end
+  
   handles.col = 3;
   handles.maxplotvalue = 1;
 
@@ -36,5 +40,6 @@ function postprocessor_CLI()
   handles.surface = 0;
   %handles.contour = 1;
 
+  % generate plot
   [ handles, ok ] = PP_generate_plot(handles);
 end
