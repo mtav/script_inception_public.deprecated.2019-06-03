@@ -11,7 +11,7 @@ def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== cylinder START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = iterations
+  P.setIterations(iterations)
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
@@ -55,7 +55,7 @@ def cylinder_mission3(DSTDIR, bottomN, topN, excitationType, iterations, freq_sn
   P = pillar_1D()
   print('======== cylinder_mission3 START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = iterations
+  P.setIterations(iterations)
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
@@ -113,7 +113,7 @@ def square_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapsho
   P = pillar_1D()
   print('======== square_holes START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = iterations
+  P.setIterations(iterations)
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
@@ -161,7 +161,7 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_sn
   P = pillar_1D()
   print('======== rectangular_holes START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = iterations
+  P.setIterations(iterations)
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
@@ -289,9 +289,9 @@ def mission4(DSTDIR,excitationType,iterations,freq_snapshots):
   triangular_yagi_voxel(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
   triangular_yagi_voxel_sym(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
 
-#def loncar_cylinder(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_type):
+#def loncar_cylinder(BASENAME, DSTDIR, iterations, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius_mum, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY,excitation_type):
 
-#def loncar_structure(BASENAME, DSTDIR, ITERATIONS, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY):
+#def loncar_structure(BASENAME, DSTDIR, iterations, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY):
 
 def main(argv=None):
   if argv is None:

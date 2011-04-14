@@ -46,9 +46,12 @@ class pillar_1D:
     self.bottom_N = 6; # number of holes on bottom (no unit)
     self.top_N = 3; # number of holes on top (no unit)
     self.Nvoxels = 10
+    
+    # can be set directly, but it is recommended to use setIterations()
     self.ITERATIONS = 32000
     self.FIRST=65400
     self.REPETITION=524200
+    
     self.WALLTIME=360
     self.TIMESTEP=0.9; #mus
     self.TIME_CONSTANT=4.000000E-09; #mus
@@ -162,6 +165,16 @@ class pillar_1D:
 
   def setLambda(self,Lambda_mum):
     self.EXCITATION_FREQUENCY = get_c0()/Lambda_mum
+
+  def setIterations(self, N_iterations, N_first = 65400, N_repetitions = 524200):
+    #first<=iterations
+    #repetition>rep_min
+    self.ITERATIONS = N_iterations
+    self.FIRST = N_first
+    self.REPETITION = N_repetitions
+
+    if self.FIRST > self.ITERATIONS:
+      self.FIRST = self.ITERATIONS
 
   def setExcitationType(self, excitationType):
 

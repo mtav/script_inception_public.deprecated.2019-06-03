@@ -4,7 +4,7 @@ def triangular_yagi_voxel(DSTDIR, bottomN, topN, excitationType, iterations, fre
   P = pillar_1D()
   print('======== triangular_yagi_voxel START ============')
   P.DSTDIR = DSTDIR
-  P.ITERATIONS = iterations
+  P.setIterations(iterations)
   P.print_holes_top = True
   P.print_holes_bottom = True
   P.setLambda(0.637)
