@@ -179,26 +179,25 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   
   val = get(handles.popupmenu_inputsnapshot,'Value');
   if (val<1) | (length(handles.snaplist)<val)
-    error(['val not in range : ',num2str(val)])
-    return
+    error(['val not in range : ',num2str(val)]);
+    return;
   end
   snapfile = handles.snaplist{val};
   handles.snapfile = [handles.workdir, filesep, snapfile];
   
   val = get(handles.popupmenu_geometryfile,'Value');
   if (val<1) | (length(handles.geolist)<val)
-    error(['val not in range : ',num2str(val)])
-    return
+    error(['val not in range : ',num2str(val)]);
+    return;
   end
   geofile = handles.geolist{val};
   
-  handles.geofile = [handles.workdir, filesep, geofile]
-  
+  handles.geofile = [handles.workdir, filesep, geofile];
 
   val = get(handles.popupmenu_inputfile,'Value');
   if (val<1) | (length(handles.inplist)<val)
-    error(['val not in range : ',num2str(val)])
-    return
+    error(['val not in range : ',num2str(val)]);
+    return;
   end
   inpfile = handles.inplist{val};
   handles.inpfile = [handles.workdir, filesep, inpfile];

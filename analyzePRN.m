@@ -37,10 +37,10 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
   %6 Hy
   %7 Hz
 
-    original_working_dir = pwd();
-    original_working_dir
-    
-    verbose=1;
+  original_working_dir = pwd();
+  original_working_dir
+  
+  verbose=1;
   time_plot = 1;
   freq_plot_all = 1;
   freq_plot_zoom1 = 0;
