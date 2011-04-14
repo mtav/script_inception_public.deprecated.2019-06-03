@@ -12,12 +12,7 @@ function plotgen(maxval,column,handles)
   %
   %For Poynting vector plots in the same format use snap_poy_int.m
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
-  if isnan(maxval)
-    % TODO: search data for maximum value
-    maxval = 1;
-  end
-  
+    
   %% Load geo file data
   Geoparms = geometryparms(handles.geofile);
   
@@ -55,13 +50,21 @@ function plotgen(maxval,column,handles)
   
   %% Load column of choice to data
   modu = 1;
+  rawdata = handles.fin1(:,column);
   if handles.modulus == 1
-      data = abs(handles.fin1(:,column));
+      data = abs(rawdata);
   else
-      data = handles.fin1(:,column);
+      data = rawdata;
       if min(data) < 0
           modu = 0;
       end
+  end
+
+  disp(['DATA INFO: min(rawdata) = ',num2str(min(rawdata))]);
+  disp(['DATA INFO: max(rawdata) = ',num2str(max(rawdata))]);
+  
+  if isnan(maxval)
+    maxval = max(data);
   end
   
   %% Create plot data meshgrid
@@ -88,26 +91,23 @@ function plotgen(maxval,column,handles)
   if handles.plane == 1
       if (handles.surface)
           %pcolor(i,j,k)
-          surf(i,j,k)
+          surf(i,j,k);
       else
-          contour(i,j,k)
+          contour(i,j,k);
       end
   elseif handles.plane == 2
       if (handles.surface)
           %pcolor(i,j,k)
-          surf(i,j,k)
+          surf(i,j,k);
       else
-          contour(i,j,k)
+          contour(i,j,k);
       end
   else
       if (handles.surface)
           %pcolor(j,i,k)
-          surf(j,i,k)
+          surf(j,i,k);
       else
-          j
-          i
-          k
-          contour(j,i,k)
+          contour(j,i,k);
       end
   end
   
@@ -115,9 +115,9 @@ function plotgen(maxval,column,handles)
   colfig = handles.colplot{column};
   disp(['maxval=',num2str(maxval)]);
   if (modu == 1) || (handles.modulus == 1)
-      caxis([0 maxval])
+      caxis([0 maxval]);
   else
-      caxis([-maxval maxval])
+      caxis([-maxval maxval]);
   end
   colorbar
   AspectRatio = get(gca,'DataAspectRatio');
@@ -148,8 +148,8 @@ function plotgen(maxval,column,handles)
   end
   titlesnap = strread(handles.snapfile,'%s','delimiter','\\');
   title([char(titlesnap(length(titlesnap))) ': ' char(handles.colplot(column))],'FontWeight','bold');
-  clear titlesnap
-  hold on
+  clear titlesnap;
+  hold on;
   
   %% Plot Geometry Entities
   if handles.geometry == 1
@@ -176,7 +176,7 @@ function plotgen(maxval,column,handles)
                           (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2)) ...
                           (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2))];
                       plot(I,J,'y','LineWidth',2);
-                      clear I J
+                      clear I J;
                   end
               end
           case 2
@@ -197,7 +197,7 @@ function plotgen(maxval,column,handles)
                       plot(J,I,'y'); clear I J
                       I = (Geoparms.Cylinder(1,ii).Rad2*circle_i)+Geoparms.Cylinder(1,ii).X;
                       J = (Geoparms.Cylinder(1,ii).Rad2*circle_j)+Geoparms.Cylinder(1,ii).Z;
-                      plot(J,I,'y','LineWidth',2); clear I J
+                      plot(J,I,'y','LineWidth',2); clear I J;
                   end
               end
           case 3
@@ -221,7 +221,7 @@ function plotgen(maxval,column,handles)
                           (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2)) ...
                           (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2))];
                       plot(I,J,'y','LineWidth',2);
-                      clear I J
+                      clear I J;
                   end
               end
       end
@@ -234,6 +234,6 @@ function plotgen(maxval,column,handles)
       else
           figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
       end
-      print(gcf,'-dpng','-r300',figout)
+      print(gcf,'-dpng','-r300',figout);
   end
 end

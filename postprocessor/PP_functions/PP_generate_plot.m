@@ -6,6 +6,7 @@ function [ handles, ok ] = PP_generate_plot(handles)
 
   if ~handles.isLoaded
     disp('WARNING: Please load a file first');
+    ok = 0;
     return;
   end
   
