@@ -29,8 +29,7 @@ function [ handles, isLoaded ] = PP_load_data(handles)
     end
     name = handles.ProbeList{val};
     handles.ProbeFile = [handles.workdir, filesep, name];
-    %load snapshot data
-    [handles.header, handles.fin1] = hdrload(handles.ProbeFile);
+    handles.snapfile = handles.ProbeFile;
   elseif handles.Type == 2
     val = handles.TimeSnapshotID;
     if (val<1) | (length(handles.TimeSnapshotList)<val)
@@ -39,7 +38,7 @@ function [ handles, isLoaded ] = PP_load_data(handles)
     end
     name = handles.TimeSnapshotList{val};
     handles.TimeSnapshotFile = [handles.workdir, filesep, name];
-    [handles.header, handles.fin1] = hdrload(handles.TimeSnapshotFile);
+    handles.snapfile = handles.TimeSnapshotFile;
   elseif handles.Type == 3
     val = handles.FrequencySnapshotID;
     if (val<1) | (length(handles.FrequencySnapshotList)<val)
@@ -48,11 +47,14 @@ function [ handles, isLoaded ] = PP_load_data(handles)
     end
     name = handles.FrequencySnapshotList{val};
     handles.FrequencySnapshotFile = [handles.workdir, filesep, name];
-    [handles.header, handles.fin1] = hdrload(handles.FrequencySnapshotFile);
+    handles.snapfile = handles.FrequencySnapshotFile;
   else
     error('Unknown data type')
     return
   end
+
+  %load snapshot data
+  [handles.header, handles.fin1] = hdrload(handles.snapfile);
   
   %determine orientation of snapshot
   handles.gr = size(handles.fin1);
