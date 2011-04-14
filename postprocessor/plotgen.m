@@ -62,6 +62,10 @@ function plotgen(maxval,column,handles)
 
   disp(['DATA INFO: min(rawdata) = ',num2str(min(rawdata))]);
   disp(['DATA INFO: max(rawdata) = ',num2str(max(rawdata))]);
+  if min(rawdata)==0 & max(rawdata)==0
+    disp('WARNING: empty data');
+    return;
+  end
   
   if isnan(maxval)
     maxval = max(data);

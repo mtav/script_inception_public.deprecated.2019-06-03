@@ -82,19 +82,19 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   end
 
   % set default value
-  new_dir = pwd();
+  handles.workdir = pwd();
 
   % CLI input arg handling
   if nargin > 3
     if exist(varargin{1}{1},'dir')
-      new_dir = varargin{1}{1};
+      handles.workdir = varargin{1}{1};
     else
-      errordlg({'Input argument must be a valid folder'},'Input Argument Error!');
-      return
+      %errordlg({'Input argument must be a valid folder'},'Input Argument Error!');
+      disp('WARNING: Input Argument Error!: Input argument must be a valid folder');
+      guidata(hObject, handles);
     end
   end
 
-  handles.workdir = new_dir;
   [handles] = setupListsGUI(handles);
 
   % Update handles structure
