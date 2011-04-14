@@ -98,7 +98,6 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   [handles] = setupListsGUI(handles);
 
   % Update handles structure
-  % set(handles.label_working_directory,'String',handles.workdir)
   guidata(hObject, handles);
 
   % UIWAIT makes postprocessor wait for user response (see UIRESUME)
@@ -312,12 +311,14 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
     return
   end
   
+  % get from GUI
   col = get(handles.popupmenu_plotcolumn,'Value');
+
   col = col+2;
   handles.dataname = get(handles.popupmenu_plotcolumn,'String');
+
   max = get(handles.edit_maxplotvalue,'String');
   max = str2double(max);
-  guidata(hObject,handles);
   
   handles.interpolate = get(handles.checkbox_interpolate,'Value');
   handles.autosave= get(handles.checkbox_autosave,'Value');
@@ -329,10 +330,11 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
 
   handles.surface = get(handles.radiobutton_surface,'Value');
   %handles.contour = 1;
-  
-  handles.geofile
-  
+
+  % generate plot
   plotgen(max,col,handles);
+
+  guidata(hObject,handles);
 end
 
 function edit3_Callback(hObject, eventdata, handles)
@@ -405,8 +407,16 @@ function pushbutton_browse_Callback(hObject, eventdata, handles)
   % hObject    handle to pushbutton_browse (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
+  
+  % get from GUI
+  handles.workdir = get(handles.label_working_directory,'String');
+  
+  % browse
   [handles, dirChosen] = PP_browse(handles);
+  
+  % set to GUI
   [handles] = setupListsGUI(handles);
+
   guidata(hObject,handles);
 end
 

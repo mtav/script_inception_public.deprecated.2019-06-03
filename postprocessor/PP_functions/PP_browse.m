@@ -7,7 +7,7 @@ function [handles, dirChosen] = PP_browse(handles)
 
   handles.isLoaded = 0;
 
-  new_dir = CrossPlatformUigetdir();
+  new_dir = CrossPlatformUigetdir(handles.workdir);
   disp(['new_dir = ',new_dir])
   if new_dir == 0
     dirChosen = 0;
