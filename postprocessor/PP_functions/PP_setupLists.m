@@ -1,5 +1,5 @@
 function [handles, ok] = PP_setupLists(handles)
-  disp('function [handles] = setWorkDir(handles, new_dir)')
+  disp('function [handles] = setWorkDir(handles, handles.workdir)')
 
   handles.data_files = {};
   handles.ProbeList = {};
@@ -8,7 +8,7 @@ function [handles, ok] = PP_setupLists(handles)
   handles.geolist = {};
   handles.inplist = {};
 
-  data_files = [dir(fullfile(new_dir,'*.prn')); dir(fullfile(new_dir,'*.dat'))];
+  data_files = [dir(fullfile(handles.workdir,'*.prn')); dir(fullfile(handles.workdir,'*.dat'))];
   handles.data_files = {data_files.name}; handles.data_files = handles.data_files';
   for idx=1:length(handles.data_files)
     unknown = 1;
@@ -38,15 +38,15 @@ function [handles, ok] = PP_setupLists(handles)
   total = length(handles.ProbeList) + length(handles.TimeSnapshotList) + length(handles.FrequencySnapshotList) + 1;
   disp(['total = ',num2str(total)])
  
-  %prn_files = [dir(fullfile(new_dir,'*.prn')); dir(fullfile(new_dir,'*.dat'))];
+  %prn_files = [dir(fullfile(handles.workdir,'*.prn')); dir(fullfile(handles.workdir,'*.dat'))];
   %handles.snaplist = {prn_files.name}; handles.snaplist = handles.snaplist';
   %prn_files = char(prn_files.name);
     
-  geo_files = dir(fullfile(new_dir,'*.geo'));
+  geo_files = dir(fullfile(handles.workdir,'*.geo'));
   handles.geolist = {geo_files.name}; handles.geolist = handles.geolist';
   %geo_files = char(geo_files.name);
   
-  inp_files = dir(fullfile(new_dir,'*.inp'));
+  inp_files = dir(fullfile(handles.workdir,'*.inp'));
   handles.inplist = {inp_files.name}; handles.inplist = handles.inplist';
   %inp_files = char(inp_files.name);
 

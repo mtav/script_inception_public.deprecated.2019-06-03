@@ -94,6 +94,7 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
     end
   end
 
+  handles.workdir = new_dir;
   [handles] = setupWorkDir(handles);
 
   % Update handles structure
