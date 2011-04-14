@@ -306,19 +306,9 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   
-  if ~handles.isLoaded
-    disp('WARNING: Please load a file first')
-    return
-  end
-  
   % get from GUI
-  col = get(handles.popupmenu_plotcolumn,'Value');
-
-  col = col+2;
-  handles.dataname = get(handles.popupmenu_plotcolumn,'String');
-
-  max = get(handles.edit_maxplotvalue,'String');
-  max = str2double(max);
+  handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
+  handles.maxplotvalue = str2double(get(handles.edit_maxplotvalue,'String'));
   
   handles.interpolate = get(handles.checkbox_interpolate,'Value');
   handles.autosave= get(handles.checkbox_autosave,'Value');
@@ -326,13 +316,10 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   handles.modulus = get(handles.checkbox_modulus,'Value');
 
   handles.colour = get(handles.radiobutton_colour,'Value');
-  %handles.greyscale = 0;
-
   handles.surface = get(handles.radiobutton_surface,'Value');
-  %handles.contour = 1;
 
   % generate plot
-  plotgen(max,col,handles);
+  [ handles, ok ] = PP_generate_plot(handles);
 
   guidata(hObject,handles);
 end

@@ -35,10 +35,7 @@ function postprocessor_CLI()
   handles.modulus = 0;
 
   handles.colour = 1;
-  %handles.greyscale = 0;
-
   handles.surface = 0;
-  %handles.contour = 1;
 
   % generate plot
   [ handles, ok ] = PP_generate_plot(handles);

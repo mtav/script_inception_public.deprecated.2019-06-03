@@ -5,23 +5,18 @@ function [ handles, ok ] = PP_generate_plot(handles)
   % handles    structure with handles and user data (see GUIDATA)
 
   if ~handles.isLoaded
-    error('Please load a file first')
-    return
+    disp('WARNING: Please load a file first');
+    return;
   end
   
-  %handles.colplot
-  
-  %handles.plotcolumn
-  
   col = handles.col;
-  %col = col+2;
   handles.dataname = handles.colplot(col);
   max = handles.maxplotvalue;
   
   if handles.Type == 1
-    error('No plot generator available yet for probes.')
-    ok = 0
-    return
+    disp('WARNING: No plot generator available yet for probes.')
+    ok = 0;
+    return;
   elseif handles.Type == 2
     handles.snapfile = handles.TimeSnapshotFile;
     plotgen(max,col,handles);
@@ -29,9 +24,9 @@ function [ handles, ok ] = PP_generate_plot(handles)
     handles.snapfile = handles.FrequencySnapshotFile;
     plotgen(max,col,handles);
   else
-    error('Unknown data type')
-    ok = 0
-    return
+    error('Unknown data type');
+    ok = 0;
+    return;
   end
   ok = 1;
 end
