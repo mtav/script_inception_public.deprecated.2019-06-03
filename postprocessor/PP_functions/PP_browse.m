@@ -13,7 +13,9 @@ function [handles, dirChosen] = PP_browse(handles)
     dirChosen = 0;
     return;
   end
-  [handles, ok] = PP_setWorkDir(handles,new_dir);
+  handles.workdir = new_dir;
+
+  [handles, ok] = PP_setupLists(handles);
   if ~ok
     dirChosen = 0;
     return

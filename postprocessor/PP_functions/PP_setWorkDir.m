@@ -1,6 +1,5 @@
-function [handles, ok] = PP_setWorkDir(handles, new_dir)
+function [handles, ok] = PP_setupLists(handles)
   disp('function [handles] = setWorkDir(handles, new_dir)')
-  handles.workdir = new_dir;
 
   handles.data_files = {};
   handles.ProbeList = {};
