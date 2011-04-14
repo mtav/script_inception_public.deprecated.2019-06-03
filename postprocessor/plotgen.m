@@ -82,7 +82,7 @@ function plotgen(maxval,column,handles)
   end
   
   %% Create figure and plot data
-  figure
+  figure;
   grey = 0;
   if (handles.colour)
       colormap(jet(256));
@@ -116,7 +116,7 @@ function plotgen(maxval,column,handles)
   end
   
   %colave = max(fin1(:,column));
-  colfig = handles.colplot{column};
+  colfig = handles.AllHeaders{column};
   disp(['maxval=',num2str(maxval)]);
   if (modu == 1) || (handles.modulus == 1)
       caxis([0 maxval]);
@@ -128,9 +128,9 @@ function plotgen(maxval,column,handles)
   AspectRatio(1) = AspectRatio(2);
   set(gca,'DataAspectRatio',AspectRatio);
   if handles.interpolate == 1
-      shading interp
+      shading interp;
   else
-      shading flat
+      shading flat;
   end
   % TODO: handle NaNs
   switch handles.plane
@@ -151,7 +151,7 @@ function plotgen(maxval,column,handles)
           axis(foo)
   end
   titlesnap = strread(handles.snapfile,'%s','delimiter','\\');
-  title([char(titlesnap(length(titlesnap))) ': ' char(handles.colplot(column))],'FontWeight','bold');
+  title([char(titlesnap(length(titlesnap))) ': ' char(handles.AllHeaders(column))],'FontWeight','bold');
   clear titlesnap;
   hold on;
   
@@ -239,6 +239,7 @@ function plotgen(maxval,column,handles)
       else
           figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
       end
+      disp(['Saving figure as ',figout]);
       print(gcf,'-dpng','-r300',figout);
   end
 end

@@ -2,10 +2,11 @@
 % given point.
 
 function [ind,val]=closestInd(M,p)
-N=abs(M-p);
-err=N;
-for m=1:ndims(N)
+  N=abs(M-p);
+  err=N;
+  for m=1:ndims(N)
     err=min(err);
+  end
+  ind=find(N==err);
+  val=M(ind);
 end
-ind=find(N==err);
-val=M(ind);

@@ -73,10 +73,18 @@ function [ handles, isLoaded ] = PP_load_data(handles)
       handles.maxy = handles.fin1(handles.gr(1),2);
   end
   
-  handles.colplot = columns; % all headers
-  columns = columns(3:length(columns));
-  columns = char(columns);
-  handles.plotcolumn = columns; % all headers except the two first ones
+  handles.AllHeaders = columns; % all headers
+
+  if handles.Type == 1
+    handles.HeadersForPopupList = char(columns(2:length(columns))); % all headers except the one/two first ones
+  elseif handles.Type == 2
+    handles.HeadersForPopupList = char(columns(3:length(columns))); % all headers except the one/two first ones
+  elseif handles.Type == 3
+    handles.HeadersForPopupList = char(columns(3:length(columns))); % all headers except the one/two first ones
+  else
+    error('Unknown data type')
+    return
+  end
   
   handles.isLoaded = 1;
   isLoaded = 1;

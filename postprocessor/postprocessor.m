@@ -197,7 +197,7 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   end
   
   % set to GUI
-  set(handles.popupmenu_plotcolumn,'String',handles.plotcolumn);
+  set(handles.popupmenu_plotcolumn,'String',handles.HeadersForPopupList);
   set(handles.text11,'String',['Loaded data: ',handles.snapfile]);
 
   guidata(hObject,handles);
@@ -311,7 +311,15 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   % handles    structure with handles and user data (see GUIDATA)
   
   % get from GUI
-  handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
+  if get(handles.radiobutton_Probe,'Value')
+    handles.col = get(handles.popupmenu_plotcolumn,'Value')+1;
+  end
+  if get(handles.radiobutton_TimeSnapshot,'Value');
+    handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
+  end
+  if get(handles.radiobutton_FrequencySnapshot,'Value');
+    handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
+  end
   handles.maxplotvalue = str2double(get(handles.edit_maxplotvalue,'String'));
   
   handles.interpolate = get(handles.checkbox_interpolate,'Value');

@@ -11,13 +11,11 @@ function [ handles, ok ] = PP_generate_plot(handles)
   end
   
   col = handles.col;
-  handles.dataname = handles.colplot(col);
+  handles.dataname = handles.AllHeaders(col);
   max = handles.maxplotvalue;
   
   if handles.Type == 1
-    disp('WARNING: No plot generator available yet for probes.')
-    ok = 0;
-    return;
+    plotProbe(handles.ProbeFile, handles.col, handles.autosave);
   elseif handles.Type == 2
     handles.snapfile = handles.TimeSnapshotFile;
     plotgen(max,col,handles);

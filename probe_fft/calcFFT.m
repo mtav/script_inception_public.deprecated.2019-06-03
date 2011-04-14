@@ -16,17 +16,17 @@ function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
 
   fft_out = fft(datain,NFFT);
 
-    Lout = length(fft_out);
+  Lout = length(fft_out);
   fft_out = fft_out(1:Lout/2);
 
-    % relative frequency according to nyquist criterion
-    nyqfreq = 1/dt;
+  % relative frequency according to nyquist criterion
+  nyqfreq = 1/dt;
 
   % freq = nyqfreq/2*linspace(0,1,length(fft_out));
-    freq = nyqfreq/Lout*linspace(1,Lout/2,length(fft_out));
+  freq = nyqfreq/Lout*linspace(1,Lout/2,length(fft_out));
 
   % wavelength from FDTD frequency units
-    lambda = get_c0()./freq;
+  lambda = get_c0()./freq;
 
   % make sure all vectors are column vectors
   fft_out = fft_out(:);
