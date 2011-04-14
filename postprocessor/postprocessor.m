@@ -32,7 +32,7 @@ function varargout = postprocessor(varargin)
   
   % Edit the above text to modify the response to help postprocessor
   
-  % Last Modified by GUIDE v2.5 07-Sep-2010 15:52:22
+  % Last Modified by GUIDE v2.5 14-Apr-2011 14:53:22
   
   % Begin initialization code - DO NOT EDIT
   gui_Singleton = 1;
@@ -116,21 +116,21 @@ function varargout = postprocessor_OutputFcn(hObject, eventdata, handles)
   varargout{1} = handles.output;
 end
 
-function popupmenu_inputsnapshot_Callback(hObject, eventdata, handles)
+function popupmenu_Probe_Callback(hObject, eventdata, handles)
   disp('function popupmenu_inputsnapshot_Callback(hObject, eventdata, handles)')
-  % --- Executes on selection change in popupmenu_inputsnapshot.
-  % hObject    handle to popupmenu_inputsnapshot (see GCBO)
+  % --- Executes on selection change in popupmenu_Probe.
+  % hObject    handle to popupmenu_Probe (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   
-  % Hints: contents = get(hObject,'String') returns popupmenu_inputsnapshot contents as cell array
-  %        contents{get(hObject,'Value')} returns selected item from popupmenu_inputsnapshot
+  % Hints: contents = get(hObject,'String') returns popupmenu_Probe contents as cell array
+  %        contents{get(hObject,'Value')} returns selected item from popupmenu_Probe
 end
 
-function popupmenu_inputsnapshot_CreateFcn(hObject, eventdata, handles)
+function popupmenu_Probe_CreateFcn(hObject, eventdata, handles)
   disp('function popupmenu_inputsnapshot_CreateFcn(hObject, eventdata, handles)')
   % --- Executes during object creation, after setting all properties.
-  % hObject    handle to popupmenu_inputsnapshot (see GCBO)
+  % hObject    handle to popupmenu_Probe (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    empty - handles not created until after all CreateFcns called
   
@@ -173,7 +173,7 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   
-  val = get(handles.popupmenu_inputsnapshot,'Value');
+  val = get(handles.popupmenu_Probe,'Value');
   if (val<1) | (length(handles.snaplist)<val)
     error(['val not in range : ',num2str(val)]);
     return;
@@ -383,9 +383,21 @@ function [handles] = setupWorkDir(handles, new_dir)
   set(handles.label_working_directory,'String',handles.workdir);
 
   if length(handles.ProbeList)>0
-    set(handles.popupmenu_inputsnapshot,'String',handles.ProbeList);
+    set(handles.popupmenu_Probe,'String',handles.ProbeList);
   else
-    set(handles.popupmenu_inputsnapshot,'String',{''});
+    set(handles.popupmenu_Probe,'String',{''});
+  end
+
+  if length(handles.TimeSnapshotList)>0
+    set(handles.popupmenu_TimeSnapshot,'String',handles.TimeSnapshotList);
+  else
+    set(handles.popupmenu_TimeSnapshot,'String',{''});
+  end
+
+  if length(handles.FrequencySnapshotList)>0
+    set(handles.popupmenu_FrequencySnapshot,'String',handles.FrequencySnapshotList);
+  else
+    set(handles.popupmenu_FrequencySnapshot,'String',{''});
   end
   
   if length(handles.geolist)>0
@@ -490,4 +502,76 @@ function checkbox_modulus_Callback(hObject, eventdata, handles)
   % handles    structure with handles and user data (see GUIDATA)
   
   % Hint: get(hObject,'Value') returns toggle state of checkbox_modulus
+end
+
+function popupmenu_FrequencySnapshot_Callback(hObject, eventdata, handles)
+  % --- Executes on selection change in popupmenu_FrequencySnapshot.
+  % hObject    handle to popupmenu_FrequencySnapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hints: contents = get(hObject,'String') returns popupmenu_FrequencySnapshot contents as cell array
+  %        contents{get(hObject,'Value')} returns selected item from popupmenu_FrequencySnapshot
+end
+
+function popupmenu_FrequencySnapshot_CreateFcn(hObject, eventdata, handles)
+  % --- Executes during object creation, after setting all properties.
+  % hObject    handle to popupmenu_FrequencySnapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+  
+  % Hint: popupmenu controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
+end
+
+function popupmenu_TimeSnapshot_Callback(hObject, eventdata, handles)
+  % --- Executes on selection change in popupmenu_TimeSnapshot.
+  % hObject    handle to popupmenu_TimeSnapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hints: contents = get(hObject,'String') returns popupmenu_TimeSnapshot contents as cell array
+  %        contents{get(hObject,'Value')} returns selected item from popupmenu_TimeSnapshot
+end
+
+function popupmenu_TimeSnapshot_CreateFcn(hObject, eventdata, handles)
+  % --- Executes during object creation, after setting all properties.
+  % hObject    handle to popupmenu_TimeSnapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+  
+  % Hint: popupmenu controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
+end
+
+function radiobutton_Probe_Callback(hObject, eventdata, handles)
+  % --- Executes on button press in radiobutton_Probe.
+  % hObject    handle to radiobutton_Probe (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hint: get(hObject,'Value') returns toggle state of radiobutton_Probe
+end
+
+function radiobutton_TimeSnapshot_Callback(hObject, eventdata, handles)
+  % --- Executes on button press in radiobutton_TimeSnapshot.
+  % hObject    handle to radiobutton_TimeSnapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hint: get(hObject,'Value') returns toggle state of radiobutton_TimeSnapshot
+end
+
+function radiobutton_FrequencySnapshot_Callback(hObject, eventdata, handles)
+  % --- Executes on button press in radiobutton_FrequencySnapshot.
+  % hObject    handle to radiobutton_FrequencySnapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  % Hint: get(hObject,'Value') returns toggle state of radiobutton_FrequencySnapshot
 end
