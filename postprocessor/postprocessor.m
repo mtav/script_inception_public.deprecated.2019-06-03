@@ -169,74 +169,25 @@ end
 
 function pushbutton_load_data_Callback(hObject, eventdata, handles)
   disp('function pushbutton_load_data_Callback(hObject, eventdata, handles)')
+  
+  % get from GUI
   handles.Type = 2;
-  handles.ProbeID = 1;
-  handles.TimeSnapshotID = 1;
-  handles.FrequencySnapshotID = 1;
-  handles.geometryfile = 1;
-  handles.inputfile = 1;
+  handles.ProbeID = get(handles.popupmenu_Probe,'Value');
+  handles.TimeSnapshotID = get(handles.popupmenu_TimeSnapshot,'Value');
+  handles.FrequencySnapshotID = get(handles.popupmenu_FrequencySnapshot,'Value');
+  handles.geometryfile = get(handles.popupmenu_geometryfile,'Value');
+  handles.inputfile = get(handles.popupmenu_inputfile,'Value');
   
   % load data
   [ handles, isLoaded ] = PP_load_data(handles);
   if ~isLoaded
     return
   end
-%%%%%%%%%%%%%%%%%%%%%%%%%
-  %val = get(handles.popupmenu_Probe,'Value');
-  %if (val<1) | (length(handles.snaplist)<val)
-    %error(['val not in range : ',num2str(val)]);
-    %return;
-  %end
-  %snapfile = handles.snaplist{val};
-  %handles.snapfile = [handles.workdir, filesep, snapfile];
   
-  %val = get(handles.popupmenu_geometryfile,'Value');
-  %if (val<1) | (length(handles.geolist)<val)
-    %error(['val not in range : ',num2str(val)]);
-    %return;
-  %end
-  %geofile = handles.geolist{val};
-  
-  %handles.geofile = [handles.workdir, filesep, geofile];
-
-  %val = get(handles.popupmenu_inputfile,'Value');
-  %if (val<1) | (length(handles.inplist)<val)
-    %error(['val not in range : ',num2str(val)]);
-    %return;
-  %end
-  %inpfile = handles.inplist{val};
-  %handles.inpfile = [handles.workdir, filesep, inpfile];
-  
-  %%load snapshot data
-  %[header, handles.fin1] = hdrload(handles.snapfile);
-  
-  %%determine orientation of snapshot
-  %handles.gr = size(handles.fin1);
-  %columns = strread(header,'%s');
-  %if strcmp(columns(1),'y') && strcmp(columns(2),'z')
-      %handles.plane = 1;
-      %handles.maxy = handles.fin1(handles.gr(1),1);
-      %handles.maxz = handles.fin1(handles.gr(1),2);
-  %elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
-      %handles.plane = 2;
-      %handles.maxx = handles.fin1(handles.gr(1),1);
-      %handles.maxz = handles.fin1(handles.gr(1),2);
-  %else
-      %handles.plane = 3;
-      %handles.maxx = handles.fin1(handles.gr(1),1);
-      %handles.maxy = handles.fin1(handles.gr(1),2);
-  %end
-  
-  %handles.colplot = columns;
-  %columns = columns(3:length(columns));
-  %columns = char(columns);
-  
-  %handles.isLoaded = 1;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%
+  % set to GUI
   set(handles.popupmenu_plotcolumn,'String',handles.plotcolumn);
   set(handles.text11,'String',['Loaded data: ',handles.snapfile]);
-    
+
   guidata(hObject,handles);
 end
 
