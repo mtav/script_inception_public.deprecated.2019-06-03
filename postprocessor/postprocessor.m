@@ -171,7 +171,16 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   disp('function pushbutton_load_data_Callback(hObject, eventdata, handles)')
   
   % get from GUI
-  handles.Type = 2;
+  if get(handles.radiobutton_Probe,'Value')
+    handles.Type = 1;
+  end
+  if get(handles.radiobutton_TimeSnapshot,'Value');
+    handles.Type = 2;
+  end
+  if get(handles.radiobutton_FrequencySnapshot,'Value');
+    handles.Type = 3;
+  end
+  
   handles.ProbeID = get(handles.popupmenu_Probe,'Value');
   handles.TimeSnapshotID = get(handles.popupmenu_TimeSnapshot,'Value');
   handles.FrequencySnapshotID = get(handles.popupmenu_FrequencySnapshot,'Value');
