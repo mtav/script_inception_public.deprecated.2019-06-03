@@ -158,8 +158,8 @@ function plotgen(maxval,column,handles)
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower;
           upper = FDTDobj.block_list(ii).upper;
-          plot([lower(3) lower(3) upper(3) upper(3) lower(3)],...
-            [lower(2) upper(2) upper(2) lower(2) lower(2)],'y','LineWidth',2);
+          plot3([lower(3) lower(3) upper(3) upper(3) lower(3)],...
+            [lower(2) upper(2) upper(2) lower(2) lower(2)], max(data)*ones(1,5),'y','LineWidth',2);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
@@ -186,10 +186,10 @@ function plotgen(maxval,column,handles)
         end
       case 2
         for ii=1:length(FDTDobj.block_list)
-          L = FDTDobj.block_list(ii).lower;
-          U = FDTDobj.block_list(ii).upper;
-          plot([lower(3) lower(3) upper(3) upper(3) lower(3)],...
-            [lower(1) upper(1) upper(1) lower(1) lower(1)],'y','LineWidth',2);
+          lower = FDTDobj.block_list(ii).lower;
+          upper = FDTDobj.block_list(ii).upper;
+          plot3([lower(3) lower(3) upper(3) upper(3) lower(3)],...
+            [lower(1) upper(1) upper(1) lower(1) lower(1)], max(data)*ones(1,5),'y','LineWidth',2);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
@@ -210,10 +210,10 @@ function plotgen(maxval,column,handles)
         end
       case 3
         for ii=1:length(FDTDobj.block_list)
-          L = FDTDobj.block_list(ii).lower;
-          U = FDTDobj.block_list(ii).upper;
-          plot([lower(1) lower(1) upper(1) upper(1) lower(3)],...
-            [lower(2) upper(2) upper(2) lower(2) lower(2)],'y','LineWidth',2);
+          lower = FDTDobj.block_list(ii).lower;
+          upper = FDTDobj.block_list(ii).upper;
+          plot3([lower(1) lower(1) upper(1) upper(1) lower(3)],...
+            [lower(2) upper(2) upper(2) lower(2) lower(2)], max(data)*ones(1,5),'y','LineWidth',2);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
