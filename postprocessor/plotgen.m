@@ -12,17 +12,9 @@ function plotgen(maxval,column,handles)
   %
   %For Poynting vector plots in the same format use snap_poy_int.m
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-  %% Load geo file data
-  Geoparms = geometryparms(handles.geofile);
-  
-  %% Load input file data
-  %Inpparms = inputparms(handles.inpfile);
-  
-  %[ entries, structured_entries ] = GEO_INP_reader({handles.geofile,handles.inpfile})
+
+  % load geometry data
   [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
-  %FDTDobj.box.lower
-  %FDTDobj.box.upper
   
   %% Determine size of snapshot
   ii=1; ValPrev = handles.fin1(ii,1); grid_j = 1;
@@ -134,21 +126,21 @@ function plotgen(maxval,column,handles)
   end
   % TODO: handle NaNs
   switch handles.plane
-      case 1
-          xlabel('z')
-          ylabel('y')
-          foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
-          axis(foo)
-      case 2
-          xlabel('z')
-          ylabel('x')
-          foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(1) FDTDobj.box.upper(1)];
-          axis(foo)
-      case 3
-          xlabel('x')
-          ylabel('y')
-          foo = [FDTDobj.box.lower(1) FDTDobj.box.upper(1) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
-          axis(foo)
+    case 1
+      xlabel('z')
+      ylabel('y')
+      foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+      axis(foo)
+    case 2
+      xlabel('z')
+      ylabel('x')
+      foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(1) FDTDobj.box.upper(1)];
+      axis(foo)
+    case 3
+      xlabel('x')
+      ylabel('y')
+      foo = [FDTDobj.box.lower(1) FDTDobj.box.upper(1) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+      axis(foo)
   end
   titlesnap = strread(handles.snapfile,'%s','delimiter','\\');
   title([char(titlesnap(length(titlesnap))) ': ' char(handles.AllHeaders(column))],'FontWeight','bold');
@@ -157,79 +149,96 @@ function plotgen(maxval,column,handles)
   
   %% Plot Geometry Entities
   if handles.geometry == 1
-      disp('DRAWING GEOMETRY')
-      length(Geoparms.Block)
-      switch handles.plane
-          case 1
-              %Blocks
-              if Geoparms.Blks > 0
-                  for ii=1:1:length(Geoparms.Block)
-                      plot([Geoparms.Block(1,ii).Zl Geoparms.Block(1,ii).Zl Geoparms.Block(1,ii).Zu Geoparms.Block(1,ii).Zu Geoparms.Block(1,ii).Zl],...
-                      [Geoparms.Block(1,ii).Yl Geoparms.Block(1,ii).Yu Geoparms.Block(1,ii).Yu Geoparms.Block(1,ii).Yl Geoparms.Block(1,ii).Yl],'y','LineWidth',2);
-                  end
-              end
-              if Geoparms.Cyls > 0
-                  for ii=1:1:length(Geoparms.Cylinder)
-                      I = [(Geoparms.Cylinder(1,ii).Z-Geoparms.Cylinder(1,ii).Rad1) ...
-                          (Geoparms.Cylinder(1,ii).Z-Geoparms.Cylinder(1,ii).Rad2) ...
-                          (Geoparms.Cylinder(1,ii).Z+Geoparms.Cylinder(1,ii).Rad2) ...
-                          (Geoparms.Cylinder(1,ii).Z+Geoparms.Cylinder(1,ii).Rad1) ...
-                          (Geoparms.Cylinder(1,ii).Z-Geoparms.Cylinder(1,ii).Rad1)];
-                      J = [(Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y+(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y+(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2))];
-                      plot(I,J,'y','LineWidth',2);
-                      clear I J;
-                  end
-              end
-          case 2
-              %Blocks
-              if Geoparms.Blks > 0
-                  for ii=1:1:length(Geoparms.Block)
-                      plot([Geoparms.Block(1,ii).Zl Geoparms.Block(1,ii).Zl Geoparms.Block(1,ii).Zu Geoparms.Block(1,ii).Zu Geoparms.Block(1,ii).Zl],...
-                     [Geoparms.Block(1,ii).Xl Geoparms.Block(1,ii).Xu Geoparms.Block(1,ii).Xu Geoparms.Block(1,ii).Xl Geoparms.Block(1,ii).Xl],'y','LineWidth',2);
-                  end
-              end
-              if Geoparms.Cyls > 0
-                  t = 0:0.1:((2*pi)+0.1);
-                  circle_i = cos(t);
-                  circle_j = sin(t);
-                  for ii=1:1:length(Geoparms.Cylinder)
-                      I = (Geoparms.Cylinder(1,ii).Rad1*circle_i)+Geoparms.Cylinder(1,ii).X;
-                      J = (Geoparms.Cylinder(1,ii).Rad1*circle_j)+Geoparms.Cylinder(1,ii).Z;
-                      plot(J,I,'y'); clear I J
-                      I = (Geoparms.Cylinder(1,ii).Rad2*circle_i)+Geoparms.Cylinder(1,ii).X;
-                      J = (Geoparms.Cylinder(1,ii).Rad2*circle_j)+Geoparms.Cylinder(1,ii).Z;
-                      plot(J,I,'y','LineWidth',2); clear I J;
-                  end
-              end
-          case 3
-              %Blocks
-              if Geoparms.Blks > 0
-                  for ii=1:1:length(Geoparms.Block)
-                      plot([Geoparms.Block(1,ii).Xl Geoparms.Block(1,ii).Xl Geoparms.Block(1,ii).Xu Geoparms.Block(1,ii).Xu Geoparms.Block(1,ii).Zl],...
-                     [Geoparms.Block(1,ii).Yl Geoparms.Block(1,ii).Yu Geoparms.Block(1,ii).Yu Geoparms.Block(1,ii).Yl Geoparms.Block(1,ii).Yl],'y','LineWidth',2);
-                  end
-              end
-              if Geoparms.Cyls > 0
-                  for ii=1:1:length(Geoparms.Cylinder)
-                      I = [(Geoparms.Cylinder(1,ii).X-Geoparms.Cylinder(1,ii).Rad1) ...
-                          (Geoparms.Cylinder(1,ii).X-Geoparms.Cylinder(1,ii).Rad2) ...
-                          (Geoparms.Cylinder(1,ii).X+Geoparms.Cylinder(1,ii).Rad2) ...
-                          (Geoparms.Cylinder(1,ii).X+Geoparms.Cylinder(1,ii).Rad1) ...
-                          (Geoparms.Cylinder(1,ii).X-Geoparms.Cylinder(1,ii).Rad1)];
-                      J = [(Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y+(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y+(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2)) ...
-                          (Geoparms.Cylinder(1,ii).Y-(Geoparms.Cylinder(1,ii).H/2))];
-                      plot(I,J,'y','LineWidth',2);
-                      clear I J;
-                  end
-              end
-      end
+    disp('DRAWING GEOMETRY')
+    t = 0:0.1:((2*pi)+0.1);
+    circle_i = cos(t);
+    circle_j = sin(t);
+    switch handles.plane
+      case 1
+        for ii=1:length(FDTDobj.block_list)
+          lower = FDTDobj.block_list(ii).lower;
+          upper = FDTDobj.block_list(ii).upper;
+          plot([lower(3) lower(3) upper(3) upper(3) lower(3)],...
+            [lower(2) upper(2) upper(2) lower(2) lower(2)],'y','LineWidth',2);
+        end
+        for ii=1:length(FDTDobj.cylinder_list)
+          center = FDTDobj.cylinder_list(ii).center;
+          inner_radius = FDTDobj.cylinder_list(ii).inner_radius;
+          outer_radius = FDTDobj.cylinder_list(ii).outer_radius;
+          height = FDTDobj.cylinder_list(ii).height;
+          I = [(Z-Rad1) ...
+              (Z-Rad2) ...
+              (Z+Rad2) ...
+              (Z+Rad1) ...
+              (Z-Rad1)];
+          J = [(Y-(H/2)) ...
+              (Y+(H/2)) ...
+              (Y+(H/2)) ...
+              (Y-(H/2)) ...
+              (Y-(H/2))];
+          plot(I,J,'y','LineWidth',2);
+          clear I J;
+        end
+        for ii=1:length(FDTDobj.sphere_list)
+          center = FDTDobj.sphere_list(ii).center
+          outer_radius = FDTDobj.sphere_list(ii).outer_radius
+          inner_radius = FDTDobj.sphere_list(ii).inner_radius
+        end
+      case 2
+        for ii=1:length(FDTDobj.block_list)
+          L = FDTDobj.block_list(ii).lower;
+          U = FDTDobj.block_list(ii).upper;
+          plot([lower(3) lower(3) upper(3) upper(3) lower(3)],...
+            [lower(1) upper(1) upper(1) lower(1) lower(1)],'y','LineWidth',2);
+        end
+        for ii=1:length(FDTDobj.cylinder_list)
+          center = FDTDobj.cylinder_list(ii).center;
+          inner_radius = FDTDobj.cylinder_list(ii).inner_radius;
+          outer_radius = FDTDobj.cylinder_list(ii).outer_radius;
+          height = FDTDobj.cylinder_list(ii).height;
+          I = (Rad1*circle_i)+X;
+          J = (Rad1*circle_j)+Z;
+          plot(J,I,'y'); clear I J
+          I = (Rad2*circle_i)+X;
+          J = (Rad2*circle_j)+Z;
+          plot(J,I,'y','LineWidth',2); clear I J;
+        end
+        for ii=1:length(FDTDobj.sphere_list)
+          center = FDTDobj.sphere_list(ii).center
+          outer_radius = FDTDobj.sphere_list(ii).outer_radius
+          inner_radius = FDTDobj.sphere_list(ii).inner_radius
+        end
+      case 3
+        for ii=1:length(FDTDobj.block_list)
+          L = FDTDobj.block_list(ii).lower;
+          U = FDTDobj.block_list(ii).upper;
+          plot([lower(1) lower(1) upper(1) upper(1) lower(3)],...
+            [lower(2) upper(2) upper(2) lower(2) lower(2)],'y','LineWidth',2);
+        end
+        for ii=1:length(FDTDobj.cylinder_list)
+          center = FDTDobj.cylinder_list(ii).center;
+          inner_radius = FDTDobj.cylinder_list(ii).inner_radius;
+          outer_radius = FDTDobj.cylinder_list(ii).outer_radius;
+          height = FDTDobj.cylinder_list(ii).height;
+          I = [(X-Rad1) ...
+              (X-Rad2) ...
+              (X+Rad2) ...
+              (X+Rad1) ...
+              (X-Rad1)];
+          J = [(Y-(H/2)) ...
+              (Y+(H/2)) ...
+              (Y+(H/2)) ...
+              (Y-(H/2)) ...
+              (Y-(H/2))];
+          plot(I,J,'y','LineWidth',2);
+          clear I J;
+        end
+        for ii=1:length(FDTDobj.sphere_list)
+          center = FDTDobj.sphere_list(ii).center
+          outer_radius = FDTDobj.sphere_list(ii).outer_radius
+          inner_radius = FDTDobj.sphere_list(ii).inner_radius
+        end
+    end
   end
   
   if handles.autosave == 1
