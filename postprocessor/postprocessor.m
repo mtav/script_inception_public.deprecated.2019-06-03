@@ -437,16 +437,7 @@ function pushbutton_browse_Callback(hObject, eventdata, handles)
   % hObject    handle to pushbutton_browse (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
-  
-  new_dir = uigetdir(handles.workdir);
-  if new_dir == 0
-      return
-  end
-  
-  [handles] = setWorkDir(handles, new_dir);
-  
-  handles.isLoaded = 0;
-  
+  [handles, dirChosen] = PP_browse(handles);
   guidata(hObject,handles);
 end
 

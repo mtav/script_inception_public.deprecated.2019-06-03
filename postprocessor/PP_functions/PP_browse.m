@@ -19,5 +19,4 @@ function [handles, dirChosen] = PP_browse(handles)
     return
   end
   dirChosen = 1;
-  return;
 end

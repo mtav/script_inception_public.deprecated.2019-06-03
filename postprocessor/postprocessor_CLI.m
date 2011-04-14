@@ -6,10 +6,12 @@ function postprocessor_CLI()
   handles.snaplist = {};
   handles.geolist = {};
   handles.inplist = {};
+
   [handles, dirChosen] = PP_browse(handles);
   if ~dirChosen
     return
   end
+
   handles.Type = 2;
   handles.ProbeID = 1;
   handles.TimeSnapshotID = 1;
