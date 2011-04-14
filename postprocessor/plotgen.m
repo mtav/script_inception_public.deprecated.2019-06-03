@@ -210,10 +210,10 @@ function plotgen(maxval,column,handles)
         end
       case 3
         for ii=1:length(FDTDobj.block_list)
-          lower = FDTDobj.block_list(ii).lower;
-          upper = FDTDobj.block_list(ii).upper;
-          plot3([lower(1) lower(1) upper(1) upper(1) lower(3)],...
-            [lower(2) upper(2) upper(2) lower(2) lower(2)], max(data)*ones(1,5),'y','LineWidth',2);
+          lower = FDTDobj.block_list(ii).lower
+          upper = FDTDobj.block_list(ii).upper
+          plot3([lower(1), lower(1), upper(1), upper(1), lower(1)],...
+            [lower(2), upper(2), upper(2), lower(2), lower(2)], max(data)*ones(1,5),'y','LineWidth',2);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
