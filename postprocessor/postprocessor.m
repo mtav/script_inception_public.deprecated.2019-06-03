@@ -83,6 +83,10 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
 
   % set default value
   handles.workdir = pwd();
+  
+  % set GUI default values
+  set(handles.radiobutton_TimeSnapshot,'Value',1);
+  set(handles.checkbox_geometry,'Value',1);
 
   % CLI input arg handling
   if nargin > 3

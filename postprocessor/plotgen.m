@@ -158,6 +158,7 @@ function plotgen(maxval,column,handles)
   %% Plot Geometry Entities
   if handles.geometry == 1
       disp('DRAWING GEOMETRY')
+      length(Geoparms.Block)
       switch handles.plane
           case 1
               %Blocks
