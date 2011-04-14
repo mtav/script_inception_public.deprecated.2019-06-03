@@ -95,7 +95,7 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
   end
 
   handles.workdir = new_dir;
-  [handles] = setupWorkDir(handles);
+  [handles] = setupListsGUI(handles);
 
   % Update handles structure
   % set(handles.label_working_directory,'String',handles.workdir)
@@ -375,7 +375,7 @@ function edit3_Callback(hObject, eventdata, handles)
   %        str2double(get(hObject,'String')) returns contents of edit3 as a double
 end
 
-function [handles] = setupWorkDir(handles)
+function [handles] = setupListsGUI(handles)
   [handles, ok] = PP_setupLists(handles);
   if ~ok
     return
@@ -436,7 +436,7 @@ function pushbutton_browse_Callback(hObject, eventdata, handles)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   [handles, dirChosen] = PP_browse(handles);
-  [handles] = setupWorkDir(handles);
+  [handles] = setupListsGUI(handles);
   guidata(hObject,handles);
 end
 
