@@ -40,11 +40,11 @@ def comparePeaks(harminv_filename, matlab_filename, out_filename):
     mindiff_set = False;
     mindiff = -1;
     for harminv_peak in harminv_peak_list:
-    diff = abs(harminv_peak[0]-matlab_peak[0]);
-    if (not mindiff_set) or (mindiff_set and diff < mindiff):
-      mindiff = diff
-      merge_peak_list[peak_idx] = harminv_peak;
-      mindiff_set = True;
+      diff = abs(harminv_peak[0]-matlab_peak[0]);
+      if (not mindiff_set) or (mindiff_set and diff < mindiff):
+        mindiff = diff
+        merge_peak_list[peak_idx] = harminv_peak;
+        mindiff_set = True;
 
   #for peak in merge_peak_list:
     #print peak
