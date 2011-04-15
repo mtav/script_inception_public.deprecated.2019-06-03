@@ -74,9 +74,13 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
     # Probe
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
+    Nprobes = 0
     for probe in structured_entries.probe_list:
         # print('probe = ',Vector(probe.position))
-        FDTDGeometryObjects_obj.GEOprobe(probe.name, Vector(probe.position));
+        Nprobes += 1
+        ProbeFileName = 'p' + str(Nprobes).zfill(2) + structured_entries.flag.id.replace('\"','') + '.prn'
+        #FDTDGeometryObjects_obj.GEOprobe(probe.name+' ('+ProbeFileName+')', Vector(probe.position));
+        FDTDGeometryObjects_obj.GEOprobe(ProbeFileName, Vector(probe.position));
     
     # Sphere
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
