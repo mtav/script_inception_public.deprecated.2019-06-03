@@ -10,6 +10,7 @@ usage()
   echo "`basename $0` 3 DEST  file1.out/.sh file2.out/.sh ... (create links to finished ones in DEST)"
   echo "creates links to the dirs containing *.out in DEST if *.out contains \"Deallocating\", i.e. if the simulations in those dirs are finished"
   echo "`basename $0` 4 file1.out/.sh file2.out/.sh ... (submit unfinished ones)"
+  echo "`basename $0` 5 file1.out/.sh file2.out/.sh ... (create links to finished ones in ~/DATA/DONE with correct directory structure)"
   echo "NOTE: Use of */*.sh is recommended instead of */*.out as out files may not exist"
   exit 0
 }
