@@ -61,4 +61,66 @@ def write(filename):
 
   Blender.Window.WaitCursor(0)
 
-Blender.Window.FileSelector(write, "Export", Blender.sys.makename(ext='.begc'))
+###############################
+# IMPORTS
+###############################
+import os
+import cPickle
+
+###############################
+# INITIALIZATIONS
+###############################
+cfgfile = Blender.Get("datadir")+'/BlenderExport.txt'
+
+###############################
+# EXPORT FUNCTION
+###############################
+def exportBristolFDTD(dir_name):
+    ''' export BristolFDTD geometry '''
+    print('----->Exporting as bristol FDTD geometry into: ' + dir_name)
+    Blender.Window.WaitCursor(1);
+
+    if os.path.isdir(dir_name) == False:
+      dir_name = os.path.dirname(dir_name)
+      
+    # save export path
+    FILE = open(cfgfile, 'w');
+    cPickle.dump(dir_name, FILE);
+    FILE.close();
+    
+    print 'dir_name=', dir_name
+    
+    #########################
+    # Not yet implemented:
+    # Flag
+    # structured_entries.flag;
+    # Boundaries
+    # structured_entries.boundaries;
+    #########################
+    
+    Blender.Window.WaitCursor(0);
+    print('...done')
+
+###############################
+# MAIN FUNCTION
+###############################
+def main():
+  ''' MAIN FUNCTION '''
+  ###################
+  # load export path
+  ###################
+  default_path = os.getenv('DATADIR')
+  print('cfgfile = ', cfgfile)
+
+  if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
+    with open(cfgfile, 'r') as FILE:
+      default_path = cPickle.load(FILE);
+  ###################
+
+  ###################
+  # export file
+  ###################
+  Blender.Window.FileSelector(exportBristolFDTD, "Export Bristol FDTD file...", default_path);
+
+if __name__ == "__main__":
+  main()
