@@ -207,9 +207,9 @@ function plotgen(maxval,column,handles)
           clear I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
-          center = FDTDobj.sphere_list(ii).center
-          outer_radius = FDTDobj.sphere_list(ii).outer_radius
-          inner_radius = FDTDobj.sphere_list(ii).inner_radius
+          center = FDTDobj.sphere_list(ii).center;
+          outer_radius = FDTDobj.sphere_list(ii).outer_radius;
+          inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(2);
           plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
@@ -237,9 +237,9 @@ function plotgen(maxval,column,handles)
           plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
-          center = FDTDobj.sphere_list(ii).center
-          outer_radius = FDTDobj.sphere_list(ii).outer_radius
-          inner_radius = FDTDobj.sphere_list(ii).inner_radius
+          center = FDTDobj.sphere_list(ii).center;
+          outer_radius = FDTDobj.sphere_list(ii).outer_radius;
+          inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(1);
           plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
@@ -249,8 +249,8 @@ function plotgen(maxval,column,handles)
         end
       case 3 % X,Y
         for ii=1:length(FDTDobj.block_list)
-          lower = FDTDobj.block_list(ii).lower
-          upper = FDTDobj.block_list(ii).upper
+          lower = FDTDobj.block_list(ii).lower;
+          upper = FDTDobj.block_list(ii).upper;
           plot3([lower(1), lower(1), upper(1), upper(1), lower(1)],...
             [lower(2), upper(2), upper(2), lower(2), lower(2)], plotting_height_rectangle,'y','LineWidth',2);
         end
@@ -298,9 +298,9 @@ function plotgen(maxval,column,handles)
           clear I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
-          center = FDTDobj.sphere_list(ii).center
-          outer_radius = FDTDobj.sphere_list(ii).outer_radius
-          inner_radius = FDTDobj.sphere_list(ii).inner_radius
+          center = FDTDobj.sphere_list(ii).center;
+          outer_radius = FDTDobj.sphere_list(ii).outer_radius;
+          inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(1);
           J = (outer_radius*circle_j)+center(2);
           plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;

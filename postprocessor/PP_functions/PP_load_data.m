@@ -1,13 +1,15 @@
-function [ handles, isLoaded ] = PP_load_data(handles)
+function [ handles ] = PP_load_data(handles)
   disp('function pushbutton_load_data_Callback(hObject, eventdata, handles)')
   % --- Executes on button press in pushbutton_load_data.
   % hObject    handle to pushbutton_load_data (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
 
+  handles.isLoaded = 0;
+    
   val = handles.geometryfile;
   if (val<1) | (length(handles.geolist)<val)
-    isLoaded = 0;
+    handles.isLoaded = 0;
     return
   end
   geofile = handles.geolist{val};
@@ -15,7 +17,7 @@ function [ handles, isLoaded ] = PP_load_data(handles)
   
   val = handles.inputfile;
   if (val<1) | (length(handles.inplist)<val)
-    isLoaded = 0;
+    handles.isLoaded = 0;
     return
   end
   inpfile = handles.inplist{val};
@@ -24,7 +26,7 @@ function [ handles, isLoaded ] = PP_load_data(handles)
   if handles.Type == 1
     val = handles.ProbeID;
     if (val<1) | (length(handles.ProbeList)<val)
-      isLoaded = 0;
+      handles.isLoaded = 0;
       return
     end
     name = handles.ProbeList{val};
@@ -33,7 +35,7 @@ function [ handles, isLoaded ] = PP_load_data(handles)
   elseif handles.Type == 2
     val = handles.TimeSnapshotID;
     if (val<1) | (length(handles.TimeSnapshotList)<val)
-      isLoaded = 0;
+      handles.isLoaded = 0;
       return
     end
     name = handles.TimeSnapshotList{val};
@@ -42,7 +44,7 @@ function [ handles, isLoaded ] = PP_load_data(handles)
   elseif handles.Type == 3
     val = handles.FrequencySnapshotID;
     if (val<1) | (length(handles.FrequencySnapshotList)<val)
-      isLoaded = 0;
+      handles.isLoaded = 0;
       return
     end
     name = handles.FrequencySnapshotList{val};
@@ -87,5 +89,4 @@ function [ handles, isLoaded ] = PP_load_data(handles)
   end
   
   handles.isLoaded = 1;
-  isLoaded = 1;
 end

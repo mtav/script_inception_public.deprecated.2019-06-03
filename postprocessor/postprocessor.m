@@ -192,14 +192,16 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   handles.inputfile = get(handles.popupmenu_inputfile,'Value');
   
   % load data
-  [ handles, isLoaded ] = PP_load_data(handles);
-  if ~isLoaded
-    return
-  end
+  [ handles ] = PP_load_data(handles);
   
   % set to GUI
-  set(handles.popupmenu_plotcolumn,'String',handles.HeadersForPopupList);
-  set(handles.text11,'String',['Loaded data: ',handles.snapfile]);
+  if handles.isLoaded
+    set(handles.popupmenu_plotcolumn,'String',handles.HeadersForPopupList);
+    set(handles.text11,'String',['Loaded data: ',handles.snapfile]);
+  else
+    set(handles.popupmenu_plotcolumn,'String',{''});
+    set(handles.text11,'String',['Loaded data: ',{''}]);
+  end
 
   guidata(hObject,handles);
 end
@@ -349,42 +351,39 @@ end
 
 function [handles] = setupListsGUI(handles)
   [handles, ok] = PP_setupLists(handles);
-  if ~ok
-    return
-  end
-
-  set(handles.label_working_directory,'String',handles.workdir);
-
-  if length(handles.ProbeList)>0
-    set(handles.popupmenu_Probe,'String',handles.ProbeList);
-  else
-    set(handles.popupmenu_Probe,'String',{''});
-  end
-
-  if length(handles.TimeSnapshotList)>0
-    set(handles.popupmenu_TimeSnapshot,'String',handles.TimeSnapshotList);
-  else
-    set(handles.popupmenu_TimeSnapshot,'String',{''});
-  end
-
-  if length(handles.FrequencySnapshotList)>0
-    set(handles.popupmenu_FrequencySnapshot,'String',handles.FrequencySnapshotList);
-  else
-    set(handles.popupmenu_FrequencySnapshot,'String',{''});
-  end
+  if ok
+    set(handles.label_working_directory,'String',handles.workdir);
   
-  if length(handles.geolist)>0
-    set(handles.popupmenu_geometryfile,'String',handles.geolist);
-  else
-    set(handles.popupmenu_geometryfile,'String',{''});
-  end
+    if length(handles.ProbeList)>0
+      set(handles.popupmenu_Probe,'String',handles.ProbeList);
+    else
+      set(handles.popupmenu_Probe,'String',{''});
+    end
   
-  if length(handles.inplist)>0
-    set(handles.popupmenu_inputfile,'String',handles.inplist);
-  else
-    set(handles.popupmenu_inputfile,'String',{''});  
+    if length(handles.TimeSnapshotList)>0
+      set(handles.popupmenu_TimeSnapshot,'String',handles.TimeSnapshotList);
+    else
+      set(handles.popupmenu_TimeSnapshot,'String',{''});
+    end
+  
+    if length(handles.FrequencySnapshotList)>0
+      set(handles.popupmenu_FrequencySnapshot,'String',handles.FrequencySnapshotList);
+    else
+      set(handles.popupmenu_FrequencySnapshot,'String',{''});
+    end
+    
+    if length(handles.geolist)>0
+      set(handles.popupmenu_geometryfile,'String',handles.geolist);
+    else
+      set(handles.popupmenu_geometryfile,'String',{''});
+    end
+    
+    if length(handles.inplist)>0
+      set(handles.popupmenu_inputfile,'String',handles.inplist);
+    else
+      set(handles.popupmenu_inputfile,'String',{''});  
+    end
   end
-
 end
 
 function edit3_CreateFcn(hObject, eventdata, handles)

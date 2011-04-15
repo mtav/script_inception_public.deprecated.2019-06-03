@@ -21,8 +21,8 @@ function postprocessor_CLI()
   handles.inputfile = 1;
   
   % load data
-  [ handles, isLoaded ] = PP_load_data(handles);
-  if ~isLoaded
+  [ handles ] = PP_load_data(handles);
+  if ~handles.isLoaded
     return
   end
   
