@@ -6,23 +6,29 @@ function [ handles ] = PP_load_data(handles)
   % handles    structure with handles and user data (see GUIDATA)
 
   handles.isLoaded = 0;
-    
-  val = handles.geometryfile;
-  if (val<1) | (length(handles.geolist)<val)
-    handles.isLoaded = 0;
-    return
-  end
-  geofile = handles.geolist{val};
-  handles.geofile = [handles.workdir, filesep, geofile];
-  
-  val = handles.inputfile;
-  if (val<1) | (length(handles.inplist)<val)
-    handles.isLoaded = 0;
-    return
-  end
-  inpfile = handles.inplist{val};
-  handles.inpfile = [handles.workdir, filesep, inpfile];
 
+  val = handles.geometryfile;
+  if (1<=val) & (val<=length(handles.geolist))
+    geofile = handles.geolist{val};
+    handles.geofile = [handles.workdir, filesep, geofile];
+  else
+    if (handles.Type == 2) | (handles.Type == 3)
+      handles.isLoaded = 0;
+      return;
+    end
+  end
+
+  val = handles.inputfile;
+  if (1<=val) & (val<=length(handles.inplist))
+    inpfile = handles.inplist{val};
+    handles.inpfile = [handles.workdir, filesep, inpfile];
+  else
+    if (handles.Type == 2) | (handles.Type == 3)
+      handles.isLoaded = 0;
+      return;
+    end
+  end
+  
   if handles.Type == 1
     val = handles.ProbeID;
     if (val<1) | (length(handles.ProbeList)<val)
