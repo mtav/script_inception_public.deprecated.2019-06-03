@@ -5,8 +5,8 @@ function [header,data,ux,uy]=readPrnFile(filename)
     % if ux and uy are asked for, it will create a 3D plot of col(3) vs ( col(1), col(2) )
 
     if (nargin==0)
-        [FileName,PathName] = uigetfile({'*.prn *.dat'},'Select the prn-file','D:\Simulations\BFDTD\');
-        filename=[PathName,'\',FileName];
+        [FileName,PathName] = uigetfile({'*.prn *.dat'},'Select the prn-file',getenv('DATADIR'));
+        filename=[PathName,filesep,FileName];
     end
 
     fid = fopen(filename,'rt');
