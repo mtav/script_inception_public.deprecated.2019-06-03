@@ -1,12 +1,16 @@
-% Finds the index of the closest point of a given vector or matrix to the
-% given point.
-
-function [ind,val]=closestInd(M,p)
-  N=abs(M-p);
-  err=N;
-  for m=1:ndims(N)
-    err=min(err);
+% Finds the index of the closest point of a given vector or matrix 'M' to the
+% given point 'p'.
+% WARNING: ind, val and abs_err can be vectors!!!
+function [ind,val,abs_err]=closestInd(M,p)
+  % create absolute error array
+  abs_err_array = abs(M-p);
+  % get minimum in each direction
+  minerr = min(abs_err_array);
+  for i=2:ndims(abs_err_array)
+    minerr = min(minerr);
   end
-  ind=find(N==err);
-  val=M(ind);
+  % set return variables
+  ind = find(abs_err_array == minerr);
+  val = M(ind);
+  abs_err = abs_err_array(ind);
 end
