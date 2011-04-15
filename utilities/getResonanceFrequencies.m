@@ -1,9 +1,8 @@
 function getResonanceFrequencies(probefile, colnumP, outputfile)
   % writes the resonance frequencies of probefile/column into outputfile + some plots into dirname(probefile)/harminv
   
-  computeHarminv = 1;
-  lambdaLow = 0.4 %0.62; %set min lamda  0.90
-  lambdaHigh = 0.8; %set max lamda  0.98
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  computeHarminv = 0;
 
   clf;
   
@@ -17,6 +16,11 @@ function getResonanceFrequencies(probefile, colnumP, outputfile)
   harminv_dir = [ probefile_folder, filesep, 'harminv' ];
   harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{colnumP} ];
   harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{colnumP} ];
+  title_base = fullfile(probefile_folder_basename, probefile_basename);
+  
+  if ~(exist(harminv_dir,'dir'))
+    mkdir(harminv_dir); 
+  end
   
   % plot output filenames
   filename_probe_time_png = [ harminv_basepath,'.png' ];
@@ -25,23 +29,23 @@ function getResonanceFrequencies(probefile, colnumP, outputfile)
   filename_probe_freq_fig = [ harminv_basepath,'_probeFFT.fig' ];
   filename_harminv_freq_png = [ harminv_basepath,'.png' ];
   filename_harminv_freq_fig = [ harminv_basepath,'.fig' ];
-  
-  return
-  
+    
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   figure(1); clf;
-  plot(data(:,1)*1e-9,data(:,colnumP))
+  plot(data(:,1)*1e-9,data(:,colnumP));
 
-  title_label = [probefile_folder_basename,filesep,probefile_basename, probefile_ext,'  ',header{colnumP}];
+  title_label = [ title_base, probefile_ext,'  ',header{colnumP} ];
 
-  title(title_label);
+  title(title_label,'Interpreter','none');
   xlabel('time (ns)');
   
   % save time domain plot from probe
-  saveas(gcf,filename_probe_time_png,'png');
-  saveas(gcf,filename_probe_time_fig,'fig');
+  saveas(gcf,filename_probe_time_png,'png');disp(['Saved as ',filename_probe_time_png]);
+  saveas(gcf,filename_probe_time_fig,'fig');disp(['Saved as ',filename_probe_time_fig]);
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  dt = 1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
-  [Y,lambda] = bFFT(data(:,colnumP),dt);
+  dt_mus = 1e-12*(data(2,1)-data(1,1));  % Normally the data in probe file is in values of 1e*18 seconds
+  [Y,lambda_mum] = bFFT(data(:,colnumP),dt_mus);
   Mag=2*abs(Y);
   
   aver=sum(Mag)/length(Mag);
@@ -51,23 +55,22 @@ function getResonanceFrequencies(probefile, colnumP, outputfile)
     return;
   end
 
-  peaks=peakdet(Mag, delta/3,lambda);
+  peaks=peakdet(Mag, delta/3,lambda_mum);
+  wavelength_nm=1e3*lambda_mum;
   
-  %     indMax=min(find(lambda==min(peaks(:,1)))+250,length(lambda));
-  %     indMin=max(find(lambda==max(peaks(:,1)))-250,1);
-
-  wavelength=1e3*lambda;
-  %     wavelength=1e3*lambda(indMin:indMax); %Unit of wavelength is nm.
-  %     Mag=Mag(indMin:indMax);
   figure(2);hold off;
-  plot(wavelength,Mag);
-  xlim(1e3*[0.8*min(peaks(:,1)),1.2*max(peaks(:,1))])
+  plot(wavelength_nm, Mag);
+  xlim(1e3*[0.8*min(peaks(:,1)),1.2*max(peaks(:,1))]);
   
-  title([filesP(m).name,' ',header{colnumP},'  Spectrum at Timestep:',num2str(length(data))])
-  xlabel('Wavelength (nm)')
-  ylabel('Mag')
+  title([ title_base,' ',header{colnumP},'  Spectrum at Timestep:',num2str(length(data))],'Interpreter','none');
+  xlabel('Wavelength (nm)');
+  ylabel('Mag');
 
   if computeHarminv
+
+    lambdaLow = 0.4; %0.62; %set min lamda  0.90
+    lambdaHigh = 0.8; %set max lamda  0.98
+
     harminvFolder
     harminvDataFile=[strrep([harminvFolder,filesep,filesP(m).name],'.prn','_harminv'),'_',header{colnumP},'.txt'];
     fid=fopen(harminvDataFile,'w+');
@@ -97,8 +100,8 @@ function getResonanceFrequencies(probefile, colnumP, outputfile)
     ylabel('Q Factor')
     
     % save frequency domain plot from harminv
-    saveas(gcf,[outFile,'.png'],'png');
-    saveas(gcf,[outFile,'.fig'],'fig');
+    saveas(gcf,[outFile,'.png'],'png');disp(['Saved as ',[outFile,'.png']]);
+    saveas(gcf,[outFile,'.fig'],'fig');disp(['Saved as ',[outFile,'.fig']]);
     
     parametersFile=[filename,'_',header{colnumP},'_parameters.txt'];
     fid=fopen(parametersFile,'w+');
@@ -122,8 +125,8 @@ function getResonanceFrequencies(probefile, colnumP, outputfile)
     figure(2)
     
     % save frequency domain plot from probe
-    saveas(gcf,filename_probe_freq_png,'png');
-    saveas(gcf,filename_probe_freq_fig,'fig');
+    saveas(gcf,filename_probe_freq_png,'png');disp(['Saved as ',filename_probe_freq_png]);
+    saveas(gcf,filename_probe_freq_fig,'fig');disp(['Saved as ',filename_probe_freq_fig]);
     
   end
   disp('DONE')
