@@ -156,7 +156,7 @@ function plotgen(maxval,column,handles)
     plotting_height_rectangle = max(data)*ones(1,5);
     plotting_height_circle = max(data)*ones(1,length(t));
     switch handles.plane
-      case 1
+      case 1 % Z,Y
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower;
           upper = FDTDobj.block_list(ii).upper;
@@ -210,8 +210,14 @@ function plotgen(maxval,column,handles)
           center = FDTDobj.sphere_list(ii).center
           outer_radius = FDTDobj.sphere_list(ii).outer_radius
           inner_radius = FDTDobj.sphere_list(ii).inner_radius
+          I = (outer_radius*circle_i)+center(3);
+          J = (outer_radius*circle_j)+center(2);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          I = (inner_radius*circle_i)+center(3);
+          J = (inner_radius*circle_j)+center(2);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
         end
-      case 2
+      case 2 % Z,X
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower;
           upper = FDTDobj.block_list(ii).upper;
@@ -223,19 +229,25 @@ function plotgen(maxval,column,handles)
           inner_radius = FDTDobj.cylinder_list(ii).inner_radius;
           outer_radius = FDTDobj.cylinder_list(ii).outer_radius;
           height = FDTDobj.cylinder_list(ii).height;
-          I = (outer_radius*circle_i)+center(1);
-          J = (outer_radius*circle_j)+center(3);
-          plot3(J, I, plotting_height_circle, 'y','LineWidth',2); clear I J
-          I = (0*circle_i)+center(1);
-          J = (0*circle_j)+center(3);
-          plot3(J, I, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          I = (outer_radius*circle_i)+center(3);
+          J = (outer_radius*circle_j)+center(1);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          I = (inner_radius*circle_i)+center(3);
+          J = (inner_radius*circle_j)+center(1);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
           center = FDTDobj.sphere_list(ii).center
           outer_radius = FDTDobj.sphere_list(ii).outer_radius
           inner_radius = FDTDobj.sphere_list(ii).inner_radius
+          I = (outer_radius*circle_i)+center(3);
+          J = (outer_radius*circle_j)+center(1);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          I = (inner_radius*circle_i)+center(3);
+          J = (inner_radius*circle_j)+center(1);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
         end
-      case 3
+      case 3 % X,Y
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower
           upper = FDTDobj.block_list(ii).upper
@@ -289,6 +301,12 @@ function plotgen(maxval,column,handles)
           center = FDTDobj.sphere_list(ii).center
           outer_radius = FDTDobj.sphere_list(ii).outer_radius
           inner_radius = FDTDobj.sphere_list(ii).inner_radius
+          I = (outer_radius*circle_i)+center(1);
+          J = (outer_radius*circle_j)+center(2);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          I = (inner_radius*circle_i)+center(1);
+          J = (inner_radius*circle_j)+center(2);
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
         end
     end
   end
