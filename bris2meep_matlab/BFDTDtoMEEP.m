@@ -35,8 +35,10 @@ function BFDTDtoMEEP(file_list)
     % file_list{1}
     % file_list[1]
   [GeoPathName, GeoFileName_basename, ext] = fileparts(file_list{1});
-    if isempty(GeoPathName); GeoPathName = '.'; end;
-    
+  if isempty(GeoPathName)
+    GeoPathName = '.';
+  end
+  
   GeoFileName = [GeoFileName_basename, ext];
       
   % [entries]=GEO_INP_reader({geofile});
@@ -45,7 +47,7 @@ function BFDTDtoMEEP(file_list)
   projectPath = [GeoPathName, filesep, 'ctlConversion'];
   mkdir(projectPath);
   filename = [projectPath, filesep, GeoFileName_basename, '.ctl'];
-    disp(['Saving as ',filename]);
+  disp(['Saving as ',filename]);
   FILE = fopen(filename, 'w+');
 
   %% GEO FILE%
@@ -61,8 +63,8 @@ function BFDTDtoMEEP(file_list)
     % end
   % end
     
-    % [xl, yl, zl] = FDTDobj.box.lower(:)';
-    % [xu, yu, zu] = FDTDobj.box.upper(:)';
+  % [xl, yl, zl] = FDTDobj.box.lower(:)';
+  % [xu, yu, zu] = FDTDobj.box.upper(:)';
 
   simSize = FDTDobj.box.upper - FDTDobj.box.lower;
   geoCenter = simSize(:)./2.0;
@@ -76,11 +78,11 @@ function BFDTDtoMEEP(file_list)
 
   numSteps = FDTDobj.flag.numSteps;
     
-    MEEP_settings(FILE, resolution, simSize);
+  MEEP_settings(FILE, resolution, simSize);
 
-    %%%%%%%%%%%%%%%%%%%
-    fprintf(FILE,';geometry specification\r\n(set! geometry\r\n\t(list\r\n');
-    % fprintf(FILE, '\r\n');
+  %%%%%%%%%%%%%%%%%%%
+  fprintf(FILE,';geometry specification\r\n(set! geometry\r\n\t(list\r\n');
+  % fprintf(FILE, '\r\n');
 
   for m=1:length(entries)
      type=entries{m}.type;
@@ -120,7 +122,7 @@ function BFDTDtoMEEP(file_list)
      end   
   end
     
-    fprintf(FILE,'\t)\r\n)\r\n\r\n');
+  fprintf(FILE,'\t)\r\n)\r\n\r\n');
     
     %%%%%%%%%%%%%%%%%%%    
   % Excitations
