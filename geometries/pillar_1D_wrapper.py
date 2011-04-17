@@ -304,7 +304,10 @@ def main(argv=None):
     # main function
     #test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
     #test2(os.getenv('TESTDIR'))
-    
+
+    # TODO: do only one number of iterations, but output snapshots at different points
+    # TODO: pass DSTDIR by CLI (use more CLI options generally)
+    # TODO: make voxel meshes fit voxels again. It's more important that the mesh fits the geometry, than to have the same mesh for the different structures for comparison...
     freq_snapshots = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
     for excitationType in range(4):
       for iterations in [10,32000,261600,300000,1048400]:
