@@ -10,6 +10,9 @@ function getResonanceFrequencies(probefile, colnumP)
   
   % read the data
   [header, data] = readPrnFile(probefile);
+  if size(data,1)<=2
+    return
+  end
   %header
   %data
 

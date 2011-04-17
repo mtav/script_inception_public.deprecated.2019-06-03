@@ -92,6 +92,16 @@ def rerun(filename):
 
   #cylinder(os.getenv('TESTDIR'), 12, 12, 0)
 
+#def preRerun(filename):
+  #with open(filename, 'r') as f:
+    #f.readline()
+    #for line in f:
+      #freq_snapshots.append(double(line.split()[1])*1e-6)
+            ##read_data = f.read()
+    ##print read_data
+  #f.closed
+  #return freq_snapshots
+  
 def main(argv=None):
   if argv is None:
       argv = sys.argv
