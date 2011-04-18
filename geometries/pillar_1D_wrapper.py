@@ -7,6 +7,8 @@ from geometries.triangular_yagi import *
 from geometries.triangular_yagi_voxel import *
 from geometries.triangular_yagi_voxel_sym import *
 
+from optparse import OptionParser
+
 def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== cylinder START ============')
@@ -294,37 +296,62 @@ def mission4(DSTDIR,excitationType,iterations,freq_snapshots):
 #def loncar_structure(BASENAME, DSTDIR, iterations, print_holes_top, print_holes_bottom, HOLE_TYPE, pillar_radius, EXCITATION_FREQUENCY, SNAPSHOTS_FREQUENCY):
 
 def main(argv=None):
-  if argv is None:
-      argv = sys.argv
-  try:
-    try:
-      opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    except getopt.error, msg:
-      raise Usage(msg)
+  usagestr = "usage: %prog [-d destdir] [-i iterations]"
+  parser = OptionParser(usage=usagestr)
+  
+  parser.add_option("-d", "--destdir", action="store", type="string", dest="destdir", default=os.getenv('DATADIR'), help="destination directory")
+  parser.add_option("-i", type="int", dest="iterations", default=65400+524200+524200, help="number of iterations")
+  
+  (options, args) = parser.parse_args()
+  
+  print options.destdir
+  print options.iterations
+
+  if os.path.isdir(options.destdir):
+    freq_snapshots = []
+    for excitationType in range(4):
+      mission1(options.destdir+os.sep+'mission1', excitationType, options.iterations, freq_snapshots)
+      mission2(options.destdir+os.sep+'mission2', excitationType, options.iterations, freq_snapshots)
+      mission3(options.destdir+os.sep+'mission3', excitationType, options.iterations, freq_snapshots)
+      mission4(options.destdir+os.sep+'mission4', excitationType, options.iterations, freq_snapshots)
+  else:
+    print('options.destdir = ' + options.destdir + ' is not a directory')
+
+  #if argv is None:
+    #argv = sys.argv
+  #try:
+    #try:
+      #opts, args = getopt.getopt(argv[1:], "h", ["help"])
+    #except getopt.error, msg:
+      #raise Usage(msg)
     # main function
     #test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
     #test2(os.getenv('TESTDIR'))
 
-    # TODO: do only one number of iterations, but output snapshots at different points
-    # TODO: pass DSTDIR by CLI (use more CLI options generally)
     # TODO: make voxel meshes fit voxels again. It's more important that the mesh fits the geometry, than to have the same mesh for the different structures for comparison...
-    freq_snapshots = [get_c0()/0.637, get_c0()/0.637-1, get_c0()/0.637+1]
-    for excitationType in range(4):
-      for iterations in [10,32000,261600,300000,1048400]:
-        mission1(os.getenv('DATADIR')+os.sep+'mission1.iterations_'+str(iterations),excitationType,iterations,freq_snapshots)
-        mission2(os.getenv('DATADIR')+os.sep+'mission2.iterations_'+str(iterations),excitationType,iterations,freq_snapshots)
-        mission3(os.getenv('DATADIR')+os.sep+'mission3.iterations_'+str(iterations),excitationType,iterations,freq_snapshots)
-        mission4(os.getenv('DATADIR')+os.sep+'mission4.iterations_'+str(iterations),excitationType,iterations,freq_snapshots)
-    
-    #loncar_cylinder('loncar_cyl_python', DSTDIR, iterations, True, True, 'cylinder', 0.150/2.0, 0.637, [get_c0()/0.637],excitationType)
-    #loncar_structure('loncar_rect_python', DSTDIR, iterations, True, True, 'rectangular_holes', 1, 0.637, [get_c0()/0.637], excitationType)
 
-    #cylinder(os.getenv('TESTDIR'), 12, 12, 0)
-
-  except Usage, err:
-    print >>sys.stderr, err.msg
-    print >>sys.stderr, "for help use --help"
-    return 2
+    #if length(sys.argv)
+    #DSTDIR = sys.argv[1]
+    #DSTDIR = os.getenv('DATADIR')
+    #if os.path.isdir(DSTDIR):
+      #freq_snapshots = []
+      #iterations = 65400+524200+524200;
+      #for excitationType in range(4):
+        #mission1(DSTDIR+os.sep+'mission1',excitationType,iterations,freq_snapshots)
+        #mission2(DSTDIR+os.sep+'mission2',excitationType,iterations,freq_snapshots)
+        #mission3(DSTDIR+os.sep+'mission3',excitationType,iterations,freq_snapshots)
+        #mission4(DSTDIR+os.sep+'mission4',excitationType,iterations,freq_snapshots)
+      
+      #loncar_cylinder('loncar_cyl_python', DSTDIR, iterations, True, True, 'cylinder', 0.150/2.0, 0.637, [get_c0()/0.637],excitationType)
+      #loncar_structure('loncar_rect_python', DSTDIR, iterations, True, True, 'rectangular_holes', 1, 0.637, [get_c0()/0.637], excitationType)
+  
+      #cylinder(os.getenv('TESTDIR'), 12, 12, 0)
+    #else:
+      #print('DSTDIR = ' + DSTDIR + ' is not a directory')
+  #except Usage, err:
+    #print >>sys.stderr, err.msg
+    #print >>sys.stderr, "for help use --help"
+    #return 2
 
 if __name__ == "__main__":
   sys.exit(main())
