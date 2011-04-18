@@ -38,7 +38,13 @@ def triangular_yagi_voxel_sym(DSTDIR, bottomN, topN, excitationType, iterations,
   P.setDistanceBetweenDefectBordersInCavity(P.getLambda()/n_Eff)
   delta_diamond = P.getLambda()/(10*P.n_Substrate);
   P.delta_X_bottomSquare = delta_diamond
-  P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
+
+  delta_X_hole = (2*P.radius_X_hole)/(2*P.Nvoxels+1)
+  delta_Y_hole = P.getLambda()/(4*P.n_Defect)
+  delta_Z_hole = (P.radius_Z_pillar_mum - P.radius_Z_hole)/(P.Nvoxels+1)
+
+  P.setDeltaHole(delta_X_hole, delta_Y_hole, delta_Z_hole)
+
   P.setDeltaSubstrate(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
