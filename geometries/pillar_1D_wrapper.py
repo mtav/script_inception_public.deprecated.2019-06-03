@@ -317,41 +317,5 @@ def main(argv=None):
   else:
     print('options.destdir = ' + options.destdir + ' is not a directory')
 
-  #if argv is None:
-    #argv = sys.argv
-  #try:
-    #try:
-      #opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    #except getopt.error, msg:
-      #raise Usage(msg)
-    # main function
-    #test(os.getenv('TESTDIR')+os.sep+'meshtest',20,10)
-    #test2(os.getenv('TESTDIR'))
-
-    # TODO: make voxel meshes fit voxels again. It's more important that the mesh fits the geometry, than to have the same mesh for the different structures for comparison...
-
-    #if length(sys.argv)
-    #DSTDIR = sys.argv[1]
-    #DSTDIR = os.getenv('DATADIR')
-    #if os.path.isdir(DSTDIR):
-      #freq_snapshots = []
-      #iterations = 65400+524200+524200;
-      #for excitationType in range(4):
-        #mission1(DSTDIR+os.sep+'mission1',excitationType,iterations,freq_snapshots)
-        #mission2(DSTDIR+os.sep+'mission2',excitationType,iterations,freq_snapshots)
-        #mission3(DSTDIR+os.sep+'mission3',excitationType,iterations,freq_snapshots)
-        #mission4(DSTDIR+os.sep+'mission4',excitationType,iterations,freq_snapshots)
-      
-      #loncar_cylinder('loncar_cyl_python', DSTDIR, iterations, True, True, 'cylinder', 0.150/2.0, 0.637, [get_c0()/0.637],excitationType)
-      #loncar_structure('loncar_rect_python', DSTDIR, iterations, True, True, 'rectangular_holes', 1, 0.637, [get_c0()/0.637], excitationType)
-  
-      #cylinder(os.getenv('TESTDIR'), 12, 12, 0)
-    #else:
-      #print('DSTDIR = ' + DSTDIR + ' is not a directory')
-  #except Usage, err:
-    #print >>sys.stderr, err.msg
-    #print >>sys.stderr, "for help use --help"
-    #return 2
-
 if __name__ == "__main__":
   sys.exit(main())
