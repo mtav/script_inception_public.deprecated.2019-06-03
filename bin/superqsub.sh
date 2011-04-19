@@ -10,6 +10,8 @@ set -eux
 # Check if all parameters are present
 # If no, exit
 
+source script_inception_common_functions.sh
+
 echo $#
 
 if [ $# -lt 1 ]
@@ -24,6 +26,23 @@ fi
 
 for SCRIPT in "$@"
 do
-  echo "submitting $SCRIPT"
-  qsub -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT
+  OUTFILE=$(getOutFile "$SCRIPT")
+  
+  set +e
+  getDataState $SCRIPT
+  status=$?
+  set -e
+  
+  if  [ $status == 2 ]
+  then
+    echo "submitting $SCRIPT"
+    qsub -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT
+  else
+    if  [ $status == 0 ]
+    then
+      echo "script already done. -> skipping (remove .out file to run it anyway)"
+    else
+      echo "script seems to be already running. -> skipping (remove .out file to run it anyway)"
+    fi
+  fi
 done
