@@ -21,12 +21,10 @@ function plotProbe(filename, probe_col, autosave)
   % convert lambda to nm
   lambda_vec_nm = 1e3*lambda_vec_mum;
 
-  % define X and Y for the fitting (Y = power)
-  X = lambda_vec_nm;
-  Y = cFFT_output.* conj(cFFT_output);
-
   % create new figure
   figure;
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % plot in the time domain to see the ringdown
   subplot(1,2,1);
   plot(time_mus,data_time_domain);
@@ -39,8 +37,26 @@ function plotProbe(filename, probe_col, autosave)
     disp('WARNING: empty data');
     return;
   end
+
+  % zoom plot on interesting region
+  ViewingWindowThreshold = 1e-3; % stop plotting when the remaining values are under this ViewingWindowThreshold*max(Y)
+  ymin = min(data_time_domain);
+  ymax = max(data_time_domain);
+  for idx_max=length(data_time_domain):-1:1;
+    if data_time_domain(idx_max)>ViewingWindowThreshold*ymax;
+      break;
+    end;
+  end;
+  xmin = time_mus(1);
+  xmax = time_mus(idx_max);
+  axis([xmin, xmax, 1.1*ymin, 1.1*ymax]);
   
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % plot the FFT to locate the resonance peak
+  % define X and Y for the fitting (Y = power)
+  X = lambda_vec_nm;
+  Y = cFFT_output.* conj(cFFT_output);
+
   subplot(1,2,2);
   plot(X,Y);
   xlabel('lambda (nm)');
@@ -63,6 +79,7 @@ function plotProbe(filename, probe_col, autosave)
 
   disp(['DATA INFO: maximums at = ',num2str(X(idx_max))]);
 
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % autosaving
   if autosave == 1
     figout = [folder, filesep, basename, '_', char(data_name), '.png'];
