@@ -16,7 +16,7 @@ function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
 
   fft_out = fft(datain,NFFT);
 
-  Lout = length(fft_out);
+  Lout = length(fft_out); % = NFFT
   fft_out = fft_out(1:Lout/2);
 
   % relative frequency according to nyquist criterion
