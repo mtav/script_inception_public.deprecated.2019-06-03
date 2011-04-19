@@ -40,7 +40,7 @@ function GEOshellscript(filename, BASENAME, EXE, WORKDIR, WALLTIME)
   fprintf(out,'cd $WORKDIR\n');
   fprintf(out,'\n');
   fprintf(out,'$EXE %s.in > %s.out\n', BASENAME, BASENAME);
-  fprintf(out,'fix_filenames.sh\n');
+  fprintf(out,'fix_filenames.py -v .\n');
 
   %close file
   fclose(out);
