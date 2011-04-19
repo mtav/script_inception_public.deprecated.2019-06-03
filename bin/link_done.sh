@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -u
 
 usage()
 {
@@ -23,25 +23,7 @@ fi
 operation_type=$1
 shift
 
-function getOutFile()
-{
-    DIR=$(dirname $(readlink -f "$1"))
-    BASE=$(basename $1 '_4ppn.sh')
-    BASE=$(basename $BASE '_8ppn.sh')
-    BASE=$(basename $(basename $BASE '.out') .sh)
-    OUTFILE="$DIR/$BASE.out"
-    echo "$OUTFILE"
-}
-
-function getScriptFile()
-{
-    DIR=$(dirname $(readlink -f "$1"))
-    BASE=$(basename $1 '_4ppn.sh')
-    BASE=$(basename $BASE '_8ppn.sh')
-    BASE=$(basename $(basename $BASE '.out') .sh)
-    SCRIPTFILE="$DIR/$BASE.sh"
-    echo "$SCRIPTFILE"
-}
+source script_inception_common_functions.sh
 
 function list_finished()
 {
@@ -49,11 +31,11 @@ function list_finished()
   for f in "$@"
   do
     OUTFILE=$(getOutFile "$f")
-    DIR=$(dirname $(readlink -f $OUTFILE))
-    BASE=$(basename $DIR)
-    if grep Deallocating  $OUTFILE 1>/dev/null 2>&1
+    getDataState $f
+    status=$?
+    if  [ $status == 0 ]
     then
-      echo "$OUTFILE"
+      echo $OUTFILE
     fi
   done
 }
@@ -64,14 +46,26 @@ function list_unfinished_running()
   for f in "$@"
   do
     OUTFILE=$(getOutFile "$f")
-    if [ -s  "$OUTFILE" ]
+    getDataState $f
+    status=$?
+    if  [ $status == 1 ]
     then
-      #~ echo "$OUTFILE exists"
-      if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
-      then
-        #~ echo "$OUTFILE exists but is unfinished"
-        echo "$OUTFILE"
-      fi
+      echo $OUTFILE
+    fi
+  done
+}
+
+function list_unstarted()
+{
+  #~ echo "==>list_unstarted called"
+  for f in "$@"
+  do
+    OUTFILE=$(getOutFile "$f")
+    getDataState $f
+    status=$?
+    if  [ $status == 2 ]
+    then
+      echo $OUTFILE
     fi
   done
 }
@@ -82,17 +76,11 @@ function list_all_unfinished()
   for f in "$@"
   do
     OUTFILE=$(getOutFile "$f")
-    if [ -s  "$OUTFILE" ]
+    getDataState $f
+    status=$?
+    if  [ $status == 1 ] || [ $status == 2 ]
     then
-      #~ echo "$OUTFILE exists"
-      if ! grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1
-      then
-        #~ echo "$OUTFILE exists but is unfinished"
-        echo "$OUTFILE"
-      fi
-    else
-      #~ echo "$OUTFILE does not exist"
-      echo "$OUTFILE"
+      echo $OUTFILE
     fi
   done
 }
