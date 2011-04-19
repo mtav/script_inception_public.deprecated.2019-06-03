@@ -102,9 +102,9 @@ function plotProbe(filename, probe_col, autosave)
   
   hold on;
 
-  Q_lorentz = [1,2,3,4];  
-  Q_harminv_local = [11,22,33,44];  
-  Q_harminv_global = [111,222,333,444];  
+  Q_lorentz = zeros(1,size(peaks,1));
+  Q_harminv_local = zeros(1,size(peaks,1));
+  Q_harminv_global = zeros(1,size(peaks,1));
   for n=1:size(peaks,1)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
     plot(peaks(n,3),Y(closestInd(X,peaks(n,3))),'g*'); % plot little stars on detected peaks
@@ -112,6 +112,13 @@ function plotProbe(filename, probe_col, autosave)
     [indS,val] = closestInd(X,peaks(n,1))
     peakWaveLength = peaks(n,1);
     peakValue = peaks(n,2);
+    
+    xmin = peaks(n,4)
+    xmax = peaks(n,3)
+    [Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax)
+    
+    Q_lorentz(n) = Q;
+    plot(linspace(xmin,xmax,100),lorentz(vEnd,linspace(xmin,xmax,100)),'r.');
     
     Q1 = ['Q_L=',num2str(Q_lorentz(n))];
     Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
