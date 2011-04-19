@@ -109,15 +109,15 @@ function plotProbe(filename, probe_col, autosave)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-  [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename)
-  [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder)
+  [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename);
+  [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder);
   harminv_dir = fullfile( probefile_folder, 'harminv' );
   harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
   outfileName =               [ harminv_basepath, '_harminv.out' ];
   harminvDataFile =           [ harminv_basepath, '_harminv.txt' ];
   parametersFile =            [ harminv_basepath, '_parameters.txt' ];
 
-  computeHarminv = 1
+  computeHarminv = 1;
   if computeHarminv
     lambdaLow_mum = xmin_global*1e-3;
     lambdaHigh_mum = xmax_global*1e-3;
@@ -148,7 +148,7 @@ function plotProbe(filename, probe_col, autosave)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
     plot(peaks(n,3),Y(closestInd(X,peaks(n,3))),'g*'); % plot little stars on detected peaks
     plot(peaks(n,4),Y(closestInd(X,peaks(n,4))),'b*'); % plot little stars on detected peaks
-    [indS,val] = closestInd(X,peaks(n,1))
+    [indS,val] = closestInd(X,peaks(n,1));
     peakWaveLength = peaks(n,1);
     peakValue = peaks(n,2);
     
