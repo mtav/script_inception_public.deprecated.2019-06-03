@@ -50,23 +50,35 @@ function [maxtab, mintab] = peakdet(v, delta, x)
   
   mn = Inf; mx = -Inf;
   mnpos = NaN; mxpos = NaN;
+  mx_left = -Inf;
+  mx_right = Inf;
+  mn_left = -Inf;
+  mn_right = Inf;
+  mxpos_idx = -1;
+  mnpos_idx = -1;
   
   lookformax = 1;
   
   for i=1:length(v)
     this = v(i);
-    if this > mx, mx = this; mxpos = x(i); end
-    if this < mn, mn = this; mnpos = x(i); end
+    if this > mx, mx = this; mxpos = x(i); mxpos_idx = i; end
+    if this < mn, mn = this; mnpos = x(i); mnpos_idx = i; end
     
     if lookformax
       if this < mx-delta
-        maxtab = [maxtab ; mxpos mx];
+        [ idx_min_left, idx_min_right ] = getSurroundingMins(v, mxpos_idx);
+        mx_left = x(idx_min_left);
+        mx_right = x(idx_min_right);
+        maxtab = [maxtab ; mxpos mx mx_left mx_right];
         mn = this; mnpos = x(i);
         lookformax = 0;
       end  
     else
       if this > mn+delta
-        mintab = [mintab ; mnpos mn];
+        % TODO: create getSurroundingMaxs
+        mn_left = mnpos-1;
+        mn_right = mnpos+1;
+        mintab = [mintab ; mnpos mn mn_left mn_right];
         mx = this; mxpos = x(i);
         lookformax = 1;
       end

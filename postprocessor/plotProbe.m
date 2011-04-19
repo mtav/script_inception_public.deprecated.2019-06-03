@@ -95,6 +95,11 @@ function plotProbe(filename, probe_col, autosave)
   peaks = peakdet(Y, delta, X);
   peaks
   
+  %closestInd(Y,peaks(1,3))
+  %closestInd(Y,peaks(2,3))
+  %closestInd(Y,peaks(3,3))
+  %closestInd(Y,peaks(4,3))
+  
   hold on;
 
   Q_lorentz = [1,2,3,4];  
@@ -102,13 +107,15 @@ function plotProbe(filename, probe_col, autosave)
   Q_harminv_global = [111,222,333,444];  
   for n=1:size(peaks,1)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
+    plot(peaks(n,3),Y(closestInd(X,peaks(n,3))),'g*'); % plot little stars on detected peaks
+    plot(peaks(n,4),Y(closestInd(X,peaks(n,4))),'b*'); % plot little stars on detected peaks
     [indS,val] = closestInd(X,peaks(n,1))
     peakWaveLength = peaks(n,1);
     peakValue = peaks(n,2);
     
-    Q1 = ['Q=',num2str(Q_lorentz(n))];
-    Q2 = ['Q=',num2str(Q_harminv_local(n))];
-    Q3 = ['Q=',num2str(Q_harminv_global(n))];
+    Q1 = ['Q_L=',num2str(Q_lorentz(n))];
+    Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
+    Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
     text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 16);
 
     %text(peakWaveLength, peakValue + 0*font_size, );
