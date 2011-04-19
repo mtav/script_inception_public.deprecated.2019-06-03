@@ -75,10 +75,10 @@ function plotProbe(filename, probe_col, autosave)
   % zoom plot on interesting region
   idx_max = find(Y==max(Y));
   ViewingWindowSize = 200;
-  xmin = X(idx_max(1)) - ViewingWindowSize;
-  xmax = X(idx_max(length(idx_max))) + ViewingWindowSize;
+  xmin_global = X(idx_max(1)) - ViewingWindowSize;
+  xmax_global = X(idx_max(length(idx_max))) + ViewingWindowSize;
 
-  axis([xmin, xmax, min(Y), 1.1*max(Y)]);
+  axis([xmin_global, xmax_global, min(Y), 1.1*max(Y)]);
 
   disp(['DATA INFO: maximums at = ',num2str(X(idx_max))]);
 
@@ -95,6 +95,10 @@ function plotProbe(filename, probe_col, autosave)
   peaks = peakdet(Y, delta, X);
   peaks
   
+  Q_lorentz = zeros(1,size(peaks,1));
+  Q_harminv_local = zeros(1,size(peaks,1));
+  Q_harminv_global = zeros(1,size(peaks,1));
+
   %closestInd(Y,peaks(1,3))
   %closestInd(Y,peaks(2,3))
   %closestInd(Y,peaks(3,3))
@@ -102,9 +106,56 @@ function plotProbe(filename, probe_col, autosave)
   
   hold on;
 
-  Q_lorentz = zeros(1,size(peaks,1));
-  Q_harminv_local = zeros(1,size(peaks,1));
-  Q_harminv_global = zeros(1,size(peaks,1));
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+  [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename)
+  [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder)
+  harminv_dir = fullfile( probefile_folder, 'harminv' );
+  harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
+  outfileName =               [ harminv_basepath, '_harminv.out' ];
+  harminvDataFile =           [ harminv_basepath, '_harminv.txt' ];
+  parametersFile =            [ harminv_basepath, '_parameters.txt' ];
+
+  computeHarminv = 1
+  if computeHarminv
+
+    lambdaLow_mum = xmin_global*1e-3;
+    lambdaHigh_mum = xmax_global*1e-3;
+
+    fid = fopen(harminvDataFile,'w+');
+    fprintf(fid,'%2.8e\r\n',data(:,probe_col));
+    fclose(fid);
+    
+    [lambdaH_mum,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
+    lambdaH_nm = lambdaH_mum*1e3;
+    
+    rel=1./err; rel=rel/max(rel)*max(Q);
+    
+    fid = fopen(parametersFile,'w+');
+    fprintf(fid,'PeakNo\tFrequency(Hz)\tWavelength(nm)\tQFactor\t\r\n');
+
+    for n=1:size(peaks,1)
+      [indS,val]=closestInd(lambdaH_nm,peaks(n,1));
+      Q_harminv_global(n) = Q(indS);
+      peakWaveLength_nm = peaks(n,1);
+      %peakValue=peaks(n,2);
+      %text(peakWaveLength,peakValue,['Q=',num2str(Q(indS))],'FontSize',16);
+      %% Write peaks to a text file.
+      Frequency_Hz = get_c0()/peakWaveLength_nm*1e9;
+      fprintf(fid,'%i\t%2.8g\t%2.11g\t%2.8g\r\n',n,Frequency_Hz,peakWaveLength_nm,Q(indS));
+      %disp(Frequency_Hz*10^-6)
+      %frequency_struct.PeakNo{end+1} = 
+      %frequency_struct.Frequency_Hz{end+1} = 
+      %frequency_struct.Wavelength_nm{end+1} = 
+      %frequency_struct.QFactor = 
+      %frequency_struct_array = 
+    end
+      
+    fclose(fid);     
+  end % end of if computeHarminv
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
   for n=1:size(peaks,1)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
     plot(peaks(n,3),Y(closestInd(X,peaks(n,3))),'g*'); % plot little stars on detected peaks
@@ -141,63 +192,6 @@ function plotProbe(filename, probe_col, autosave)
 
   end
   
-  computeHarminv = 0
-  if computeHarminv
-
-    lambdaLow = xmin; %0.62; %set min lamda  0.90
-    lambdaHigh = xmax; %set max lamda  0.98
-
-    fid = fopen(harminvDataFile,'w+');
-    fprintf(fid,'%2.8e\r\n',data(:,colnumP));
-    fclose(fid);
-    
-    [lambdaH,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow,lambdaHigh);
-    
-    figure(3); clf
-    plot(lambdaH,Q,'r','LineWidth',2);
-    hold on
-    rel=1./err; rel=rel/max(rel)*max(Q);
-    plot(lambdaH,rel,':')
-    hold off
-    xlim([lambdaLow lambdaHigh])
-    
-    if length(Q)
-      ylim(sort([0 1.1*max(Q)]))
-    end
-  
-    title(title_base,'interpreter','none')
-    xlabel('wavelength(um)')
-    ylabel('Q Factor')
-    
-    % save frequency domain plot from harminv
-    saveas(gcf,[outFile,'.png'],'png');disp(['Saved as ',[outFile,'.png']]);
-    saveas(gcf,[outFile,'.fig'],'fig');disp(['Saved as ',[outFile,'.fig']]);
-    
-    fid = fopen(parametersFile,'w+');
-    fprintf(fid,'PeakNo\tFrequency(Hz)\tWavelength(nm)\tQFactor\t\r\n');
-
-    for n=1:size(peaks,1)
-      figure(2); hold on;
-      plot(1e3*peaks(n,1),peaks(n,2),'r*')
-      [indS,val]=closestInd(lambdaH,peaks(n,1));
-      peakWaveLength=1e3*peaks(n,1);
-      peakValue=peaks(n,2);
-      text(peakWaveLength,peakValue,['Q=',num2str(Q(indS))],'FontSize',16);
-      %% Write peaks to a text file.
-      Frequency_Hz = get_c0()/peakWaveLength*1e9;
-      fprintf(fid,'%i\t%2.8g\t%2.11g\t%2.8g\r\n',n,Frequency_Hz,peakWaveLength,Q(indS));
-      disp(Frequency_Hz*10^-6)
-      %frequency_struct.PeakNo{end+1} = 
-      %frequency_struct.Frequency_Hz{end+1} = 
-      %frequency_struct.Wavelength_nm{end+1} = 
-      %frequency_struct.QFactor = 
-      %frequency_struct_array = 
-
-    end
-      
-    fclose(fid);     
-  end % end of if computeHarminv
-
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % autosaving
   if autosave == 1
