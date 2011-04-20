@@ -20,8 +20,8 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType, iterations, freq_sna
   
   # refractive indices
   P.n_Substrate = n_Diamond
-  #P.n_Defect = n_Diamond
-  P.n_Defect = n_Air
+  P.n_Defect = n_Diamond
+  #P.n_Defect = n_Air
   P.n_Outside = n_Air
   P.n_bottomSquare = n_Diamond
   
@@ -38,8 +38,9 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType, iterations, freq_sna
   
   P.setDistanceBetweenDefectBordersInCavity(P.getLambda()/n_Eff)
   delta_diamond = P.getLambda()/(10*P.n_Substrate);
+  delta_defect = P.getLambda()/(10*P.n_Substrate);
   P.delta_X_bottomSquare = delta_diamond
-  P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
+  P.setDeltaHole(delta_defect,delta_defect,delta_defect)
   P.setDeltaSubstrate(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaOutside(P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect),P.getLambda()/(4*P.n_Defect))
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
@@ -57,4 +58,7 @@ def rectangular_yagi(DSTDIR, bottomN, topN, excitationType, iterations, freq_sna
   P.setExcitationType(excitationType)
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
 
+  #P.verbose = True
+  #dumpObj(P)
   P.write()
+  

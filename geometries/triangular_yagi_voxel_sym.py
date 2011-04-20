@@ -20,8 +20,8 @@ def triangular_yagi_voxel_sym(DSTDIR, bottomN, topN, excitationType, iterations,
   
   # refractive indices
   P.n_Substrate = n_Diamond
-  #P.n_Defect = n_Diamond
-  P.n_Defect = n_Air
+  P.n_Defect = n_Diamond
+  #P.n_Defect = n_Air
   P.n_Outside = n_Air
   P.n_bottomSquare = n_Diamond
   

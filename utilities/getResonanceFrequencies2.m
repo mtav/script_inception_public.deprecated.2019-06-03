@@ -87,6 +87,12 @@ function getResonanceFrequencies2(filename, probe_col, parametersFile)
   [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename);
   [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder);
   harminv_dir = fullfile( probefile_folder, 'harminv' );
+  
+  if ~(exist(harminv_dir,'dir'))
+    harminv_dir
+    mkdir(harminv_dir); 
+  end
+  
   harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
   outfileName =               [ harminv_basepath, '_harminv.out' ];
   harminvDataFile =           [ harminv_basepath, '_harminv.txt' ];
@@ -96,6 +102,7 @@ function getResonanceFrequencies2(filename, probe_col, parametersFile)
     lambdaLow_mum = xmin_global*1e-3;
     lambdaHigh_mum = xmax_global*1e-3;
 
+    disp(['harminvDataFile = ', harminvDataFile])
     fid = fopen(harminvDataFile,'w+');
     fprintf(fid,'%2.8e\r\n',data(:,probe_col));
     fclose(fid);
@@ -105,6 +112,7 @@ function getResonanceFrequencies2(filename, probe_col, parametersFile)
     
     rel=1./err; rel=rel/max(rel)*max(Q);
     
+    disp(['parametersFile = ',parametersFile])
     fid = fopen(parametersFile,'w+');
     fprintf(fid,'PeakNo\tFrequency(Hz)\tWavelength(nm)\tQFactor\t\r\n');
     for n=1:size(peaks,1)
