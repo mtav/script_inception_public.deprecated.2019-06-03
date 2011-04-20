@@ -658,7 +658,17 @@ class pillar_1D:
     sh_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.sh';
     if self.verbose:
       print('Writing shellscript '+sh_filename+' ...')
-    GEOshellscript(sh_filename, self.BASENAME, '$HOME/bin/fdtd', '$JOBDIR', self.WALLTIME)
+    probe_col = 0
+    if self.excitation.E == [1,0,0]:
+      probe_col = 2
+    elif self.excitation.E == [0,1,0]:
+      probe_col = 3
+    elif self.excitation.E == [0,0,1]:
+      probe_col = 4
+    else:
+      print('ERROR : Unknown Excitation type')
+      sys.exit(-1)
+    GEOshellscript_advanced(sh_filename, self.BASENAME, probe_col,'$HOME/bin/fdtd', '$JOBDIR', self.WALLTIME)
     if self.verbose:
       print('...done')
     return(sh_filename)
@@ -970,6 +980,33 @@ class pillar_1D:
         print('...done')
     
     return(inp_filename)
+
+def GEOshellscript_advanced(filename, BASENAME, probe_col, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTIME = 12):
+
+  #open file
+  with open(filename, 'w') as FILE:
+    #write file
+    FILE.write("#!/bin/bash\n")
+    FILE.write("#\n")
+    FILE.write("#PBS -l walltime=%d:00:00\n" % WALLTIME)
+    FILE.write("#PBS -mabe\n")
+    FILE.write("#PBS -joe\n")
+    FILE.write("#\n")
+    FILE.write("\n")
+    FILE.write("\n")
+    FILE.write("export WORKDIR=%s\n" % WORKDIR)
+    FILE.write("export EXE=%s\n" % EXE)
+    FILE.write("\n")
+    FILE.write("cd $WORKDIR\n")
+    FILE.write("\n")
+    FILE.write("$EXE %s.in > %s.out\n" %  (BASENAME, BASENAME))
+    FILE.write("fix_filenames.py -v .\n")
+    FILE.write("matlab_batcher.sh getResonanceFrequencies2 \"'$WORKDIR/p005id.prn',%d,'$WORKDIR/getResonanceFrequencies2.txt'\"\n" % probe_col)
+    FILE.write("cd resonance/ && $EXE %s.in >> %s.out\n" %  (BASENAME, BASENAME))
+    FILE.write("fix_filenames.py -v .\n")
+  
+    #close file
+    FILE.close()
 
 def main(argv=None):
   if argv is None:

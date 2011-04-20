@@ -299,7 +299,7 @@ def main(argv=None):
   usagestr = "usage: %prog [-d destdir] [-i iterations]"
   parser = OptionParser(usage=usagestr)
   
-  parser.add_option("-d", "--destdir", action="store", type="string", dest="destdir", default=os.getenv('DATADIR'), help="destination directory")
+  parser.add_option("-d", "--destdir", action="store", type="string", dest="destdir", default=os.getenv('TESTDIR'), help="destination directory")
   parser.add_option("-i", type="int", dest="iterations", default=65400+524200+524200, help="number of iterations")
   
   (options, args) = parser.parse_args()
