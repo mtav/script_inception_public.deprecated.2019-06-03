@@ -3,6 +3,7 @@
 
 from geometries.pillar_1D_wrapper import *
 import re
+from bfdtd.bfdtd_parser import *
 
 def getFrequencies(filename):
   freq_snapshots = []
@@ -16,25 +17,30 @@ def getFrequencies(filename):
   return freq_snapshots
 
 def rerun(filename):
+  filename = os.path.abspath(filename)
   freq_snapshots = getFrequencies(filename)
   print freq_snapshots
   
-
-
   BASE = os.path.basename(filename)
   DIR = os.path.dirname(filename)
-  print BASE
-  print DIR
-  head,tail = os.path.split(filename)
-  basedir,tail = os.path.split(head)
+  print 'BASE = ', BASE
+  print 'DIR = ', DIR
+  updir1,filename_base = os.path.split(filename)
+  updir2,updir1_base = os.path.split(updir1)
+  if updir1_base == 'harminv':
+    basedir = os.path.abspath(updir2)
+  else:
+    basedir = os.path.abspath(updir1)
+    
   #head,basedir = os.path.split(head)
-  print basedir
+  print 'basedir = ', basedir
   
   pattern = re.compile("(.*).bottomN_(\d+).topN_(\d+).excitationType_([XYZ]m[12])")
-  m = pattern.match(os.path.basename(basedir))
+  str_to_match = os.path.basename(basedir)
+  m = pattern.match(str_to_match)
   print m
-  print m.groups()
   if m:
+    print m.groups()
     pillarType = m.group(1).strip()
     bottomN = int(m.group(2).strip())
     topN = int(m.group(3).strip())
@@ -51,32 +57,39 @@ def rerun(filename):
       excitationType = 3
     print 'excitationType = ', excitationType
 
-    DSTDIR = basedir+os.sep+'resonance'
+    DSTDIR = os.path.abspath(basedir+os.sep+'resonance')
     print 'DSTDIR=', DSTDIR
-
     if not os.path.isdir(DSTDIR):
       os.mkdir(DSTDIR)
-    for iterations in [10,32000,261600,300000,1048400]:
-      DSTDIR = basedir+os.sep+'resonance' + os.sep + 'iterations_' + str(iterations)
-      if not os.path.isdir(DSTDIR):
-        os.mkdir(DSTDIR)
-      if pillarType == 'rectangular_holes':
-        rectangular_holes(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
-      elif pillarType == 'rectangular_yagi':
-        rectangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
-      elif pillarType == 'cylinder':
-        cylinder(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
-      elif pillarType == 'triangular_yagi':
-        triangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
-      elif pillarType == 'triangular_yagi_voxel':
-        triangular_yagi_voxel(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
-      elif pillarType == 'triangular_yagi_voxel_sym':
-        triangular_yagi_voxel_sym(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
-      else:
-        print 'UNKNOWN pillarType = ',pillarType
+      
+    INPFILE = os.path.dirname(filename)+os.sep+os.path.basename(basedir)+'.inp'
+    print 'INPFILE = ', INPFILE
+    # TODO: use this to write out exactly the same geo/inp set, except with frequency snapshots added
+    structured_entries = readBristolFDTD(INPFILE)
+    iterations = structured_entries.flag.numSteps
+    print 'iterations = ', iterations
+    
+    #for iterations in [10,32000,261600,300000,1048400]:
+    #DSTDIR = basedir+os.sep+'resonance' + os.sep + 'iterations_' + str(iterations)
+    #if not os.path.isdir(DSTDIR):
+      #os.mkdir(DSTDIR)
+    if pillarType == 'rectangular_holes':
+      rectangular_holes(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+    elif pillarType == 'rectangular_yagi':
+      rectangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+    elif pillarType == 'cylinder':
+      cylinder(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+    elif pillarType == 'triangular_yagi':
+      triangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+    elif pillarType == 'triangular_yagi_voxel':
+      triangular_yagi_voxel(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+    elif pillarType == 'triangular_yagi_voxel_sym':
+      triangular_yagi_voxel_sym(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+    else:
+      print 'UNKNOWN pillarType = ', pillarType
 
   else:
-    print 'NO MATCH'
+    print 'NO MATCH ON : ', str_to_match
   
   
   #for excitationType in range(4):
