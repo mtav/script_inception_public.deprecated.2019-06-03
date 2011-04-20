@@ -1,4 +1,4 @@
-function plotProbe(filename, probe_col, autosave)
+function plotProbe(filename, probe_col, autosave, imageSaveName)
 
   [ folder, basename, ext ] = fileparts(filename);
   [ geoname_folder, geoname_basename ] = fileparts(folder);
@@ -165,7 +165,7 @@ function plotProbe(filename, probe_col, autosave)
     Q1 = ['Q_L=',num2str(Q_lorentz(n))];
     Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
     Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
-    text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 16);
+    text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
 
     %text(peakWaveLength, peakValue + 0*font_size, );
     %text(peakWaveLength, peakValue + 1*font_size, ,'FontSize',font_size;
@@ -184,10 +184,20 @@ function plotProbe(filename, probe_col, autosave)
   end
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
+
   % autosaving
   if autosave == 1
     figout = [folder, filesep, basename, '_', char(data_name), '.png'];
     disp(['Saving figure as ',figout]);
     print(gcf,'-dpng','-r300',figout);
   end
+  
+  % normal saving
+  if exist('imageSaveName','var')~=0
+    figout = [];
+    disp(['Saving figure as ',imageSaveName]);
+    print(gcf,'-dpng','-r300',imageSaveName);
+  end
+
 end

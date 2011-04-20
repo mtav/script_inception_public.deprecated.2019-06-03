@@ -1,4 +1,5 @@
 #!/bin/sh
+# source : http://stackoverflow.com/questions/2001183/how-to-call-matlab-functions-from-linux-command-line
 
 matlab_exec=matlab
 X="${1}(${2})"
