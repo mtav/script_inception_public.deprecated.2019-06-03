@@ -143,7 +143,18 @@ function plotgen(maxval,column,handles)
       axis(foo)
   end
   titlesnap = strread(handles.snapfile,'%s','delimiter','\\');
-  title([char(titlesnap(length(titlesnap))) ': ' char(handles.AllHeaders(column))],'FontWeight','bold');
+  snapfile_full = char(titlesnap(length(titlesnap)));
+
+  [ snapfile_full_folder, snapfile_full_basename, snapfile_full_ext ] = fileparts(snapfile_full);
+  [ snapfile_full_folder_folder, snapfile_full_folder_basename ] = fileparts(snapfile_full_folder);
+  
+  title_base = [ snapfile_full_folder_basename, filesep, snapfile_full_basename, snapfile_full_ext ]
+
+  Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id)
+  freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency
+  lambda_snap_mum = get_c0()/freq_snap_MHz*1e3
+  
+  title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_mum), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
   clear titlesnap;
   hold on;
   
