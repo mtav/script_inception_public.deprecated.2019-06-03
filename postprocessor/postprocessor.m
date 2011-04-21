@@ -196,6 +196,14 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   
   % set to GUI
   if handles.isLoaded
+    handles.HeadersForPopupList
+
+    % make sure col is within the range of the popup list
+    col = get(handles.popupmenu_plotcolumn,'Value');
+    if (col<1) | (length(handles.HeadersForPopupList)<col)
+      set(handles.popupmenu_plotcolumn,'Value',1);
+    end
+    
     set(handles.popupmenu_plotcolumn,'String',handles.HeadersForPopupList);
     set(handles.text11,'String',['Loaded data: ',handles.snapfile]);
   else

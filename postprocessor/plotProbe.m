@@ -112,6 +112,12 @@ function plotProbe(filename, probe_col, autosave, imageSaveName)
   [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename);
   [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder);
   harminv_dir = fullfile( probefile_folder, 'harminv' );
+  
+  if ~(exist(harminv_dir,'dir'))
+    harminv_dir
+    mkdir(harminv_dir); 
+  end
+  
   harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
   outfileName =               [ harminv_basepath, '_harminv.out' ];
   harminvDataFile =           [ harminv_basepath, '_harminv.txt' ];
@@ -122,6 +128,7 @@ function plotProbe(filename, probe_col, autosave, imageSaveName)
     lambdaLow_mum = xmin_global*1e-3;
     lambdaHigh_mum = xmax_global*1e-3;
 
+    harminvDataFile
     fid = fopen(harminvDataFile,'w+');
     fprintf(fid,'%2.8e\r\n',data(:,probe_col));
     fclose(fid);
@@ -165,7 +172,8 @@ function plotProbe(filename, probe_col, autosave, imageSaveName)
     Q1 = ['Q_L=',num2str(Q_lorentz(n))];
     Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
     Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
-    text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
+    %text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
+    text(peakWaveLength, peakValue, {Q1}, 'FontSize', 8);
 
     %text(peakWaveLength, peakValue + 0*font_size, );
     %text(peakWaveLength, peakValue + 1*font_size, ,'FontSize',font_size;
