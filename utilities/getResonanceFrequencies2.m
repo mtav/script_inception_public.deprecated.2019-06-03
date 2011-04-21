@@ -83,9 +83,9 @@ function getResonanceFrequencies2(filename, probe_col, parametersFile)
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-  [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename);
-  [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder);
+  filename
+  [ probefile_folder, probefile_basename, probefile_ext ] = fileparts(filename)
+  [ probefile_folder_folder, probefile_folder_basename ] = fileparts(probefile_folder)
   harminv_dir = fullfile( probefile_folder, 'harminv' );
   
   if ~(exist(harminv_dir,'dir'))
