@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from geometries.pillar_1D import *
 
 def triangular_yagi(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
