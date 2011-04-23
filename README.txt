@@ -8,7 +8,7 @@ License:
 --------
 Unless otherwise specified inside a file or folder, everything is under GPLv3 (cf COPYING.txt).
 
-The following are under the LGPL:
+The following (written by Ian Buss) are under the LGPL:
 
 * Bris2Meep
 
