@@ -1,6 +1,7 @@
 useful scripts for MEEP and Bristol FDTD and maybe other stuff :)
 
 License:
+-------------
 Unless otherwise specified inside a file or folder, everything is under GPLv3 (cf COPYING.txt).
 
 The following are under the LGPL:
@@ -8,12 +9,12 @@ The following are under the LGPL:
 -Postprocessor
 -Geo2Str
 
-====================
+Links:
+---------
 For more info: https://wikis.bris.ac.uk/display/Photonics/Public+scripts+repository
-====================
 
 Blender scripts installation HOWTO:
-===========================
+------------------------------------------------------
 I still need to make it a bit more user-friendly, but to install it, here's what you have to do:
 
 1) Install blender 2.49b (so, not the latest version, but I'll try to fix that later. The problem is that the latest blender version uses python 3 instead of python 2.6)
@@ -28,6 +29,6 @@ http://www.python.org/download/releases/2.6.6/
 
 5) Define the following environment variables (cf http://support.microsoft.com/kb/310519 for how to do this) :
 
-DATADIR = H:\ (or whatever else you want to use as the default import directory. It doesn't matter much, since the import script will store the last directory you imported from. I'm going to change it so this variable isn't mandatory anymore)
+- DATADIR = H:\ (or whatever else you want to use as the default import directory. It doesn't matter much, since the import script will store the last directory you imported from. I'm going to change it so this variable isn't mandatory anymore)
 
-PYTHONPATH = H:\script_inception_public
+- PYTHONPATH = H:\script_inception_public
