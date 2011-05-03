@@ -18,125 +18,125 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
   end
   
   %%%%%%%%PARAMETERS%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-  %interRingDistancePxl=1;  % The distance in pixels between each spiral ring.
+  %interRingDistancePxl = 1;  % The distance in pixels between each spiral ring.
 
-  HFW=304000/mag; % Width of the horizontal scan (um).
+  HFW = 304000/mag; % Width of the horizontal scan (um).
   if (r_outer/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  res=HFW/4096; % size of each pixel (um).
-  R_outer=round(r_outer/res); % Radius in pixels.
-  R_inner=round(r_inner/res); % Radius in pixels.
+  res = HFW/4096; % size of each pixel (um).
+  R_outer = round(r_outer/res); % Radius in pixels.
+  R_inner = round(r_inner/res); % Radius in pixels.
 
-  ring_Width=2.1; %um  
-  Ring_Width=round(ring_Width/res); %in pixels.
+  ring_Width = 2.1; %um  
+  Ring_Width = round(ring_Width/res); %in pixels.
 
-  ringDwell=3400;             %unit: 0.1us
-  domeMaxDwell=3200;
-  domeMinDwell=50;
+  ringDwell = 3400;             %unit: 0.1us
+  domeMaxDwell = 3200;
+  domeMinDwell = 50;
 
-  writeToFile=1;
+  writeToFile = 1;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  rvec=(R_inner+1):interRingDistancePxl:R_outer;
+  rvec = (R_inner+1):interRingDistancePxl:R_outer;
   
   if strcmpi(profile_type,'dome')
     %% DOME
-    pf=[prefix,'_dome'];
-    profile=500*(1-sin(acos(rvec/max(rvec))));
+    pf = [prefix,'_dome'];
+    profile = 500*(1-sin(acos(rvec/max(rvec))));
   elseif strcmpi(profile_type,'sawtooth')
     %% SAWTOOTH
-    pf=[prefix,'_swt'];
-    profile=500*(0.5*sawtooth(rvec/8/pi)+0.5);
+    pf = [prefix,'_swt'];
+    profile = 500*(0.5*sawtooth(rvec/8/pi)+0.5);
   elseif strcmpi(profile_type,'dome + ring')
     %% DOME+RING
-    pf=[prefix,'_dmr'];
-    profile=domeMaxDwell*(1-sin(acos(rvec/max(rvec))))+domeMinDwell;
-    profile=[profile,ringDwell*ones(1,Ring_Width)];
+    pf = [prefix,'_dmr'];
+    profile = domeMaxDwell*(1-sin(acos(rvec/max(rvec))))+domeMinDwell;
+    profile = [profile,ringDwell*ones(1,Ring_Width)];
   elseif strcmpi(profile_type,'dome + angular ring')
     %% DOME+ANGULAR RING
-    pf=[prefix,'_dmar'];
-    profile=domeMaxDwell*(1-sin(acos(rvec/max(rvec))))+domeMinDwell;
-    profile=[profile,(Ring_Width:-1:0)/Ring_Width*ringDwell];
+    pf = [prefix,'_dmar'];
+    profile = domeMaxDwell*(1-sin(acos(rvec/max(rvec))))+domeMinDwell;
+    profile = [profile,(Ring_Width:-1:0)/Ring_Width*ringDwell];
   else
     disp('Using user-defined profile');
-    pf=[prefix,'_custom'];
+    pf = [prefix,'_custom'];
   end
   
-  Rad=length(profile); % Radius in pixels.
-  rvec_new=1:Rad;
-  pxPerRing=round(8*pi*Rad);
-  rad=repmat(rvec_new,pxPerRing,1);
-  rad=rad(:)';
+  Rad = length(profile); % Radius in pixels.
+  rvec_new = 1:Rad;
+  pxPerRing = round(8*pi*Rad);
+  rad = repmat(rvec_new,pxPerRing,1);
+  rad = rad(:)';
   
   %% PLOT
   figure;
   plot(rvec_new*res*interRingDistancePxl,profile)
   set(gca,'YDir','reverse')
   %~ pause(.3)
-  prefix=pf;
+  prefix = pf;
 
-  dwell=round(profile);
+  dwell = round(profile);
   figure;
   plot(rvec_new*res*interRingDistancePxl,dwell)
-  dwell=repmat(dwell,pxPerRing,1);
-  dwell=dwell(:);
+  dwell = repmat(dwell,pxPerRing,1);
+  dwell = dwell(:);
 
-  theta=repmat(linspace(0,2*pi,pxPerRing),1,Rad);
+  theta = repmat(linspace(0,2*pi,pxPerRing),1,Rad);
   x = round(rad.*cos(theta));
   y = round(rad.*sin(theta));
 
   %% REMOVE POINTS HAVING MINIMUM DWELL
-  ind=find(dwell~=0);
-  x=x(ind);
-  y=y(ind);
-  dwell=dwell(ind);
+  ind = find(dwell ~=  0);
+  x = x(ind);
+  y = y(ind);
+  dwell = dwell(ind);
 
   if length(x)<1e5
-      %% METHOD 1
-      c=[x',y'];
-      [mixed,k]=unique(c,'rows');
-      kk=sort(k);
-      v=c(kk,:)';
-      dwell=dwell(kk)';
-      % lineLength(coordinates)
-      x=v(1,:);
-      y=v(2,:);
+    %% METHOD 1
+    c = [x',y'];
+    [mixed,k] = unique(c,'rows');
+    kk = sort(k);
+    v = c(kk,:)';
+    dwell = dwell(kk)';
+    % lineLength(coordinates)
+    x = v(1,:);
+    y = v(2,:);
   else
     %% METHOD 2 IF NOT ENOUGH MEMORY USE THIS METHOD
     disp('WARNING: NOT ENOUGH MEMORY')
-    stackSize=1e5;
-    cc=ceil(length(x)/stackSize);
-    xn=[];
-    yn=[];
-    dwellN=[];
-    for m=1:cc
-      ind=(m-1)*stackSize+1:min(m*stackSize,length(x));
-      c=[x(ind)',y(ind)'];
-      dwellT=dwell(ind);
-      [mixed,k]=unique(c,'rows');
-      kk=sort(k);
-      v=c(kk,:)';
-      dwellT=dwellT(kk);
+    stackSize = 1e5;
+    cc = ceil(length(x)/stackSize);
+    xn = [];
+    yn = [];
+    dwellN = [];
+    for m = 1:cc
+      ind = (m-1)*stackSize+1:min(m*stackSize,length(x));
+      c = [x(ind)',y(ind)'];
+      dwellT = dwell(ind);
+      [mixed,k] = unique(c,'rows');
+      kk = sort(k);
+      v = c(kk,:)';
+      dwellT = dwellT(kk);
       % lineLength(coordinates)
-      xn=[xn,v(1,:)];
-      yn=[yn,v(2,:)];  
-      dwellN=[dwellN;dwellT];
+      xn = [xn,v(1,:)];
+      yn = [yn,v(2,:)];  
+      dwellN = [dwellN;dwellT];
     end
-    c=[xn',yn'];
-    [mixed,k]=unique(c,'rows');
-    kk=sort(k);
-    v=c(kk,:)';
-    x=v(1,:);
-    y=v(2,:);
-    dwell=dwellN(kk)';
+    c = [xn',yn'];
+    [mixed,k] = unique(c,'rows');
+    kk = sort(k);
+    v = c(kk,:)';
+    x = v(1,:);
+    y = v(2,:);
+    dwell = dwellN(kk)';
   end
 
-  x=x+2048-round((min(x)+max(x))/2);
-  y=y+2048-round((min(y)+max(y))/2);
+  x = x+2048-round((min(x)+max(x))/2);
+  y = y+2048-round((min(y)+max(y))/2);
 
   figure;
-  % maxInd=length(x);
-  % ind=(maxInd-40000:10:maxInd);
+  % maxInd = length(x);
+  % ind = (maxInd-40000:10:maxInd);
   % scatter3(x(ind),y(ind),dwell(ind));
   %
   % plot3(x,y,dwell);
@@ -151,10 +151,10 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
 
   if writeToFile
     % Write to file.
-    % folder=uigetdir();
+    % folder = uigetdir();
     mkdir(folder);
-    filename=[folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
-    %~ filename=[folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
+    filename = [folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
+    %~ filename = [folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
     %~ rep
     %~ mag
     %~ r_inner
@@ -168,12 +168,12 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
     %~ domeMinDwell
 
     disp(['Writing to ',filename])
-    fid=fopen(filename,'w');
+    fid = fopen(filename,'w');
     fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(x));
     if ~direction
-        fprintf(fid,'%i %i %i\r\n',[dwell;x;y]);
+      fprintf(fid,'%i %i %i\r\n',[dwell;x;y]);
     else
-        fprintf(fid,'%i %i %i\r\n',fliplr([dwell;x;y]));
+      fprintf(fid,'%i %i %i\r\n',fliplr([dwell;x;y]));
     end
     fclose(fid);
   end
