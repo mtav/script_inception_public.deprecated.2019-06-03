@@ -103,7 +103,7 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
     y = v(2,:);
   else
     %% METHOD 2 IF NOT ENOUGH MEMORY USE THIS METHOD
-    disp('WARNING: NOT ENOUGH MEMORY')
+    disp('WARNING: NOT ENOUGH MEMORY');return;
     stackSize = 1e5;
     cc = ceil(length(x)/stackSize);
     xn = [];

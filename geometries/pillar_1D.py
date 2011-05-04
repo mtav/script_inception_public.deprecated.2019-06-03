@@ -132,6 +132,11 @@ class pillar_1D:
     self.probes_X_vector_center = []
     self.probes_Y_vector_center = []
     self.probes_Z_vector_center = []
+    
+    #self.defect_radius = []
+    #self.defect_position_X = []
+    #self.defect_position_Y = []
+    #self.defect_position_Z = []
 
   def getPillarHeight(self):
     return (self.bottom_N+self.top_N)*self.d_holes_mum + self.getDistanceBetweenDefectBordersInCavity()
