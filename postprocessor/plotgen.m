@@ -1,4 +1,4 @@
-function plotgen(maxval,column,handles)
+function plotgen(maxval,column,handles,hide_figures)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software
@@ -11,7 +11,14 @@ function plotgen(maxval,column,handles)
   %Version 4.2
   %
   %For Poynting vector plots in the same format use snap_poy_int.m
+  % TODO: Locate snap_poy_int.m
+  % Arguments:
+  % column = column ID, 1 being the first column of the snaphot .prn file, i.e. the xy/yz/zx columns are included
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  if exist('hide_figures','var')==0
+    hide_figures = false;
+  end
 
   % load geometry data
   [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
@@ -74,7 +81,11 @@ function plotgen(maxval,column,handles)
   end
   
   %% Create figure and plot data
-  figure;
+  if hide_figures
+    fig = figure('visible','off');
+  else
+    fig = figure('visible','on');
+  end
   grey = 0;
   if (handles.colour)
       colormap(jet(256));
@@ -341,6 +352,6 @@ function plotgen(maxval,column,handles)
           figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
       end
       disp(['Saving figure as ',figout]);
-      print(gcf,'-dpng','-r300',figout);
+      print(fig,'-dpng','-r300',figout);
   end
 end

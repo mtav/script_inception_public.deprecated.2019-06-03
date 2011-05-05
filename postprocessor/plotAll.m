@@ -11,6 +11,9 @@ function plotAll(directory, specific_probe_cell)
   for script_idx = 1:length(Names)
     script_filename = char(Names(script_idx));
     [ script_folder, script_basename, script_ext ] = fileparts(script_filename);
+
+    handles = struct;
+
     handles.geofile = [ script_folder, filesep, script_basename, '.geo' ];
     handles.inpfile = [ script_folder, filesep, script_basename, '.inp' ];
     
@@ -20,10 +23,16 @@ function plotAll(directory, specific_probe_cell)
 
     if excitation == [1,0,0]
       probe_col = 2
+      TimeSnapshot_col = 3;
+      FrequencySnapshot_col = 3;
     elseif excitation == [0,1,0]
       probe_col = 3
+      TimeSnapshot_col = 4;
+      FrequencySnapshot_col = 6;
     elseif excitation == [0,0,1]
       probe_col = 4
+      TimeSnapshot_col = 5;
+      FrequencySnapshot_col = 9;
     else
       error('Unknown excitation');
     end
@@ -46,6 +55,47 @@ function plotAll(directory, specific_probe_cell)
         end
       elseif strcmp(type_name, 'TimeSnapshot')
         disp('plotting TimeSnapshot');
+
+        handles.isLoaded = 0;
+        handles.workdir = script_folder;
+        handles.snaplist = {};
+        handles.geolist = {};
+        handles.inplist = {};
+        
+        % time snapshot specific
+        handles.Type = 2;
+        handles.col = TimeSnapshot_col;
+        
+        handles.ProbeID = 1;
+        handles.TimeSnapshotID = 1;
+        handles.FrequencySnapshotID = 1;
+        handles.geometryfile = 1;
+        handles.inputfile = 1;
+        
+        % load data
+        [ handles ] = PP_load_data(handles);
+        if ~handles.isLoaded
+          error('ERROR: Loading failed');
+        end
+        
+        handles.maxplotvalue = NaN;
+      
+        handles.interpolate = 0;
+        handles.autosave= 0;
+        handles.geometry= 1;
+        handles.modulus = 0;
+      
+        handles.colour = 1;
+        handles.surface = 1;
+      
+        % generate plot
+        col = handles.col;
+        handles.dataname = handles.AllHeaders(col);
+        max = handles.maxplotvalue;
+        
+        handles.snapfile = prn_filename;
+        plotgen(max,col,handles);
+
       elseif strcmp(type_name, 'FrequencySnapshot')
         disp('plotting FrequencySnapshot');
       elseif strcmp(type_name, 'Reference')
@@ -64,7 +114,6 @@ function plotAll(directory, specific_probe_cell)
 plotProbe(filename, probe_col, autosave, imageSaveName)
 plotgen(maxval,column,handles)
 
-  handles = struct;
   handles.isLoaded = 0;
   handles.workdir = pwd();
   handles.snaplist = {};
