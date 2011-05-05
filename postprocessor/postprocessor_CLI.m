@@ -27,15 +27,15 @@ function postprocessor_CLI()
   end
   
   handles.col = 3;
-  handles.maxplotvalue = 1;
+  handles.maxplotvalue = NaN;
 
   handles.interpolate = 0;
   handles.autosave= 0;
-  handles.geometry= 0;
+  handles.geometry= 1;
   handles.modulus = 0;
 
   handles.colour = 1;
-  handles.surface = 0;
+  handles.surface = 1;
 
   % generate plot
   [ handles, ok ] = PP_generate_plot(handles);
