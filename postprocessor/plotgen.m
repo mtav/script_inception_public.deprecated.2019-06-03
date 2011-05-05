@@ -150,11 +150,22 @@ function plotgen(maxval,column,handles)
   
   title_base = [ snapfile_full_folder_basename, filesep, snapfile_full_basename, snapfile_full_ext ]
 
-  Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id)
-  freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency
-  lambda_snap_mum = get_c0()/freq_snap_MHz*1e3
+  if handles.Type == 1 % probe
+    error('ERROR: Trying to plot probe with snapshot plotter');
+    return;
+  elseif handles.Type == 2 % time snapshot
+    % TODO: Add more info to title?
+    title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
+  elseif handles.Type == 3 % frequency snapshot
+    Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+    freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+    lambda_snap_mum = get_c0()/freq_snap_MHz*1e3;
+    title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_mum), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+  else
+    error('ERROR: Unknown data type');
+    return;
+  end
   
-  title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_mum), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
   clear titlesnap;
   hold on;
   
