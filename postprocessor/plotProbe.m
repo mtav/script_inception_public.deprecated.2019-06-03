@@ -1,4 +1,8 @@
-function plotProbe(filename, probe_col, autosave, imageSaveName)
+function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+
+  if exist('hide_figures','var')==0
+    hide_figures = false;
+  end
 
   [ folder, basename, ext ] = fileparts(filename);
   [ geoname_folder, geoname_basename ] = fileparts(folder);
@@ -23,7 +27,11 @@ function plotProbe(filename, probe_col, autosave, imageSaveName)
   lambda_vec_nm = 1e3*lambda_vec_mum;
 
   % create new figure
-  figure;
+  if hide_figures
+    fig = figure('visible','off');
+  else
+    fig = figure('visible','on');
+  end
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % plot in the time domain to see the ringdown
@@ -192,20 +200,20 @@ function plotProbe(filename, probe_col, autosave, imageSaveName)
   end
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
+  set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
 
   % autosaving
   if autosave == 1
     figout = [folder, filesep, basename, '_', char(data_name), '.png'];
     disp(['Saving figure as ',figout]);
-    print(gcf,'-dpng','-r300',figout);
+    print(fig,'-dpng','-r300',figout);
   end
   
   % normal saving
   if exist('imageSaveName','var')~=0
     figout = [];
     disp(['Saving figure as ',imageSaveName]);
-    print(gcf,'-dpng','-r300',imageSaveName);
+    print(fig,'-dpng','-r300',imageSaveName);
   end
 
 end
