@@ -211,7 +211,6 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
   
   % normal saving
   if exist('imageSaveName','var')~=0
-    figout = [];
     disp(['Saving figure as ',imageSaveName]);
     print(fig,'-dpng','-r300',imageSaveName);
   end

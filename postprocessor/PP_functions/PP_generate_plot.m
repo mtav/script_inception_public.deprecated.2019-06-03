@@ -12,16 +12,16 @@ function [ handles, ok ] = PP_generate_plot(handles)
   
   col = handles.col;
   handles.dataname = handles.AllHeaders(col);
-  max = handles.maxplotvalue;
+  maxplotvalue = handles.maxplotvalue;
   
   if handles.Type == 1
     plotProbe(handles.ProbeFile, handles.col, handles.autosave);
   elseif handles.Type == 2
     handles.snapfile = handles.TimeSnapshotFile;
-    plotgen(max,col,handles);
+    plotgen(maxplotvalue,col,handles);
   elseif handles.Type == 3
     handles.snapfile = handles.FrequencySnapshotFile;
-    plotgen(max,col,handles);
+    plotgen(maxplotvalue,col,handles);
   else
     error('Unknown data type');
     ok = 0;

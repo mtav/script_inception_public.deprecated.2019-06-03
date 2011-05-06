@@ -55,46 +55,30 @@ function plotAll(directory, specific_probe_cell)
         end
       elseif strcmp(type_name, 'TimeSnapshot')
         disp('plotting TimeSnapshot');
-
-        handles.isLoaded = 0;
-        handles.workdir = script_folder;
-        handles.snaplist = {};
-        handles.geolist = {};
-        handles.inplist = {};
         
-        % time snapshot specific
-        handles.Type = 2;
-        handles.col = TimeSnapshot_col;
-        
-        handles.ProbeID = 1;
-        handles.TimeSnapshotID = 1;
-        handles.FrequencySnapshotID = 1;
-        handles.geometryfile = 1;
-        handles.inputfile = 1;
-        
-        % load data
-        [ handles ] = PP_load_data(handles);
-        if ~handles.isLoaded
-          error('ERROR: Loading failed');
-        end
-        
-        handles.maxplotvalue = NaN;
-      
-        handles.interpolate = 0;
+        % setting up the handles structure:
+        handles.AllHeaders
         handles.autosave= 0;
-        handles.geometry= 1;
-        handles.modulus = 0;
-      
         handles.colour = 1;
+        handles.fin1
+        % handles.geofile; % already defined
+        handles.geometry= 1;
+        handles.gr
+        % handles.inpfile; % already defined
+        handles.interpolate = 0;
+        handles.modulus = 0;
+        handles.plane
+        handles.snapfile = fullfile(script_folder,prn_filename);
         handles.surface = 1;
-      
-        % generate plot
+        handles.Type = 2;
+
+        % other variables
         col = handles.col;
-        handles.dataname = handles.AllHeaders(col);
-        max = handles.maxplotvalue;
+        maxplotvalue = NaN;
+        imageSaveName = 'test.png';
         
-        handles.snapfile = prn_filename;
-        plotgen(max,col,handles);
+        % finally plotting
+        plotgen(maxplotvalue, col, handles, imageSaveName, true);
 
       elseif strcmp(type_name, 'FrequencySnapshot')
         disp('plotting FrequencySnapshot');

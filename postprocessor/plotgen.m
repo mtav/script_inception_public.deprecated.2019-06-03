@@ -1,4 +1,4 @@
-function plotgen(maxval,column,handles,hide_figures)
+function plotgen(maxval, column, handles, imageSaveName, hide_figures)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software
@@ -14,6 +14,23 @@ function plotgen(maxval,column,handles,hide_figures)
   % TODO: Locate snap_poy_int.m
   % Arguments:
   % column = column ID, 1 being the first column of the snaphot .prn file, i.e. the xy/yz/zx columns are included
+  %
+  % required attributes of handles:
+  % ===============================
+  % handles.AllHeaders
+  % handles.autosave
+  % handles.colour
+  % handles.fin1
+  % handles.geofile
+  % handles.geometry
+  % handles.gr
+  % handles.inpfile
+  % handles.interpolate
+  % handles.modulus
+  % handles.plane
+  % handles.snapfile
+  % handles.surface
+  % handles.Type
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   if exist('hide_figures','var')==0
@@ -354,4 +371,11 @@ function plotgen(maxval,column,handles,hide_figures)
     disp(['Saving figure as ',figout]);
     print(fig,'-dpng','-r300',figout);
   end
+  
+  % normal saving
+  if exist('imageSaveName','var')~=0
+    disp(['Saving figure as ',imageSaveName]);
+    print(fig,'-dpng','-r300',imageSaveName);
+  end
+
 end
