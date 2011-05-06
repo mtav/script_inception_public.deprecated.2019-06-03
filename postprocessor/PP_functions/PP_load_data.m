@@ -65,6 +65,7 @@ function [ handles ] = PP_load_data(handles)
   [handles.header, handles.fin1] = hdrload(handles.snapfile);
   
   %determine orientation of snapshot
+  % TODO: Use the maximums calculated here
   handles.gr = size(handles.fin1);
   columns = strread(handles.header,'%s');
   if strcmp(columns(1),'y') && strcmp(columns(2),'z')
