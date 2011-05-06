@@ -116,10 +116,10 @@ function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArra
           handles.modulus = 0;
           handles.surface = 1;
   
-          % time snapshot specific
+          % frequency snapshot specific
           handles.Type = 3;
           col = FrequencySnapshot_col;
-          imageSaveName = '%BASENAME.%FIELD.max_%MAX.png';
+          imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.png';
   
           % finally plotting
           plotgen(NaN, col, handles, imageSaveName, true);

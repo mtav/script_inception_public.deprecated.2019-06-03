@@ -187,8 +187,9 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
   elseif handles.Type == 3 % frequency snapshot
     Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
     freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-    lambda_snap_mum = get_c0()/freq_snap_MHz*1e3;
-    title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_mum), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+    lambda_snap_mum = get_c0()/freq_snap_MHz;
+    lambda_snap_nm = lambda_snap_mum*1e3;
+    title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
   else
     error('ERROR: Unknown data type');
     return;
@@ -372,7 +373,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
     print(fig,'-dpng','-r300',figout);
   end
   
-  % normal saving
+  % normal saving ( with format string! :D )
   if exist('imageSaveName','var')~=0
     % substitution variable preparation
     [ folder, basename, ext ] = fileparts(handles.snapfile);
@@ -382,6 +383,17 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%BASENAME', basename);
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%FIELD', num2str(colfig));
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%MAX', num2str(maxval));
+    % additional stuff for frequency snapshots
+    if handles.Type == 3 % frequency snapshot
+      Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+      freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+      lambda_snap_mum = get_c0()/freq_snap_MHz;
+      lambda_snap_nm = lambda_snap_mum*1e3;
+      imageSaveNameFinal = strrep(imageSaveNameFinal, '%NSNAP', num2str(Nsnap));
+      imageSaveNameFinal = strrep(imageSaveNameFinal, '%FREQ_SNAP_MHZ', num2str(freq_snap_MHz));
+      imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_MUM', num2str(lambda_snap_mum));
+      imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_NM', num2str(lambda_snap_nm));
+    end
     % saving
     disp(['Saving figure as ',imageSaveNameFinal]);
     print(fig,'-dpng','-r300',imageSaveNameFinal);
