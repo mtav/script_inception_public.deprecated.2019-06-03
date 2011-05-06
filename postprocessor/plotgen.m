@@ -374,8 +374,17 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
   
   % normal saving
   if exist('imageSaveName','var')~=0
-    disp(['Saving figure as ',imageSaveName]);
-    print(fig,'-dpng','-r300',imageSaveName);
+    % substitution variable preparation
+    [ folder, basename, ext ] = fileparts(handles.snapfile);
+    % substitution
+    imageSaveNameFinal = imageSaveName;
+    imageSaveNameFinal = strrep(imageSaveNameFinal, '%DATE', datestr(now,'yyyymmdd_HHMMSS'));
+    imageSaveNameFinal = strrep(imageSaveNameFinal, '%BASENAME', basename);
+    imageSaveNameFinal = strrep(imageSaveNameFinal, '%FIELD', num2str(colfig));
+    imageSaveNameFinal = strrep(imageSaveNameFinal, '%MAX', num2str(maxval));
+    % saving
+    disp(['Saving figure as ',imageSaveNameFinal]);
+    print(fig,'-dpng','-r300',imageSaveNameFinal);
   end
 
 end

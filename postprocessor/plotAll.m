@@ -84,7 +84,7 @@ function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArra
           % time snapshot specific
           handles.Type = 2;
           col = TimeSnapshot_col;
-          imageSaveName = 'test.png';
+          imageSaveName = '%BASENAME.%FIELD.max_%MAX.png';
   
           % finally plotting
           plotgen(NaN, col, handles, imageSaveName, true);
