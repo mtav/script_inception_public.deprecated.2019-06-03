@@ -26,37 +26,37 @@ function plotgen(maxval,column,handles,hide_figures)
   %% Determine size of snapshot
   ii=1; ValPrev = handles.fin1(ii,1); grid_j = 1;
   while ii<handles.gr(1)
-      if handles.fin1(ii,1) ~= ValPrev
-          ValPrev = handles.fin1(ii,1);
-          grid_j = grid_j+1;
-      end
-      ii=ii+1;
+    if handles.fin1(ii,1) ~= ValPrev
+      ValPrev = handles.fin1(ii,1);
+      grid_j = grid_j+1;
+    end
+    ii=ii+1;
   end
   grid_i = handles.gr(1)/grid_j;
   
   %% Create meshgrids for snapshot
   for pp=1:grid_j
-      for qq=1:grid_i
-          i(pp,qq)=handles.fin1(qq,2);
-      end
+    for qq=1:grid_i
+      i(pp,qq)=handles.fin1(qq,2);
+    end
   end
   
   for pp=1:grid_j
-      for qq=1:grid_i
-          j(pp,qq)=handles.fin1((qq+((pp-1)*grid_i)),1);
-      end
+    for qq=1:grid_i
+      j(pp,qq)=handles.fin1((qq+((pp-1)*grid_i)),1);
+    end
   end
   
   %% Load column of choice to data
   modu = 1;
   rawdata = handles.fin1(:,column);
   if handles.modulus == 1
-      data = abs(rawdata);
+    data = abs(rawdata);
   else
-      data = rawdata;
-      if min(data) < 0
-          modu = 0;
-      end
+    data = rawdata;
+    if min(data) < 0
+      modu = 0;
+    end
   end
 
   disp(['DATA INFO: min(rawdata) = ',num2str(min(rawdata))]);
@@ -73,11 +73,11 @@ function plotgen(maxval,column,handles,hide_figures)
   %% Create plot data meshgrid
   count=1;
   for ii=1:grid_j
-      kk=grid_i*count;
-      for jj=1:grid_i
-          k(ii,jj)=data(jj+(kk-grid_i));
-      end
-      count=count+1;
+    kk=grid_i*count;
+    for jj=1:grid_i
+      k(ii,jj)=data(jj+(kk-grid_i));
+    end
+    count=count+1;
   end
   
   %% Create figure and plot data
@@ -88,52 +88,52 @@ function plotgen(maxval,column,handles,hide_figures)
   end
   grey = 0;
   if (handles.colour)
-      colormap(jet(256));
-      grey = 0;
+    colormap(jet(256));
+    grey = 0;
   else
-      colormap(gray(256));
-      grey = 1;
+    colormap(gray(256));
+    grey = 1;
   end
   
   if handles.plane == 1
-      if (handles.surface)
-          %pcolor(i,j,k)
-          surf(i,j,k);
-      else
-          contour(i,j,k);
-      end
+    if (handles.surface)
+      %pcolor(i,j,k)
+      surf(i,j,k);
+    else
+      contour(i,j,k);
+    end
   elseif handles.plane == 2
-      if (handles.surface)
-          %pcolor(i,j,k)
-          surf(i,j,k);
-      else
-          contour(i,j,k);
-      end
+    if (handles.surface)
+      %pcolor(i,j,k)
+      surf(i,j,k);
+    else
+      contour(i,j,k);
+    end
   else
-      if (handles.surface)
-          %pcolor(j,i,k)
-          surf(j,i,k);
-      else
-          contour(j,i,k);
-      end
+    if (handles.surface)
+      %pcolor(j,i,k)
+      surf(j,i,k);
+    else
+      contour(j,i,k);
+    end
   end
   
   %colave = max(fin1(:,column));
   colfig = handles.AllHeaders{column};
   disp(['maxval=',num2str(maxval)]);
   if (modu == 1) || (handles.modulus == 1)
-      caxis([0 maxval]);
+    caxis([0 maxval]);
   else
-      caxis([-maxval maxval]);
+    caxis([-maxval maxval]);
   end
   colorbar
   AspectRatio = get(gca,'DataAspectRatio');
   AspectRatio(1) = AspectRatio(2);
   set(gca,'DataAspectRatio',AspectRatio);
   if handles.interpolate == 1
-      shading interp;
+    shading interp;
   else
-      shading flat;
+    shading flat;
   end
   % TODO: handle NaNs
   switch handles.plane
@@ -345,13 +345,13 @@ function plotgen(maxval,column,handles,hide_figures)
   end
   
   if handles.autosave == 1
-      dim = length(handles.snapfile);
-      if grey == 1
-          figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];
-      else
-          figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
-      end
-      disp(['Saving figure as ',figout]);
-      print(fig,'-dpng','-r300',figout);
+    dim = length(handles.snapfile);
+    if grey == 1
+      figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];
+    else
+      figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
+    end
+    disp(['Saving figure as ',figout]);
+    print(fig,'-dpng','-r300',figout);
   end
 end
