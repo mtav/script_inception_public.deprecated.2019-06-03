@@ -1,7 +1,7 @@
-function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArray, FrequencySnapshot_patternCellArray)
+function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_patternCellArray, FrequencySnapshot_patternCellArray)
 
   % ex: Probe_patternCellArray = {'pxx.prn','ptyruytue.prn',etc}
-  % ex: plotAll('~/Labortablo/nano_meeting/',{'p05id.prn','p005id.prn'},{'y.*id.*\.prn'},{'y.*id.*\.prn'})
+  % ex: plotAll('~/Labortablo/nano_meeting/',1,{'p05id.prn','p005id.prn'},{'y.*id.*\.prn'},{'y.*id.*\.prn'})
   
   if exist('directory','var')==0
     directory = pwd();
@@ -88,7 +88,7 @@ function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArra
           imageSaveName = '%BASENAME.%FIELD.max_%MAX.png';
   
           % finally plotting
-          plotgen(NaN, col, handles, imageSaveName, true);
+          plotgen(maxplotvalue, col, handles, imageSaveName, true);
         end
 
       elseif strcmp(type_name, 'FrequencySnapshot')
@@ -123,7 +123,7 @@ function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArra
           imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.png';
   
           % finally plotting
-          plotgen(NaN, col, handles, imageSaveName, true);
+          plotgen(maxplotvalue, col, handles, imageSaveName, true);
         end
       elseif strcmp(type_name, 'Reference')
         disp('skipping Reference');
