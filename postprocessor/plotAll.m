@@ -1,6 +1,7 @@
 function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArray, FrequencySnapshot_patternCellArray)
 
   % ex: Probe_patternCellArray = {'pxx.prn','ptyruytue.prn',etc}
+  % ex: plotAll('~/Labortablo/nano_meeting/',{'p05id.prn','p005id.prn'},{'y.*id.*\.prn'},{'y.*id.*\.prn'})
   
   if exist('directory','var')==0
     directory = pwd();
