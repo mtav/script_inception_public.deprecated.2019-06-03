@@ -53,7 +53,7 @@ function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArra
         %if ( exist('Probe_patternCellArray','var')==0 ) | ( exist('Probe_patternCellArray','var')==1 & max(strcmp(prn_filename_basename,Probe_patternCellArray)) )
         if ( exist('Probe_patternCellArray','var')==0 ) | ( exist('Probe_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, Probe_patternCellArray))) )
           disp('plotting Probe');
-          plotProbe(prn_filename, probe_col, false, [ prn_filename_folder, prn_filename_basename, '.png' ],true);
+          plotProbe(prn_filename, probe_col, false, [ prn_filename_folder, prn_filename_basenameNoExt, '.png' ],true);
         end
       elseif strcmp(type_name, 'TimeSnapshot')
         if ( exist('TimeSnapshot_patternCellArray','var')==0 ) | ( exist('TimeSnapshot_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, TimeSnapshot_patternCellArray))) )
@@ -91,7 +91,39 @@ function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArra
         end
 
       elseif strcmp(type_name, 'FrequencySnapshot')
-        disp('plotting FrequencySnapshot');
+        if ( exist('FrequencySnapshot_patternCellArray','var')==0 ) | ( exist('FrequencySnapshot_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, FrequencySnapshot_patternCellArray))) )
+          disp('plotting FrequencySnapshot');
+          
+          % loading
+          handles.snapfile = fullfile(script_folder,prn_filename);
+          [handles.header, handles.fin1] = hdrload(handles.snapfile);
+          handles.gr = size(handles.fin1);
+          columns = strread(handles.header,'%s');
+          if strcmp(columns(1),'y') && strcmp(columns(2),'z')
+            handles.plane = 1;
+          elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
+            handles.plane = 2;
+          else
+            handles.plane = 3;
+          end
+          handles.AllHeaders = columns; % all headers
+          
+          % setting up the handles structure:
+          handles.autosave = 0;
+          handles.colour = 1;
+          handles.geometry = 1;
+          handles.interpolate = 0;
+          handles.modulus = 0;
+          handles.surface = 1;
+  
+          % time snapshot specific
+          handles.Type = 3;
+          col = FrequencySnapshot_col;
+          imageSaveName = '%BASENAME.%FIELD.max_%MAX.png';
+  
+          % finally plotting
+          plotgen(NaN, col, handles, imageSaveName, true);
+        end
       elseif strcmp(type_name, 'Reference')
         disp('skipping Reference');
       else
