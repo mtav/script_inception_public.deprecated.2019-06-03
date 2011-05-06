@@ -1,6 +1,6 @@
-function plotAll(directory, specific_probe_cell)
+function plotAll(directory, Probe_patternCellArray, TimeSnapshot_patternCellArray, FrequencySnapshot_patternCellArray)
 
-  % ex: specific_probe_cell = {'pxx.prn','ptyruytue.prn',etc}
+  % ex: Probe_patternCellArray = {'pxx.prn','ptyruytue.prn',etc}
   
   if exist('directory','var')==0
     directory = pwd();
@@ -45,61 +45,50 @@ function plotAll(directory, specific_probe_cell)
     prnFiles = dir('*.prn');
     for prn_idx = 1:length(prnFiles)
       prn_filename = prnFiles(prn_idx).name;
-      [ prn_filename_folder, prn_filename_basename, prn_filename_ext ] = fileparts(prn_filename);
+      [ prn_filename_folder, prn_filename_basenameNoExt, prn_filename_ext ] = fileparts(prn_filename);
+      prn_filename_basename = [prn_filename_basenameNoExt, prn_filename_ext];
       disp(['Processing ', prn_filename]);
       [type_ID, type_name] = getDataType(prn_filename);
       if strcmp(type_name, 'Probe')
-        if ( exist('specific_probe_cell','var')==0 ) | ( exist('specific_probe_cell','var')==1 & max(strcmp([prn_filename_basename, prn_filename_ext],specific_probe_cell)) )
+        %if ( exist('Probe_patternCellArray','var')==0 ) | ( exist('Probe_patternCellArray','var')==1 & max(strcmp(prn_filename_basename,Probe_patternCellArray)) )
+        if ( exist('Probe_patternCellArray','var')==0 ) | ( exist('Probe_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, Probe_patternCellArray))) )
           disp('plotting Probe');
           plotProbe(prn_filename, probe_col, false, [ prn_filename_folder, prn_filename_basename, '.png' ],true);
         end
       elseif strcmp(type_name, 'TimeSnapshot')
-        disp('plotting TimeSnapshot');
-        
-        % loading
-        handles.snapfile = fullfile(script_folder,prn_filename);
-        [handles.header, handles.fin1] = hdrload(handles.snapfile);
-        handles.gr = size(handles.fin1);
-        columns = strread(handles.header,'%s');
-        if strcmp(columns(1),'y') && strcmp(columns(2),'z')
-          handles.plane = 1;
-          handles.maxy = handles.fin1(handles.gr(1),1);
-          handles.maxz = handles.fin1(handles.gr(1),2);
-        elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
-          handles.plane = 2;
-          handles.maxx = handles.fin1(handles.gr(1),1);
-          handles.maxz = handles.fin1(handles.gr(1),2);
-        else
-          handles.plane = 3;
-          handles.maxx = handles.fin1(handles.gr(1),1);
-          handles.maxy = handles.fin1(handles.gr(1),2);
+        if ( exist('TimeSnapshot_patternCellArray','var')==0 ) | ( exist('TimeSnapshot_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, TimeSnapshot_patternCellArray))) )
+          disp('plotting TimeSnapshot');
+          
+          % loading
+          handles.snapfile = fullfile(script_folder,prn_filename);
+          [handles.header, handles.fin1] = hdrload(handles.snapfile);
+          handles.gr = size(handles.fin1);
+          columns = strread(handles.header,'%s');
+          if strcmp(columns(1),'y') && strcmp(columns(2),'z')
+            handles.plane = 1;
+          elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
+            handles.plane = 2;
+          else
+            handles.plane = 3;
+          end
+          handles.AllHeaders = columns; % all headers
+          
+          % setting up the handles structure:
+          handles.autosave = 0;
+          handles.colour = 1;
+          handles.geometry = 1;
+          handles.interpolate = 0;
+          handles.modulus = 0;
+          handles.surface = 1;
+  
+          % time snapshot specific
+          handles.Type = 2;
+          col = TimeSnapshot_col;
+          imageSaveName = 'test.png';
+  
+          % finally plotting
+          plotgen(NaN, col, handles, imageSaveName, true);
         end
-        handles.AllHeaders = columns; % all headers
-        
-        % setting up the handles structure:
-        % handles.geofile; % already defined
-        % handles.inpfile; % already defined
-        % handles.AllHeaders; % defined during load
-        % handles.fin1; % defined during load
-        % handles.gr; % defined during load
-        % handles.plane; % defined during load
-        handles.autosave = 0;
-        handles.colour = 1;
-        handles.geometry = 1;
-        handles.interpolate = 0;
-        handles.modulus = 0;
-        handles.surface = 1;
-
-        % time snapshot specific
-        handles.Type = 2;
-        col = TimeSnapshot_col;
-        imageSaveName = 'test.png';
-
-        % other variables
-        maxplotvalue = NaN;
-        
-        % finally plotting
-        plotgen(maxplotvalue, col, handles, imageSaveName, true);
 
       elseif strcmp(type_name, 'FrequencySnapshot')
         disp('plotting FrequencySnapshot');
