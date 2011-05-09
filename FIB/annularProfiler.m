@@ -2,14 +2,17 @@
 % folder : folder to save to
 % rep : Repetitions (ex: 1,3,5 or 16)
 % mag : Magnification (ex: 10000 or 20000)
-% r_inner : inner radius in mum (ex: 0, 2, 2.8 or 4.2)
-% r_outer : outer radius in mum (ex: 2, 2.8 or 4.2)
+% r_inner_mum : inner radius in mum (ex: 0, 2, 2.8 or 4.2)
+% r_outer_mum : outer radius in mum (ex: 2, 2.8 or 4.2)
 % prefix : prefix used in filename (ex: 'ERMAN')
 % direction : 0 for inner to outer 1 for outer to inner.
 % profile_type : 'dome', 'sawtooth', 'dome + ring', 'dome + angular ring', anything else => user-defined profile
 % profile : user-defined profile, vector holding dwell times.
 
-function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile_type,profile,interRingDistancePxl)
+% hang you PC with:
+% annularProfiler(getenv('TESTDIR'),1,40000,2,4,'_prefix_',0,'dome + angular ring',[],1)
+
+function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction,profile_type,profile,interRingDistancePxl)
   if exist('folder','var')==0
     folder = uigetdir(pwd(),'folder');
   end
@@ -21,12 +24,13 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
   %interRingDistancePxl = 1;  % The distance in pixels between each spiral ring.
 
   HFW = 304000/mag; % Width of the horizontal scan (um).
-  if (r_outer/1e3>HFW/2)
+  if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  res = HFW/4096; % size of each pixel (um).
-  R_outer = round(r_outer/res); % Radius in pixels.
-  R_inner = round(r_inner/res); % Radius in pixels.
+  res = HFW/4096; % size of each pixel (mum/pxl).
+  disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl'])
+  R_outer_pxl = round(r_outer_mum/res); % Radius in pixels.
+  R_inner_pxl = round(r_inner_mum/res); % Radius in pixels.
 
   ring_Width = 2.1; %um  
   Ring_Width = round(ring_Width/res); %in pixels.
@@ -37,7 +41,7 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
 
   writeToFile = 1;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  rvec = (R_inner+1):interRingDistancePxl:R_outer;
+  rvec = (R_inner_pxl+1):interRingDistancePxl:R_outer_pxl;
   
   if strcmpi(profile_type,'dome')
     %% DOME
@@ -61,10 +65,10 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
     disp('Using user-defined profile');
     pf = [prefix,'_custom'];
   end
-  
-  Rad = length(profile); % Radius in pixels.
-  rvec_new = 1:Rad;
-  pxPerRing = round(8*pi*Rad);
+      
+  Rad_pxl = length(profile); % Radius in pixels.
+  rvec_new = 1:Rad_pxl;
+  pxPerRing = round(8*pi*Rad_pxl);
   rad = repmat(rvec_new,pxPerRing,1);
   rad = rad(:)';
   
@@ -81,7 +85,15 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
   dwell = repmat(dwell,pxPerRing,1);
   dwell = dwell(:);
 
-  theta = repmat(linspace(0,2*pi,pxPerRing),1,Rad);
+  size(linspace(0,2*pi,pxPerRing))
+  size(Rad_pxl)
+  pxPerRing
+  Rad_pxl
+  if pxPerRing*Rad_pxl>1e6
+    disp('WARNING: NOT ENOUGH MEMORY');
+    return
+  end
+  theta = repmat(linspace(0,2*pi,pxPerRing),1,Rad_pxl);
   x = round(rad.*cos(theta));
   y = round(rad.*sin(theta));
 
@@ -103,7 +115,8 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
     y = v(2,:);
   else
     %% METHOD 2 IF NOT ENOUGH MEMORY USE THIS METHOD
-    disp('WARNING: NOT ENOUGH MEMORY');return;
+    disp('WARNING: NOT ENOUGH MEMORY');
+    disp('Dauxrigante...')
     stackSize = 1e5;
     cc = ceil(length(x)/stackSize);
     xn = [];
@@ -122,6 +135,7 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
       yn = [yn,v(2,:)];  
       dwellN = [dwellN;dwellT];
     end
+
     c = [xn',yn'];
     [mixed,k] = unique(c,'rows');
     kk = sort(k);
@@ -157,8 +171,8 @@ function annularProfiler(folder,rep,mag,r_inner,r_outer,prefix,direction,profile
     %~ filename = [folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
     %~ rep
     %~ mag
-    %~ r_inner
-    %~ r_outer
+    %~ r_inner_mum
+    %~ r_outer_mum
     %~ prefix
     %~ direction
     %~ profile_type
