@@ -31,3 +31,4 @@ tmp.bat
 *.tif
 tmp.in
 tmp.sh
+*.o[0-9]*
