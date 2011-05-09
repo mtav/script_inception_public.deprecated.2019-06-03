@@ -928,6 +928,7 @@ class pillar_1D:
           #GEOfrequency_snapshot(out, 'Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
           #GEOtime_snapshot(out, 'Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
         
+        # central planes
         plane = 1
         P1 = [self.getPillarCenterX(), 0, 0]
         P2 = [self.getPillarCenterX(), self.getYlim(), self.getZlim()]
@@ -945,6 +946,11 @@ class pillar_1D:
         P2 = [self.Xmax, self.getYlim(), self.Zmax/2-self.getZoffset()]
         GEOfrequency_snapshot(out, 'Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
         GEOtime_snapshot(out, 'Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
+
+        # box
+        P1 = [0,0,0]
+        P2 = [self.Xmax, self.getYlim(), self.getZlim()]
+        GEOfrequency_snapshot(out, 'Box frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
     
       if self.print_probes:
         # probes
