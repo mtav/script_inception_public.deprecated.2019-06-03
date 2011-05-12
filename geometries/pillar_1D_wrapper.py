@@ -260,7 +260,7 @@ def test2(DSTDIR):
     rectangular_holes(DSTDIR,7,4,i)
     rectangular_holes(DSTDIR,7,5,i)
     rectangular_holes(DSTDIR,8,6,i)
-    rectangular_yagi(DSTDIR,20,10,i)
+    rectangular_yagi(DSTDIR,20,10,i,1)
     triangular_yagi(DSTDIR,20,10,i)
     triangular_yagi_voxel(DSTDIR,20,10,i)
 
@@ -276,7 +276,7 @@ def mission1(DSTDIR,excitationType,iterations,freq_snapshots):
 def mission2(DSTDIR,excitationType,iterations,freq_snapshots):
   if not os.path.isdir(DSTDIR):
     os.mkdir(DSTDIR)
-  rectangular_yagi(DSTDIR,20,10,excitationType,iterations,freq_snapshots)
+  rectangular_yagi(DSTDIR,20,10,excitationType,iterations,freq_snapshots,1)
 
 def mission3(DSTDIR,excitationType,iterations,freq_snapshots):
   if not os.path.isdir(DSTDIR):

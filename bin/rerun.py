@@ -76,7 +76,9 @@ def rerun(filename):
     if pillarType == 'rectangular_holes':
       rectangular_holes(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
     elif pillarType == 'rectangular_yagi':
-      rectangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
+      rectangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots,1)
+    elif pillarType == 'rectangular_yagi_LambdaOver2Cavity':
+      rectangular_yagi_LambdaOver2Cavity(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots,0.5)
     elif pillarType == 'cylinder':
       cylinder(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
     elif pillarType == 'triangular_yagi':
