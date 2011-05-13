@@ -212,7 +212,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
           lower = FDTDobj.block_list(ii).lower;
           upper = FDTDobj.block_list(ii).upper;
           plot3([lower(3) lower(3) upper(3) upper(3) lower(3)],...
-            [lower(2) upper(2) upper(2) lower(2) lower(2)], plotting_height_rectangle,'y','LineWidth',2);
+            [lower(2) upper(2) upper(2) lower(2) lower(2)], plotting_height_rectangle,'y','LineWidth',1);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
@@ -230,7 +230,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
                 (center(2)+(height/2)) ...
                 (center(2)+(height/2)) ...
                 (center(2)-(height/2))];
-            plot3(I,J,plotting_height_rectangle,'y','LineWidth',2);
+            plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
           else
             I = [(center(3)-outer_radius) ...
                 (center(3)-inner_radius) ...
@@ -242,7 +242,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
                 (center(2)+(height/2)) ...
                 (center(2)+(height/2)) ...
                 (center(2)-(height/2))];
-            plot3(I,J,plotting_height_rectangle,'y','LineWidth',2);
+            plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
             I = [(center(3)+outer_radius) ...
                 (center(3)+inner_radius) ...
                 (center(3)+inner_radius) ...
@@ -253,7 +253,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
                 (center(2)+(height/2)) ...
                 (center(2)+(height/2)) ...
                 (center(2)-(height/2))];
-            plot3(I,J,plotting_height_rectangle,'y','LineWidth',2);
+            plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
           end
           clear I J;
         end
@@ -263,17 +263,17 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
           inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
         end
       case 2 % Z,X
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower;
           upper = FDTDobj.block_list(ii).upper;
           plot3([lower(3) lower(3) upper(3) upper(3) lower(3)],...
-            [lower(1) upper(1) upper(1) lower(1) lower(1)], plotting_height_rectangle,'y','LineWidth',2);
+            [lower(1) upper(1) upper(1) lower(1) lower(1)], plotting_height_rectangle,'y','LineWidth',1);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
@@ -282,10 +282,10 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
           height = FDTDobj.cylinder_list(ii).height;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
           center = FDTDobj.sphere_list(ii).center;
@@ -293,17 +293,17 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
           inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
         end
       case 3 % X,Y
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower;
           upper = FDTDobj.block_list(ii).upper;
           plot3([lower(1), lower(1), upper(1), upper(1), lower(1)],...
-            [lower(2), upper(2), upper(2), lower(2), lower(2)], plotting_height_rectangle,'y','LineWidth',2);
+            [lower(2), upper(2), upper(2), lower(2), lower(2)], plotting_height_rectangle,'y','LineWidth',1);
         end
         for ii=1:length(FDTDobj.cylinder_list)
           center = FDTDobj.cylinder_list(ii).center;
@@ -321,7 +321,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
                 (center(2)+(height/2)) ...
                 (center(2)+(height/2)) ...
                 (center(2)-(height/2))];
-            plot3(I,J,plotting_height_rectangle,'y','LineWidth',2);
+            plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
           else
             I = [(center(1)-outer_radius) ...
                 (center(1)-inner_radius) ...
@@ -333,7 +333,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
                 (center(2)+(height/2)) ...
                 (center(2)+(height/2)) ...
                 (center(2)-(height/2))];
-            plot3(I,J,plotting_height_rectangle,'y','LineWidth',2);
+            plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
             I = [(center(1)+outer_radius) ...
                 (center(1)+inner_radius) ...
                 (center(1)+inner_radius) ...
@@ -344,7 +344,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
                 (center(2)+(height/2)) ...
                 (center(2)+(height/2)) ...
                 (center(2)-(height/2))];
-            plot3(I,J,plotting_height_rectangle,'y','LineWidth',2);
+            plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
           end
           clear I J;
         end
@@ -354,10 +354,10 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
           inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(1);
           J = (outer_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
           I = (inner_radius*circle_i)+center(1);
           J = (inner_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',2); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
         end
     end
   end
@@ -370,7 +370,8 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
       figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
     end
     disp(['Saving figure as ',figout]);
-    print(fig,'-dpng','-r300',figout);
+    %print(fig,'-dpng','-r300',figout);
+    print(fig,'-dpng',figout);
   end
   
   % normal saving ( with format string! :D )
@@ -387,16 +388,19 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
     if handles.Type == 3 % frequency snapshot
       Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
       freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+      pos_mum = FDTDobj.frequency_snapshots(Nsnap).P1(handles.plane);
       lambda_snap_mum = get_c0()/freq_snap_MHz;
       lambda_snap_nm = lambda_snap_mum*1e3;
       imageSaveNameFinal = strrep(imageSaveNameFinal, '%NSNAP', num2str(Nsnap));
       imageSaveNameFinal = strrep(imageSaveNameFinal, '%FREQ_SNAP_MHZ', num2str(freq_snap_MHz));
       imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_MUM', num2str(lambda_snap_mum));
       imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_NM', num2str(lambda_snap_nm));
+      imageSaveNameFinal = strrep(imageSaveNameFinal, '%POS_MUM', num2str(pos_mum));
     end
     % saving
     disp(['Saving figure as ',imageSaveNameFinal]);
-    print(fig,'-dpng','-r300',imageSaveNameFinal);
+    %print(fig,'-dpng','-r300',imageSaveNameFinal);
+    print(fig,'-depsc','-r1500',[imageSaveNameFinal,'.eps']);
   end
 
 end

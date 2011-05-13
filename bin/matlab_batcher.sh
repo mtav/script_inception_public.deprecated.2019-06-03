@@ -8,5 +8,6 @@ matlab_exec=matlab
 X="${1}(${2})"
 echo ${X} > $TMP
 cat $TMP
-${matlab_exec} -nojvm -nodisplay -nosplash < $TMP
+#${matlab_exec} -nojvm -nodisplay -nosplash < $TMP
+${matlab_exec} -nodesktop -nodisplay -nosplash < $TMP
 rm $TMP

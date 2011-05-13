@@ -2,6 +2,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
 
   % ex: Probe_patternCellArray = {'pxx.prn','ptyruytue.prn',etc}
   % ex: plotAll('~/Labortablo/nano_meeting/',1,{'p05id.prn','p005id.prn'},{'y.*id.*\.prn'},{'y.*id.*\.prn'})
+  % TODO: Make it work with relative path too (i.e. '.' for example)
   
   if exist('directory','var')==0
     directory = pwd();
@@ -120,7 +121,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           % frequency snapshot specific
           handles.Type = 3;
           col = FrequencySnapshot_col;
-          imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.png';
+          imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.pos(mum)_%POS_MUM.png';
   
           % finally plotting
           plotgen(maxplotvalue, col, handles, imageSaveName, true);
