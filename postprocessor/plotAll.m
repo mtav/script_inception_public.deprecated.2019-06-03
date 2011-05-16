@@ -8,8 +8,13 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     directory = pwd();
   end
 
-  % loop through .sh files  
-  [Files,Bytes,Names] = dirr(directory,'\.sh\>','name');
+  % loop through .sh files
+  [Files,Bytes,Names] = dirr(directory,'\.sh\>$','name');
+  %length(Names)
+  %for script_idx = 1:length(Names)
+    %disp(char(Names(script_idx)))
+  %end
+  %return
   for script_idx = 1:length(Names)
     script_filename = char(Names(script_idx));
     [ script_folder, script_basename, script_ext ] = fileparts(script_filename);
@@ -23,20 +28,20 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     %handles.inpfile
     %which GEO_INP_reader
     
-    disp(['Processing ', script_folder]);
-    [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
+    disp(['Processing script_folder = ', script_folder]);
+    [entries,FDTDobj] = GEO_INP_reader({handles.geofile,handles.inpfile});
     excitation = FDTDobj.excitations(1).E;
 
     if excitation == [1,0,0]
-      probe_col = 2
+      probe_col = 2;
       TimeSnapshot_col = 3;
       FrequencySnapshot_col = 3;
     elseif excitation == [0,1,0]
-      probe_col = 3
+      probe_col = 3;
       TimeSnapshot_col = 4;
       FrequencySnapshot_col = 6;
     elseif excitation == [0,0,1]
-      probe_col = 4
+      probe_col = 4;
       TimeSnapshot_col = 5;
       FrequencySnapshot_col = 9;
     else

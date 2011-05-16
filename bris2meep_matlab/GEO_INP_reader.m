@@ -7,7 +7,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(file_list)
 
   for idx = 1:length(file_list)
     filename = file_list{idx};
-    disp(['Processing ', filename]);
+    % disp(['Processing ', filename]);
     [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries);
   end
 
