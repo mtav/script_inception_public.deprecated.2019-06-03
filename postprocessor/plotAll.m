@@ -19,6 +19,10 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     handles.geofile = [ script_folder, filesep, script_basename, '.geo' ];
     handles.inpfile = [ script_folder, filesep, script_basename, '.inp' ];
     
+    %handles.geofile
+    %handles.inpfile
+    %which GEO_INP_reader
+    
     disp(['Processing ', script_folder]);
     [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
     excitation = FDTDobj.excitations(1).E;
@@ -104,12 +108,15 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           if strcmp(columns(1),'y') && strcmp(columns(2),'z')
             handles.plane = 1;
             rotate90 = false;
+            handles.drawColorBar = true;
           elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
             handles.plane = 2;
             rotate90 = true;
+            handles.drawColorBar = false;
           else
             handles.plane = 3;
             rotate90 = false;
+            handles.drawColorBar = true;
           end
           handles.AllHeaders = columns; % all headers
           

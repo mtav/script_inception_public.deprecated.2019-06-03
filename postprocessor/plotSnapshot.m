@@ -30,11 +30,13 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   % handles.plane
   % handles.surface
   % handles.Type
+  % handles.drawColorBar
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   if exist('hide_figures','var')==0; hide_figures = false; end
   if exist('rotate90','var')==0; rotate90 = false; end
   
+  if exist('handles','var')==0 || isfield(handles,'drawColorBar')==0; handles.drawColorBar = true; end
   if exist('handles','var')==0 || isfield(handles,'autosave')==0; handles.autosave = 0; end
   if exist('handles','var')==0 || isfield(handles,'colour')==0; handles.colour = 1; end
   if exist('handles','var')==0 || isfield(handles,'geometry')==0; handles.geometry = 0; end
@@ -231,9 +233,13 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
 
   if rotate90
     view(90,90);
-    colorbar('South');
+    if handles.drawColorBar
+      colorbar('South');
+    end
   else
-    colorbar
+    if handles.drawColorBar
+      colorbar
+    end
   end
   
   titlesnap = strread(snapshot_filename,'%s','delimiter','\\');
