@@ -1,4 +1,4 @@
-function plotgen(maxval, column, handles, imageSaveName, hide_figures)
+function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_axes)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software
@@ -35,6 +35,10 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
 
   if exist('hide_figures','var')==0
     hide_figures = false;
+  end
+
+  if exist('invert_axes','var')==0
+    invert_axes = false;
   end
 
   % load geometry data
@@ -400,7 +404,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures)
     % saving
     disp(['Saving figure as ',imageSaveNameFinal]);
     %print(fig,'-dpng','-r300',imageSaveNameFinal);
-    print(fig,'-depsc','-r1500',[imageSaveNameFinal,'.eps']);
+    print(fig,'-depsc','-r1500',imageSaveNameFinal);
   end
 
 end
