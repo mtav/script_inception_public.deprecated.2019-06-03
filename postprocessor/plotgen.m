@@ -1,4 +1,4 @@
-function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_axes)
+function plotgen(snapshot_filename, column, rotate90, maxval, handles, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software
@@ -28,21 +28,64 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
   % handles.interpolate
   % handles.modulus
   % handles.plane
-  % handles.snapfile
   % handles.surface
   % handles.Type
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  if exist('hide_figures','var')==0
-    hide_figures = false;
+  if exist('hide_figures','var')==0; hide_figures = false; end
+  if exist('rotate90','var')==0; rotate90 = false; end
+  
+  if exist('handles','var')==0 || isfield(handles,'autosave')==0; handles.autosave = 0; end
+  if exist('handles','var')==0 || isfield(handles,'colour')==0; handles.colour = 1; end
+  if exist('handles','var')==0 || isfield(handles,'geometry')==0; handles.geometry = 0; end
+  if exist('handles','var')==0 || isfield(handles,'interpolate')==0; handles.interpolate = 0; end
+  if exist('handles','var')==0 || isfield(handles,'modulus')==0; handles.modulus = 0; end
+  if exist('handles','var')==0 || isfield(handles,'surface')==0; handles.surface = 1; end
+
+  if exist('handles','var')==0 || ...
+     isfield(handles,'header')==0 || ...
+     isfield(handles,'data')==0 || ...
+     isfield(handles,'dataSize')==0 || ...
+     isfield(handles,'plane')==0 || ...
+     isfield(handles,'AllHeaders')==0
+    
+    [handles.header, handles.data] = hdrload(snapshot_filename);
+    handles.dataSize = size(handles.data);
+    columns = strread(handles.header,'%s');
+    if strcmp(columns(1),'y') && strcmp(columns(2),'z')
+      handles.plane = 1;
+    elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
+      handles.plane = 2;
+    else
+      handles.plane = 3;
+    end
+    handles.AllHeaders = columns; % all headers
+    
   end
 
-  if exist('invert_axes','var')==0
-    invert_axes = false;
+  if exist('column','var')==0
+    disp('ERROR: no column specified. Please choose from the following:');
+    for i=1:length(handles.AllHeaders)
+      disp([num2str(i), ':' ,handles.AllHeaders{i}])
+    end
+    error('TODO: add column selector');
   end
 
-  % load geometry data
-  [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
+  if exist('maxval','var')==0
+    maxval = NaN;
+  end
+  
+  % frequency snapshot specific
+  [handles.Type, type_name] = getDataType(snapshot_filename);
+
+  if handles.geometry==1
+    if exist('handles','var') && isfield(handles,'geofile') && isfield(handles,'inpfile')
+      % load geometry data
+      [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
+    else
+      error('ERROR: you need to specify geo and inp file in order to show the geometry.');
+    end
+  end
   
   %% Determine size of snapshot
   ii=1; ValPrev = handles.data(ii,1); grid_j = 1;
@@ -147,7 +190,6 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
   else
     caxis([-maxval maxval]);
   end
-  colorbar
   AspectRatio = get(gca,'DataAspectRatio');
   AspectRatio(1) = AspectRatio(2);
   set(gca,'DataAspectRatio',AspectRatio);
@@ -161,20 +203,40 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
     case 1
       xlabel('z')
       ylabel('y')
-      foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+      if handles.geometry
+        foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+      else
+        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1) ];
+      end
       axis(foo)
     case 2
       xlabel('z')
       ylabel('x')
-      foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(1) FDTDobj.box.upper(1)];
+      if handles.geometry
+        foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(1) FDTDobj.box.upper(1)];
+      else
+        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1) ];
+      end
       axis(foo)
     case 3
       xlabel('x')
       ylabel('y')
-      foo = [FDTDobj.box.lower(1) FDTDobj.box.upper(1) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
-      axis(foo)
+      if handles.geometry
+        foo = [FDTDobj.box.lower(1) FDTDobj.box.upper(1) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+      else
+        foo = [ j(1,1),j(size(j,1),1), i(1,1),i(1,size(i,2)) ];
+      end
+      axis(foo);
   end
-  titlesnap = strread(handles.snapfile,'%s','delimiter','\\');
+
+  if rotate90
+    view(90,90);
+    colorbar('South');
+  else
+    colorbar
+  end
+  
+  titlesnap = strread(snapshot_filename,'%s','delimiter','\\');
   snapfile_full = char(titlesnap(length(titlesnap)));
 
   [ snapfile_full_folder, snapfile_full_basename, snapfile_full_ext ] = fileparts(snapfile_full);
@@ -189,11 +251,15 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
     % TODO: Add more info to title?
     title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
   elseif handles.Type == 3 % frequency snapshot
-    Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
-    freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-    lambda_snap_mum = get_c0()/freq_snap_MHz;
-    lambda_snap_nm = lambda_snap_mum*1e3;
-    title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+    if exist('FDTDobj','var')==1
+      Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+      freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+      lambda_snap_mum = get_c0()/freq_snap_MHz;
+      lambda_snap_nm = lambda_snap_mum*1e3;
+      title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+    else
+      title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
+    end
   else
     error('ERROR: Unknown data type');
     return;
@@ -367,11 +433,11 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
   end
   
   if handles.autosave == 1
-    dim = length(handles.snapfile);
+    dim = length(snapshot_filename);
     if grey == 1
-      figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];
+      figout = [snapshot_filename(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];
     else
-      figout = [handles.snapfile(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
+      figout = [snapshot_filename(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
     end
     disp(['Saving figure as ',figout]);
     %print(fig,'-dpng','-r300',figout);
@@ -381,7 +447,7 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
   % normal saving ( with format string! :D )
   if exist('imageSaveName','var')~=0
     % substitution variable preparation
-    [ folder, basename, ext ] = fileparts(handles.snapfile);
+    [ folder, basename, ext ] = fileparts(snapshot_filename);
     % substitution
     imageSaveNameFinal = imageSaveName;
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%DATE', datestr(now,'yyyymmdd_HHMMSS'));
