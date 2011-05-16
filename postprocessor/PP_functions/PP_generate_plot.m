@@ -18,10 +18,10 @@ function [ handles, ok ] = PP_generate_plot(handles)
     plotProbe(handles.ProbeFile, handles.col, handles.autosave);
   elseif handles.Type == 2
     handles.snapfile = handles.TimeSnapshotFile;
-    plotgen(maxplotvalue,col,handles);
+    plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
   elseif handles.Type == 3
     handles.snapfile = handles.FrequencySnapshotFile;
-    plotgen(maxplotvalue,col,handles);
+    plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
   else
     error('Unknown data type');
     ok = 0;

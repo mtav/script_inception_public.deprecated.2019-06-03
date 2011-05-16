@@ -1,4 +1,4 @@
-function plotgen(snapshot_filename, column, rotate90, maxval, handles, hide_figures, imageSaveName)
+function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software

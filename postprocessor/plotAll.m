@@ -89,7 +89,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           imageSaveName = '%BASENAME.%FIELD.max_%MAX.png';
   
           % finally plotting
-          plotgen(maxplotvalue, col, handles, imageSaveName, true);
+          plotSnapshot(snapshot_filename, col, maxplotvalue, handles, false, true, imageSaveName);
         end
 
       elseif strcmp(type_name, 'FrequencySnapshot')
@@ -103,10 +103,13 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           columns = strread(handles.header,'%s');
           if strcmp(columns(1),'y') && strcmp(columns(2),'z')
             handles.plane = 1;
+            rotate90 = false;
           elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
             handles.plane = 2;
+            rotate90 = true;
           else
             handles.plane = 3;
+            rotate90 = false;
           end
           handles.AllHeaders = columns; % all headers
           
@@ -124,7 +127,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.pos(mum)_%POS_MUM.eps';
   
           % finally plotting
-          plotgen(maxplotvalue, col, handles, imageSaveName, true);
+          plotSnapshot(handles.snapfile, col, maxplotvalue, handles, rotate90, true, imageSaveName);
         end
       elseif strcmp(type_name, 'Reference')
         disp('skipping Reference');
