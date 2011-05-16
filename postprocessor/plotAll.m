@@ -63,8 +63,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           
           % loading
           handles.snapfile = fullfile(script_folder,prn_filename);
-          [handles.header, handles.fin1] = hdrload(handles.snapfile);
-          handles.gr = size(handles.fin1);
+          [handles.header, handles.data] = hdrload(handles.snapfile);
+          handles.dataSize = size(handles.data);
           columns = strread(handles.header,'%s');
           if strcmp(columns(1),'y') && strcmp(columns(2),'z')
             handles.plane = 1;
@@ -98,8 +98,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           
           % loading
           handles.snapfile = fullfile(script_folder,prn_filename);
-          [handles.header, handles.fin1] = hdrload(handles.snapfile);
-          handles.gr = size(handles.fin1);
+          [handles.header, handles.data] = hdrload(handles.snapfile);
+          handles.dataSize = size(handles.data);
           columns = strread(handles.header,'%s');
           if strcmp(columns(1),'y') && strcmp(columns(2),'z')
             handles.plane = 1;

@@ -20,10 +20,10 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
   % handles.AllHeaders
   % handles.autosave
   % handles.colour
-  % handles.fin1
+  % handles.data
   % handles.geofile
   % handles.geometry
-  % handles.gr
+  % handles.dataSize
   % handles.inpfile
   % handles.interpolate
   % handles.modulus
@@ -45,32 +45,32 @@ function plotgen(maxval, column, handles, imageSaveName, hide_figures, invert_ax
   [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
   
   %% Determine size of snapshot
-  ii=1; ValPrev = handles.fin1(ii,1); grid_j = 1;
-  while ii<handles.gr(1)
-    if handles.fin1(ii,1) ~= ValPrev
-      ValPrev = handles.fin1(ii,1);
+  ii=1; ValPrev = handles.data(ii,1); grid_j = 1;
+  while ii<handles.dataSize(1)
+    if handles.data(ii,1) ~= ValPrev
+      ValPrev = handles.data(ii,1);
       grid_j = grid_j+1;
     end
     ii=ii+1;
   end
-  grid_i = handles.gr(1)/grid_j;
+  grid_i = handles.dataSize(1)/grid_j;
   
   %% Create meshgrids for snapshot
   for pp=1:grid_j
     for qq=1:grid_i
-      i(pp,qq)=handles.fin1(qq,2);
+      i(pp,qq)=handles.data(qq,2);
     end
   end
   
   for pp=1:grid_j
     for qq=1:grid_i
-      j(pp,qq)=handles.fin1((qq+((pp-1)*grid_i)),1);
+      j(pp,qq)=handles.data((qq+((pp-1)*grid_i)),1);
     end
   end
   
   %% Load column of choice to data
   modu = 1;
-  rawdata = handles.fin1(:,column);
+  rawdata = handles.data(:,column);
   if handles.modulus == 1
     data = abs(rawdata);
   else
