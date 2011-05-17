@@ -21,9 +21,9 @@ class Foo:
     if m:
       #print m.groups()
       self.Plane = m.group(1)
-      self.Lambda = m.group(2)
-      self.Freq = m.group(3)
-      self.Pos = m.group(4)
+      self.Lambda = float(m.group(2))
+      self.Freq = float(m.group(3))
+      self.Pos = float(m.group(4))
     else:
       print 'ERROR: NO MATCH : ', filename
       sys.exit(-1)
@@ -92,8 +92,8 @@ for Lambda in lambda_set:
     if p.Plane=='z' and p.Pos==Zpos_set[1] and p.Lambda==Lambda:
       #print 'BIP 3'
       p3=p
-  print p1.Filename+' + '+p2.Filename+' + '+p3.Filename+' -> '+Lambda+'.png'
-  cmd=['convert', p1.Filename, '(', p2.Filename, p3.Filename, '-append', ')', '-gravity', 'center', '+append', Lambda+'.png']
+  print p1.Filename+' + '+p2.Filename+' + '+p3.Filename+' -> '+str(Lambda)+'.png'
+  cmd=['convert', p1.Filename, '(', p2.Filename, p3.Filename, '-append', ')', '-gravity', 'center', '+append', str(Lambda)+'.png']
   print cmd
   call(cmd)
 

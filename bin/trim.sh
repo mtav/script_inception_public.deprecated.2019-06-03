@@ -19,3 +19,4 @@ do
 done
 
 # convert image1.png \( image2.png  image3.png -append \) -gravity center +append out.png
+#ls -d */resonance/*/ | xargs -n1 -I{} ~/Development/script_inception_public/special_ops/SO_delimages.py {}
