@@ -321,15 +321,25 @@ class pillar_1D:
   def getPillarCenterZ(self):
     return self.Zmax/2
 
-  def write(self):
-    if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
-      os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
-    self.mesh()
-    print self.writeIN()
-    self.writeSH()
-    self.writeCMD()
-    self.writeGEO()
-    self.writeINP()
+  def write(self, DSTDIR, BASENAME):
+    # TODO: convert writing functions, so that they accept a direct filename as input arg
+    
+    self.DSTDIR = DSTDIR
+    self.BASENAME = BASENAME
+    
+    if os.path.isdir(self.DSTDIR):
+      if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
+        os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
+      self.mesh()
+      print self.writeIN()
+      self.writeSH()
+      self.writeCMD()
+      self.writeGEO()
+      self.writeINP()
+      return(0)
+    else:
+      print('ERROR: self.DSTDIR = ' + self.DSTDIR + ' is not a directory')
+      return(-1)
 
   def mesh(self):
     
