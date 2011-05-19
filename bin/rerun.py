@@ -5,6 +5,8 @@ from geometries.pillar_1D_wrapper import *
 import re
 from bfdtd.bfdtd_parser import *
 
+# TODO: rewrite this function so it doesn't depend on the filename (i.e. just copy (import/export better of course :) ) everything as it is and add the snapshots to the .inp file...)
+
 def getFrequencies(filename):
   freq_snapshots = []
   with open(filename, 'r') as f:
@@ -76,9 +78,13 @@ def rerun(filename):
     if pillarType == 'rectangular_holes':
       rectangular_holes(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
     elif pillarType == 'rectangular_yagi':
-      rectangular_yagi(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots,1)
+      P = rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, 1)
+      baseName = 'rectangular_yagi.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPE'
+      P.write(DSTDIR,baseName)
     elif pillarType == 'rectangular_yagi_LambdaOver2Cavity':
-      rectangular_yagi_LambdaOver2Cavity(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots,0.5)
+      P = rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, 0.5)
+      baseName = 'rectangular_yagi_LambdaOver2Cavity.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPE'
+      P.write(DSTDIR,baseName)
     elif pillarType == 'cylinder':
       cylinder(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
     elif pillarType == 'triangular_yagi':
