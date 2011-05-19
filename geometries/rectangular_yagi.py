@@ -74,7 +74,7 @@ def main(argv=None):
   usagestr = "usage: %prog [-d destdir] [-i iterations] [ -b Nbottom ] [ -t Ntop ] [ -e excitationTypeStr ] [ -f FrequencyList ]"
   parser = OptionParser(usage=usagestr)
 
-  default_basename = 'rectangular_yagi.CavityScalingFactor_%CSF.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPE.DistanceBetweenDefectBordersInCavity_%DISTANCEBETWEENDEFECTBORDERSINCAVITY'
+  default_basename = 'rectangular_yagi.CavityScalingFactor_%CSF.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPESTR' #.DistanceBetweenDefectBordersInCavity_%DISTANCEBETWEENDEFECTBORDERSINCAVITY'
   
   parser.add_option("-d", "--destdir", action="store", type="string", dest="destdir", default=os.getenv('TESTDIR'), help="destination directory")
   parser.add_option("-i", type="int", dest="iterations", default=65400+524200+524200, help="number of iterations")
@@ -118,8 +118,22 @@ def main(argv=None):
     excitationType = 3
   print 'excitationType = ', excitationType
 
+  print options
+
   P = rectangular_yagi(options.N_bottom, options.N_top, excitationType, options.iterations, freq_snapshots, options.CavityScalingFactor, options.RadiusPillar_Y_mum, options.RadiusPillar_Z_mum, options.n_Eff, options.radius_Z_piercer_mum)
-  P.write(options.destdir,options.baseName)
+
+  baseName_substituted = options.baseName
+  baseName_substituted = baseName_substituted.replace('%CSF',str(options.CavityScalingFactor))
+  baseName_substituted = baseName_substituted.replace('%BOTTOMN',str(options.N_bottom))
+  baseName_substituted = baseName_substituted.replace('%TOPN',str(options.N_top))
+  baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPESTR',options.excitationTypeStr)
+  baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPE',str(excitationType))
+  baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Y_MUM',str(options.RadiusPillar_Y_mum))
+  baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Z_MUM',str(options.RadiusPillar_Z_mum))
+  baseName_substituted = baseName_substituted.replace('%N_EFF',str(options.n_Eff))
+  baseName_substituted = baseName_substituted.replace('%RADIUS_Z_PIERCER_MUM',str(options.radius_Z_piercer_mum))
+
+  P.write(options.destdir,baseName_substituted)
   
   # TODO: put this in P.write()
   #if os.path.isdir(options.destdir):

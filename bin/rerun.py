@@ -79,11 +79,11 @@ def rerun(filename):
       rectangular_holes(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
     elif pillarType == 'rectangular_yagi':
       P = rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, 1)
-      baseName = 'rectangular_yagi.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPE'
+      baseName = 'rectangular_yagi.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPESTR'
       P.write(DSTDIR,baseName)
     elif pillarType == 'rectangular_yagi_LambdaOver2Cavity':
       P = rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, 0.5)
-      baseName = 'rectangular_yagi_LambdaOver2Cavity.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPE'
+      baseName = 'rectangular_yagi_LambdaOver2Cavity.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPESTR'
       P.write(DSTDIR,baseName)
     elif pillarType == 'cylinder':
       cylinder(DSTDIR,bottomN,topN,excitationType,iterations,freq_snapshots)
