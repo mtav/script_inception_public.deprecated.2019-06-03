@@ -124,13 +124,6 @@ def main(argv=None):
 
   baseName_substituted = options.baseName
   baseName_substituted = baseName_substituted.replace('%CSF',str(options.CavityScalingFactor))
-  baseName_substituted = baseName_substituted.replace('%BOTTOMN',str(options.N_bottom))
-  baseName_substituted = baseName_substituted.replace('%TOPN',str(options.N_top))
-  baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPESTR',options.excitationTypeStr)
-  baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPE',str(excitationType))
-  baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Y_MUM',str(options.RadiusPillar_Y_mum))
-  baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Z_MUM',str(options.RadiusPillar_Z_mum))
-  baseName_substituted = baseName_substituted.replace('%N_EFF',str(options.n_Eff))
   baseName_substituted = baseName_substituted.replace('%RADIUS_Z_PIERCER_MUM',str(options.radius_Z_piercer_mum))
 
   P.write(options.destdir,baseName_substituted)

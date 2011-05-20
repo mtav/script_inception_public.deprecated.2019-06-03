@@ -327,6 +327,17 @@ class pillar_1D:
     self.DSTDIR = DSTDIR
     self.BASENAME = BASENAME
     
+    baseName_substituted = self.BASENAME
+    baseName_substituted = baseName_substituted.replace('%BOTTOMN',str(self.N_bottom))
+    baseName_substituted = baseName_substituted.replace('%TOPN',str(self.N_top))
+    baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPESTR',self.excitationTypeStr)
+    baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPE',str(self.excitationType))
+    baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Y_MUM',str(self.RadiusPillar_Y_mum))
+    baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Z_MUM',str(self.RadiusPillar_Z_mum))
+    baseName_substituted = baseName_substituted.replace('%N_EFF',str(self.n_Eff))
+    
+    self.BASENAME = baseName_substituted
+    
     if os.path.isdir(self.DSTDIR):
       if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
         os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
