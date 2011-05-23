@@ -7,6 +7,7 @@ import os;
 import sys;
 import re;
 from utilities.common import *
+from bfdtd.bristolFDTD_generator_functions import *
 
 #==== UTILITIES START ====#
 def float_array(A):
@@ -708,6 +709,68 @@ class Structured_entries:
           print 'WARNING: mesh not found';
       if (not box_read):
           print 'WARNING: box not found';
+  
+  def writeGeoFile(self,fileName):
+    ''' Generate .geo file '''
+    print 'TODO'
+    return
+    
+  def writeInpFile(self,fileName):
+    ''' Generate .inp file '''
+    return
+    
+  def writeFileList(self,fileName,fileList):
+    ''' Generate .in file '''
+    # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object
+    print fileName
+    print fileList
+    GEOin(fileName,fileList)
+    return
+    
+  def writeCondorScript(self,fileName, BASENAME=None):
+    ''' Generate fileName.cmd file for Condor using BASENAME.in, BASENAME.geo, BASENAME.inp '''
+    # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object
+    if BASENAME is None:
+      BASENAME = os.path.splitext(os.path.basename(fileName))[0]
+    GEOcommand(fileName, BASENAME)
+    return
+    
+  def writeShellScript(self,fileName, BASENAME=None, EXE='fdtd', WORKDIR='$JOBDIR', WALLTIME=12):
+    ''' Generate .sh file '''
+    if BASENAME is None:
+      BASENAME = os.path.splitext(os.path.basename(fileName))[0]
+    GEOshellscript(fileName, BASENAME, EXE, WORKDIR, WALLTIME)
+    #probe_col = 0
+    #if self.excitation.E == [1,0,0]:
+      #probe_col = 2
+    #elif self.excitation.E == [0,1,0]:
+      #probe_col = 3
+    #elif self.excitation.E == [0,0,1]:
+      #probe_col = 4
+    #else:
+      #print('ERROR : Unknown Excitation type')
+      #sys.exit(-1)
+    #GEOshellscript_advanced(fileName, BASENAME, probe_col, EXE, WORKDIR, WALLTIME)
+    return
+    
+  def writeAll(self,newDirName):
+    ''' Generate .in,.inp,.geo,.cmd,.sh files in directory newDirName (it will be created if it doesn't exist)'''
+    newDirName = os.path.expanduser(newDirName)
+    if not os.path.isdir(newDirName):
+      os.mkdir(newDirName)
+    
+    fileBaseName = os.path.basename(newDirName)
+    geoFileName = newDirName+os.sep+fileBaseName+'.geo'
+    inpFileName = newDirName+os.sep+fileBaseName+'.inp'
+    inFileName = newDirName+os.sep+fileBaseName+'.in'
+    cmdFileName = newDirName+os.sep+fileBaseName+'.cmd'
+    shFileName = newDirName+os.sep+fileBaseName+'.sh'
+    
+    self.writeGeoFile(geoFileName)
+    self.writeInpFile(inpFileName)
+    self.writeFileList(inFileName,[geoFileName,inpFileName])
+    self.writeCondorScript(cmdFileName)
+    self.writeShellScript(shFileName)
     
 #==== CLASSES END ====#
 

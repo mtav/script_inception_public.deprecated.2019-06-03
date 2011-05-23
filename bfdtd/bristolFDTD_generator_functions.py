@@ -470,6 +470,7 @@ def GEOin(filename, file_list):
     #close file
     FILE.close()
 
+# TODO: simplify it + merge with GEOshellscript_advanced by adding options
 def GEOshellscript(filename, BASENAME, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTIME = 12):
 
   #open file
@@ -490,6 +491,44 @@ def GEOshellscript(filename, BASENAME, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTI
     FILE.write("\n")
     FILE.write("$EXE %s.in > %s.out\n" %  (BASENAME, BASENAME))
     FILE.write("fix_filenames.py -v .\n")
+  
+    #close file
+    FILE.close()
+
+# TODO: maybe create a submission function in python...
+def GEOshellscript_advanced(filename, BASENAME, probe_col, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTIME = 12):
+
+  #open file
+  with open(filename, 'w') as FILE:
+    #write file
+    FILE.write("#!/bin/bash\n")
+    FILE.write("#\n")
+    FILE.write("#PBS -l walltime=%d:00:00\n" % WALLTIME)
+    FILE.write("#PBS -mabe\n")
+    FILE.write("#PBS -joe\n")
+    FILE.write("#\n")
+    FILE.write("\n")
+    FILE.write("set -eux\n")
+    FILE.write("\n")
+    FILE.write('if [ -n "${JOBDIR+x}" ]; then\n')
+    FILE.write('  echo JOBDIR is set\n')
+    FILE.write('else\n')
+    FILE.write('  echo JOBDIR is not set\n')
+    FILE.write('  JOBDIR="$(readlink -f $(dirname "$0"))"\n')
+    FILE.write('fi\n')
+    FILE.write("\n")
+    FILE.write("export WORKDIR=%s\n" % WORKDIR)
+    FILE.write("export EXE=%s\n" % EXE)
+    FILE.write("\n")
+    FILE.write("cd $WORKDIR\n")
+    FILE.write("\n")
+    FILE.write("$EXE %s.in > %s.out\n" %  (BASENAME, BASENAME))
+    FILE.write("fix_filenames.py -v .\n")
+    FILE.write("matlab_batcher.sh getResonanceFrequencies2 \"'$WORKDIR/p005id.prn',%d,'$WORKDIR/freq_list.txt'\"\n" % probe_col)
+    FILE.write("rerun.py $WORKDIR/freq_list.txt\n")
+    FILE.write("cd resonance/%s && $EXE %s.in >> %s.out\n" %  (BASENAME, BASENAME, BASENAME))
+    FILE.write("fix_filenames.py -v .\n")
+    FILE.write("plotAll.sh .\n")
   
     #close file
     FILE.close()
