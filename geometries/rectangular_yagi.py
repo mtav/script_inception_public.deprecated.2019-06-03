@@ -62,8 +62,8 @@ def rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, 
   P.Zmax = 2*(P.radius_Z_pillar_mum + 4*delta_diamond + 4*P.delta_Z_outside); #mum
 
   P.setExcitationType(excitationType)
-  #P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType() #+'.DistanceBetweenDefectBordersInCavity_'+P.getDistanceBetweenDefectBordersInCavity()
-  #P.BASENAME = 'rectangular_yagi_LambdaOver2Cavity' + '.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType() #+'.DistanceBetweenDefectBordersInCavity_'+P.getDistanceBetweenDefectBordersInCavity()
+  #P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr() #+'.DistanceBetweenDefectBordersInCavity_'+P.getDistanceBetweenDefectBordersInCavity()
+  #P.BASENAME = 'rectangular_yagi_LambdaOver2Cavity' + '.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr() #+'.DistanceBetweenDefectBordersInCavity_'+P.getDistanceBetweenDefectBordersInCavity()
 
   #P.verbose = True
   #dumpObj(P)
@@ -125,6 +125,7 @@ def main(argv=None):
   baseName_substituted = options.baseName
   baseName_substituted = baseName_substituted.replace('%CSF',str(options.CavityScalingFactor))
   baseName_substituted = baseName_substituted.replace('%RADIUS_Z_PIERCER_MUM',str(options.radius_Z_piercer_mum))
+  baseName_substituted = baseName_substituted.replace('%N_EFF',str(options.n_Eff))
 
   P.write(options.destdir,baseName_substituted)
   

@@ -49,7 +49,7 @@ def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P.Zmax = 5*2*P.radius_Z_pillar_mum;
   
   P.setExcitationType(excitationType)
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   P.write()
   
@@ -105,7 +105,7 @@ def cylinder_mission3(DSTDIR, bottomN, topN, excitationType, iterations, freq_sn
   P.Zmax = 2*(P.radius_Z_pillar_mum + 4*delta_diamond + 4*P.delta_Z_outside); #mum
 
   P.setExcitationType(excitationType)
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   dumpObj(P)
   P.verbose = True
@@ -155,7 +155,7 @@ def square_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapsho
   #P.verbose = True
 
   P.setExcitationType(excitationType)
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   P.write()
 
@@ -212,7 +212,7 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_sn
   P.Zmax = 2*(P.radius_Z_pillar_mum + 4*delta_diamond + 4*P.delta_Z_outside); #mum
 
   P.setExcitationType(excitationType)
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   #P.verbose = True
   P.write()
@@ -226,22 +226,22 @@ def test(DSTDIR,bottomN,topN):
   for i in range(4):
     P.setExcitationType(i)
     P.HOLE_TYPE = 'cylinder'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
     P.write()
     P.HOLE_TYPE = 'square_holes'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
     P.write()
     P.HOLE_TYPE = 'rectangular_holes'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
     P.write()
     P.HOLE_TYPE = 'rectangular_yagi'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
     P.write()
     P.HOLE_TYPE = 'triangular_yagi'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
     P.write()
     P.HOLE_TYPE = 'triangular_yagi_voxel'
-    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+    P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
     P.write()
 
 def test2(DSTDIR):

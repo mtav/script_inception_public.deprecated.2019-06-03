@@ -58,6 +58,6 @@ def triangular_yagi(DSTDIR, bottomN, topN, excitationType, iterations, freq_snap
   P.Zmax = 2*(P.radius_Z_pillar_mum + 4*delta_diamond + 4*P.delta_Z_outside); #mum
 
   P.setExcitationType(excitationType)
-  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationType()
+  P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   P.write()

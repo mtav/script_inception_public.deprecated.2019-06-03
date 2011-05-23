@@ -235,15 +235,28 @@ class pillar_1D:
       print('FATAL ERROR: invalid direction : '+str(excitationType))
       sys.exit(-1)
 
-  def getExcitationType(self):
+  def getExcitationTypeStr(self):
     if self.excitation.name == 'P_Ym1 excitation':
       return 'Ym1'
     elif self.excitation.name == 'P_Zm1 excitation':
-      return  'Zm1'
+      return 'Zm1'
     elif self.excitation.name == 'P_Ym2 excitation':
-      return  'Ym2'
+      return 'Ym2'
     elif self.excitation.name == 'P_Zm2 excitation':
       return 'Zm2'
+    else:
+      print('FATAL ERROR: invalid direction' + self.excitation.name)
+      sys.exit(-1)
+
+  def getExcitationTypeID(self):
+    if self.excitation.name == 'P_Ym1 excitation':
+      return(0)
+    elif self.excitation.name == 'P_Zm1 excitation':
+      return(1)
+    elif self.excitation.name == 'P_Ym2 excitation':
+      return(2)
+    elif self.excitation.name == 'P_Zm2 excitation':
+      return(3)
     else:
       print('FATAL ERROR: invalid direction' + self.excitation.name)
       sys.exit(-1)
@@ -328,13 +341,12 @@ class pillar_1D:
     self.BASENAME = BASENAME
     
     baseName_substituted = self.BASENAME
-    baseName_substituted = baseName_substituted.replace('%BOTTOMN',str(self.N_bottom))
-    baseName_substituted = baseName_substituted.replace('%TOPN',str(self.N_top))
-    baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPESTR',self.excitationTypeStr)
-    baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPE',str(self.excitationType))
-    baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Y_MUM',str(self.RadiusPillar_Y_mum))
-    baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Z_MUM',str(self.RadiusPillar_Z_mum))
-    baseName_substituted = baseName_substituted.replace('%N_EFF',str(self.n_Eff))
+    baseName_substituted = baseName_substituted.replace('%BOTTOMN',str(self.bottom_N))
+    baseName_substituted = baseName_substituted.replace('%TOPN',str(self.top_N))
+    baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPESTR',self.getExcitationTypeStr())
+    baseName_substituted = baseName_substituted.replace('%EXCITATIONTYPE',str(self.getExcitationTypeID()))
+    baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Y_MUM',str(self.radius_Y_pillar_mum))
+    baseName_substituted = baseName_substituted.replace('%RADIUSPILLAR_Z_MUM',str(self.radius_Z_pillar_mum))
     
     self.BASENAME = baseName_substituted
     
