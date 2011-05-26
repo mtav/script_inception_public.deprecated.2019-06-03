@@ -717,7 +717,7 @@ class Structured_entries:
   
   def writeGeoFile(self,fileName):
     ''' Generate .geo file '''
-    print 'TODO'
+    print 'writeGeoFile: TODO'
     return
     
   def writeInpFile(self,fileName):
@@ -760,13 +760,15 @@ class Structured_entries:
     #GEOshellscript_advanced(fileName, BASENAME, probe_col, EXE, WORKDIR, WALLTIME)
     return
     
-  def writeAll(self,newDirName):
+  def writeAll(self, newDirName, fileBaseName=None):
     ''' Generate .in,.inp,.geo,.cmd,.sh files in directory newDirName (it will be created if it doesn't exist)'''
-    newDirName = os.path.expanduser(newDirName)
+    newDirName = os.path.expanduser(newDirName).rstrip('/') # replace ~ or similar and remove any trailing '/'
     if not os.path.isdir(newDirName):
       os.mkdir(newDirName)
+
+    if fileBaseName is None:
+      fileBaseName = os.path.basename(newDirName)
     
-    fileBaseName = os.path.basename(newDirName)
     geoFileName = newDirName+os.sep+fileBaseName+'.geo'
     inpFileName = newDirName+os.sep+fileBaseName+'.inp'
     inFileName = newDirName+os.sep+fileBaseName+'.in'
