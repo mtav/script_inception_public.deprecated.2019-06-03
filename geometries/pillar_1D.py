@@ -16,6 +16,17 @@ from math import sqrt
 from utilities.dumpObj import *
 from bfdtd.bfdtd_parser import *
 
+def getFrequencies(filename):
+  freq_snapshots = []
+  with open(filename, 'r') as f:
+    f.readline()
+    for line in f:
+      freq_snapshots.append(double(line.split()[1])*1e-6)
+            #read_data = f.read()
+    #print read_data
+  f.closed
+  return freq_snapshots
+
 class pillar_1D:
   '''creates a 1D pillar with different kinds of irregularities'''
   def __init__(self):

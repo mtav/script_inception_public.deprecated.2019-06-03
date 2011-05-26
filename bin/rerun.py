@@ -7,17 +7,6 @@ from bfdtd.bfdtd_parser import *
 
 # TODO: rewrite this function so it doesn't depend on the filename (i.e. just copy (import/export better of course :) ) everything as it is and add the snapshots to the .inp file...)
 
-def getFrequencies(filename):
-  freq_snapshots = []
-  with open(filename, 'r') as f:
-    f.readline()
-    for line in f:
-      freq_snapshots.append(double(line.split()[1])*1e-6)
-            #read_data = f.read()
-    #print read_data
-  f.closed
-  return freq_snapshots
-
 def rerun(filename):
   filename = os.path.abspath(filename)
   freq_snapshots = getFrequencies(filename)

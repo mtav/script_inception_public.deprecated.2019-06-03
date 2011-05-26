@@ -77,12 +77,13 @@ def main(argv=None):
   default_basename = 'rectangular_yagi.CavityScalingFactor_%CSF.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPESTR' #.DistanceBetweenDefectBordersInCavity_%DISTANCEBETWEENDEFECTBORDERSINCAVITY'
   
   parser.add_option("-d", "--destdir", action="store", type="string", dest="destdir", default=os.getenv('TESTDIR'), help="destination directory")
-  parser.add_option("-i", type="int", dest="iterations", default=65400+524200+524200, help="number of iterations")
-  parser.add_option("-b", type="int", dest="N_bottom", default=9, help="number of holes at the bottom")
-  parser.add_option("-t", type="int", dest="N_top", default=7, help="number of holes at the top")
-  parser.add_option("-e", type="string", dest="excitationTypeStr", default='Zm1', help="excitationType: Ym1,Ym2,Zm1,Zm2")
-  parser.add_option("-f", type="string", dest="FrequencyList", default='', help="frequency of the frequency snapshots: ex: \"100.1,150.2,200.3,250.4\"")
-  parser.add_option("-c", type="float", dest="CavityScalingFactor", default=1, help="cavity height = CavityScalingFactor*lambda/n_Eff")
+  parser.add_option("-i", "--iterations", type="int", dest="iterations", default=65400+524200+524200, help="number of iterations")
+  parser.add_option("-b", "--N_bottom", type="int", dest="N_bottom", default=9, help="number of holes at the bottom")
+  parser.add_option("-t", "--N_top", type="int", dest="N_top", default=7, help="number of holes at the top")
+  parser.add_option("-e", "--excitationTypeStr", type="string", dest="excitationTypeStr", default='Zm1', help="excitationType: Ym1,Ym2,Zm1,Zm2")
+  parser.add_option("-f", "--frequency", type="string", dest="FrequencyList", default='', help="frequency of the frequency snapshots: ex: \"100.1,150.2,200.3,250.4\"")
+  parser.add_option("--FrequencyListFile", type="string", dest="FrequencyListFile", default='', help="file containing a list of frequencies for the frequency snapshots: ex: freq_list.txt")
+  parser.add_option("-c", "--CavityScalingFactor", type="float", dest="CavityScalingFactor", default=1, help="cavity height = CavityScalingFactor*lambda/n_Eff")
   parser.add_option("--RadiusPillar_Y_mum", type="float", dest="RadiusPillar_Y_mum", default=0.5, help="RadiusPillar_Y_mum")
   parser.add_option("--RadiusPillar_Z_mum", type="float", dest="RadiusPillar_Z_mum", default=0.5, help="RadiusPillar_Z_mum")
   parser.add_option("--n_Eff", type="float", dest="n_Eff", default=2.2, help="n_Eff")
@@ -99,11 +100,12 @@ def main(argv=None):
   print 'FrequencyList = ',options.FrequencyList
   print 'CavityScalingFactor = ',options.CavityScalingFactor
   
-  if len(options.FrequencyList) == 0:
-    freq_snapshots = []
-  else:
-    #print options.FrequencyList.split(',')
-    freq_snapshots = [float(x) for x in options.FrequencyList.split(',')]
+  freq_snapshots = []
+  if len(options.FrequencyListFile) != 0:
+    freq_snapshots += getFrequencies(options.FrequencyListFile)
+  if len(options.FrequencyList) != 0:
+    freq_snapshots += [float(x) for x in options.FrequencyList.split(',')]
+
   print freq_snapshots
   #sys.exit()
 
