@@ -6,7 +6,7 @@ import os
 import getopt
 #~ import utilities.getuserdir
 from utilities.getuserdir import *
-from bfdtd.bfdtd_parser import *
+#from bfdtd.bfdtd_parser import *
 from utilities.common import fixLowerUpper
 
 def planeNumberName(var):
@@ -567,8 +567,8 @@ def main(argv=None):
       GEOblock(FILE, COMMENT, [1.1,2.2,3.3], [4.4,5.5,6.6], 600, 700)
       GEOcylinder(FILE, COMMENT, [1.2,3.4,5.6], 77, 88, 99, 100, 0.02, 47.42)
       GEOrotation(FILE, COMMENT, [1,2,3], [4,5,6], 56)
-      excitation_obj = Excitation(COMMENT, 77, [1,2,3], [4,5,6], [7,8,9], [77,88,99], 69, 12.36, 45.54, 78.87, 456, 1, 22, 333, 4444)
-      excitation_obj.write_entry(FILE)
+      #excitation_obj = Excitation(COMMENT, 77, [1,2,3], [4,5,6], [7,8,9], [77,88,99], 69, 12.36, 45.54, 78.87, 456, 1, 22, 333, 4444)
+      #excitation_obj.write_entry(FILE)
       GEOtime_snapshot(FILE, COMMENT, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
       GEOtime_snapshot(FILE, COMMENT, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
       GEOtime_snapshot(FILE, COMMENT, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)

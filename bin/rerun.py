@@ -111,7 +111,12 @@ def rerun(filename):
     ##print read_data
   #f.closed
   #return freq_snapshots
-  
+
+def copyBFDTD(src,dst):
+  ''' Copy src to dst '''
+  FDTDobj = readBristolFDTD(src)
+  FDTDobj.writeAll(dst)
+
 def main(argv=None):
   if argv is None:
       argv = sys.argv
@@ -121,6 +126,9 @@ def main(argv=None):
     except getopt.error, msg:
       raise Usage(msg)
       
+    copyBFDTD(sys.argv[1],sys.argv[2])
+    sys.exit(0)
+    
     # main function
     for i in sys.argv[1:]:
       print '==>Processing '+i

@@ -28,7 +28,7 @@ cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
 # IMPORT FUNCTION
 ###############################
 def importBristolFDTD(filename):
-    ''' import BristolFDTD geometry from .in,.geo or .inp and create corresponding structure in Blender'''
+    ''' import BristolFDTD geometry from .in,.geo or .inp and create corresponding structure in Blender '''
     print('----->Importing bristol FDTD geometry: '+filename)
     Blender.Window.WaitCursor(1);
 

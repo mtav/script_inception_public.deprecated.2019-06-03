@@ -497,6 +497,9 @@ class Structured_entries:
     self.frequency_snapshot_list = [];
     self.probe_list = [];
 
+    # special
+    self.fileList = []
+    
   def __str__(self):
       ret = '--->snapshot_list\n';
       for i in range(len(self.snapshot_list)):
@@ -691,19 +694,21 @@ class Structured_entries:
       
       f = open(filename, 'r');
       for line in f:
-          print 'os.path.dirname(filename): ', os.path.dirname(filename);
-          print 'line.strip()=', line.strip();
-          subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()));
-          print 'subfile: ', subfile;
-          if (not xmesh_read):
-              subfile = getname(subfile,'inp');
+          print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
+          print 'line.strip()=', line.strip() # remove any \n or similar
+          self.fileList.append(line.strip())
+          # this is done so that you don't have to be in the directory containing the .geo/.inp files
+          subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()))
+          print 'subfile: ', subfile
+          if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
+              subfile = getname(subfile,'inp')
           else:
-              subfile = getname(subfile,'geo');
-          [ xmesh_read_loc, box_read_loc ] = self.read_input_file(subfile);
+              subfile = getname(subfile,'geo')
+          [ xmesh_read_loc, box_read_loc ] = self.read_input_file(subfile)
           if xmesh_read_loc:
-              xmesh_read = True;
+              xmesh_read = True
           if box_read_loc:
-              box_read = True;
+              box_read = True
       f.close();
       if (not xmesh_read):
           print 'WARNING: mesh not found';
@@ -719,9 +724,11 @@ class Structured_entries:
     ''' Generate .inp file '''
     return
     
-  def writeFileList(self,fileName,fileList):
+  def writeFileList(self,fileName,fileList=None):
     ''' Generate .in file '''
     # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object
+    if fileList is None:
+      fileList = self.fileList
     print fileName
     print fileList
     GEOin(fileName,fileList)
@@ -765,12 +772,15 @@ class Structured_entries:
     inFileName = newDirName+os.sep+fileBaseName+'.in'
     cmdFileName = newDirName+os.sep+fileBaseName+'.cmd'
     shFileName = newDirName+os.sep+fileBaseName+'.sh'
+
+    if self.fileList is None:
+      self.fileList = [fileBaseName+'.inp',fileBaseName+'.geo']
     
     self.writeGeoFile(geoFileName)
     self.writeInpFile(inpFileName)
-    self.writeFileList(inFileName,[geoFileName,inpFileName])
-    self.writeCondorScript(cmdFileName)
-    self.writeShellScript(shFileName)
+    self.writeFileList(inFileName,self.fileList)
+    #self.writeCondorScript(cmdFileName)
+    #self.writeShellScript(shFileName)
     
 #==== CLASSES END ====#
 
@@ -794,12 +804,47 @@ def readBristolFDTD(filename):
         print '.prn file detected: Not supported yet';
     else:
         print 'Unknown file format:', extension;
+        sys.exit(-1)
     
     #~ print '================';
     #~ print structured_entries;
     #~ print '================';
     return structured_entries;
     
+def TestWriting():
+    # more code, unchanged
+    with open('tmp.txt', 'w') as FILE:
+      delta_X_vector = [11.25,21.25,31.25]
+      delta_Y_vector = [12.25,22.25,32.25]
+      delta_Z_vector = [13.25,23.25,33.25]
+      COMMENT = 'example comment'
+      GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector)
+      GEOflag(FILE, COMMENT, 70, 12.34, 24, 42, 1000, 0.755025, '_id_')
+      GEOboundary(FILE, COMMENT, 1.2, [3.4,3.4,3.4],\
+                                  5.6, [7.8,7.8,6.2],\
+                                  9.10, [11.12,1,2],\
+                                  13.14, [15.16,3,4],\
+                                  17.18, [19.20,5,6],\
+                                  21.22, [23.24,7.8,5.4])
+      GEObox(FILE, COMMENT, [1.2,3.4,5.6], [9.8,7.6,5.4])
+      GEOsphere(FILE, COMMENT, [1,2,3], 9, 8, 7, 6)
+      GEOblock(FILE, COMMENT, [1.1,2.2,3.3], [4.4,5.5,6.6], 600, 700)
+      GEOcylinder(FILE, COMMENT, [1.2,3.4,5.6], 77, 88, 99, 100, 0.02, 47.42)
+      GEOrotation(FILE, COMMENT, [1,2,3], [4,5,6], 56)
+      excitation_obj = Excitation(COMMENT, 77, [1,2,3], [4,5,6], [7,8,9], [77,88,99], 69, 12.36, 45.54, 78.87, 456, 1, 22, 333, 4444)
+      excitation_obj.write_entry(FILE)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, True)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'x', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'y', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOtime_snapshot(FILE, COMMENT, 1, 23, 'z', [1,2,3], [4,5,6], [7,8,9], [77,88,99], [1.23,4.56,7.89], 123, False)
+      GEOfrequency_snapshot(FILE, COMMENT, 369, 852, 147, 258, 369, 987, 'x', [1,2,3], [1,2,3], [852,741,963], 147, [7,8,9],[4,5,6],[1,2,3])
+      GEOprobe(FILE, COMMENT, [1,2,3], 56, [5,6,7], [5,6,7], [5,6,7], 4564654 )
+      GEOcommand('tmp.bat', 'BASENAME')
+      GEOin('tmp.in', ['file','list'])
+      GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
+  
 def main(argv=None):
   if argv is None:
       argv = sys.argv
