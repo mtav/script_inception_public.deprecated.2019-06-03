@@ -414,48 +414,123 @@ class Excitation:
 
 # measurement objects
 class Time_snapshot:
-    def __init__(self):
-        self.name = 'time snapshot'
-        self.first = 0
-        self.repetition = 0
-        self.plane = 0
-        self.P1 = 0
-        self.P2 = 0
-        self.E = 0
-        self.H = 0
-        self.J = 0
-        self.power = 0
-        self.eps = 0
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'first = ' + str(self.first) + '\n' +\
-        'repetition = ' + str(self.repetition) + '\n' +\
-        'plane = ' + str(self.plane) + '\n' +\
-        'P1 = ' + str(self.P1) + '\n' +\
-        'P2 = ' + str(self.P2) + '\n' +\
-        'E = ' + str(self.E) + '\n' +\
-        'H = ' + str(self.H) + '\n' +\
-        'J = ' + str(self.J) + '\n' +\
-        'power = ' + str(self.power) + '\n' +\
-        'eps = ' + str(self.eps)
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        idx = 0
-        if entry.name:
-          self.name = entry.name
-        self.first = float(entry.data[idx]); idx = idx+1
-        self.repetition = float(entry.data[idx]); idx = idx+1
-        self.plane = int(float(entry.data[idx])); idx = idx+1
-        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.power = float(entry.data[idx]); idx = idx+1
-        if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1
-        return(0)
+  def __init__(self):
+    self.name = 'time snapshot'
+    self.first = 0
+    self.repetition = 0
+    self.plane = 0
+    self.P1 = 0
+    self.P2 = 0
+    self.E = 0
+    self.H = 0
+    self.J = 0
+    self.power = 0
+    self.eps = 0
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'first = ' + str(self.first) + '\n' +\
+    'repetition = ' + str(self.repetition) + '\n' +\
+    'plane = ' + str(self.plane) + '\n' +\
+    'P1 = ' + str(self.P1) + '\n' +\
+    'P2 = ' + str(self.P2) + '\n' +\
+    'E = ' + str(self.E) + '\n' +\
+    'H = ' + str(self.H) + '\n' +\
+    'J = ' + str(self.J) + '\n' +\
+    'power = ' + str(self.power) + '\n' +\
+    'eps = ' + str(self.eps)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    idx = 0
+    if entry.name:
+      self.name = entry.name
+    self.first = float(entry.data[idx]); idx = idx+1
+    self.repetition = float(entry.data[idx]); idx = idx+1
+    self.plane = int(float(entry.data[idx])); idx = idx+1
+    self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.power = float(entry.data[idx]); idx = idx+1
+    if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1
+    return(0)
+  def write_entry(self, FILE):
+    ''' # def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
+    #
+    # format specification:
+    # 1 iteration number for the first snapshot
+    # 2 number of iterations between snapshots
+    # 3 plane - 1=x 2=y 3=z
+    # 4-9 coordinates of the lower left and top right corners of the plane x1 y1 z1 x2 y2 z2
+    # 10-18 field components to be sampled ex ey ez hx hy hz Ix Iy Iz
+    # 19 print power? =0/1
+    # 20 create EPS (->epsilon->refractive index) snapshot? =0/1
+    # 21 write an output file in "list" format
+    # 22 write an output file in "matrix" format
+    #
+    # List format ( as used in version 11 ) which has a filename of the form "x1idaa.prn", where "x" is the plane over
+    # which the snapshot has been taken, "1"is the snapshot serial number. ie. the snaps are numbered in the order which
+    # they appear in the input file.. "id" in an identifier specified in the "flags" object. "aa" is the time serial number ie.
+    # if snapshots are asked for at every 100 iterations then the first one will have "aa", the second one "ab" etc
+    # The file consists of a single header line followed by columns of numbers, one for each field component wanted and
+    # two for the coordinates of the point which has been sampled. These files can be read into Gema.
+    #
+    # Matrix format for each snapshot a file is produced for each requested field component with a name of the form
+    # "x1idaa_ex" where the "ex" is the field component being sampled. The rest of the filename is tha same as for the list
+    # format case. The file consists of a matrix of numbers the first column and first row or which, gives the position of
+    # the sample points in each direction. These files can be read into MathCad or to spreadsheet programs.'''
+
+    self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
+  
+    def snapshot(plane,P1,P2):
+      plane_ID, plane_name = planeNumberName(plane)
+      #~ if plane == 1:
+        #~ plane_name='X'
+      #~ elif plane == 2:
+        #~ plane_name='Y'
+      #~ else: #plane == 3:
+        #~ plane_name='Z'
+      #~ end
+  
+      FILE.write('SNAPSHOT **name='+self.name+'\n')
+      FILE.write('{\n')
+  
+      FILE.write("%d **FIRST\n" % self.first)
+      FILE.write("%d **REPETITION\n" % self.repetition)
+      FILE.write("%d **PLANE %s\n" % (plane_ID, plane_name))
+      FILE.write("%E **X1\n" % P1[0])
+      FILE.write("%E **Y1\n" % P1[1])
+      FILE.write("%E **Z1\n" % P1[2])
+      FILE.write("%E **X2\n" % P2[0])
+      FILE.write("%E **Y2\n" % P2[1])
+      FILE.write("%E **Z2\n" % P2[2])
+      FILE.write("%d **EX\n" % self.E[0])
+      FILE.write("%d **EY\n" % self.E[1])
+      FILE.write("%d **EZ\n" % self.E[2])
+      FILE.write("%d **HX\n" % self.H[0])
+      FILE.write("%d **HY\n" % self.H[1])
+      FILE.write("%d **HZ\n" % self.H[2])
+      FILE.write("%d **JX\n" % self.J[0])
+      FILE.write("%d **JY\n" % self.J[1])
+      FILE.write("%d **JZ\n" % self.J[2])
+      FILE.write("%d **POW\n" % self.power)
+      FILE.write("%d **EPS\n" % self.eps)
+      FILE.write('}\n')
+  
+      FILE.write('\n')
+  
+    plane_ID, plane_name = planeNumberName(self.plane)
+    if self.P1[plane_ID-1] == self.P2[plane_ID-1]:
+      snapshot(plane_ID,self.P1,self.P2)
+    else:
+      snapshot(1,[self.P1[0],self.P1[1],self.P1[2]],[self.P1[0],self.P2[1],self.P2[2]])
+      snapshot(1,[self.P2[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]])
+      snapshot(2,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P1[1],self.P2[2]])
+      snapshot(2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]])
+      snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]])
+      snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
 
 class Frequency_snapshot:
     def __init__(self):
@@ -512,32 +587,51 @@ class Frequency_snapshot:
         return(0)
 
 class Probe:
-    def __init__(self):
-        self.name = 'probe'
-        self.position = [0,0,0]
-        self.step = 0
-        self.E = [0,0,0]
-        self.H = [0,0,0]
-        self.J = [0,0,0]
-        self.pow = 0
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'position = ' + str(self.position) + '\n' +\
-        'step = ' + str(self.step) + '\n' +\
-        'E = ' + str(self.E) + '\n' +\
-        'H = ' + str(self.H) + '\n' +\
-        'J = ' + str(self.J) + '\n' +\
-        'pow = ' + str(self.pow)
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        self.position = float_array([entry.data[0],entry.data[1],entry.data[2]])
-        self.step = float(entry.data[3])
-        self.E = float_array([entry.data[4],entry.data[5],entry.data[6]])
-        self.H = float_array([entry.data[7],entry.data[8],entry.data[9]])
-        self.J = float_array([entry.data[10],entry.data[11],entry.data[12]])
-        self.pow = float(entry.data[13])
+  def __init__(self):
+    self.name = 'probe'
+    self.position = [0,0,0]
+    self.step = 0
+    self.E = [0,0,0]
+    self.H = [0,0,0]
+    self.J = [0,0,0]
+    self.power = 0
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'position = ' + str(self.position) + '\n' +\
+    'step = ' + str(self.step) + '\n' +\
+    'E = ' + str(self.E) + '\n' +\
+    'H = ' + str(self.H) + '\n' +\
+    'J = ' + str(self.J) + '\n' +\
+    'power = ' + str(self.power)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    self.position = float_array([entry.data[0],entry.data[1],entry.data[2]])
+    self.step = float(entry.data[3])
+    self.E = float_array([entry.data[4],entry.data[5],entry.data[6]])
+    self.H = float_array([entry.data[7],entry.data[8],entry.data[9]])
+    self.J = float_array([entry.data[10],entry.data[11],entry.data[12]])
+    self.power = float(entry.data[13])
+  def write_entry(self, FILE):
+    FILE.write('PROBE **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%E **X\n" % self.position[0])
+    FILE.write("%E **Y\n" % self.position[1])
+    FILE.write("%E **Z\n" % self.position[2])
+    FILE.write("%d **STEP\n" % self.step)
+    FILE.write("%d **EX\n" % self.E[0])
+    FILE.write("%d **EY\n" % self.E[1])
+    FILE.write("%d **EZ\n" % self.E[2])
+    FILE.write("%d **HX\n" % self.H[0])
+    FILE.write("%d **HY\n" % self.H[1])
+    FILE.write("%d **HZ\n" % self.H[2])
+    FILE.write("%d **JX\n" % self.J[0])
+    FILE.write("%d **JY\n" % self.J[1])
+    FILE.write("%d **JZ\n" % self.J[2])
+    FILE.write("%d **POW\n" % self.power)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 class Entry:
   def __init__(self):
@@ -859,9 +953,11 @@ class Structured_entries:
       self.boundaries.write_entry(out)
       self.flag.write_entry(out)
       self.writeMesh(out)
-      GEOfrequency_snapshot(out, 'X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-      GEOtime_snapshot(out, 'X time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
-      GEOprobe(out, 'XY probes', [x, y, z], step, E, H, J, power )
+      
+      for obj in self.snapshot_list:
+        obj.write_entry(out)
+      for obj in self.probe_list:
+        obj.write_entry(out)
       
       #write footer
       out.write('end\n'); #end the file

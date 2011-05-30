@@ -120,116 +120,7 @@ def GEOrotation(FILE, COMMENT, axis_point, axis_direction, angle_degrees):
 
   FILE.write('\n')
 
-
-# excitation objects
-#def GEOexcitation(FILE, COMMENT, current_source, P1, P2, E, H, type, time_constant, amplitude, time_offset, frequency, param1, param2, param3, param4):
-  #FILE.write('EXCITATION **name='+COMMENT+'\n')
-
-  #FILE.write('{\n')
-
-  #FILE.write("%d ** CURRENT SOURCE \n" % current_source)
-  #FILE.write("%E **X1\n" % P1[0])
-  #FILE.write("%E **Y1\n" % P1[1])
-  #FILE.write("%E **Z1\n" % P1[2])
-  #FILE.write("%E **X2\n" % P2[0])
-  #FILE.write("%E **Y2\n" % P2[1])
-  #FILE.write("%E **Z2\n" % P2[2])
-  #FILE.write("%d **EX\n" % E[0])
-  #FILE.write("%d **EY\n" % E[1])
-  #FILE.write("%d **EZ\n" % E[2])
-  #FILE.write("%d **HX\n" % H[0])
-  #FILE.write("%d **HY\n" % H[1])
-  #FILE.write("%d **HZ\n" % H[2])
-  #FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % type)
-  #FILE.write("%E **TIME CONSTANT\n" % time_constant)
-  #FILE.write("%E **AMPLITUDE\n" % amplitude)
-  #FILE.write("%E **TIME OFFSET\n" % time_offset)
-  #FILE.write("%E **FREQ (HZ)\n" % frequency)
-  #FILE.write("%d **UNUSED PARAMETER\n" % param1)
-  #FILE.write("%d **UNUSED PARAMETER\n" % param2)
-  #FILE.write("%d **UNUSED PARAMETER\n" % param3)
-  #FILE.write("%d **UNUSED PARAMETER\n" % param4)
-  #FILE.write('}\n')
-
-  #FILE.write('\n')
-
 # measurement objects
-def GEOtime_snapshot(FILE, COMMENT, first, repetition, plane, P1, P2, E, H, J, power, eps):
-  P1, P2 = fixLowerUpper(P1, P2)
-
-  ''' # def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
-  #
-  # format specification:
-  # 1 iteration number for the first snapshot
-  # 2 number of iterations between snapshots
-  # 3 plane - 1=x 2=y 3=z
-  # 4-9 coordinates of the lower left and top right corners of the plane x1 y1 z1 x2 y2 z2
-  # 10-18 field components to be sampled ex ey ez hx hy hz Ix Iy Iz
-  # 19 print power? =0/1
-  # 20 create EPS (->epsilon->refractive index) snapshot? =0/1
-  # 21 write an output file in "list" format
-  # 22 write an output file in "matrix" format
-  #
-  # List format ( as used in version 11 ) which has a filename of the form "x1idaa.prn", where "x" is the plane over
-  # which the snapshot has been taken, "1"is the snapshot serial number. ie. the snaps are numbered in the order which
-  # they appear in the input file.. "id" in an identifier specified in the "flags" object. "aa" is the time serial number ie.
-  # if snapshots are asked for at every 100 iterations then the first one will have "aa", the second one "ab" etc
-  # The file consists of a single header line followed by columns of numbers, one for each field component wanted and
-  # two for the coordinates of the point which has been sampled. These files can be read into Gema.
-  #
-  # Matrix format for each snapshot a file is produced for each requested field component with a name of the form
-  # "x1idaa_ex" where the "ex" is the field component being sampled. The rest of the filename is tha same as for the list
-  # format case. The file consists of a matrix of numbers the first column and first row or which, gives the position of
-  # the sample points in each direction. These files can be read into MathCad or to spreadsheet programs.'''
-
-  def snapshot(plane,P1,P2):
-    plane_ID, plane_name = planeNumberName(plane)
-    #~ if plane == 1:
-      #~ plane_name='X'
-    #~ elif plane == 2:
-      #~ plane_name='Y'
-    #~ else: #plane == 3:
-      #~ plane_name='Z'
-    #~ end
-
-    FILE.write('SNAPSHOT **name='+COMMENT+'\n')
-    FILE.write('{\n')
-
-    FILE.write("%d **FIRST\n" % first)
-    FILE.write("%d **REPETITION\n" % repetition)
-    FILE.write("%d **PLANE %s\n" % (plane_ID, plane_name))
-    FILE.write("%E **X1\n" % P1[0])
-    FILE.write("%E **Y1\n" % P1[1])
-    FILE.write("%E **Z1\n" % P1[2])
-    FILE.write("%E **X2\n" % P2[0])
-    FILE.write("%E **Y2\n" % P2[1])
-    FILE.write("%E **Z2\n" % P2[2])
-    FILE.write("%d **EX\n" % E[0])
-    FILE.write("%d **EY\n" % E[1])
-    FILE.write("%d **EZ\n" % E[2])
-    FILE.write("%d **HX\n" % H[0])
-    FILE.write("%d **HY\n" % H[1])
-    FILE.write("%d **HZ\n" % H[2])
-    FILE.write("%d **JX\n" % J[0])
-    FILE.write("%d **JY\n" % J[1])
-    FILE.write("%d **JZ\n" % J[2])
-    FILE.write("%d **POW\n" % power)
-    FILE.write("%d **EPS\n" % eps)
-    FILE.write('}\n')
-
-    FILE.write('\n')
-
-
-  plane_ID, plane_name = planeNumberName(plane)
-  if P1[plane_ID-1] == P2[plane_ID-1]:
-    snapshot(plane_ID,P1,P2)
-  else:
-    snapshot(1,[P1[0],P1[1],P1[2]],[P1[0],P2[1],P2[2]])
-    snapshot(1,[P2[0],P1[1],P1[2]],[P2[0],P2[1],P2[2]])
-    snapshot(2,[P1[0],P1[1],P1[2]],[P2[0],P1[1],P2[2]])
-    snapshot(2,[P1[0],P2[1],P1[2]],[P2[0],P2[1],P2[2]])
-    snapshot(3,[P1[0],P1[1],P1[2]],[P2[0],P2[1],P1[2]])
-    snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]])
 
 def GEOfrequency_snapshot(FILE, COMMENT, first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency, starting_sample, E, H, J):
   P1, P2 = fixLowerUpper(P1, P2)
@@ -285,30 +176,6 @@ def GEOfrequency_snapshot(FILE, COMMENT, first, repetition, interpolate, real_df
       snapshot(2,[P1[0],P2[1],P1[2]],[P2[0],P2[1],P2[2]],frequency[i])
       snapshot(3,[P1[0],P1[1],P1[2]],[P2[0],P2[1],P1[2]],frequency[i])
       snapshot(3,[P1[0],P1[1],P2[2]],[P2[0],P2[1],P2[2]],frequency[i])
-
-def GEOprobe(FILE, COMMENT, position, step, E, H, J, power ):
-  FILE.write('PROBE **name='+COMMENT+'\n')
-
-  FILE.write('{\n')
-
-  FILE.write("%E **X\n" % position[0])
-  FILE.write("%E **Y\n" % position[1])
-  FILE.write("%E **Z\n" % position[2])
-  FILE.write("%d **STEP\n" % step)
-  FILE.write("%d **EX\n" % E[0])
-  FILE.write("%d **EY\n" % E[1])
-  FILE.write("%d **EZ\n" % E[2])
-  FILE.write("%d **HX\n" % H[0])
-  FILE.write("%d **HY\n" % H[1])
-  FILE.write("%d **HZ\n" % H[2])
-  FILE.write("%d **JX\n" % J[0])
-  FILE.write("%d **JY\n" % J[1])
-  FILE.write("%d **JZ\n" % J[2])
-  FILE.write("%d **POW\n" % power)
-  FILE.write('}\n')
-
-  FILE.write('\n')
-
 
 # files
 def GEOcommand(filename, BASENAME):
