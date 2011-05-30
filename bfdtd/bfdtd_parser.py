@@ -712,9 +712,9 @@ class Frequency_snapshot:
   def write_entry(self, FILE):
     self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
   
-    def snapshot(plane,P1,P2, frequency):
+    def snapshot(name,plane,P1,P2, frequency):
       plane_ID, plane_name = planeNumberName(plane)
-      FILE.write('FREQUENCY_SNAPSHOT **name='+self.name+'\n')
+      FILE.write('FREQUENCY_SNAPSHOT **name='+name+'\n')
       FILE.write('{\n')
       FILE.write("%d **FIRST\n" % self.first)
       FILE.write("%d **REPETITION\n" % self.repetition)
@@ -746,14 +746,14 @@ class Frequency_snapshot:
     plane_ID, plane_name = planeNumberName(self.plane)
     for i in range(len(self.frequency_vector)):
       if self.P1[plane_ID-1] == self.P2[plane_ID-1]:
-        snapshot(plane_ID,self.P1,self.P2,self.frequency_vector[i])
+        snapshot(self.name, plane_ID,self.P1,self.P2,self.frequency_vector[i])
       else:
-        snapshot(1,[self.P1[0],self.P1[1],self.P1[2]],[self.P1[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
-        snapshot(1,[self.P2[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
-        snapshot(2,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P1[1],self.P2[2]],self.frequency_vector[i])
-        snapshot(2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
-        snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]],self.frequency_vector[i])
-        snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(self.name + ' X-', 1,[self.P1[0],self.P1[1],self.P1[2]],[self.P1[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(self.name + ' X+', 1,[self.P2[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(self.name + ' Y-', 2,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P1[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(self.name + ' Y+', 2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(self.name + ' Z-', 3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]],self.frequency_vector[i])
+        snapshot(self.name + ' Z+', 3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
 
 class Probe:
   def __init__(self,

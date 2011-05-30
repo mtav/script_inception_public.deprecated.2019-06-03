@@ -923,7 +923,7 @@ class pillar_1D(BFDTDobject):
       #if self.print_excitation:
         #self.excitation_list[0].write_entry(out)
 
-      self.boundaries.name = 'boundaries'
+      self.boundaries.name = 'boundary'
       self.boundaries.Xpos_bc = 2; self.boundaries.Xpos_param = [1,1,0]
       if self.Ysymmetry:
         self.boundaries.Ypos_bc = 1; self.boundaries.Ypos_param = [1,1,0]
@@ -999,7 +999,7 @@ class pillar_1D(BFDTDobject):
         P1 = [0,0,0]
         P2 = [self.Xmax, self.getYlim(), self.getZlim()]
         F = Frequency_snapshot('Box frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-        self.snapshot_list.extend([F,T])
+        self.snapshot_list.extend([F])
     
       if self.print_probes:
         # probes
