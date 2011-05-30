@@ -769,6 +769,9 @@ class Structured_entries:
     if fileBaseName is None:
       fileBaseName = os.path.basename(newDirName)
     
+    
+    print 'fileBaseName = ', fileBaseName
+    
     geoFileName = newDirName+os.sep+fileBaseName+'.geo'
     inpFileName = newDirName+os.sep+fileBaseName+'.inp'
     inFileName = newDirName+os.sep+fileBaseName+'.in'

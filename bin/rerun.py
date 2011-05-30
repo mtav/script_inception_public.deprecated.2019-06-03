@@ -114,8 +114,16 @@ def rerun(filename):
 
 def copyBFDTD(src,dst):
   ''' Copy src to dst '''
-  FDTDobj = readBristolFDTD(src)
-  FDTDobj.writeAll(dst)
+  src = src.rstrip(os.sep)
+  dst = dst.rstrip(os.sep)
+  if os.path.isdir(src):
+    FDTDobj = readBristolFDTD(src+os.sep+src+'.in')
+    fileBaseName = os.path.basename(src)
+  else:
+    FDTDobj = readBristolFDTD(src)
+    fileBaseName = os.path.splitext(os.path.basename(src))[0]
+  
+  FDTDobj.writeAll(dst,fileBaseName)
 
 def main(argv=None):
   if argv is None:
