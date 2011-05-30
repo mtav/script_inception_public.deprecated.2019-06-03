@@ -97,9 +97,9 @@ class Flag:
 
 class Boundaries:
   def __init__(self):
-    self.name = 'boundary'
-    self.layer = 'boundary'
-    self.group = 'boundary'
+    self.name = 'boundaries'
+    self.layer = 'boundaries'
+    self.group = 'boundaries'
 
     self.Xpos_bc = 0
     self.Ypos_bc = 0
@@ -148,12 +148,19 @@ class Boundaries:
     FILE.write('\n')
 
 class Box:
-  def __init__(self):
-      self.name = 'box'
-      self.layer = 'box'
-      self.group = 'box'
-      self.lower = [0,0,0]
-      self.upper = [0,0,0]
+  def __init__(self,
+      name = 'box',
+      layer = 'box',
+      group = 'box',
+      lower = [0,0,0],
+      upper = [0,0,0]):
+      
+      self.name = name
+      self.layer = layer
+      self.group = group
+      self.lower = lower
+      self.upper = upper
+      
   def __str__(self):
       ret  = 'name = '+self.name+'\n'
       ret += 'lower = '+str(self.lower)+'\n'
@@ -240,17 +247,23 @@ class Sphere(Geometry_object):
     FILE.write('\n')
 
 class Block(Geometry_object):
-  def __init__(self):
+  def __init__(self,
+    name = 'block',
+    layer = 'block',
+    group = 'block',
+    lower = [0,0,0],
+    upper = [0,0,0],
+    permittivity = 0,
+    conductivity = 0):
+    
     Geometry_object.__init__(self)
-
-    self.name = 'block'
-    self.layer = 'block'
-    self.group = 'block'
-
-    self.lower = [0,0,0]
-    self.upper = [0,0,0]
-    self.permittivity = 0
-    self.conductivity = 0
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.lower = lower
+    self.upper = upper
+    self.permittivity = permittivity
+    self.conductivity = conductivity
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
@@ -477,20 +490,35 @@ class Excitation:
 
 # measurement objects
 class Time_snapshot:
-  def __init__(self):
-    self.name = 'time_snapshot'
-    self.layer = 'time_snapshot'
-    self.group = 'time_snapshot'
-    self.first = 0
-    self.repetition = 0
-    self.plane = 0
-    self.P1 = 0
-    self.P2 = 0
-    self.E = 0
-    self.H = 0
-    self.J = 0
-    self.power = 0
-    self.eps = 0
+  def __init__(self,
+    name = 'time_snapshot',
+    first = 0,
+    repetition = 0,
+    plane = 0,
+    P1 = 0,
+    P2 = 0,
+    E = 0,
+    H = 0,
+    J = 0,
+    power = 0,
+    eps = 0,
+    layer = 'time_snapshot',
+    group = 'time_snapshot'):
+  
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.first = first
+    self.repetition = repetition
+    self.plane = plane
+    self.P1 = P1
+    self.P2 = P2
+    self.E = E
+    self.H = H
+    self.J = J
+    self.power = power
+    self.eps = eps
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'first = ' + str(self.first) + '\n' +\
@@ -598,24 +626,42 @@ class Time_snapshot:
       snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
 
 class Frequency_snapshot:
-  def __init__(self):
-    self.name = 'frequency_snapshot'
-    self.layer = 'frequency_snapshot'
-    self.group = 'frequency_snapshot'
-    self.first = 0
-    self.repetition = 0
-    self.interpolate = 0
-    self.real_dft = 0
-    self.mod_only = 0
-    self.mod_all = 0
-    self.plane = 0
-    self.P1 = 0
-    self.P2 = 0
-    self.frequency_vector = [0]
-    self.starting_sample = 0
-    self.E = 0
-    self.H = 0
-    self.J = 0
+  def __init__(self,
+    name = 'frequency_snapshot',
+    first = 0,
+    repetition = 0,
+    interpolate = 0,
+    real_dft = 0,
+    mod_only = 0,
+    mod_all = 0,
+    plane = 0,
+    P1 = 0,
+    P2 = 0,
+    frequency_vector = [0],
+    starting_sample = 0,
+    E = 0,
+    H = 0,
+    J = 0,
+    layer = 'frequency_snapshot',
+    group = 'frequency_snapshot'):
+    
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.first = first
+    self.repetition = repetition
+    self.interpolate = interpolate
+    self.real_dft = real_dft
+    self.mod_only = mod_only
+    self.mod_all = mod_all
+    self.plane = plane
+    self.P1 = P1
+    self.P2 = P2
+    self.frequency_vector = frequency_vector
+    self.starting_sample = starting_sample
+    self.E = E
+    self.H = H
+    self.J = J
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'first = ' + str(self.first) + '\n' +\
@@ -699,16 +745,27 @@ class Frequency_snapshot:
         snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
 
 class Probe:
-  def __init__(self):
-    self.name = 'probe'
-    self.layer = 'probe'
-    self.group = 'probe'
-    self.position = [0,0,0]
-    self.step = 0
-    self.E = [0,0,0]
-    self.H = [0,0,0]
-    self.J = [0,0,0]
-    self.power = 0
+  def __init__(self,
+    name = 'probe',
+    position = [0,0,0],
+    step = 0,
+    E = [0,0,0],
+    H = [0,0,0],
+    J = [0,0,0],
+    power = 0,
+    layer = 'probe',
+    group = 'probe'):
+    
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.position = position
+    self.step = step
+    self.E = E
+    self.H = H
+    self.J = J
+    self.power = power
+  
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'position = ' + str(self.position) + '\n' +\
