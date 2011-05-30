@@ -370,14 +370,15 @@ class pillar_1D(BFDTDobject):
     self.BASENAME = baseName_substituted
     
     if os.path.isdir(self.DSTDIR):
-      if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
-        os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
+      #if not os.path.isdir(self.DSTDIR+os.sep+self.BASENAME):
+        #os.mkdir(self.DSTDIR+os.sep+self.BASENAME)
       self.mesh()
-      print self.writeIN()
+      self.generateGeometry()
+      self.generateINPStuff()
+      self.writeAll(self.DSTDIR+os.sep+self.BASENAME, self.BASENAME)
+      #print self.writeIN()
       self.writeSH()
       self.writeCMD()
-      self.writeGEO()
-      self.writeINP()
       return(0)
     else:
       print('ERROR: self.DSTDIR = ' + self.DSTDIR + ' is not a directory')
@@ -740,11 +741,11 @@ class pillar_1D(BFDTDobject):
       print('...done')
     return(cmd_filename)
   
-  def addHole(self, FILE, COMMENT, X_current, permittivity, conductivity):
+  def addHole(self, COMMENT, X_current, permittivity, conductivity):
     ''' adds a hole centered at  X_current '''
     centre = [ X_current, self.Ymax/2, self.Zmax/2 ]
     if self.HOLE_TYPE == 'cylinder':
-      GEOcylinder(FILE, COMMENT, centre, 0, self.radius_X_hole, 2*self.radius_Y_pillar_mum, permittivity, conductivity, 0)
+      self.geometry_object_list.append(Cylinder(COMMENT, centre, 0, self.radius_X_hole, 2*self.radius_Y_pillar_mum, permittivity, conductivity, 0))
     elif self.HOLE_TYPE == 'square_holes':
       lower = [ X_current - self.radius_X_hole, self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_X_hole]
       upper = [ X_current + self.radius_X_hole, self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_X_hole]
@@ -842,82 +843,82 @@ class pillar_1D(BFDTDobject):
     else:
       print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
     
-  def writeGEO(self):
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # .geo file
-    geo_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.geo'
-    if self.verbose:
-      print('Writing GEO file '+geo_filename+' ...')
+  def generateGeometry(self):
+    # clear any previous entries in geometry
+    self.geometry_object_list = []
+    
+    #geo_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.geo'
+    #if self.verbose:
+      #print('Writing GEO file '+geo_filename+' ...')
   
     # open file
-    with open(geo_filename, 'w') as out:
+    #with open(geo_filename, 'w') as out:
   
       # write header
-      out.write('**GEOMETRY FILE\n')
-      out.write('\n')
+      #out.write('**GEOMETRY FILE\n')
+      #out.write('\n')
     
       # initialize current y
-      X_current = 0
-      
-      if self.print_podium:
-        # create bottom block
-        L = [ 0, 0, 0 ]
-        U = [ X_current + self.thickness_X_bottomSquare, self.Ymax, self.Zmax ]
-        self.geometry_object_list.append(Block(name='podium', lower=L, upper=U, permittivity=pow(self.n_bottomSquare,2), conductivity=0))
-  
-      X_current = X_current + self.thickness_X_bottomSquare;
-      
-      if self.print_pillar:
-        # create main pillar
-        L = [ X_current, self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum ]
-        U = [ X_current + self.getPillarHeight(), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum ]
-        self.geometry_object_list.append(Block(name='main_pillar', lower=L, upper=U, permittivity=pow(self.n_Substrate,2), conductivity=0))
+    X_current = 0
     
-      X_current = X_current + (self.d_holes_mum - self.radius_X_hole)
-    
-      if self.print_holes:
-          # hole settings
-          permittivity = pow(self.n_Defect,2)
-          conductivity = 0
-          
-          # create bottom holes
-          for i in range(self.bottom_N):
-            if self.print_holes_bottom:
-              self.addHole(out, 'bottom hole', X_current, permittivity, conductivity)
-            X_current = X_current + self.d_holes_mum
-    
-          X_current = X_current - self.d_holes_mum + self.getDistanceBetweenDefectCentersInCavity()
-    
-          # create top holes
-          for i in range(self.top_N):
-            if self.print_holes_top:
-              self.addHole(out, 'top hole', X_current, permittivity, conductivity)
-            X_current = X_current + self.d_holes_mum
-          
-      #write box
+    if self.print_podium:
+      # create bottom block
       L = [ 0, 0, 0 ]
-      U = [ self.Xmax, self.getYlim(), self.getZlim() ]
-      self.box = Box(name='box', lower=L, upper=U)
+      U = [ X_current + self.thickness_X_bottomSquare, self.Ymax, self.Zmax ]
+      self.geometry_object_list.append(Block(name='podium', lower=L, upper=U, permittivity=pow(self.n_bottomSquare,2), conductivity=0))
+
+    X_current = X_current + self.thickness_X_bottomSquare;
+    
+    if self.print_pillar:
+      # create main pillar
+      L = [ X_current, self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum ]
+      U = [ X_current + self.getPillarHeight(), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum ]
+      self.geometry_object_list.append(Block(name='main pillar', lower=L, upper=U, permittivity=pow(self.n_Substrate,2), conductivity=0))
+  
+    X_current = X_current + (self.d_holes_mum - self.radius_X_hole)
+  
+    if self.print_holes:
+        # hole settings
+        permittivity = pow(self.n_Defect,2)
+        conductivity = 0
+        
+        # create bottom holes
+        for i in range(self.bottom_N):
+          if self.print_holes_bottom:
+            self.addHole('bottom hole', X_current, permittivity, conductivity)
+          X_current = X_current + self.d_holes_mum
+  
+        X_current = X_current - self.d_holes_mum + self.getDistanceBetweenDefectCentersInCavity()
+  
+        # create top holes
+        for i in range(self.top_N):
+          if self.print_holes_top:
+            self.addHole('top hole', X_current, permittivity, conductivity)
+          X_current = X_current + self.d_holes_mum
+        
+    #write box
+    L = [ 0, 0, 0 ]
+    U = [ self.Xmax, self.getYlim(), self.getZlim() ]
+    self.box = Box(name='box', lower=L, upper=U)
 
       #write footer
-      out.write('end\n'); #end the file
+      #out.write('end\n'); #end the file
     
       #close file
-      out.close()
-      if self.verbose:
-        print('...done')
+      #out.close()
+      #if self.verbose:
+        #print('...done')
         
-      return(geo_filename)
+      #return(geo_filename)
+    return
 
-  def writeINP(self):
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # .inp file
-    inp_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.inp'
-    if self.verbose:
-      print('Writing INP file '+inp_filename+' ...')
+  def generateINPStuff(self):
+    #inp_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.inp'
+    #if self.verbose:
+      #print('Writing INP file '+inp_filename+' ...')
   
     # open file
-    with open(inp_filename, 'w') as out:
+    #with open(inp_filename, 'w') as out:
   
       #if self.print_excitation:
         #self.excitation_list[0].write_entry(out)
@@ -1031,14 +1032,15 @@ class pillar_1D(BFDTDobject):
               self.probe_list.append(Probe('center probe ('+str(iX-1)+','+str(iY-1)+','+str(iZ-1)+')', [self.probes_X_vector_center[iX], self.probes_Y_vector_center[iY], self.probes_Z_vector_center[iZ]], step, E, H, J, power ))
       
       #write footer
-      out.write('end\n'); #end the file
+      #out.write('end\n'); #end the file
     
       #close file
-      out.close()
-      if self.verbose:
-        print('...done')
+      #out.close()
+      #if self.verbose:
+        #print('...done')
     
-    return(inp_filename)
+    #return(inp_filename)
+      return
 
 def main(argv=None):
   if argv is None:

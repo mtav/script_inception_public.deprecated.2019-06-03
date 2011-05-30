@@ -295,18 +295,29 @@ class Block(Geometry_object):
     FILE.write('\n')
 
 class Cylinder(Geometry_object):
-  def __init__(self):
+  def __init__(self,
+    name = 'cylinder',
+    centre = [0,0,0],
+    inner_radius = 0,
+    outer_radius = 0,
+    height = 0,
+    permittivity = 0,
+    conductivity = 0,
+    angle_deg = 0,
+    layer = 'cylinder',
+    group = 'cylinder'):
+    
     Geometry_object.__init__(self)
-    self.name = 'cylinder'
-    self.layer = 'cylinder'
-    self.group = 'cylinder'
-    self.centre = [0,0,0]
-    self.inner_radius = 0
-    self.outer_radius = 0
-    self.height = 0
-    self.permittivity = 0
-    self.conductivity = 0
-    self.angle_deg = 0
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.centre = centre
+    self.inner_radius = inner_radius
+    self.outer_radius = outer_radius
+    self.height = height
+    self.permittivity = permittivity
+    self.conductivity = conductivity
+    self.angle_deg = angle_deg
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'centre = ' + str(self.centre) + '\n' +\
@@ -1098,8 +1109,8 @@ class BFDTDobject:
       # write geometry objects
       print 'len(self.geometry_object_list) = ', len(self.geometry_object_list)
       for obj in self.geometry_object_list:
-        print obj.name
-        print obj.__class__.__name__
+        #print obj.name
+        #print obj.__class__.__name__
         obj.write_entry(out)
 
       #write box

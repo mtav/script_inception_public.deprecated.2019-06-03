@@ -135,6 +135,7 @@ def main(argv=None):
   baseName_substituted = baseName_substituted.replace('%RADIUS_Z_PIERCER_MUM',str(options.radius_Z_piercer_mum))
   baseName_substituted = baseName_substituted.replace('%N_EFF',str(options.n_Eff))
 
+  P.verbose = True
   P.write(options.destdir,baseName_substituted)
   
   # TODO: put this in P.write()
