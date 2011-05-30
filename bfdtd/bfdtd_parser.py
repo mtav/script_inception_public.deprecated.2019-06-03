@@ -91,7 +91,7 @@ class Flag:
     FILE.write("%d **FLAG TWO\n" % self.flagTwo)
     FILE.write("%d **ITERATIONS\n" % self.iterations)
     FILE.write("%E **TIMESTEP as a proportion of the maximum allowed\n" % self.timeStep)
-    FILE.write("\"%s\" **ID CHARACTER (ALWAYS USE QUOTES)\n" % self.id)
+    FILE.write("\"%s\" **ID CHARACTER (ALWAYS USE QUOTES)\n" % self.id.strip('"'))
     FILE.write('}\n')
     FILE.write('\n')
 
