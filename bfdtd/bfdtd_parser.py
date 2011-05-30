@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # parses BFDTD files
 
-import math;
-import os;
-import sys;
-import re;
+import math
+import os
+import sys
+import re
 from utilities.common import *
 from bfdtd.bristolFDTD_generator_functions import *
 
@@ -13,36 +13,36 @@ from bfdtd.bristolFDTD_generator_functions import *
 def float_array(A):
     ''' convert string array to float array '''
     for i in range(len(A)):
-        A[i]=float(A[i]);
-    return(A);
+        A[i]=float(A[i])
+    return(A)
   
 def int_array(A):
     ''' convert string array to int array '''
     for i in range(len(A)):
-        A[i]=int(float(A[i]));
-    return(A);
+        A[i]=int(float(A[i]))
+    return(A)
 
 
 def is_number(s):
     ''' returns true if s can be converted to a float, otherwise false '''
     try:
         float(s)
-        return True;
+        return True
     except ValueError:
-        return False;
+        return False
 
 def getname(filename, default_extension):
     ''' add default_extension if the file does not end in .geo or .inp '''
     
-    extension = getExtension(filename);
+    extension = getExtension(filename)
     if extension == 'geo' or extension == 'inp':
-        return filename;
+        return filename
     else:
-        return filename + '.' + default_extension;
+        return filename + '.' + default_extension
 
 def getExtension(filename):
     ''' returns extension of filename '''
-    return filename.split(".")[-1];
+    return filename.split(".")[-1]
 
 #==== UTILITIES END ====#
 
@@ -52,73 +52,73 @@ def getExtension(filename):
 class Flag:
     def __init__(self):
         self.name = 'flag'
-        self.iMethod = 0;
-        self.propCons = 0;
-        self.flagOne = 0;
-        self.flagTwo = 0;
-        self.numSteps = 0;
-        self.stabFactor = 0;
-        self.id = '_id_';
+        self.iMethod = 0
+        self.propCons = 0
+        self.flagOne = 0
+        self.flagTwo = 0
+        self.numSteps = 0
+        self.stabFactor = 0
+        self.id = '_id_'
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
+        ret  = 'name = '+self.name+'\n'
         ret += 'iMethod = ' + str(self.iMethod) + '\n' +\
         'propCons = ' + str(self.propCons) + '\n' +\
         'flagOne = ' + str(self.flagOne) + '\n' +\
         'flagTwo = ' + str(self.flagTwo) + '\n' +\
         'numSteps = ' + str(self.numSteps) + '\n' +\
         'stabFactor = ' + str(self.stabFactor) + '\n' +\
-        'id = ' + self.id;
-        return ret;
+        'id = ' + self.id
+        return ret
     def read_entry(self, entry):
         if entry.name:
           self.name = entry.name
-        self.iMethod = float(entry.data[0]);
-        self.propCons = float(entry.data[1]);
-        self.flagOne = float(entry.data[2]);
-        self.flagTwo = float(entry.data[3]);
-        self.numSteps = float(entry.data[4]);
-        self.stabFactor = float(entry.data[5]);
-        self.id = entry.data[6];
+        self.iMethod = float(entry.data[0])
+        self.propCons = float(entry.data[1])
+        self.flagOne = float(entry.data[2])
+        self.flagTwo = float(entry.data[3])
+        self.numSteps = float(entry.data[4])
+        self.stabFactor = float(entry.data[5])
+        self.id = entry.data[6]
 
 class Boundaries:
     def __init__(self):
         self.name = 'boundary'
-        self.Type = [0,0,0,0,0,0];
-        self.position = [0,0,0,0,0,0];
+        self.Type = [0,0,0,0,0,0]
+        self.position = [0,0,0,0,0,0]
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
-        ret += 'X+: Type = '+str(self.Type[0])+' position = '+str(self.position[0])+'\n';
-        ret += 'Y+: Type = '+str(self.Type[1])+' position = '+str(self.position[1])+'\n';
-        ret += 'Z+: Type = '+str(self.Type[2])+' position = '+str(self.position[2])+'\n';
-        ret += 'X-: Type = '+str(self.Type[3])+' position = '+str(self.position[3])+'\n';
-        ret += 'Y-: Type = '+str(self.Type[4])+' position = '+str(self.position[4])+'\n';
-        ret += 'Z-: Type = '+str(self.Type[5])+' position = '+str(self.position[5]);
-        return ret;
+        ret  = 'name = '+self.name+'\n'
+        ret += 'X+: Type = '+str(self.Type[0])+' position = '+str(self.position[0])+'\n'
+        ret += 'Y+: Type = '+str(self.Type[1])+' position = '+str(self.position[1])+'\n'
+        ret += 'Z+: Type = '+str(self.Type[2])+' position = '+str(self.position[2])+'\n'
+        ret += 'X-: Type = '+str(self.Type[3])+' position = '+str(self.position[3])+'\n'
+        ret += 'Y-: Type = '+str(self.Type[4])+' position = '+str(self.position[4])+'\n'
+        ret += 'Z-: Type = '+str(self.Type[5])+' position = '+str(self.position[5])
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
         for i in range(6):
-            self.Type[i] = entry.data[4*i];
-            self.position[i] = entry.data[1+4*i:4+4*i];
-        return(0);
+            self.Type[i] = entry.data[4*i]
+            self.position[i] = entry.data[1+4*i:4+4*i]
+        return(0)
 
 class Box:
   def __init__(self):
       self.name = 'box'
       self.layer = 'box'
       self.group = 'box'
-      self.lower = [0,0,0];
-      self.upper = [0,0,0];
+      self.lower = [0,0,0]
+      self.upper = [0,0,0]
   def __str__(self):
-      ret  = 'name = '+self.name+'\n';
-      ret += 'lower = '+str(self.lower)+'\n';
-      ret += 'upper = '+str(self.upper);
-      return ret;
+      ret  = 'name = '+self.name+'\n'
+      ret += 'lower = '+str(self.lower)+'\n'
+      ret += 'upper = '+str(self.upper)
+      return ret
   def read_entry(self,entry):
       if entry.name:
         self.name = entry.name
-      self.lower = float_array(entry.data[0:3]);
-      self.upper = float_array(entry.data[3:6]);
+      self.lower = float_array(entry.data[0:3])
+      self.upper = float_array(entry.data[3:6])
   def write_entry(self, FILE):
     self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('BOX  **name='+self.name+'\n')
@@ -136,42 +136,42 @@ class Box:
 class Geometry_object:
     def __init__(self):
         self.name = 'geometry object'
-        self.rotation_list = [];
+        self.rotation_list = []
     def __str__(self):
-        ret = '--->object rotation_list';
+        ret = '--->object rotation_list'
         for i in range(len(self.rotation_list)):
             ret += '\n'
-            ret += '-->object rotation '+str(i)+':\n';
-            ret += self.rotation_list[i].__str__();
+            ret += '-->object rotation '+str(i)+':\n'
+            ret += self.rotation_list[i].__str__()
         return(ret)
 
 class Sphere(Geometry_object):
     def __init__(self):
         Geometry_object.__init__(self)
         self.name = 'sphere'
-        self.center = [0,0,0];
-        self.outer_radius = 0;
-        self.inner_radius = 0;
-        self.permittivity = 0;
-        self.conductivity = 0;
+        self.center = [0,0,0]
+        self.outer_radius = 0
+        self.inner_radius = 0
+        self.permittivity = 0
+        self.conductivity = 0
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
+        ret  = 'name = '+self.name+'\n'
         ret += 'center = ' + str(self.center) + '\n' +\
         'outer_radius = ' + str(self.outer_radius) + '\n' +\
         'inner_radius = ' + str(self.inner_radius) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
-        'conductivity = ' + str(self.conductivity)+'\n';
+        'conductivity = ' + str(self.conductivity)+'\n'
         ret += Geometry_object.__str__(self)
-        return ret;
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
-        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
-        self.outer_radius = float(entry.data[3]);
-        self.inner_radius = float(entry.data[4]);
-        self.permittivity = float(entry.data[5]);
-        self.conductivity = float(entry.data[6]);
-        return(0);
+        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]])
+        self.outer_radius = float(entry.data[3])
+        self.inner_radius = float(entry.data[4])
+        self.permittivity = float(entry.data[5])
+        self.conductivity = float(entry.data[6])
+        return(0)
 
 class Block(Geometry_object):
   def __init__(self):
@@ -181,25 +181,25 @@ class Block(Geometry_object):
       self.layer = 'block'
       self.group = 'block'
 
-      self.lower = [0,0,0];
-      self.upper = [0,0,0];
-      self.permittivity = 0;
-      self.conductivity = 0;
+      self.lower = [0,0,0]
+      self.upper = [0,0,0]
+      self.permittivity = 0
+      self.conductivity = 0
   def __str__(self):
-      ret  = 'name = '+self.name+'\n';
-      ret += 'lower = '+str(self.lower)+'\n';
-      ret += 'upper = '+str(self.upper)+'\n';
-      ret += 'permittivity = '+str(self.permittivity)+'\n';
-      ret += 'conductivity = '+str(self.conductivity)+'\n';
+      ret  = 'name = '+self.name+'\n'
+      ret += 'lower = '+str(self.lower)+'\n'
+      ret += 'upper = '+str(self.upper)+'\n'
+      ret += 'permittivity = '+str(self.permittivity)+'\n'
+      ret += 'conductivity = '+str(self.conductivity)+'\n'
       ret += Geometry_object.__str__(self)
-      return ret;
+      return ret
   def read_entry(self,entry):
       if entry.name:
         self.name = entry.name
-      self.lower = float_array(entry.data[0:3]);
-      self.upper = float_array(entry.data[3:6]);
-      self.permittivity = float(entry.data[6]);
-      self.conductivity = float(entry.data[7]);
+      self.lower = float_array(entry.data[0:3])
+      self.upper = float_array(entry.data[3:6])
+      self.permittivity = float(entry.data[6])
+      self.conductivity = float(entry.data[7])
   def write_entry(self, FILE):
     self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('BLOCK **name='+self.name+'\n')
@@ -219,54 +219,54 @@ class Cylinder(Geometry_object):
     def __init__(self):
         Geometry_object.__init__(self)
         self.name = 'cylinder'
-        self.center = [0,0,0];
-        self.inner_radius = 0;
-        self.outer_radius = 0;
-        self.height = 0;
-        self.permittivity = 0;
-        self.conductivity = 0;
-        self.angle = 0;
+        self.center = [0,0,0]
+        self.inner_radius = 0
+        self.outer_radius = 0
+        self.height = 0
+        self.permittivity = 0
+        self.conductivity = 0
+        self.angle = 0
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
+        ret  = 'name = '+self.name+'\n'
         ret += 'center = ' + str(self.center) + '\n' +\
         'inner_radius = ' + str(self.inner_radius) + '\n' +\
         'outer_radius = ' + str(self.outer_radius) + '\n' +\
         'height = ' + str(self.height) + '\n' +\
         'permittivity = ' + str(self.permittivity) + '\n' +\
         'conductivity = ' + str(self.conductivity) + '\n' +\
-        'angle = ' + str(self.angle) + '\n';
+        'angle = ' + str(self.angle) + '\n'
         ret += Geometry_object.__str__(self)
-        return ret;
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
-        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]]);
-        self.inner_radius = float(entry.data[3]);
-        self.outer_radius = float(entry.data[4]);
-        self.height = float(entry.data[5]);
-        self.permittivity = float(entry.data[6]);
-        self.conductivity = float(entry.data[7]);
-        if(len(entry.data)>8): self.angle = float(entry.data[8]);
-        return(0);
+        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]])
+        self.inner_radius = float(entry.data[3])
+        self.outer_radius = float(entry.data[4])
+        self.height = float(entry.data[5])
+        self.permittivity = float(entry.data[6])
+        self.conductivity = float(entry.data[7])
+        if(len(entry.data)>8): self.angle = float(entry.data[8])
+        return(0)
 
 class Rotation:
     def __init__(self):
         self.name = 'rotation'
-        self.axis_point = [0,0,0];
-        self.axis_direction = [0,0,0];
-        self.angle_degrees = 0;
+        self.axis_point = [0,0,0]
+        self.axis_direction = [0,0,0]
+        self.angle_degrees = 0
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
-        ret += 'axis_point = ' + str(self.axis_point) + '\n';
-        ret += 'axis_direction = ' + str(self.axis_direction) + '\n';
-        ret += 'angle_degrees = ' + str(self.angle_degrees);
-        return ret;
+        ret  = 'name = '+self.name+'\n'
+        ret += 'axis_point = ' + str(self.axis_point) + '\n'
+        ret += 'axis_direction = ' + str(self.axis_direction) + '\n'
+        ret += 'angle_degrees = ' + str(self.angle_degrees)
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
-        self.axis_point = float_array(entry.data[0:3]);
-        self.axis_direction = float_array(entry.data[3:6]);
-        self.angle_degrees = float(entry.data[6]);
+        self.axis_point = float_array(entry.data[0:3])
+        self.axis_direction = float_array(entry.data[3:6])
+        self.angle_degrees = float(entry.data[6])
     
 
 # excitation objects
@@ -303,7 +303,7 @@ class Excitation:
     self.param3 = param3
     self.param4 = param4
   def __str__(self):
-    ret  = 'name = '+self.name+'\n';
+    ret  = 'name = '+self.name+'\n'
     ret += 'current_source = ' + str(self.current_source) + '\n' +\
     'P1 = ' + str(self.P1) + '\n' +\
     'P2 = ' + str(self.P2) + '\n' +\
@@ -317,27 +317,27 @@ class Excitation:
     'param1 = ' + str(self.param1) + '\n' +\
     'param2 = ' + str(self.param2) + '\n' +\
     'param3 = ' + str(self.param3) + '\n' +\
-    'param4 = ' + str(self.param4);
-    return ret;
+    'param4 = ' + str(self.param4)
+    return ret
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
-    idx = 0;
-    self.current_source = float(entry.data[idx]); idx = idx+1;
-    self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-    self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-    self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-    self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-    self.Type = float(entry.data[idx]); idx = idx+1;
-    self.time_constant = float(entry.data[idx]); idx = idx+1;
-    self.amplitude = float(entry.data[idx]); idx = idx+1;
-    self.time_offset = float(entry.data[idx]); idx = idx+1;
-    self.frequency = float(entry.data[idx]); idx = idx+1;
-    self.param1 = float(entry.data[idx]); idx = idx+1;
-    self.param2 = float(entry.data[idx]); idx = idx+1;
-    self.param3 = float(entry.data[idx]); idx = idx+1;
-    self.param4 = float(entry.data[idx]); idx = idx+1;
-    return(0);
+    idx = 0
+    self.current_source = float(entry.data[idx]); idx = idx+1
+    self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.Type = float(entry.data[idx]); idx = idx+1
+    self.time_constant = float(entry.data[idx]); idx = idx+1
+    self.amplitude = float(entry.data[idx]); idx = idx+1
+    self.time_offset = float(entry.data[idx]); idx = idx+1
+    self.frequency = float(entry.data[idx]); idx = idx+1
+    self.param1 = float(entry.data[idx]); idx = idx+1
+    self.param2 = float(entry.data[idx]); idx = idx+1
+    self.param3 = float(entry.data[idx]); idx = idx+1
+    self.param4 = float(entry.data[idx]); idx = idx+1
+    return(0)
   def write_entry(self, FILE):
     self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
     FILE.write('EXCITATION **name='+self.name+'\n')
@@ -371,18 +371,18 @@ class Excitation:
 class Time_snapshot:
     def __init__(self):
         self.name = 'time snapshot'
-        self.first = 0;
-        self.repetition = 0;
-        self.plane = 0;
-        self.P1 = 0;
-        self.P2 = 0;
-        self.E = 0;
-        self.H = 0;
-        self.J = 0;
-        self.power = 0;
-        self.eps = 0;
+        self.first = 0
+        self.repetition = 0
+        self.plane = 0
+        self.P1 = 0
+        self.P2 = 0
+        self.E = 0
+        self.H = 0
+        self.J = 0
+        self.power = 0
+        self.eps = 0
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
+        ret  = 'name = '+self.name+'\n'
         ret += 'first = ' + str(self.first) + '\n' +\
         'repetition = ' + str(self.repetition) + '\n' +\
         'plane = ' + str(self.plane) + '\n' +\
@@ -392,45 +392,45 @@ class Time_snapshot:
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J) + '\n' +\
         'power = ' + str(self.power) + '\n' +\
-        'eps = ' + str(self.eps);
-        return ret;
+        'eps = ' + str(self.eps)
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
-        idx = 0;
+        idx = 0
         if entry.name:
           self.name = entry.name
-        self.first = float(entry.data[idx]); idx = idx+1;
-        self.repetition = float(entry.data[idx]); idx = idx+1;
-        self.plane = int(float(entry.data[idx])); idx = idx+1;
-        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.power = float(entry.data[idx]); idx = idx+1;
-        if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1;
-        return(0);
+        self.first = float(entry.data[idx]); idx = idx+1
+        self.repetition = float(entry.data[idx]); idx = idx+1
+        self.plane = int(float(entry.data[idx])); idx = idx+1
+        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.power = float(entry.data[idx]); idx = idx+1
+        if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1
+        return(0)
 
 class Frequency_snapshot:
     def __init__(self):
         self.name = 'frequency snapshot'
-        self.first = 0;
-        self.repetition = 0;
-        self.interpolate = 0;
-        self.real_dft = 0;
-        self.mod_only = 0;
-        self.mod_all = 0;
-        self.plane = 0;
-        self.P1 = 0;
-        self.P2 = 0;
-        self.frequency = 0;
-        self.starting_sample = 0;
-        self.E = 0;
-        self.H = 0;
-        self.J = 0;
+        self.first = 0
+        self.repetition = 0
+        self.interpolate = 0
+        self.real_dft = 0
+        self.mod_only = 0
+        self.mod_all = 0
+        self.plane = 0
+        self.P1 = 0
+        self.P2 = 0
+        self.frequency = 0
+        self.starting_sample = 0
+        self.E = 0
+        self.H = 0
+        self.J = 0
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
+        ret  = 'name = '+self.name+'\n'
         ret += 'first = ' + str(self.first) + '\n' +\
         'repetition = ' + str(self.repetition) + '\n' +\
         'interpolate = ' + str(self.interpolate) + '\n' +\
@@ -444,27 +444,27 @@ class Frequency_snapshot:
         'starting_sample = ' + str(self.starting_sample) + '\n' +\
         'E = ' + str(self.E) + '\n' +\
         'H = ' + str(self.H) + '\n' +\
-        'J = ' + str(self.J);
-        return ret;
+        'J = ' + str(self.J)
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
-        idx = 0;
-        self.first = float(entry.data[idx]); idx = idx+1;
-        self.repetition = float(entry.data[idx]); idx = idx+1;
-        self.interpolate = float(entry.data[idx]); idx = idx+1;
-        self.real_dft = float(entry.data[idx]); idx = idx+1;
-        self.mod_only = float(entry.data[idx]); idx = idx+1;
-        self.mod_all = float(entry.data[idx]); idx = idx+1;
-        self.plane = int(float(entry.data[idx])); idx = idx+1;
-        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.frequency = float(entry.data[idx]); idx = idx+1;
-        self.starting_sample = float(entry.data[idx]); idx = idx+1;
-        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3;
-        return(0);
+        idx = 0
+        self.first = float(entry.data[idx]); idx = idx+1
+        self.repetition = float(entry.data[idx]); idx = idx+1
+        self.interpolate = float(entry.data[idx]); idx = idx+1
+        self.real_dft = float(entry.data[idx]); idx = idx+1
+        self.mod_only = float(entry.data[idx]); idx = idx+1
+        self.mod_all = float(entry.data[idx]); idx = idx+1
+        self.plane = int(float(entry.data[idx])); idx = idx+1
+        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.frequency = float(entry.data[idx]); idx = idx+1
+        self.starting_sample = float(entry.data[idx]); idx = idx+1
+        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+        return(0)
 
 class Probe:
     def __init__(self):
@@ -476,14 +476,14 @@ class Probe:
         self.J = [0,0,0]
         self.pow = 0
     def __str__(self):
-        ret  = 'name = '+self.name+'\n';
+        ret  = 'name = '+self.name+'\n'
         ret += 'position = ' + str(self.position) + '\n' +\
         'step = ' + str(self.step) + '\n' +\
         'E = ' + str(self.E) + '\n' +\
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J) + '\n' +\
         'pow = ' + str(self.pow)
-        return ret;
+        return ret
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
@@ -524,89 +524,89 @@ class Structured_entries:
     self.excitation_list = []
     
     # measurement objects
-    self.snapshot_list = [];
-    self.time_snapshot_list = [];
-    self.frequency_snapshot_list = [];
-    self.probe_list = [];
+    self.snapshot_list = []
+    self.time_snapshot_list = []
+    self.frequency_snapshot_list = []
+    self.probe_list = []
 
     # special
     self.fileList = []
     
   def __str__(self):
-      ret = '--->snapshot_list\n';
+      ret = '--->snapshot_list\n'
       for i in range(len(self.snapshot_list)):
-          ret += '-->snapshot '+str(i)+':\n';
-          ret += self.snapshot_list[i].__str__()+'\n';
+          ret += '-->snapshot '+str(i)+':\n'
+          ret += self.snapshot_list[i].__str__()+'\n'
 
-      ret += '--->time_snapshot_list\n';
+      ret += '--->time_snapshot_list\n'
       for i in range(len(self.time_snapshot_list)):
-          ret += '-->time_snapshot '+str(i)+':\n';
-          ret += self.time_snapshot_list[i].__str__()+'\n';
+          ret += '-->time_snapshot '+str(i)+':\n'
+          ret += self.time_snapshot_list[i].__str__()+'\n'
 
-      ret += '--->frequency_snapshot_list\n';
+      ret += '--->frequency_snapshot_list\n'
       for i in range(len(self.frequency_snapshot_list)):
-          ret += '-->frequency_snapshot '+str(i)+':\n';
-          ret += self.frequency_snapshot_list[i].__str__()+'\n';
+          ret += '-->frequency_snapshot '+str(i)+':\n'
+          ret += self.frequency_snapshot_list[i].__str__()+'\n'
 
-      ret += '--->excitation_list\n';
+      ret += '--->excitation_list\n'
       for i in range(len(self.excitation_list)):
-          ret += '-->excitation '+str(i)+':\n';
-          ret += self.excitation_list[i].__str__()+'\n';
+          ret += '-->excitation '+str(i)+':\n'
+          ret += self.excitation_list[i].__str__()+'\n'
       
       ret += '--->xmesh\n'+self.xmesh.__str__()+'\n'+\
       '--->ymesh\n'+self.ymesh.__str__()+'\n'+\
       '--->zmesh\n'+self.zmesh.__str__()+'\n'+\
       '--->flag\n'+self.flag.__str__()+'\n'+\
       '--->boundaries\n'+self.boundaries.__str__()+'\n'+\
-      '--->box\n'+self.box.__str__()+'\n';
+      '--->box\n'+self.box.__str__()+'\n'
       
-      ret += '--->probe_list\n';
+      ret += '--->probe_list\n'
       for i in range(len(self.probe_list)):
-          ret += '-->probe '+str(i)+':\n';
-          ret += self.probe_list[i].__str__()+'\n';
+          ret += '-->probe '+str(i)+':\n'
+          ret += self.probe_list[i].__str__()+'\n'
 
-      ret += '--->sphere_list\n';
+      ret += '--->sphere_list\n'
       for i in range(len(self.sphere_list)):
-          ret += '-->sphere '+str(i)+':\n';
-          ret += self.sphere_list[i].__str__()+'\n';
+          ret += '-->sphere '+str(i)+':\n'
+          ret += self.sphere_list[i].__str__()+'\n'
       
-      ret += '--->block_list\n';
+      ret += '--->block_list\n'
       for i in range(len(self.block_list)):
-          ret += '-->block '+str(i)+':\n';
-          ret += self.block_list[i].__str__()+'\n';
+          ret += '-->block '+str(i)+':\n'
+          ret += self.block_list[i].__str__()+'\n'
 
-      ret += '--->cylinder_list\n';
+      ret += '--->cylinder_list\n'
       for i in range(len(self.cylinder_list)):
-          ret += '-->cylinder '+str(i)+':\n';
-          ret += self.cylinder_list[i].__str__()+'\n';
+          ret += '-->cylinder '+str(i)+':\n'
+          ret += self.cylinder_list[i].__str__()+'\n'
 
-      ret += '--->global_rotation_list\n';
+      ret += '--->global_rotation_list\n'
       for i in range(len(self.global_rotation_list)):
-          # ret += '\n';
-          ret += '-->rotation '+str(i)+':\n';
-          ret += self.global_rotation_list[i].__str__()+'\n';
+          # ret += '\n'
+          ret += '-->rotation '+str(i)+':\n'
+          ret += self.global_rotation_list[i].__str__()+'\n'
 
-      ret += '--->geometry_object_list\n';
+      ret += '--->geometry_object_list\n'
       for i in range(len(self.geometry_object_list)):
-          ret += '-->geometry_object '+str(i)+':\n';
-          ret += self.geometry_object_list[i].__str__()+'\n';
+          ret += '-->geometry_object '+str(i)+':\n'
+          ret += self.geometry_object_list[i].__str__()+'\n'
           
-      return ret;
+      return ret
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
-      print 'Processing ', filename;
-      box_read = False;
-      xmesh_read = False;
+      print 'Processing ', filename
+      box_read = False
+      xmesh_read = False
       
       # open file
-      input = open(filename);
+      input = open(filename)
       # read the whole file as one string
-      fulltext = input.read();
+      fulltext = input.read()
       # close file
-      input.close();
+      input.close()
   
-      # print fulltext;
+      # print fulltext
   
       # remove comments
       # TODO: Add more generic system for functional comments (to add layer, scene and group for example)
@@ -614,15 +614,15 @@ class Structured_entries:
       cleantext = pattern_stripcomments.sub("\n", fulltext)
       #print(cleantext)
   
-      # pattern_objects = re.compile("^(?<Type>\w+).*?\{(?<data>[^\{\}]*?)\}");
+      # pattern_objects = re.compile("^(?<Type>\w+).*?\{(?<data>[^\{\}]*?)\}")
       #pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<name>(?<=\*\*name=)[^{}]*)?{(?P<data>[^{}]*)}",re.DOTALL)
       pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
       objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
     
-      entries = [];
+      entries = []
       # process objects
       for i in range(len(objects)):
-          Type = objects[i]['Type'];
+          Type = objects[i]['Type']
           name = ''
           if 'nameblob' in objects[i].keys():
             #print objects[i]['nameblob']
@@ -638,94 +638,94 @@ class Structured_entries:
           #else:
             #print 'NO NAME'
             #name = ''
-          data = objects[i]['data'];
+          data = objects[i]['data']
           
           # convert Type to upper case and strip it
-          Type = Type.upper().strip();
+          Type = Type.upper().strip()
           # split data by spaces and new lines
-          data = re.split('\s+',data);
+          data = re.split('\s+',data)
           # remove empty lines from data
-          data = filter(None, data);
+          data = filter(None, data)
           
-          entry = Entry();
-          entry.Type = Type;
-          entry.name = name;
-          entry.data = data;
-          entries.append(entry);
+          entry = Entry()
+          entry.Type = Type
+          entry.name = name
+          entry.data = data
+          entries.append(entry)
           
           # mandatory objects
           if entry.Type == 'XMESH':
-              self.xmesh = float_array(entry.data);
-              xmesh_read = True;
+              self.xmesh = float_array(entry.data)
+              xmesh_read = True
           elif entry.Type == 'YMESH':
-              self.ymesh = float_array(entry.data);
+              self.ymesh = float_array(entry.data)
           elif entry.Type == 'ZMESH':
-              self.zmesh = float_array(entry.data);
+              self.zmesh = float_array(entry.data)
           elif entry.Type == 'FLAG':
-              self.flag.read_entry(entry);
+              self.flag.read_entry(entry)
           elif entry.Type == 'BOUNDARY':
-              self.boundaries.read_entry(entry);
+              self.boundaries.read_entry(entry)
           elif entry.Type == 'BOX':
-              self.box.read_entry(entry);
-              box_read = True;
+              self.box.read_entry(entry)
+              box_read = True
                   
           # geometry objects
           elif entry.Type == 'SPHERE':
-              sphere = Sphere();
-              sphere.read_entry(entry);
-              self.sphere_list.append(sphere);
-              self.geometry_object_list.append(sphere);
+              sphere = Sphere()
+              sphere.read_entry(entry)
+              self.sphere_list.append(sphere)
+              self.geometry_object_list.append(sphere)
           elif entry.Type == 'BLOCK':
-              block = Block();
-              block.read_entry(entry);
-              self.block_list.append(block);
-              self.geometry_object_list.append(block);
+              block = Block()
+              block.read_entry(entry)
+              self.block_list.append(block)
+              self.geometry_object_list.append(block)
           elif entry.Type == 'CYLINDER':
-              cylinder = Cylinder();
-              cylinder.read_entry(entry);
-              self.cylinder_list.append(cylinder);
-              self.geometry_object_list.append(cylinder);
+              cylinder = Cylinder()
+              cylinder.read_entry(entry)
+              self.cylinder_list.append(cylinder)
+              self.geometry_object_list.append(cylinder)
           elif entry.Type == 'ROTATION':
-              rotation = Rotation();
-              rotation.read_entry(entry);
-              self.global_rotation_list.append(rotation);
-              self.geometry_object_list[-1].rotation_list.append(rotation);
+              rotation = Rotation()
+              rotation.read_entry(entry)
+              self.global_rotation_list.append(rotation)
+              self.geometry_object_list[-1].rotation_list.append(rotation)
           
           # excitation objects
           elif entry.Type == 'EXCITATION':
-              current_excitation = Excitation();
-              current_excitation.read_entry(entry);
-              self.excitation_list.append(current_excitation);
+              current_excitation = Excitation()
+              current_excitation.read_entry(entry)
+              self.excitation_list.append(current_excitation)
           
           # measurement objects
           elif entry.Type == 'FREQUENCY_SNAPSHOT':
-              frequency_snapshot = Frequency_snapshot();
-              frequency_snapshot.read_entry(entry);
-              self.frequency_snapshot_list.append(frequency_snapshot);
-              self.snapshot_list.append(frequency_snapshot);
+              frequency_snapshot = Frequency_snapshot()
+              frequency_snapshot.read_entry(entry)
+              self.frequency_snapshot_list.append(frequency_snapshot)
+              self.snapshot_list.append(frequency_snapshot)
           elif entry.Type == 'SNAPSHOT':
-              time_snapshot = Time_snapshot();
-              time_snapshot.read_entry(entry);
-              self.time_snapshot_list.append(time_snapshot);
-              self.snapshot_list.append(time_snapshot);
+              time_snapshot = Time_snapshot()
+              time_snapshot.read_entry(entry)
+              self.time_snapshot_list.append(time_snapshot)
+              self.snapshot_list.append(time_snapshot)
           elif entry.Type == 'PROBE':
-              probe = Probe();
-              probe.read_entry(entry);
-              self.probe_list.append(probe);
+              probe = Probe()
+              probe.read_entry(entry)
+              self.probe_list.append(probe)
   
           else:
-              print 'Unknown Type: ', entry.Type;
+              print 'Unknown Type: ', entry.Type
 
-      return [ xmesh_read, box_read ];
+      return [ xmesh_read, box_read ]
 
   def read_inputs(self,filename):
       ''' read .in file '''
-      print '->Processing .in file : ', filename;
+      print '->Processing .in file : ', filename
       
-      box_read = False;
-      xmesh_read = False;
+      box_read = False
+      xmesh_read = False
       
-      f = open(filename, 'r');
+      f = open(filename, 'r')
       for line in f:
           print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
           print 'line.strip()=', line.strip() # remove any \n or similar
@@ -742,11 +742,11 @@ class Structured_entries:
               xmesh_read = True
           if box_read_loc:
               box_read = True
-      f.close();
+      f.close()
       if (not xmesh_read):
-          print 'WARNING: mesh not found';
+          print 'WARNING: mesh not found'
       if (not box_read):
-          print 'WARNING: box not found';
+          print 'WARNING: box not found'
   
   def writeGeoFile(self,fileName):
     ''' Generate .geo file '''
@@ -849,30 +849,30 @@ class Structured_entries:
 
 def readBristolFDTD(filename):
     ''' reads .in (=>.inp+.geo), .geo or .inp '''
-    print '->Processing generic file : ', filename;
+    print '->Processing generic file : ', filename
 
-    structured_entries = Structured_entries();
+    structured_entries = Structured_entries()
     
-    extension = getExtension(filename);
+    extension = getExtension(filename)
     if extension == 'in':
-        print '.in file detected';
-        structured_entries.read_inputs(filename);
+        print '.in file detected'
+        structured_entries.read_inputs(filename)
     elif extension == 'inp':
-        print '.inp file detected';
-        structured_entries.read_input_file(filename);
+        print '.inp file detected'
+        structured_entries.read_input_file(filename)
     elif extension == 'geo':
-        print '.geo file detected';
-        structured_entries.read_input_file(filename);
+        print '.geo file detected'
+        structured_entries.read_input_file(filename)
     elif extension == 'prn':
-        print '.prn file detected: Not supported yet';
+        print '.prn file detected: Not supported yet'
     else:
-        print 'Unknown file format:', extension;
+        print 'Unknown file format:', extension
         sys.exit(-1)
     
-    #~ print '================';
-    #~ print structured_entries;
-    #~ print '================';
-    return structured_entries;
+    #~ print '================'
+    #~ print structured_entries
+    #~ print '================'
+    return structured_entries
     
 def TestWriting():
     # more code, unchanged
@@ -918,10 +918,10 @@ def main(argv=None):
       raise Usage(msg)
     # main function
     # for testing
-    print '----->Importing bristol FDTD geometry...';
-    structured_entries = readBristolFDTD(sys.argv[1]);
+    print '----->Importing bristol FDTD geometry...'
+    structured_entries = readBristolFDTD(sys.argv[1])
     print structured_entries
-    print '...done';
+    print '...done'
     
   except Usage, err:
     print >>sys.stderr, err.msg
