@@ -157,7 +157,7 @@ def GEOshellscript_advanced(filename, BASENAME, probe_col, EXE = 'fdtd', WORKDIR
     FILE.write("$EXE %s.in > %s.out\n" %  (BASENAME, BASENAME))
     FILE.write("fix_filenames.py -v .\n")
     FILE.write("matlab_batcher.sh getResonanceFrequencies2 \"'$WORKDIR/p005id.prn',%d,'$WORKDIR/freq_list.txt'\"\n" % probe_col)
-    FILE.write("rerun.py $WORKDIR $WORKDIR/resonance $WORKDIR/freq_list.txt\n")
+    FILE.write("resonance_run.py $WORKDIR $WORKDIR/resonance $WORKDIR/freq_list.txt\n")
     FILE.write("cd resonance/ && $EXE %s.in >> %s.out\n" %  (BASENAME, BASENAME))
     FILE.write("fix_filenames.py -v .\n")
     FILE.write("plotAll.sh .\n")
