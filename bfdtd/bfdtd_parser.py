@@ -103,21 +103,34 @@ class Boundaries:
         return(0);
 
 class Box:
-    def __init__(self):
-        self.name = 'box'
-        self.lower = [0,0,0];
-        self.upper = [0,0,0];
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n';
-        ret += 'lower = '+str(self.lower)+'\n';
-        ret += 'upper = '+str(self.upper);
-        return ret;
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        self.lower = float_array(entry.data[0:3]);
-        self.upper = float_array(entry.data[3:6]);
-
+  def __init__(self):
+      self.name = 'box'
+      self.layer = 'box'
+      self.group = 'box'
+      self.lower = [0,0,0];
+      self.upper = [0,0,0];
+  def __str__(self):
+      ret  = 'name = '+self.name+'\n';
+      ret += 'lower = '+str(self.lower)+'\n';
+      ret += 'upper = '+str(self.upper);
+      return ret;
+  def read_entry(self,entry):
+      if entry.name:
+        self.name = entry.name
+      self.lower = float_array(entry.data[0:3]);
+      self.upper = float_array(entry.data[3:6]);
+  def write_entry(self, FILE):
+    self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
+    FILE.write('BOX  **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%E **XL\n" % self.lower[0])
+    FILE.write("%E **YL\n" % self.lower[1])
+    FILE.write("%E **ZL\n" % self.lower[2])
+    FILE.write("%E **XU\n" % self.upper[0])
+    FILE.write("%E **YU\n" % self.upper[1])
+    FILE.write("%E **ZU\n" % self.upper[2])
+    FILE.write('}\n')
+    FILE.write('\n')
 
 # geometry objects
 class Geometry_object:
@@ -161,28 +174,46 @@ class Sphere(Geometry_object):
         return(0);
 
 class Block(Geometry_object):
-    def __init__(self):
-        Geometry_object.__init__(self)
-        self.name = 'block'
-        self.lower = [0,0,0];
-        self.upper = [0,0,0];
-        self.permittivity = 0;
-        self.conductivity = 0;
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n';
-        ret += 'lower = '+str(self.lower)+'\n';
-        ret += 'upper = '+str(self.upper)+'\n';
-        ret += 'permittivity = '+str(self.permittivity)+'\n';
-        ret += 'conductivity = '+str(self.conductivity)+'\n';
-        ret += Geometry_object.__str__(self)
-        return ret;
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        self.lower = float_array(entry.data[0:3]);
-        self.upper = float_array(entry.data[3:6]);
-        self.permittivity = float(entry.data[6]);
-        self.conductivity = float(entry.data[7]);
+  def __init__(self):
+      Geometry_object.__init__(self)
+
+      self.name = 'block'
+      self.layer = 'block'
+      self.group = 'block'
+
+      self.lower = [0,0,0];
+      self.upper = [0,0,0];
+      self.permittivity = 0;
+      self.conductivity = 0;
+  def __str__(self):
+      ret  = 'name = '+self.name+'\n';
+      ret += 'lower = '+str(self.lower)+'\n';
+      ret += 'upper = '+str(self.upper)+'\n';
+      ret += 'permittivity = '+str(self.permittivity)+'\n';
+      ret += 'conductivity = '+str(self.conductivity)+'\n';
+      ret += Geometry_object.__str__(self)
+      return ret;
+  def read_entry(self,entry):
+      if entry.name:
+        self.name = entry.name
+      self.lower = float_array(entry.data[0:3]);
+      self.upper = float_array(entry.data[3:6]);
+      self.permittivity = float(entry.data[6]);
+      self.conductivity = float(entry.data[7]);
+  def write_entry(self, FILE):
+    self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
+    FILE.write('BLOCK **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%E **XL\n" % self.lower[0])
+    FILE.write("%E **YL\n" % self.lower[1])
+    FILE.write("%E **ZL\n" % self.lower[2])
+    FILE.write("%E **XU\n" % self.upper[0])
+    FILE.write("%E **YU\n" % self.upper[1])
+    FILE.write("%E **ZU\n" % self.upper[2])
+    FILE.write("%E **relative Permittivity\n" % self.permittivity)
+    FILE.write("%E **Conductivity\n" % self.conductivity)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 class Cylinder(Geometry_object):
     def __init__(self):
@@ -438,12 +469,12 @@ class Frequency_snapshot:
 class Probe:
     def __init__(self):
         self.name = 'probe'
-        self.position = [0,0,0];
-        self.step = 0;
-        self.E = [0,0,0];
-        self.H = [0,0,0];
-        self.J = [0,0,0];
-        self.pow = 0;
+        self.position = [0,0,0]
+        self.step = 0
+        self.E = [0,0,0]
+        self.H = [0,0,0]
+        self.J = [0,0,0]
+        self.pow = 0
     def __str__(self):
         ret  = 'name = '+self.name+'\n';
         ret += 'position = ' + str(self.position) + '\n' +\
@@ -451,45 +482,46 @@ class Probe:
         'E = ' + str(self.E) + '\n' +\
         'H = ' + str(self.H) + '\n' +\
         'J = ' + str(self.J) + '\n' +\
-        'pow = ' + str(self.pow);
+        'pow = ' + str(self.pow)
         return ret;
     def read_entry(self,entry):
         if entry.name:
           self.name = entry.name
-        self.position = float_array([entry.data[0],entry.data[1],entry.data[2]]);
-        self.step = float(entry.data[3]);
-        self.E = float_array([entry.data[4],entry.data[5],entry.data[6]]);
-        self.H = float_array([entry.data[7],entry.data[8],entry.data[9]]);
-        self.J = float_array([entry.data[10],entry.data[11],entry.data[12]]);
-        self.pow = float(entry.data[13]);
-    
-
+        self.position = float_array([entry.data[0],entry.data[1],entry.data[2]])
+        self.step = float(entry.data[3])
+        self.E = float_array([entry.data[4],entry.data[5],entry.data[6]])
+        self.H = float_array([entry.data[7],entry.data[8],entry.data[9]])
+        self.J = float_array([entry.data[10],entry.data[11],entry.data[12]])
+        self.pow = float(entry.data[13])
 
 class Entry:
   def __init__(self):
-    self.name = 'entry';
-    self.Type = '';
-    self.data = [];
+    self.name = 'default_entry'
+    self.layer = 'default_layer'
+    self.scene = 'default_scene'
+    self.group = 'default_group'
+    self.Type = ''
+    self.data = []
 
 class Structured_entries:
   def __init__(self):
     # mandatory objects
-    self.xmesh = [];
-    self.ymesh = [];
-    self.zmesh = [];
-    self.flag = Flag();
-    self.boundaries = Boundaries();
-    self.box = Box();
+    self.xmesh = []
+    self.ymesh = []
+    self.zmesh = []
+    self.flag = Flag()
+    self.boundaries = Boundaries()
+    self.box = Box()
             
     # geometry objects
-    self.geometry_object_list = [];
-    self.sphere_list = [];
-    self.block_list = [];
-    self.cylinder_list = [];
-    self.global_rotation_list = [];
+    self.geometry_object_list = []
+    self.sphere_list = []
+    self.block_list = []
+    self.cylinder_list = []
+    self.global_rotation_list = []
     
     # excitation objects
-    self.excitation_list = [];
+    self.excitation_list = []
     
     # measurement objects
     self.snapshot_list = [];
@@ -577,6 +609,7 @@ class Structured_entries:
       # print fulltext;
   
       # remove comments
+      # TODO: Add more generic system for functional comments (to add layer, scene and group for example)
       pattern_stripcomments = re.compile("\*\*(?!name=).*\n")
       cleantext = pattern_stripcomments.sub("\n", fulltext)
       #print(cleantext)
@@ -717,8 +750,33 @@ class Structured_entries:
   
   def writeGeoFile(self,fileName):
     ''' Generate .geo file '''
-    print 'writeGeoFile: TODO'
+    # open file
+    with open(fileName, 'w') as out:
+  
+      # write header
+      out.write('**GEOMETRY FILE\n')
+      out.write('\n')
+
+      # write geometry objects
+      print 'len(self.geometry_object_list) = ', len(self.geometry_object_list)
+      for obj in self.geometry_object_list:
+        print obj.name
+        print obj.__class__.__name__
+        obj.write_entry(out)
+
+      #write box
+      self.box.write_entry(out)
+      
+      # write footer
+      out.write('end\n'); #end the file
+    
+      # close file
+      out.close()
+
     return
+
+        
+
     
   def writeInpFile(self,fileName):
     ''' Generate .inp file '''

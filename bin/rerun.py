@@ -127,7 +127,7 @@ def copyBFDTD(src,dst):
 
 def main(argv=None):
   if argv is None:
-      argv = sys.argv
+    argv = sys.argv
   try:
     try:
       opts, args = getopt.getopt(argv[1:], "h", ["help"])

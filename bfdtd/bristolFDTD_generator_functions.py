@@ -118,23 +118,6 @@ def GEOboundary(FILE, COMMENT, Xpos_bc, Xpos_param,\
 
   FILE.write('\n')
 
-def GEObox(FILE, COMMENT, lower, upper):
-  lower, upper = fixLowerUpper(lower, upper)
-  
-  FILE.write('BOX  **name='+COMMENT+'\n')
-
-  FILE.write('{\n')
-
-  FILE.write("%E **XL\n" % lower[0])
-  FILE.write("%E **YL\n" % lower[1])
-  FILE.write("%E **ZL\n" % lower[2])
-  FILE.write("%E **XU\n" % upper[0])
-  FILE.write("%E **YU\n" % upper[1])
-  FILE.write("%E **ZU\n" % upper[2])
-  FILE.write('}\n')
-
-  FILE.write('\n')
-
 # geometry objects
 def GEOsphere(FILE, COMMENT, center, outer_radius, inner_radius, permittivity, conductivity):
   ''' sphere
@@ -154,25 +137,6 @@ def GEOsphere(FILE, COMMENT, center, outer_radius, inner_radius, permittivity, c
   FILE.write("%E **inner_radius\n" % inner_radius)
   FILE.write("%E **permittivity\n" % permittivity)
   FILE.write("%E **conductivity\n" % conductivity)
-  FILE.write('}\n')
-
-  FILE.write('\n')
-
-def GEOblock(FILE, COMMENT, lower, upper, permittivity, conductivity):
-  lower, upper = fixLowerUpper(lower, upper)
-
-  FILE.write('BLOCK **name='+COMMENT+'\n')
-
-  FILE.write('{\n')
-
-  FILE.write("%E **XL\n" % lower[0])
-  FILE.write("%E **YL\n" % lower[1])
-  FILE.write("%E **ZL\n" % lower[2])
-  FILE.write("%E **XU\n" % upper[0])
-  FILE.write("%E **YU\n" % upper[1])
-  FILE.write("%E **ZU\n" % upper[2])
-  FILE.write("%E **relative Permittivity\n" % permittivity)
-  FILE.write("%E **Conductivity\n" % conductivity)
   FILE.write('}\n')
 
   FILE.write('\n')
