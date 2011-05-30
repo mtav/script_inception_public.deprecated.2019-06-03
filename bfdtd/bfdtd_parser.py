@@ -191,60 +191,81 @@ class Geometry_object:
         return(ret)
 
 class Sphere(Geometry_object):
-    def __init__(self):
-        Geometry_object.__init__(self)
-        self.name = 'sphere'
-        self.center = [0,0,0]
-        self.outer_radius = 0
-        self.inner_radius = 0
-        self.permittivity = 0
-        self.conductivity = 0
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'center = ' + str(self.center) + '\n' +\
-        'outer_radius = ' + str(self.outer_radius) + '\n' +\
-        'inner_radius = ' + str(self.inner_radius) + '\n' +\
-        'permittivity = ' + str(self.permittivity) + '\n' +\
-        'conductivity = ' + str(self.conductivity)+'\n'
-        ret += Geometry_object.__str__(self)
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]])
-        self.outer_radius = float(entry.data[3])
-        self.inner_radius = float(entry.data[4])
-        self.permittivity = float(entry.data[5])
-        self.conductivity = float(entry.data[6])
-        return(0)
+  def __init__(self):
+    Geometry_object.__init__(self)
+    self.name = 'sphere'
+    self.layer = 'sphere'
+    self.group = 'sphere'
+    
+    self.centre = [0,0,0]
+    self.outer_radius = 0
+    self.inner_radius = 0
+    self.permittivity = 0
+    self.conductivity = 0
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'centre = ' + str(self.centre) + '\n' +\
+    'outer_radius = ' + str(self.outer_radius) + '\n' +\
+    'inner_radius = ' + str(self.inner_radius) + '\n' +\
+    'permittivity = ' + str(self.permittivity) + '\n' +\
+    'conductivity = ' + str(self.conductivity)+'\n'
+    ret += Geometry_object.__str__(self)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    self.centre = float_array([entry.data[0],entry.data[1],entry.data[2]])
+    self.outer_radius = float(entry.data[3])
+    self.inner_radius = float(entry.data[4])
+    self.permittivity = float(entry.data[5])
+    self.conductivity = float(entry.data[6])
+    return(0)
+  def write_entry(self, FILE):
+    ''' sphere
+    {
+     1-5 Coordinates of the sphere ( xc yc zc r1 r2 )
+     6 permittivity
+     7 conductivity
+    } '''
+    FILE.write('SPHERE  **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%E **XC\n" % self.centre[0])
+    FILE.write("%E **YC\n" % self.centre[1])
+    FILE.write("%E **ZC\n" % self.centre[2])
+    FILE.write("%E **outer_radius\n" % self.outer_radius)
+    FILE.write("%E **inner_radius\n" % self.inner_radius)
+    FILE.write("%E **permittivity\n" % self.permittivity)
+    FILE.write("%E **conductivity\n" % self.conductivity)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 class Block(Geometry_object):
   def __init__(self):
-      Geometry_object.__init__(self)
+    Geometry_object.__init__(self)
 
-      self.name = 'block'
-      self.layer = 'block'
-      self.group = 'block'
+    self.name = 'block'
+    self.layer = 'block'
+    self.group = 'block'
 
-      self.lower = [0,0,0]
-      self.upper = [0,0,0]
-      self.permittivity = 0
-      self.conductivity = 0
+    self.lower = [0,0,0]
+    self.upper = [0,0,0]
+    self.permittivity = 0
+    self.conductivity = 0
   def __str__(self):
-      ret  = 'name = '+self.name+'\n'
-      ret += 'lower = '+str(self.lower)+'\n'
-      ret += 'upper = '+str(self.upper)+'\n'
-      ret += 'permittivity = '+str(self.permittivity)+'\n'
-      ret += 'conductivity = '+str(self.conductivity)+'\n'
-      ret += Geometry_object.__str__(self)
-      return ret
+    ret  = 'name = '+self.name+'\n'
+    ret += 'lower = '+str(self.lower)+'\n'
+    ret += 'upper = '+str(self.upper)+'\n'
+    ret += 'permittivity = '+str(self.permittivity)+'\n'
+    ret += 'conductivity = '+str(self.conductivity)+'\n'
+    ret += Geometry_object.__str__(self)
+    return ret
   def read_entry(self,entry):
-      if entry.name:
-        self.name = entry.name
-      self.lower = float_array(entry.data[0:3])
-      self.upper = float_array(entry.data[3:6])
-      self.permittivity = float(entry.data[6])
-      self.conductivity = float(entry.data[7])
+    if entry.name:
+      self.name = entry.name
+    self.lower = float_array(entry.data[0:3])
+    self.upper = float_array(entry.data[3:6])
+    self.permittivity = float(entry.data[6])
+    self.conductivity = float(entry.data[7])
   def write_entry(self, FILE):
     self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('BLOCK **name='+self.name+'\n')
@@ -261,58 +282,100 @@ class Block(Geometry_object):
     FILE.write('\n')
 
 class Cylinder(Geometry_object):
-    def __init__(self):
-        Geometry_object.__init__(self)
-        self.name = 'cylinder'
-        self.center = [0,0,0]
-        self.inner_radius = 0
-        self.outer_radius = 0
-        self.height = 0
-        self.permittivity = 0
-        self.conductivity = 0
-        self.angle = 0
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'center = ' + str(self.center) + '\n' +\
-        'inner_radius = ' + str(self.inner_radius) + '\n' +\
-        'outer_radius = ' + str(self.outer_radius) + '\n' +\
-        'height = ' + str(self.height) + '\n' +\
-        'permittivity = ' + str(self.permittivity) + '\n' +\
-        'conductivity = ' + str(self.conductivity) + '\n' +\
-        'angle = ' + str(self.angle) + '\n'
-        ret += Geometry_object.__str__(self)
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        self.center = float_array([entry.data[0],entry.data[1],entry.data[2]])
-        self.inner_radius = float(entry.data[3])
-        self.outer_radius = float(entry.data[4])
-        self.height = float(entry.data[5])
-        self.permittivity = float(entry.data[6])
-        self.conductivity = float(entry.data[7])
-        if(len(entry.data)>8): self.angle = float(entry.data[8])
-        return(0)
+  def __init__(self):
+    Geometry_object.__init__(self)
+    self.name = 'cylinder'
+    self.layer = 'cylinder'
+    self.group = 'cylinder'
+    self.centre = [0,0,0]
+    self.inner_radius = 0
+    self.outer_radius = 0
+    self.height = 0
+    self.permittivity = 0
+    self.conductivity = 0
+    self.angle_deg = 0
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'centre = ' + str(self.centre) + '\n' +\
+    'inner_radius = ' + str(self.inner_radius) + '\n' +\
+    'outer_radius = ' + str(self.outer_radius) + '\n' +\
+    'height = ' + str(self.height) + '\n' +\
+    'permittivity = ' + str(self.permittivity) + '\n' +\
+    'conductivity = ' + str(self.conductivity) + '\n' +\
+    'angle_deg = ' + str(self.angle_deg) + '\n'
+    ret += Geometry_object.__str__(self)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    self.centre = float_array([entry.data[0],entry.data[1],entry.data[2]])
+    self.inner_radius = float(entry.data[3])
+    self.outer_radius = float(entry.data[4])
+    self.height = float(entry.data[5])
+    self.permittivity = float(entry.data[6])
+    self.conductivity = float(entry.data[7])
+    if(len(entry.data)>8): self.angle_deg = float(entry.data[8])
+    return(0)
+  def write_entry(self, FILE):
+    ''' # cylinder
+    # {
+    # 1-7 Coordinates of the material volume ( xc yc zc r1 r2 h )
+    # 7 permittivity
+    # 8 conductivity
+    # 9 angle_deg of inclination
+    # }
+    # xc, yc and zc are the coordinates of the centre of the cylinder. r1 and r2 are the inner and outer
+    # radius respectively, h is the cylinder height, is the angle_deg of inclination. The cylinder is aligned
+    # with the y direction if =0 and with the x direction if =90
+    #
+    # i.e. angle_deg = Angle of rotation in degrees around -Z=(0,0,-1) '''
+  
+    FILE.write('CYLINDER **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%E **X CENTRE\n" % self.centre[0])
+    FILE.write("%E **Y CENTRE\n" % self.centre[1])
+    FILE.write("%E **Z CENTRE\n" % self.centre[2])
+    FILE.write("%E **inner_radius\n" % self.inner_radius)
+    FILE.write("%E **outer_radius\n" % self.outer_radius)
+    FILE.write("%E **HEIGHT\n" % self.height)
+    FILE.write("%E **Permittivity\n" % self.permittivity)
+    FILE.write("%E **Conductivity\n" % self.conductivity)
+    FILE.write("%E **Angle of rotation in degrees around -Z=(0,0,-1)\n" % self.angle_deg)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 class Rotation:
-    def __init__(self):
-        self.name = 'rotation'
-        self.axis_point = [0,0,0]
-        self.axis_direction = [0,0,0]
-        self.angle_degrees = 0
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'axis_point = ' + str(self.axis_point) + '\n'
-        ret += 'axis_direction = ' + str(self.axis_direction) + '\n'
-        ret += 'angle_degrees = ' + str(self.angle_degrees)
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        self.axis_point = float_array(entry.data[0:3])
-        self.axis_direction = float_array(entry.data[3:6])
-        self.angle_degrees = float(entry.data[6])
-    
+  def __init__(self):
+    self.name = 'rotation'
+    self.axis_point = [0,0,0]
+    self.axis_direction = [0,0,0]
+    self.angle_degrees = 0
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'axis_point = ' + str(self.axis_point) + '\n'
+    ret += 'axis_direction = ' + str(self.axis_direction) + '\n'
+    ret += 'angle_degrees = ' + str(self.angle_degrees)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    self.axis_point = float_array(entry.data[0:3])
+    self.axis_direction = float_array(entry.data[3:6])
+    self.angle_degrees = float(entry.data[6])
+  def write_entry(self, FILE):
+    # rotation structure. Actually affects previous geometry object in Prof. Railton's modified BrisFDTD. Not fully implemented yet.
+    # Should be integrated into existing structures using a directional vector anyway, like in MEEP. BrisFDTD hacking required... :)
+    FILE.write('ROTATION **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%E **X axis_point\n" % self.axis_point[0])
+    FILE.write("%E **Y axis_point\n" % self.axis_point[1])
+    FILE.write("%E **Z axis_point\n" % self.axis_point[2])
+    FILE.write("%E **X axis_direction\n" % self.axis_direction[0])
+    FILE.write("%E **Y axis_direction\n" % self.axis_direction[1])
+    FILE.write("%E **Z axis_direction\n" % self.axis_direction[2])
+    FILE.write("%E **angle_degrees\n" % self.angle_degrees)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 # excitation objects
 class Excitation:
@@ -415,7 +478,9 @@ class Excitation:
 # measurement objects
 class Time_snapshot:
   def __init__(self):
-    self.name = 'time snapshot'
+    self.name = 'time_snapshot'
+    self.layer = 'time_snapshot'
+    self.group = 'time_snapshot'
     self.first = 0
     self.repetition = 0
     self.plane = 0
@@ -533,62 +598,111 @@ class Time_snapshot:
       snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
 
 class Frequency_snapshot:
-    def __init__(self):
-        self.name = 'frequency snapshot'
-        self.first = 0
-        self.repetition = 0
-        self.interpolate = 0
-        self.real_dft = 0
-        self.mod_only = 0
-        self.mod_all = 0
-        self.plane = 0
-        self.P1 = 0
-        self.P2 = 0
-        self.frequency = 0
-        self.starting_sample = 0
-        self.E = 0
-        self.H = 0
-        self.J = 0
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'first = ' + str(self.first) + '\n' +\
-        'repetition = ' + str(self.repetition) + '\n' +\
-        'interpolate = ' + str(self.interpolate) + '\n' +\
-        'real_dft = ' + str(self.real_dft) + '\n' +\
-        'mod_only = ' + str(self.mod_only) + '\n' +\
-        'mod_all = ' + str(self.mod_all) + '\n' +\
-        'plane = ' + str(self.plane) + '\n' +\
-        'P1 = ' + str(self.P1) + '\n' +\
-        'P2 = ' + str(self.P2) + '\n' +\
-        'frequency = ' + str(self.frequency) + '\n' +\
-        'starting_sample = ' + str(self.starting_sample) + '\n' +\
-        'E = ' + str(self.E) + '\n' +\
-        'H = ' + str(self.H) + '\n' +\
-        'J = ' + str(self.J)
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        idx = 0
-        self.first = float(entry.data[idx]); idx = idx+1
-        self.repetition = float(entry.data[idx]); idx = idx+1
-        self.interpolate = float(entry.data[idx]); idx = idx+1
-        self.real_dft = float(entry.data[idx]); idx = idx+1
-        self.mod_only = float(entry.data[idx]); idx = idx+1
-        self.mod_all = float(entry.data[idx]); idx = idx+1
-        self.plane = int(float(entry.data[idx])); idx = idx+1
-        self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.frequency = float(entry.data[idx]); idx = idx+1
-        self.starting_sample = float(entry.data[idx]); idx = idx+1
-        self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
-        return(0)
+  def __init__(self):
+    self.name = 'frequency_snapshot'
+    self.layer = 'frequency_snapshot'
+    self.group = 'frequency_snapshot'
+    self.first = 0
+    self.repetition = 0
+    self.interpolate = 0
+    self.real_dft = 0
+    self.mod_only = 0
+    self.mod_all = 0
+    self.plane = 0
+    self.P1 = 0
+    self.P2 = 0
+    self.frequency_vector = [0]
+    self.starting_sample = 0
+    self.E = 0
+    self.H = 0
+    self.J = 0
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'first = ' + str(self.first) + '\n' +\
+    'repetition = ' + str(self.repetition) + '\n' +\
+    'interpolate = ' + str(self.interpolate) + '\n' +\
+    'real_dft = ' + str(self.real_dft) + '\n' +\
+    'mod_only = ' + str(self.mod_only) + '\n' +\
+    'mod_all = ' + str(self.mod_all) + '\n' +\
+    'plane = ' + str(self.plane) + '\n' +\
+    'P1 = ' + str(self.P1) + '\n' +\
+    'P2 = ' + str(self.P2) + '\n' +\
+    'frequency = ' + str(self.frequency_vector) + '\n' +\
+    'starting_sample = ' + str(self.starting_sample) + '\n' +\
+    'E = ' + str(self.E) + '\n' +\
+    'H = ' + str(self.H) + '\n' +\
+    'J = ' + str(self.J)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    idx = 0
+    self.first = float(entry.data[idx]); idx = idx+1
+    self.repetition = float(entry.data[idx]); idx = idx+1
+    self.interpolate = float(entry.data[idx]); idx = idx+1
+    self.real_dft = float(entry.data[idx]); idx = idx+1
+    self.mod_only = float(entry.data[idx]); idx = idx+1
+    self.mod_all = float(entry.data[idx]); idx = idx+1
+    self.plane = int(float(entry.data[idx])); idx = idx+1
+    self.P1 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.P2 = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.frequency_vector = [float(entry.data[idx])]; idx = idx+1
+    self.starting_sample = float(entry.data[idx]); idx = idx+1
+    self.E = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.H = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    self.J = float_array([entry.data[idx], entry.data[idx+1], entry.data[idx+2]]); idx = idx+3
+    return(0)
+  def write_entry(self, FILE):
+    self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
+  
+    def snapshot(plane,P1,P2, frequency):
+      plane_ID, plane_name = planeNumberName(plane)
+      FILE.write('FREQUENCY_SNAPSHOT **name='+self.name+'\n')
+      FILE.write('{\n')
+      FILE.write("%d **FIRST\n" % self.first)
+      FILE.write("%d **REPETITION\n" % self.repetition)
+      FILE.write("%d **interpolate?\n" % self.interpolate)
+      FILE.write("%d **REAL DFT\n" % self.real_dft)
+      FILE.write("%d **MOD ONLY\n" % self.mod_only)
+      FILE.write("%d **MOD ALL\n" % self.mod_all)
+      FILE.write("%d **PLANE %s\n" % (plane_ID, plane_name))
+      FILE.write("%E **X1\n" % P1[0])
+      FILE.write("%E **Y1\n" % P1[1])
+      FILE.write("%E **Z1\n" % P1[2])
+      FILE.write("%E **X2\n" % P2[0])
+      FILE.write("%E **Y2\n" % P2[1])
+      FILE.write("%E **Z2\n" % P2[2])
+      FILE.write("%E **FREQUENCY (HZ)\n" % frequency)
+      FILE.write("%d **STARTING SAMPLE\n" % self.starting_sample)
+      FILE.write("%d **EX\n" % self.E[0])
+      FILE.write("%d **EY\n" % self.E[1])
+      FILE.write("%d **EZ\n" % self.E[2])
+      FILE.write("%d **HX\n" % self.H[0])
+      FILE.write("%d **HY\n" % self.H[1])
+      FILE.write("%d **HZ\n" % self.H[2])
+      FILE.write("%d **JX\n" % self.J[0])
+      FILE.write("%d **JY\n" % self.J[1])
+      FILE.write("%d **JZ\n" % self.J[2])
+      FILE.write('}\n')
+      FILE.write('\n')
+  
+    plane_ID, plane_name = planeNumberName(self.plane)
+    for i in range(len(self.frequency_vector)):
+      if self.P1[plane_ID-1] == self.P2[plane_ID-1]:
+        snapshot(plane_ID,self.P1,self.P2,self.frequency_vector[i])
+      else:
+        snapshot(1,[self.P1[0],self.P1[1],self.P1[2]],[self.P1[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(1,[self.P2[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(2,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P1[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
+        snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]],self.frequency_vector[i])
+        snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
 
 class Probe:
   def __init__(self):
     self.name = 'probe'
+    self.layer = 'probe'
+    self.group = 'probe'
     self.position = [0,0,0]
     self.step = 0
     self.E = [0,0,0]
@@ -968,10 +1082,12 @@ class Structured_entries:
   def writeFileList(self,fileName,fileList=None):
     ''' Generate .in file '''
     # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object
+    #if self.fileList is None:
+      #self.fileList = [fileBaseName+'.inp',fileBaseName+'.geo']
     if fileList is None:
       fileList = self.fileList
     print fileName
-    print fileList
+    print 'fileList = ', fileList
     GEOin(fileName,fileList)
     return
     
@@ -1010,7 +1126,6 @@ class Structured_entries:
     if fileBaseName is None:
       fileBaseName = os.path.basename(newDirName)
     
-    
     print 'fileBaseName = ', fileBaseName
     
     geoFileName = newDirName+os.sep+fileBaseName+'.geo'
@@ -1019,7 +1134,7 @@ class Structured_entries:
     cmdFileName = newDirName+os.sep+fileBaseName+'.cmd'
     shFileName = newDirName+os.sep+fileBaseName+'.sh'
 
-    if self.fileList is None:
+    if not self.fileList:
       self.fileList = [fileBaseName+'.inp',fileBaseName+'.geo']
     
     self.writeGeoFile(geoFileName)

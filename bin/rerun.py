@@ -117,9 +117,11 @@ def copyBFDTD(src,dst):
   src = src.rstrip(os.sep)
   dst = dst.rstrip(os.sep)
   if os.path.isdir(src):
-    FDTDobj = readBristolFDTD(src+os.sep+src+'.in')
+    print src +' is a directory'
+    FDTDobj = readBristolFDTD(src+os.sep+os.path.basename(src)+'.in')
     fileBaseName = os.path.basename(src)
   else:
+    print src +' is not a directory'
     FDTDobj = readBristolFDTD(src)
     fileBaseName = os.path.splitext(os.path.basename(src))[0]
   
