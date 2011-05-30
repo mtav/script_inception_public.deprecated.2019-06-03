@@ -50,57 +50,102 @@ def getExtension(filename):
 
 # mandatory objects
 class Flag:
-    def __init__(self):
-        self.name = 'flag'
-        self.iMethod = 0
-        self.propCons = 0
-        self.flagOne = 0
-        self.flagTwo = 0
-        self.numSteps = 0
-        self.stabFactor = 0
-        self.id = '_id_'
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'iMethod = ' + str(self.iMethod) + '\n' +\
-        'propCons = ' + str(self.propCons) + '\n' +\
-        'flagOne = ' + str(self.flagOne) + '\n' +\
-        'flagTwo = ' + str(self.flagTwo) + '\n' +\
-        'numSteps = ' + str(self.numSteps) + '\n' +\
-        'stabFactor = ' + str(self.stabFactor) + '\n' +\
-        'id = ' + self.id
-        return ret
-    def read_entry(self, entry):
-        if entry.name:
-          self.name = entry.name
-        self.iMethod = float(entry.data[0])
-        self.propCons = float(entry.data[1])
-        self.flagOne = float(entry.data[2])
-        self.flagTwo = float(entry.data[3])
-        self.numSteps = float(entry.data[4])
-        self.stabFactor = float(entry.data[5])
-        self.id = entry.data[6]
+  def __init__(self):
+    self.name = 'flag'
+    self.layer = 'flag'
+    self.group = 'flag'
+    
+    self.iterationMethod = 0
+    self.propagationConstant = 0
+    self.flagOne = 0
+    self.flagTwo = 0
+    self.iterations = 0
+    self.timeStep = 0
+    self.id = '_id_'
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'iMethod = ' + str(self.iterationMethod) + '\n' +\
+    'propCons = ' + str(self.propagationConstant) + '\n' +\
+    'flagOne = ' + str(self.flagOne) + '\n' +\
+    'flagTwo = ' + str(self.flagTwo) + '\n' +\
+    'iterations = ' + str(self.iterations) + '\n' +\
+    'timeStep = ' + str(self.timeStep) + '\n' +\
+    'id = ' + self.id
+    return ret
+  def read_entry(self, entry):
+    if entry.name:
+      self.name = entry.name
+    self.iterationMethod = float(entry.data[0])
+    self.propagationConstant = float(entry.data[1])
+    self.flagOne = float(entry.data[2])
+    self.flagTwo = float(entry.data[3])
+    self.iterations = float(entry.data[4])
+    self.timeStep = float(entry.data[5])
+    self.id = entry.data[6]
+  def write_entry(self, FILE):
+    FILE.write('FLAG  **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%d **ITERATION METHOD\n" % self.iterationMethod)
+    FILE.write("%E **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n" % self.propagationConstant)
+    FILE.write("%d **FLAG ONE\n" % self.flagOne)
+    FILE.write("%d **FLAG TWO\n" % self.flagTwo)
+    FILE.write("%d **ITERATIONS\n" % self.iterations)
+    FILE.write("%E **TIMESTEP as a proportion of the maximum allowed\n" % self.timeStep)
+    FILE.write("\"%s\" **ID CHARACTER (ALWAYS USE QUOTES)\n" % self.id)
+    FILE.write('}\n')
+    FILE.write('\n')
 
 class Boundaries:
-    def __init__(self):
-        self.name = 'boundary'
-        self.Type = [0,0,0,0,0,0]
-        self.position = [0,0,0,0,0,0]
-    def __str__(self):
-        ret  = 'name = '+self.name+'\n'
-        ret += 'X+: Type = '+str(self.Type[0])+' position = '+str(self.position[0])+'\n'
-        ret += 'Y+: Type = '+str(self.Type[1])+' position = '+str(self.position[1])+'\n'
-        ret += 'Z+: Type = '+str(self.Type[2])+' position = '+str(self.position[2])+'\n'
-        ret += 'X-: Type = '+str(self.Type[3])+' position = '+str(self.position[3])+'\n'
-        ret += 'Y-: Type = '+str(self.Type[4])+' position = '+str(self.position[4])+'\n'
-        ret += 'Z-: Type = '+str(self.Type[5])+' position = '+str(self.position[5])
-        return ret
-    def read_entry(self,entry):
-        if entry.name:
-          self.name = entry.name
-        for i in range(6):
-            self.Type[i] = entry.data[4*i]
-            self.position[i] = entry.data[1+4*i:4+4*i]
-        return(0)
+  def __init__(self):
+    self.name = 'boundary'
+    self.layer = 'boundary'
+    self.group = 'boundary'
+
+    self.Xpos_bc = 0
+    self.Ypos_bc = 0
+    self.Zpos_bc = 0
+    self.Xneg_bc = 0
+    self.Yneg_bc = 0
+    self.Zneg_bc = 0
+
+    self.Xpos_param = [0,0,0]
+    self.Ypos_param = [0,0,0]
+    self.Zpos_param = [0,0,0]
+    self.Xneg_param = [0,0,0]
+    self.Yneg_param = [0,0,0]
+    self.Zneg_param = [0,0,0]
+    
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'X+: Type = '+str(self.Xpos_bc)+' parameters = '+str(self.Xpos_param)+'\n'
+    ret += 'Y+: Type = '+str(self.Ypos_bc)+' parameters = '+str(self.Ypos_param)+'\n'
+    ret += 'Z+: Type = '+str(self.Zpos_bc)+' parameters = '+str(self.Zpos_param)+'\n'
+    ret += 'X-: Type = '+str(self.Xneg_bc)+' parameters = '+str(self.Xneg_param)+'\n'
+    ret += 'Y-: Type = '+str(self.Yneg_bc)+' parameters = '+str(self.Yneg_param)+'\n'
+    ret += 'Z-: Type = '+str(self.Zneg_bc)+' parameters = '+str(self.Zneg_param)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    i = 0
+    self.Xpos_bc = int(entry.data[4*i]); self.Xpos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    self.Ypos_bc = int(entry.data[4*i]); self.Ypos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    self.Zpos_bc = int(entry.data[4*i]); self.Zpos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    self.Xneg_bc = int(entry.data[4*i]); self.Xneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    self.Yneg_bc = int(entry.data[4*i]); self.Yneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    self.Zneg_bc = int(entry.data[4*i]); self.Zneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    return(0)
+  def write_entry(self, FILE):
+    FILE.write('BOUNDARY  **name='+self.name+'\n')
+    FILE.write('{\n')
+    FILE.write("%d %d %d %d **X+ \n" % (self.Xpos_bc, self.Xpos_param[0], self.Xpos_param[1], self.Xpos_param[2]))
+    FILE.write("%d %d %d %d **Y+ \n" % (self.Ypos_bc, self.Ypos_param[0], self.Ypos_param[1], self.Ypos_param[2]))
+    FILE.write("%d %d %d %d **Z+ \n" % (self.Zpos_bc, self.Zpos_param[0], self.Zpos_param[1], self.Zpos_param[2]))
+    FILE.write("%d %d %d %d **X- \n" % (self.Xneg_bc, self.Xneg_param[0], self.Xneg_param[1], self.Xneg_param[2]))
+    FILE.write("%d %d %d %d **Y- \n" % (self.Yneg_bc, self.Yneg_param[0], self.Yneg_param[1], self.Yneg_param[2]))
+    FILE.write("%d %d %d %d **Z- \n" % (self.Zneg_bc, self.Zneg_param[0], self.Zneg_param[1], self.Zneg_param[2]))
+    FILE.write('}\n')
+    FILE.write('\n')
 
 class Box:
   def __init__(self):
@@ -506,13 +551,14 @@ class Entry:
 class Structured_entries:
   def __init__(self):
     # mandatory objects
-    self.xmesh = []
-    self.ymesh = []
-    self.zmesh = []
+    self.delta_X_vector = []
+    self.delta_Y_vector = []
+    self.delta_Z_vector = []
+    self.MeshName = 'mesh'
     self.flag = Flag()
     self.boundaries = Boundaries()
     self.box = Box()
-            
+    
     # geometry objects
     self.geometry_object_list = []
     self.sphere_list = []
@@ -524,6 +570,7 @@ class Structured_entries:
     self.excitation_list = []
     
     # measurement objects
+    self.measurement_object_list = []
     self.snapshot_list = []
     self.time_snapshot_list = []
     self.frequency_snapshot_list = []
@@ -553,9 +600,9 @@ class Structured_entries:
           ret += '-->excitation '+str(i)+':\n'
           ret += self.excitation_list[i].__str__()+'\n'
       
-      ret += '--->xmesh\n'+self.xmesh.__str__()+'\n'+\
-      '--->ymesh\n'+self.ymesh.__str__()+'\n'+\
-      '--->zmesh\n'+self.zmesh.__str__()+'\n'+\
+      ret += '--->delta_X_vector\n'+self.delta_X_vector.__str__()+'\n'+\
+      '--->delta_Y_vector\n'+self.delta_Y_vector.__str__()+'\n'+\
+      '--->delta_Z_vector\n'+self.delta_Z_vector.__str__()+'\n'+\
       '--->flag\n'+self.flag.__str__()+'\n'+\
       '--->boundaries\n'+self.boundaries.__str__()+'\n'+\
       '--->box\n'+self.box.__str__()+'\n'
@@ -655,12 +702,12 @@ class Structured_entries:
           
           # mandatory objects
           if entry.Type == 'XMESH':
-              self.xmesh = float_array(entry.data)
+              self.delta_X_vector = float_array(entry.data)
               xmesh_read = True
           elif entry.Type == 'YMESH':
-              self.ymesh = float_array(entry.data)
+              self.delta_Y_vector = float_array(entry.data)
           elif entry.Type == 'ZMESH':
-              self.zmesh = float_array(entry.data)
+              self.delta_Z_vector = float_array(entry.data)
           elif entry.Type == 'FLAG':
               self.flag.read_entry(entry)
           elif entry.Type == 'BOUNDARY':
@@ -747,6 +794,32 @@ class Structured_entries:
           print 'WARNING: mesh not found'
       if (not box_read):
           print 'WARNING: box not found'
+
+  def writeMesh(self,FILE):
+    ''' writes mesh to FILE '''
+    # mesh X
+    FILE.write('XMESH **name='+self.MeshName+'\n')
+    FILE.write('{\n')
+    for i in range(len(self.delta_X_vector)):
+      FILE.write("%E\n" % self.delta_X_vector[i])
+    FILE.write('}\n')
+    FILE.write('\n')
+  
+    # mesh Y
+    FILE.write('YMESH **name='+self.MeshName+'\n')
+    FILE.write('{\n')
+    for i in range(len(self.delta_Y_vector)):
+      FILE.write("%E\n" % self.delta_Y_vector[i])
+    FILE.write('}\n')
+    FILE.write('\n')
+  
+    # mesh Z
+    FILE.write('ZMESH **name='+self.MeshName+'\n')
+    FILE.write('{\n')
+    for i in range(len(self.delta_Z_vector)):
+      FILE.write("%E\n" % self.delta_Z_vector[i])
+    FILE.write('}\n')
+    FILE.write('\n')
   
   def writeGeoFile(self,fileName):
     ''' Generate .geo file '''
@@ -775,11 +848,25 @@ class Structured_entries:
 
     return
 
-        
-
-    
   def writeInpFile(self,fileName):
     ''' Generate .inp file '''
+    # open file
+    with open(fileName, 'w') as out:
+  
+      for obj in self.excitation_list:
+        obj.write_entry(out)
+      print self.boundaries
+      self.boundaries.write_entry(out)
+      self.flag.write_entry(out)
+      self.writeMesh(out)
+      GEOfrequency_snapshot(out, 'X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+      GEOtime_snapshot(out, 'X time snapshot', first, repetition, plane, P1, P2, E, H, J, power,0)
+      GEOprobe(out, 'XY probes', [x, y, z], step, E, H, J, power )
+      
+      #write footer
+      out.write('end\n'); #end the file
+      #close file
+      out.close()
     return
     
   def writeFileList(self,fileName,fileList=None):
