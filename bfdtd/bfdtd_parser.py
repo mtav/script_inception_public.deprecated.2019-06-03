@@ -729,7 +729,7 @@ class Frequency_snapshot:
       FILE.write("%E **X2\n" % P2[0])
       FILE.write("%E **Y2\n" % P2[1])
       FILE.write("%E **Z2\n" % P2[2])
-      FILE.write("%E **FREQUENCY (HZ)\n" % frequency)
+      FILE.write("%E **FREQUENCY (MHz)\n" % frequency)
       FILE.write("%d **STARTING SAMPLE\n" % self.starting_sample)
       FILE.write("%d **EX\n" % self.E[0])
       FILE.write("%d **EY\n" % self.E[1])
