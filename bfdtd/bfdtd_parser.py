@@ -756,7 +756,7 @@ class Entry:
     self.Type = ''
     self.data = []
 
-class Structured_entries:
+class BFDTDobject:
   def __init__(self):
     # mandatory objects
     self.delta_X_vector = []
@@ -1149,7 +1149,7 @@ def readBristolFDTD(filename):
     ''' reads .in (=>.inp+.geo), .geo or .inp '''
     print '->Processing generic file : ', filename
 
-    structured_entries = Structured_entries()
+    structured_entries = BFDTDobject()
     
     extension = getExtension(filename)
     if extension == 'in':

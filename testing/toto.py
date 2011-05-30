@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bfdtd.bfdtd_parser import *
-toto=Structured_entries()
+toto=BFDTDobject()
 #toto.read_input_file('cylinder.bottomN_20.topN_10.geo')
 toto.read_input_file('sample.geo')
 
