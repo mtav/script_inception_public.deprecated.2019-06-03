@@ -3,6 +3,7 @@
 
 from geometries.pillar_1D import *
 from optparse import OptionParser
+from constants.constants import *
 
 def rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, CavityScalingFactor, RadiusPillar_Y_mum=0.5, RadiusPillar_Z_mum=0.5, n_Eff = 2.2, radius_Z_piercer_mum = 0.100):
   P = pillar_1D()
@@ -101,6 +102,11 @@ def main(argv=None):
   print 'CavityScalingFactor = ',options.CavityScalingFactor
   
   freq_snapshots = []
+  
+  # create at least one snapshot of each for the resonance rerun
+  if len(options.FrequencyListFile) == 0 and len(options.FrequencyList) == 0:
+    freq_snapshots = [get_c0()/0.637]
+
   if len(options.FrequencyListFile) != 0:
     freq_snapshots += getFrequencies(options.FrequencyListFile)
   if len(options.FrequencyList) != 0:
