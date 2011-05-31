@@ -30,13 +30,13 @@ def main(argv=None):
     try:
         try:
             opts, args = getopt.getopt(argv[1:], "h", ["help"])
-        except getopt.error, msg:
+        except getopt.error as msg:
              raise Usage(msg)
         # more code, unchanged
-        print getuserdir()
-    except Usage, err:
-        print >>sys.stderr, err.msg
-        print >>sys.stderr, "for help use --help"
+        print(getuserdir())
+    except Usage as err:
+        print(err.msg, file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2
 
 if __name__ == "__main__":

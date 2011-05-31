@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Blender
+#import Blender
 #~ from bpy import *
 import math
 import bpy;
-import BPyAddMesh;
+#import BPyAddMesh;
 import os;
 import sys;
 import re;
 import array;
-import cPickle;
+#import cPickle;
 # define Vector+Matrix
 #~ from bpy.Mathutils import Vector;
 #~ from bpy.Mathutils import Matrix;
-from Blender.Mathutils import Vector;
-from Blender.Mathutils import Matrix;
+#from Blender.Mathutils import Vector;
+#from Blender.Mathutils import Matrix;
 
 class FDTDGeometryObjects:
     def __init__(self):

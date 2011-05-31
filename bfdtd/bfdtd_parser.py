@@ -549,6 +549,9 @@ class Time_snapshot:
     idx = 0
     if entry.name:
       self.name = entry.name
+    print(entry.data)
+    print(idx)
+    entry.data[idx]
     self.first = float(entry.data[idx]); idx = idx+1
     self.repetition = float(entry.data[idx]); idx = idx+1
     self.plane = int(float(entry.data[idx])); idx = idx+1
@@ -918,7 +921,7 @@ class BFDTDobject:
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
-      print 'Processing ', filename
+      print('Processing ' + filename)
       box_read = False
       xmesh_read = False
       
@@ -962,13 +965,15 @@ class BFDTDobject:
             #print 'NO NAME'
             #name = ''
           data = objects[i]['data']
-          
+          print('data = '+data)
           # convert Type to upper case and strip it
           Type = Type.upper().strip()
           # split data by spaces and new lines
           data = re.split('\s+',data)
           # remove empty lines from data
-          data = filter(None, data)
+          data = list(filter(None, data))
+
+          print('data = '+str(data))
           
           entry = Entry()
           entry.Type = Type
@@ -1037,25 +1042,25 @@ class BFDTDobject:
               self.probe_list.append(probe)
   
           else:
-              print 'Unknown Type: ', entry.Type
+              print('Unknown Type: ', entry.Type)
 
       return [ xmesh_read, box_read ]
 
   def read_inputs(self,filename):
       ''' read .in file '''
-      print '->Processing .in file : ', filename
+      print('->Processing .in file : ', filename)
       
       box_read = False
       xmesh_read = False
       
       f = open(filename, 'r')
       for line in f:
-          print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
-          print 'line.strip()=', line.strip() # remove any \n or similar
+          print('os.path.dirname(filename): '+os.path.dirname(filename)) # directory of .in file
+          print('line.strip()='+line.strip()) # remove any \n or similar
           self.fileList.append(line.strip())
           # this is done so that you don't have to be in the directory containing the .geo/.inp files
           subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()))
-          print 'subfile: ', subfile
+          print('subfile: '+subfile)
           if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
               subfile = getname(subfile,'inp')
           else:
@@ -1067,9 +1072,9 @@ class BFDTDobject:
               box_read = True
       f.close()
       if (not xmesh_read):
-          print 'WARNING: mesh not found'
+          print('WARNING: mesh not found')
       if (not box_read):
-          print 'WARNING: box not found'
+          print('WARNING: box not found')
 
   def writeMesh(self,FILE):
     ''' writes mesh to FILE '''
@@ -1107,7 +1112,7 @@ class BFDTDobject:
       out.write('\n')
 
       # write geometry objects
-      print 'len(self.geometry_object_list) = ', len(self.geometry_object_list)
+      print('len(self.geometry_object_list) = '+len(self.geometry_object_list))
       for obj in self.geometry_object_list:
         #print obj.name
         #print obj.__class__.__name__
@@ -1131,7 +1136,7 @@ class BFDTDobject:
   
       for obj in self.excitation_list:
         obj.write_entry(out)
-      print self.boundaries
+      print(self.boundaries)
       self.boundaries.write_entry(out)
       self.flag.write_entry(out)
       self.writeMesh(out)
@@ -1154,8 +1159,8 @@ class BFDTDobject:
       #self.fileList = [fileBaseName+'.inp',fileBaseName+'.geo']
     if fileList is None:
       fileList = self.fileList
-    print fileName
-    print 'fileList = ', fileList
+    print(fileName)
+    print('fileList = '+fileList)
     GEOin(fileName,fileList)
     return
     
@@ -1194,7 +1199,7 @@ class BFDTDobject:
     if fileBaseName is None:
       fileBaseName = os.path.basename(newDirName)
     
-    print 'fileBaseName = ', fileBaseName
+    print('fileBaseName = '+fileBaseName)
     
     geoFileName = newDirName+os.sep+fileBaseName+'.geo'
     inpFileName = newDirName+os.sep+fileBaseName+'.inp'
@@ -1215,24 +1220,24 @@ class BFDTDobject:
 
 def readBristolFDTD(filename):
     ''' reads .in (=>.inp+.geo), .geo or .inp '''
-    print '->Processing generic file : ', filename
+    print('->Processing generic file : '+filename)
 
     structured_entries = BFDTDobject()
     
     extension = getExtension(filename)
     if extension == 'in':
-        print '.in file detected'
+        print('.in file detected')
         structured_entries.read_inputs(filename)
     elif extension == 'inp':
-        print '.inp file detected'
+        print('.inp file detected')
         structured_entries.read_input_file(filename)
     elif extension == 'geo':
-        print '.geo file detected'
+        print('.geo file detected')
         structured_entries.read_input_file(filename)
     elif extension == 'prn':
-        print '.prn file detected: Not supported yet'
+        print('.prn file detected: Not supported yet')
     else:
-        print 'Unknown file format:', extension
+        print('Unknown file format: '+extension)
         sys.exit(-1)
     
     #~ print '================'
@@ -1280,18 +1285,18 @@ def main(argv=None):
   try:
     try:
       opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    except getopt.error, msg:
+    except getopt.error as msg:
       raise Usage(msg)
     # main function
     # for testing
-    print '----->Importing bristol FDTD geometry...'
+    print('----->Importing bristol FDTD geometry...')
     structured_entries = readBristolFDTD(sys.argv[1])
-    print structured_entries
-    print '...done'
+    print(structured_entries)
+    print('...done')
     
-  except Usage, err:
-    print >>sys.stderr, err.msg
-    print >>sys.stderr, "for help use --help"
+  except Usage as err:
+    print(err.msg, file=sys.stderr)
+    print("for help use --help", file=sys.stderr)
     return 2
 
 if __name__ == "__main__":

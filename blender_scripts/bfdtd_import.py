@@ -163,10 +163,11 @@ def importBristolFDTD(filename):
     #########################
 
     # TODO: Save the layer settings somewhere for reuse
-    scene = Blender.Scene.GetCurrent()
+    #scene = Blender.Scene.GetCurrent()
+    scene = bpy.context.scene
     
     layersOn = [layerManager.DefaultLayers.index('spheres')+1,layerManager.DefaultLayers.index('blocks')+1,layerManager.DefaultLayers.index('cylinders')+1]
-    print layersOn
+    print(layersOn)
     #layersOn = [1,2,3]
     #print layersOn
     Blender.Scene.GetCurrent().setLayers(layersOn)
