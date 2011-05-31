@@ -62,7 +62,7 @@ excitation.P1 = P_Ym1
 excitation.P2 = P_center
 
 E = subtract(excitation.P2,excitation.P1)
-E = E/linalg.norm(E)
+E = list(E/linalg.norm(E))
 print 'E = ', E
 
 excitation.E = E
@@ -153,4 +153,21 @@ pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector
 #########
 # write
 #########
-pillar.writeAll(os.getenv('DATADIR')+os.sep+'simple_pillar','simple_pillar')
+DSTDIR = os.getenv('DATADIR')
+BASENAME = 'simple_pillar'
+WALLTIME = 360
+
+pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
+
+sh_filename = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh';
+probe_col = 0
+if pillar.excitation_list[0].E == [1,0,0]:
+  probe_col = 2
+elif pillar.excitation_list[0].E == [0,1,0]:
+  probe_col = 3
+elif pillar.excitation_list[0].E == [0,0,1]:
+  probe_col = 4
+else:
+  print('ERROR : Unknown Excitation type')
+  sys.exit(-1)
+GEOshellscript_advanced(sh_filename, BASENAME, probe_col,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME)
