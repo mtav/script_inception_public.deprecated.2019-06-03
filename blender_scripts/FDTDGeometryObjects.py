@@ -25,27 +25,30 @@ class FDTDGeometryObjects:
       bpy.ops.material.new()
       self.frequency_snapshot_material = bpy.data.materials[-1]
       self.frequency_snapshot_material.name = 'frequency_snapshot'
-      #self.frequency_snapshot_material = Blender.Material.New('frequency_snapshot');
       self.frequency_snapshot_material.diffuse_color = Color((0.5, 0, 0))
-      #self.frequency_snapshot_material.rgbCol = 0.5, 0, 0;
       self.frequency_snapshot_material.alpha = 0.5
-      #self.frequency_snapshot_material.setAlpha(0.5);
       
       #titi.transparency_method='MASK'
       #titi.transparency_method='RAYTRACE'
       #titi.transparency_method='Z_TRANSPARENCY'
       
-      self.time_snapshot_material = Blender.Material.New('time_snapshot');
-      self.time_snapshot_material.rgbCol = 0.5, 1, 0;
-      self.time_snapshot_material.setAlpha(0.5);
+      bpy.ops.material.new()
+      self.time_snapshot_material = bpy.data.materials[-1]
+      self.time_snapshot_material.name = 'time_snapshot'
+      self.time_snapshot_material.diffuse_color = Color((0.5, 1, 0))
+      self.time_snapshot_material.alpha = 0.5
       
-      self.eps_snapshot_material = Blender.Material.New('eps_snapshot');
-      self.eps_snapshot_material.rgbCol = 0.5, 0, 1;
-      self.eps_snapshot_material.setAlpha(0.5);
+      bpy.ops.material.new()
+      self.eps_snapshot_material = bpy.data.materials[-1]
+      self.eps_snapshot_material.name = 'eps_snapshot'
+      self.eps_snapshot_material.diffuse_color = Color((0.5, 0, 1))
+      self.eps_snapshot_material.alpha = 0.5
       
-      self.excitation_material = Blender.Material.New('excitation');
-      self.excitation_material.rgbCol = 1, 0, 0;
-      self.excitation_material.setAlpha(0.5);
+      bpy.ops.material.new()
+      self.excitation_material = bpy.data.materials[-1]
+      self.excitation_material.name = 'excitation'
+      self.excitation_material.diffuse_color = Color((1, 0, 0))
+      self.excitation_material.alpha = 0.5
       
       self.snapshot_materials = [ self.frequency_snapshot_material, self.time_snapshot_material, self.eps_snapshot_material ];
       
@@ -61,20 +64,26 @@ class FDTDGeometryObjects:
             n = math.sqrt(permittivity)
             
             max_permittivity = 25.0;
-            permittivity_material = Blender.Material.New('permittivity');
-            permittivity_material.rgbCol = 0, permittivity/max_permittivity, 1.0-permittivity/max_permittivity;
-            permittivity_material.setAlpha(0.5);
+            bpy.ops.material.new()
+            permittivity_material = bpy.data.materials[-1]
+            permittivity_material.name = 'permittivity'
+            permittivity_material.diffuse_color = Color((0, permittivity/max_permittivity, 1.0-permittivity/max_permittivity))
+            permittivity_material.alpha = 0.5
             
-            # conductivity_material = Blender.Material.New('conductivity')
-            # conductivity_material.rgbCol = 0, 1.0-conductivity/100.0, 0;
-            # conductivity_material.setAlpha(0.5);
+            # bpy.ops.material.new()
+            # conductivity_material = bpy.data.materials[-1]
+            # conductivity_material.name = 'conductivity'
+            # conductivity_material.diffuse_color = Color((0, 1.0-conductivity/100.0, 0))
+            # conductivity_material.alpha = 0.5
     
-            # refractive_index_material = Blender.Material.New('refractive_index')
+            # bpy.ops.material.new()
+            # refractive_index_material = bpy.data.materials[-1]
+            # refractive_index_material.name = 'refractive_index'
             # if n!=0:
-                # refractive_index_material.rgbCol = 0, 0, 1.0/n;
+                # refractive_index_material.diffuse_color = Color((0, 0, 1.0/n))
             # else:
-                # refractive_index_material.rgbCol = 0, 0, 1.0;
-            # refractive_index_material.setAlpha(0.5);
+                # refractive_index_material.diffuse_color = Color((0, 0, 1.0))
+            # refractive_index_material.alpha = 0.5
             
             self.material_dict[permittivity] = permittivity_material;
     
