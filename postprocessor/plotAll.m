@@ -65,7 +65,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
         %if ( exist('Probe_patternCellArray','var')==0 ) | ( exist('Probe_patternCellArray','var')==1 & max(strcmp(prn_filename_basename,Probe_patternCellArray)) )
         if ( exist('Probe_patternCellArray','var')==0 ) | ( exist('Probe_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, Probe_patternCellArray))) )
           disp('plotting Probe');
-          plotProbe(prn_filename, probe_col, false, [ prn_filename_folder, prn_filename_basenameNoExt, '.png' ],true);
+          plotProbe(prn_filename, probe_col, false, [ prn_filename_folder, prn_filename_basenameNoExt, '.eps' ],true);
         end
       elseif strcmp(type_name, 'TimeSnapshot')
         if ( exist('TimeSnapshot_patternCellArray','var')==0 ) | ( exist('TimeSnapshot_patternCellArray','var')==1 & max(cellfun(@length,regexp(prn_filename_basename, TimeSnapshot_patternCellArray))) )
