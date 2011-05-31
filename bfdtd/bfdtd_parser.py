@@ -183,6 +183,8 @@ class Box:
     FILE.write("%E **ZU\n" % self.upper[2])
     FILE.write('}\n')
     FILE.write('\n')
+  def getCenter(self):
+    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
 
 # geometry objects
 class Geometry_object:
@@ -293,6 +295,8 @@ class Block(Geometry_object):
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
+  def getCenter(self):
+    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
 
 class Cylinder(Geometry_object):
   def __init__(self,
@@ -824,6 +828,8 @@ class Entry:
     self.Type = ''
     self.data = []
 
+# TODO: add addSnapshot, addProbe, etc functions to BFDTDobject to make adding stuff easier (should copy value from last similar)
+# TODO: beware of the multiple snapshot lists! reduce duplicate info and add set/get functions
 class BFDTDobject:
   def __init__(self):
     # mandatory objects

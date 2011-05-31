@@ -15,3 +15,6 @@ def fixLowerUpper(L,U):
     real_L[i] = min(L[i],U[i])
     real_U[i] = max(L[i],U[i])
   return real_L, real_U
+
+def LimitsToThickness(limits):
+  return [ limits[i+1]-limits[i] for i in range(len(limits)-1) ]
