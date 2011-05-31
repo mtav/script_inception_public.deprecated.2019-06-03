@@ -15,15 +15,16 @@ from subprocess import call
 class Foo:
   def __init__(self, filename):
     self.Filename = filename
-    pattern = re.compile("([xyz]).+id..\.E.mod\.max_1\.lambda\(nm\)_([\d.]+)\.freq\(Mhz\)_([\d.]+).pos\(mum\)_([\d.]+)\.png")
+    pattern = re.compile("([xyz]).+id..\.E.mod\.max_([\d.]+)\.lambda\(nm\)_([\d.]+)\.freq\(Mhz\)_([\d.]+)\.pos\(mum\)_([\d.]+)\.png")
     m = pattern.match(self.Filename)
     #print m
     if m:
       #print m.groups()
       self.Plane = m.group(1)
-      self.Lambda = float(m.group(2))
-      self.Freq = float(m.group(3))
-      self.Pos = float(m.group(4))
+      self.MaxValue = float(m.group(2))
+      self.Lambda = float(m.group(3))
+      self.Freq = float(m.group(4))
+      self.Pos = float(m.group(5))
     else:
       print 'ERROR: NO MATCH : ', filename
       sys.exit(-1)

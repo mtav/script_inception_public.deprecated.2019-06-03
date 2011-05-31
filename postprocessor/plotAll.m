@@ -9,7 +9,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
   end
 
   % loop through .sh files
-  [Files,Bytes,Names] = dirr(directory,'\.out\>$','name')
+  % TODO: Leave looping through files to bash or python :P (externalize it at least)
+  [Files,Bytes,Names] = dirr(directory,'\.in\>$','name')
   %length(Names)
   %for script_idx = 1:length(Names)
     %disp(char(Names(script_idx)))
