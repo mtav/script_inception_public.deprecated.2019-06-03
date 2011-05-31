@@ -38,6 +38,7 @@ def rectangular_yagi(bottomN, topN, excitationType, iterations, freq_snapshots, 
   P.d_holes_mum = P.getLambda()/(2*n_Eff);#mum
   #radius_Z_piercer_mum = 0.100
   P.setRadiusHole((P.getLambda()/(4*P.n_Defect))/2,P.radius_Y_pillar_mum,P.radius_Z_pillar_mum-radius_Z_piercer_mum)
+  #P.setRadiusHole((P.getLambda()/(4*n_Eff))/2,P.radius_Y_pillar_mum,P.radius_Z_pillar_mum-radius_Z_piercer_mum)
   
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit

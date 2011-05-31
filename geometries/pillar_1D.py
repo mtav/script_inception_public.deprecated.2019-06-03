@@ -872,6 +872,7 @@ class pillar_1D(BFDTDobject):
     if self.print_pillar:
       # create main pillar
       L = [ X_current, self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum ]
+      #L = [ self.getPillarCenterX()+self.getDistanceBetweenDefectBordersInCavity()/2.0, self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum ]
       U = [ X_current + self.getPillarHeight(), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum ]
       self.geometry_object_list.append(Block(name='main pillar', lower=L, upper=U, permittivity=pow(self.n_Substrate,2), conductivity=0))
   
