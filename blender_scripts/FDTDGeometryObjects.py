@@ -157,7 +157,7 @@ class FDTDGeometryObjects:
     def GEObox(self, name, lower, upper):
         scene = Blender.Scene.GetCurrent();
         mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.faces.delete(0, range(len(mesh.faces)));
+        mesh.faces.delete(0, list(range(len(mesh.faces))));
     
         obj = scene.objects.new(mesh, name)
         pos = 0.5*(lower+upper);
@@ -169,9 +169,9 @@ class FDTDGeometryObjects:
         self.box_SizeX = abs(diag[0]);
         self.box_SizeY = abs(diag[1]);
         self.box_SizeZ = abs(diag[2]);
-        print("box_SizeX = ", self.box_SizeX)
-        print("box_SizeY = ", self.box_SizeY)
-        print("box_SizeZ = ", self.box_SizeZ)
+        print(("box_SizeX = ", self.box_SizeX))
+        print(("box_SizeY = ", self.box_SizeY))
+        print(("box_SizeZ = ", self.box_SizeZ))
         
         obj.SizeX = self.box_SizeX;
         obj.SizeY = self.box_SizeY;
@@ -213,8 +213,8 @@ class FDTDGeometryObjects:
         faces = [];
     
         if full_mesh:
-            verts = range(2*(Nx*Ny + Ny*Nz + Nz*Nx));
-            edges = range(Nx*Ny + Ny*Nz + Nz*Nx);
+            verts = list(range(2*(Nx*Ny + Ny*Nz + Nz*Nx)));
+            edges = list(range(Nx*Ny + Ny*Nz + Nz*Nx));
             faces = [];
             
             vert_idx = 0;
@@ -265,8 +265,8 @@ class FDTDGeometryObjects:
                     edges[edge_idx] = [A, B]; edge_idx+=1;
         
         else:
-            verts = range(4*(Nx + Ny + Nz));
-            edges = range(4*(Nx + Ny + Nz));
+            verts = list(range(4*(Nx + Ny + Nz)));
+            edges = list(range(4*(Nx + Ny + Nz)));
             faces = [];
             
             vert_idx = 0;
@@ -570,16 +570,16 @@ def TestMatrix():
   print('============')
   print(M)
   print('============')
-  print(Blender.Mathutils.RotationMatrix(math.radians(0), 2))
-  print(Blender.Mathutils.RotationMatrix(math.radians(45), 2))
-  print(Blender.Mathutils.RotationMatrix(math.radians(90), 2))
-  print(Blender.Mathutils.RotationMatrix(0, 2))
-  print(Blender.Mathutils.RotationMatrix(45, 2))
-  print(Blender.Mathutils.RotationMatrix(90, 2))
+  print((Blender.Mathutils.RotationMatrix(math.radians(0), 2)))
+  print((Blender.Mathutils.RotationMatrix(math.radians(45), 2)))
+  print((Blender.Mathutils.RotationMatrix(math.radians(90), 2)))
+  print((Blender.Mathutils.RotationMatrix(0, 2)))
+  print((Blender.Mathutils.RotationMatrix(45, 2)))
+  print((Blender.Mathutils.RotationMatrix(90, 2)))
   M=Blender.Mathutils.RotationMatrix(45, 3, 'x' )
   print('======QUAT======')
   print(M)
-  print(M.toQuat())
+  print((M.toQuat()))
   print('============')
   Q=Blender.Mathutils.RotationMatrix(45, 4, 'x' )
   print(Q)
@@ -592,9 +592,9 @@ def TestMatrix():
   Q=Blender.Mathutils.Matrix(u1,u2,u3,u4)
   print(Q)
   print('============')
-  print(Q.translationPart())
-  print(Q.scalePart())
-  print(Q.rotationPart())
+  print((Q.translationPart()))
+  print((Q.scalePart()))
+  print((Q.rotationPart()))
   print('====Q=R*Sx*Sy*Sz*T========')
   R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(17,18,19))
   T=Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(14,15,16))
@@ -605,7 +605,7 @@ def TestMatrix():
   print(Sy)
   print(Sz)
   S=Sx*Sy*Sz
-  print(S.scalePart())
+  print((S.scalePart()))
   print(T)
   print(R)
   Q=S*R*T
@@ -613,9 +613,9 @@ def TestMatrix():
   print('============')
   print(Q)
   print('============')
-  print(Q.translationPart())
-  print(Q.scalePart())
-  print(Q.rotationPart())
+  print((Q.translationPart()))
+  print((Q.scalePart()))
+  print((Q.rotationPart()))
   print('============')
   
   scene = Blender.Scene.GetCurrent();
@@ -649,12 +649,12 @@ def TestMatrix():
   print(M)
   print(T)
   print(Tinv)
-  print(M*Tinv)
-  print(M*Tinv*R*T)
+  print((M*Tinv))
+  print((M*Tinv*R*T))
   print('############')
   obj.setMatrix(M*Tinv*R*T);
   print('# EULER ###########')
-  print(obj.getMatrix().toEuler())
+  print((obj.getMatrix().toEuler()))
   print('############')
   #~ obj.RotX = 90;
   #~ obj.RotY = 45;

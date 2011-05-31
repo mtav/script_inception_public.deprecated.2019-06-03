@@ -56,8 +56,8 @@ the set from the list.
 Layer names and layer set are saved in the .blend as texts.
 """
 
-import Blender
-from Blender import Draw, BGL, Text, Scene, Window, Object
+#import Blender
+#from Blender import Draw, BGL, Text, Scene, Window, Object
 
 class LayerManagerObjects:
   def __init__(self):
@@ -211,7 +211,7 @@ class LayerManagerObjects:
       for item in self.layersets:
         if item.find(self.curset) != -1:
           toremove = item
-          print "toremove:" + toremove
+          print("toremove:" + toremove)
       self.layersets.remove(toremove)
       self.curset = self.layersets[0][0:self.layersets[0].find(",")]
       self.updatetxt()
@@ -286,7 +286,7 @@ class LayerManagerObjects:
         newset = Draw.PupStrInput("Set Name:", "", 25)
         if newset != None:
           newset = newset.replace(","," ")
-          print newset
+          print(newset)
           if men.val == 100:
             self.layersets.append(newset + ",1")
           else:
@@ -406,13 +406,13 @@ def main():
   layer_manager_objects = LayerManagerObjects()
   Draw.Register(layer_manager_objects.gui, layer_manager_objects.event, layer_manager_objects.button_event)
   
-  print '=========================='
-  print Blender.Window.GetScreens()
-  print Blender.Window.GetAreaID()
-  print Blender.Window.GetAreaSize()
-  print Blender.Window.GetScreenInfo()
-  print Blender.Text.Get()
-  print '=========================='
+  print('==========================')
+  print(Blender.Window.GetScreens())
+  print(Blender.Window.GetAreaID())
+  print(Blender.Window.GetAreaSize())
+  print(Blender.Window.GetScreenInfo())
+  print(Blender.Text.Get())
+  print('==========================')
   #~ Blender.Window.FileSelector(algosomething, "Import Bristol FDTD file...");
   #~ Blender.Run('~/.blender/scripts/bfdtd_import.py')
 
