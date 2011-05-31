@@ -1,0 +1,2 @@
+import bfdtd_import
+bfdtd_import.importBristolFDTD('/home/mike/Development/script_inception_public/geometries/qedc3_3_0525b.geo')
