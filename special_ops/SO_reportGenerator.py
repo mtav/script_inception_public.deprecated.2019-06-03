@@ -11,6 +11,8 @@ import glob
 import re
 from subprocess import call
 import textwrap
+import shutil
+import tempfile
 
 def reportGenerator(texfile, title_list, picture_list):
   with open(texfile, 'w') as f:
@@ -43,16 +45,23 @@ def reportGenerator(texfile, title_list, picture_list):
     cmd=['pdflatex','-output-directory', os.path.dirname(texfile), texfile]
   else:
     cmd=['pdflatex', texfile]
+  #tmpdir = tempfile.mkdtemp(); print 'tmpdir = ',tmpdir
+  #texfileCopy = tmpdir+os.sep+os.path.basename(texfile); print 'texfileCopy = ',texfileCopy
+  #shutil.copy(texfile, texfileCopy)
+
+  #cmd=['pdflatex','-output-directory', tmpdir, texfileCopy]
   print cmd
   call(cmd)
+
+  #shutil.move(os.path.splitext(texfile)[0]+'.pdf', pdfFile)
 
 def main(argv=None):
   #usagestr = "usage: %prog [-o texfile] [ -t title ] [ -w \"widthA;widthB;...\" ] [ --picture_list=\"picA1,picA2,...;picB1,picB2...;...\" ]"
   usagestr = 'usage: %prog [-o texfile] [ -t title ]\n ex:\n '+sys.argv[0]+' -t"Title" -o tmp.tex p005id.png !(p005id).png'
   parser = OptionParser(usage=usagestr)
 
-  parser.add_option("-o", "--outfile", action="store", type="string", dest="texfile", default='/tmp/tmp.tex', help='output texfile. ex: tmp.tex, which will lead to tmp.pdf being created')
-  parser.add_option("-t", "--title", action="store", type="string", dest="title", default='Default title', help='title of each frame')
+  parser.add_option("-o", "--outfile", action="store", type="string", dest="texfile", default='', help='output texfile. ex: tmp.tex, which will lead to tmp.pdf being created')
+  parser.add_option("-t", "--title", action="store", type="string", dest="title", default='', help='title of each frame')
   #parser.add_option("-w", "--width_list", action="store", type="string", dest="width_list", default='0.9;1', help='width of the different picture sections (ex: "0.9;1")')
   #parser.add_option("-p", "--picture_list", action="store", type="string", dest="picture_list", default='', help='list of pictures. "," separates pictures in same section and ";" separates picture sections')
   
@@ -75,6 +84,25 @@ def main(argv=None):
     #width_list.extend([width_sections[section_idx]]*len(s))
     #for p in s:
       #picture_list.append(p)
+
+  infiles = glob.glob('*.in')
+  if not infiles:
+    print 'no infile found'
+  else:
+    base = os.path.splitext(infiles[0])[0]
+
+  if not options.title:
+    options.title = base
+  print 'options.title = ', options.title
+
+  if not options.texfile:
+    #options.texfile = base+'.tex'
+    options.texfile = base+'.report.tex'
+  print 'options.texfile = ', options.texfile
+
+  #if not args:
+    #args = glob.glob('p005id.png !(p005id).png')
+  #print 'args = ', args
 
   picture_list = args
   Ntotal = len(picture_list)
