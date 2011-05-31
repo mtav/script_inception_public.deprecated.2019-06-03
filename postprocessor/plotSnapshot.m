@@ -133,7 +133,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   end
   
   if isnan(maxval)
-    maxval = max(data);
+    %maxval = max(data);
+    disp(['max(data) = ',num2str(max(data))])
+    disp(['mean(data) = ',num2str(mean(data))])
+    maxval = 8./9.*max(data)+1./9.*mean(data);
   end
   
   %% Create plot data meshgrid
