@@ -7,7 +7,7 @@
 # TODO: enter a list of defect positions and sizes
 # TODO: automatic meshing
 
-from __future__ import division
+
 from bfdtd.bristolFDTD_generator_functions import *
 from constants.constants import *
 from meshing.subGridMultiLayer import *
@@ -251,7 +251,7 @@ class pillar_1D(BFDTDobject):
       self.Ysymmetry = False
       self.Zsymmetry = True
     else:
-      print('FATAL ERROR: invalid direction : '+str(excitationType))
+      print(('FATAL ERROR: invalid direction : '+str(excitationType)))
       sys.exit(-1)
 
   def getExcitationTypeStr(self):
@@ -264,7 +264,7 @@ class pillar_1D(BFDTDobject):
     elif self.excitation_list[0].name == 'P_Zm2 excitation':
       return 'Zm2'
     else:
-      print('FATAL ERROR: invalid direction' + self.excitation_list[0].name)
+      print(('FATAL ERROR: invalid direction' + self.excitation_list[0].name))
       sys.exit(-1)
 
   def getExcitationTypeID(self):
@@ -277,7 +277,7 @@ class pillar_1D(BFDTDobject):
     elif self.excitation_list[0].name == 'P_Zm2 excitation':
       return(3)
     else:
-      print('FATAL ERROR: invalid direction' + self.excitation_list[0].name)
+      print(('FATAL ERROR: invalid direction' + self.excitation_list[0].name))
       sys.exit(-1)
 
   def setRadiusPillarYZ(self,radius_Y,radius_Z):
@@ -381,13 +381,13 @@ class pillar_1D(BFDTDobject):
       self.writeCMD()
       return(0)
     else:
-      print('ERROR: self.DSTDIR = ' + self.DSTDIR + ' is not a directory')
+      print(('ERROR: self.DSTDIR = ' + self.DSTDIR + ' is not a directory'))
       return(-1)
 
   def mesh(self):
     
     if not os.path.isdir(self.DSTDIR):
-      print('error: self.DSTDIR = '+self.DSTDIR+'is not a directory')
+      print(('error: self.DSTDIR = '+self.DSTDIR+'is not a directory'))
       return('error')
 
     #print >>sys.stderr, 'self.radius_X_hole',self.radius_X_hole
@@ -396,17 +396,17 @@ class pillar_1D(BFDTDobject):
     
     if self.radius_Z_hole<=0:
       if self.HOLE_TYPE == 'rectangular_holes':
-        print >>sys.stderr, 'FATAL ERROR: negative self.radius_Z_hole = ',self.radius_Z_hole
+        print('FATAL ERROR: negative self.radius_Z_hole = ',self.radius_Z_hole, file=sys.stderr)
         sys.exit(-1)
       #else:
         #print >>sys.stderr, 'WARNING: negative self.radius_Z_hole = ',self.radius_Z_hole
 
     if self.radius_Y_pillar_mum<self.radius_Y_hole:
-      print >>sys.stderr, 'ERROR: self.radius_Y_pillar_mum = '+str(self.radius_Y_pillar_mum)+' < self.radius_Y_hole = '+str(self.radius_Y_hole)
+      print('ERROR: self.radius_Y_pillar_mum = '+str(self.radius_Y_pillar_mum)+' < self.radius_Y_hole = '+str(self.radius_Y_hole), file=sys.stderr)
       sys.exit(-1)
 
     if self.radius_Z_pillar_mum<self.radius_Z_hole:
-      print >>sys.stderr, 'ERROR: self.radius_Z_pillar_mum = '+str(self.radius_Z_pillar_mum)+' < self.radius_Z_hole = '+str(self.radius_Z_hole)
+      print('ERROR: self.radius_Z_pillar_mum = '+str(self.radius_Z_pillar_mum)+' < self.radius_Z_hole = '+str(self.radius_Z_hole), file=sys.stderr)
       sys.exit(-1)
 
     ########################################################################
@@ -451,7 +451,7 @@ class pillar_1D(BFDTDobject):
       
     if self.verbose:
       print('==============')
-      print 'thicknessVector_X = ', thicknessVector_X
+      print('thicknessVector_X = ', thicknessVector_X)
       print('==============')
   
     delta_min = min(max_delta_Vector_X)
@@ -483,7 +483,7 @@ class pillar_1D(BFDTDobject):
 
     if self.verbose:
       print('==============')
-      print 'thicknessVector_Y = ', thicknessVector_Y
+      print('thicknessVector_Y = ', thicknessVector_Y)
       print('==============')
     ###########################
   
@@ -546,7 +546,7 @@ class pillar_1D(BFDTDobject):
       self.radius_Z_center ]
       max_delta_Vector_Z_1 = [ self.delta_Z_outside, self.delta_Z_buffer, self.delta_Z_hole, self.delta_Z_hole, self.delta_Z_substrate, self.delta_Z_center ]
     else:
-      print >>sys.stderr, "ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+      print("ERROR: Unknown self.HOLE_TYPE "+self.HOLE_TYPE, file=sys.stderr)
       sys.exit(-1)
 
     thicknessVector_Z_2 = thicknessVector_Z_1[:]; thicknessVector_Z_2.reverse()
@@ -561,7 +561,7 @@ class pillar_1D(BFDTDobject):
     
     if self.verbose:
       print('==============')
-      print 'thicknessVector_Z = ', thicknessVector_Z
+      print('thicknessVector_Z = ', thicknessVector_Z)
       print('==============')
     #Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
     #print('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector))
@@ -573,15 +573,15 @@ class pillar_1D(BFDTDobject):
     #print('============')
     
     if self.verbose:
-      print max_delta_Vector_X; print thicknessVector_X
+      print(max_delta_Vector_X); print(thicknessVector_X)
     self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
 
     if self.verbose:
-      print max_delta_Vector_Y; print thicknessVector_Y
+      print(max_delta_Vector_Y); print(thicknessVector_Y)
     self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
 
     if self.verbose:
-      print max_delta_Vector_Z; print thicknessVector_Z
+      print(max_delta_Vector_Z); print(thicknessVector_Z)
     self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
     ###########################
     ########################################################################
@@ -647,9 +647,9 @@ class pillar_1D(BFDTDobject):
     def Zvalid(z):
       return 0<=z and z<=self.getZlim()
 
-    self.Xplanes = filter(Xvalid, self.Xplanes)
-    self.Yplanes = filter(Yvalid, self.Yplanes)
-    self.Zplanes = filter(Zvalid, self.Zplanes)
+    self.Xplanes = list(filter(Xvalid, self.Xplanes))
+    self.Yplanes = list(filter(Yvalid, self.Yplanes))
+    self.Zplanes = list(filter(Zvalid, self.Zplanes))
     
     # remove duplicates (order of snapshots not important, in fact, ordered is better)
     self.Xplanes = list(set(self.Xplanes))
@@ -705,7 +705,7 @@ class pillar_1D(BFDTDobject):
     # .in file
     in_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.in'
     if self.verbose:
-      print('Writing IN file '+in_filename+' ...')
+      print(('Writing IN file '+in_filename+' ...'))
     GEOin(in_filename, [ self.BASENAME+'.inp', self.BASENAME+'.geo' ])
     if self.verbose:
       print('...done')
@@ -715,7 +715,7 @@ class pillar_1D(BFDTDobject):
     # .sh file
     sh_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.sh';
     if self.verbose:
-      print('Writing shellscript '+sh_filename+' ...')
+      print(('Writing shellscript '+sh_filename+' ...'))
     probe_col = 0
     if self.excitation_list[0].E == [1,0,0]:
       probe_col = 2
@@ -735,7 +735,7 @@ class pillar_1D(BFDTDobject):
     # .cmd file
     cmd_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.cmd'
     if self.verbose:
-      print('Writing CMD file '+cmd_filename+' ...')
+      print(('Writing CMD file '+cmd_filename+' ...'))
     GEOcommand(cmd_filename, self.BASENAME)
     if self.verbose:
       print('...done')
@@ -841,7 +841,7 @@ class pillar_1D(BFDTDobject):
       upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right - D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
       self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
     else:
-      print >>sys.stderr, "WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE
+      print("WARNING: Unknown self.HOLE_TYPE "+self.HOLE_TYPE, file=sys.stderr)
     
   def generateGeometry(self):
     # clear any previous entries in geometry
@@ -1048,15 +1048,15 @@ def main(argv=None):
   try:
     try:
       opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    except getopt.error, msg:
+    except getopt.error as msg:
       raise Usage(msg)
     # main function
     P = pillar_1D()
     P.write()
     
-  except Usage, err:
-    print >>sys.stderr, err.msg
-    print >>sys.stderr, "for help use --help"
+  except Usage as err:
+    print(err.msg, file=sys.stderr)
+    print("for help use --help", file=sys.stderr)
     return 2
 
 if __name__ == "__main__":

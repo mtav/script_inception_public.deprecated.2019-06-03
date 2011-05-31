@@ -93,13 +93,13 @@ def main(argv=None):
   
   (options, args) = parser.parse_args()
   
-  print 'destdir = ',options.destdir
-  print 'iterations = ',options.iterations
-  print 'N_bottom = ',options.N_bottom
-  print 'N_top = ',options.N_top
-  print 'excitationTypeStr = ',options.excitationTypeStr
-  print 'FrequencyList = ',options.FrequencyList
-  print 'CavityScalingFactor = ',options.CavityScalingFactor
+  print('destdir = ',options.destdir)
+  print('iterations = ',options.iterations)
+  print('N_bottom = ',options.N_bottom)
+  print('N_top = ',options.N_top)
+  print('excitationTypeStr = ',options.excitationTypeStr)
+  print('FrequencyList = ',options.FrequencyList)
+  print('CavityScalingFactor = ',options.CavityScalingFactor)
   
   freq_snapshots = []
   
@@ -112,7 +112,7 @@ def main(argv=None):
   if len(options.FrequencyList) != 0:
     freq_snapshots += [float(x) for x in options.FrequencyList.split(',')]
 
-  print freq_snapshots
+  print(freq_snapshots)
   #sys.exit()
 
   excitationType = -1
@@ -124,9 +124,9 @@ def main(argv=None):
     excitationType = 2
   elif options.excitationTypeStr == 'Zm2':
     excitationType = 3
-  print 'excitationType = ', excitationType
+  print('excitationType = ', excitationType)
 
-  print options
+  print(options)
 
   P = rectangular_yagi(options.N_bottom, options.N_top, excitationType, options.iterations, freq_snapshots, options.CavityScalingFactor, options.RadiusPillar_Y_mum, options.RadiusPillar_Z_mum, options.n_Eff, options.radius_Z_piercer_mum)
 

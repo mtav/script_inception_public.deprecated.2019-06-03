@@ -13,6 +13,8 @@ from bfdtd.bfdtd_parser import *
 from FDTDGeometryObjects import *
 from layer_manager import *
 from bfdtd.bristolFDTD_generator_functions import *
+import os
+import pickle
 
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
@@ -22,7 +24,10 @@ from bfdtd.bristolFDTD_generator_functions import *
 ###############################
 #cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
 # official script data location :)
-cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
+if os.getenv('BLENDERDATADIR'):
+  cfgfile = os.getenv('BLENDERDATADIR')+os.sep+'BlenderImport.txt'
+else:
+  cfgfile = getuserdir()+os.sep+'BlenderImport.txt'
 
 ###############################
 # IMPORT FUNCTION
@@ -30,14 +35,18 @@ cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
 def importBristolFDTD(filename):
     ''' import BristolFDTD geometry from .in,.geo or .inp and create corresponding structure in Blender '''
     print('----->Importing bristol FDTD geometry: '+filename)
-    Blender.Window.WaitCursor(1);
+    #Blender.Window.WaitCursor(1);
 
     # save import path
     # Blender.Set('tempdir',os.path.dirname(filename));
-    FILE = open(cfgfile, 'w');
-    cPickle.dump(filename, FILE);
-    FILE.close();
+    #FILE = open(, 'w');
+    #pickle.dump(, FILE);
+    #FILE.close();
     
+    with open(cfgfile, 'wb') as f:
+      # Pickle the 'data' dictionary using the highest protocol available.
+      pickle.dump(filename, f, pickle.HIGHEST_PROTOCOL)
+
     # create structured_entries
     structured_entries = readBristolFDTD(filename);
     
@@ -223,9 +232,12 @@ def main():
       print('cfgfile = ', cfgfile)
   
       if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
-          with open(cfgfile, 'r') as FILE:
-              default_path = cPickle.load(FILE);
-  
+          #with open(, 'r') as FILE:
+               #= pickle.load(FILE);
+        with open(cfgfile, 'rb') as f:
+          # The protocol version used is detected automatically, so we do not
+          # have to specify it.
+          default_path = pickle.load(f)
       ###################
   
       ###################

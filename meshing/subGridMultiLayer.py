@@ -41,7 +41,7 @@ def subGridMultiLayer(Section_MaxDeltaVector_in = [1.76, 2.1385, 2.3535, 1],Sect
       
   # check for zeroes
   if 0 in Section_MaxDeltaVector:
-    print('FATAL ERROR: Section_MaxDeltaVector contains zeroes : '+str(Section_MaxDeltaVector))
+    print(('FATAL ERROR: Section_MaxDeltaVector contains zeroes : '+str(Section_MaxDeltaVector)))
     sys.exit(-1)
   
   Section_MaxDeltaVector = array(Section_MaxDeltaVector)
@@ -52,11 +52,11 @@ def subGridMultiLayer(Section_MaxDeltaVector_in = [1.76, 2.1385, 2.3535, 1],Sect
     sys.exit(-1)
 
   if min(Section_MaxDeltaVector)<0:
-    print('FATAL ERROR: Section_MaxDeltaVector contains negative values: '+str(Section_MaxDeltaVector))
+    print(('FATAL ERROR: Section_MaxDeltaVector contains negative values: '+str(Section_MaxDeltaVector)))
     sys.exit(-1)
 
   if min(Section_ThicknessVector)<0:
-    print('FATAL ERROR: Section_ThicknessVector contains negative values: '+str(Section_ThicknessVector))
+    print(('FATAL ERROR: Section_ThicknessVector contains negative values: '+str(Section_ThicknessVector)))
     sys.exit(-1)
 
   totalHeight = sum(Section_ThicknessVector);
@@ -82,16 +82,16 @@ def main(argv=None):
   try:
     try:
       opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    except getopt.error, msg:
+    except getopt.error as msg:
       raise Usage(msg)
     # more code, unchanged
     Mesh_ThicknessVector, Section_FinalDeltaVector = subGridMultiLayer([1,2,3,4,5],[5,4,3,2,1])
-    print('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector))
-    print('Section_FinalDeltaVector = '+str(Section_FinalDeltaVector))
+    print(('Mesh_ThicknessVector = '+str(Mesh_ThicknessVector)))
+    print(('Section_FinalDeltaVector = '+str(Section_FinalDeltaVector)))
     
-  except Usage, err:
-    print >>sys.stderr, err.msg
-    print >>sys.stderr, "for help use --help"
+  except Usage as err:
+    print(err.msg, file=sys.stderr)
+    print("for help use --help", file=sys.stderr)
     return 2
 
 if __name__ == "__main__":

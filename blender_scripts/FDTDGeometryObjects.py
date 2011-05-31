@@ -10,20 +10,30 @@ import os;
 import sys;
 import re;
 import array;
-#import cPickle;
 # define Vector+Matrix
 #~ from bpy.Mathutils import Vector;
 #~ from bpy.Mathutils import Matrix;
 #from Blender.Mathutils import Vector;
 #from Blender.Mathutils import Matrix;
+from mathutils import Color
 
 class FDTDGeometryObjects:
     def __init__(self):
       # prepare base materials
       self.material_dict={};
-      self.frequency_snapshot_material = Blender.Material.New('frequency_snapshot');
-      self.frequency_snapshot_material.rgbCol = 0.5, 0, 0;
-      self.frequency_snapshot_material.setAlpha(0.5);
+      
+      bpy.ops.material.new()
+      self.frequency_snapshot_material = bpy.data.materials[-1]
+      self.frequency_snapshot_material.name = 'frequency_snapshot'
+      #self.frequency_snapshot_material = Blender.Material.New('frequency_snapshot');
+      self.frequency_snapshot_material.diffuse_color = Color((0.5, 0, 0))
+      #self.frequency_snapshot_material.rgbCol = 0.5, 0, 0;
+      self.frequency_snapshot_material.alpha = 0.5
+      #self.frequency_snapshot_material.setAlpha(0.5);
+      
+      #titi.transparency_method='MASK'
+      #titi.transparency_method='RAYTRACE'
+      #titi.transparency_method='Z_TRANSPARENCY'
       
       self.time_snapshot_material = Blender.Material.New('time_snapshot');
       self.time_snapshot_material.rgbCol = 0.5, 1, 0;
