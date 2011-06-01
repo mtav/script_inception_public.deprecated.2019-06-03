@@ -28,6 +28,18 @@ h_cavity = Lambda_mum/(n_diamond)
 height = Nbottom*(h_air+h_diamond) + h_cavity + Ntop*(h_air+h_diamond)
 
 #########
+# define flag
+#########
+pillar.flag.iterations = 25000
+
+#########
+# define boundary conditions
+#########
+pillar.boundaries.Xpos_bc = 2
+pillar.boundaries.Ypos_bc = 2
+pillar.boundaries.Zpos_bc = 2
+
+#########
 # define box
 #########
 pillar.box.lower = [0,0,0]
@@ -64,11 +76,6 @@ for i in range(Ntop):
   X_current = X_current+h_diamond
 
 #########
-# define flag
-#########
-pillar.flag.iterations = 25000
-
-#########
 # define excitation
 #########
 excitation = Excitation()
@@ -98,8 +105,8 @@ F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = fre
 # define mesh
 #########
 #max_delta_Vector_X = [ delta, delta, delta, delta ]
-#max_delta_Vector_Y = [ delta, delta, delta, delta, delta, delta ]
-#max_delta_Vector_Z = [ delta, delta, delta, delta ]
+max_delta_Vector_Y = [ delta, delta, delta, delta, delta, delta ]
+max_delta_Vector_Z = [ delta, delta, delta, delta ]
 #thicknessVector_X = LimitsToThickness([ pillar.box.lower[0], block.lower[0], block.upper[0], block.upper[0]+delta, pillar.box.upper[0] ])
 #thicknessVector_Y = [ block.lower[1]-pillar.box.lower[1], (block.getCenter()[1]-delta)-block.lower[1], delta, delta, block.upper[1]-(block.getCenter()[1]+delta), pillar.box.upper[1]-block.upper[1] ]
 #thicknessVector_Z = LimitsToThickness([ pillar.box.lower[2], block.lower[2], block.getCenter()[2], block.upper[2], pillar.box.upper[2] ])

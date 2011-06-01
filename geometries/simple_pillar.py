@@ -21,6 +21,18 @@ radius = 0.25
 height = 2.*20.*Lambda_mum/(2.*n_Diamond) + Lambda_mum/n_Diamond
 
 #########
+# define flag
+#########
+pillar.flag.iterations = 25000
+
+#########
+# define boundary conditions
+#########
+pillar.boundaries.Xpos_bc = 2
+pillar.boundaries.Ypos_bc = 2
+pillar.boundaries.Zpos_bc = 2
+
+#########
 # define box
 #########
 pillar.box.lower = [0,0,0]
@@ -35,11 +47,6 @@ block.upper = [ pillar.box.getCenter()[0]+0.5*height, pillar.box.getCenter()[1]+
 block.permittivity = pow(n_Diamond,2)
 block.conductivity = 0
 pillar.geometry_object_list = [ block ]
-
-#########
-# define flag
-#########
-pillar.flag.iterations = 25000
 
 #########
 # define excitation

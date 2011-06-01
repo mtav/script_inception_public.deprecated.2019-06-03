@@ -100,19 +100,19 @@ class Boundaries:
     self.layer = 'boundaries'
     self.group = 'boundaries'
 
-    self.Xpos_bc = 0
-    self.Ypos_bc = 0
-    self.Zpos_bc = 0
-    self.Xneg_bc = 0
-    self.Yneg_bc = 0
-    self.Zneg_bc = 0
+    self.Xpos_bc = 2
+    self.Ypos_bc = 2
+    self.Zpos_bc = 2
+    self.Xneg_bc = 2
+    self.Yneg_bc = 2
+    self.Zneg_bc = 2
 
-    self.Xpos_param = [0,0,0]
-    self.Ypos_param = [0,0,0]
-    self.Zpos_param = [0,0,0]
-    self.Xneg_param = [0,0,0]
-    self.Yneg_param = [0,0,0]
-    self.Zneg_param = [0,0,0]
+    self.Xpos_param = [1,1,0]
+    self.Ypos_param = [1,1,0]
+    self.Zpos_param = [1,1,0]
+    self.Xneg_param = [1,1,0]
+    self.Yneg_param = [1,1,0]
+    self.Zneg_param = [1,1,0]
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
