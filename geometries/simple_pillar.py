@@ -40,42 +40,19 @@ pillar.geometry_object_list = [ block ]
 #########
 # define flag
 #########
-pillar.flag.name = 'flag'
-pillar.flag.iterationMethod = 5
-pillar.flag.propagationConstant = 0
-pillar.flag.flagOne = 0
-pillar.flag.flagTwo = 0
 pillar.flag.iterations = 25000
-pillar.flag.timeStep = 0.9; #mus
-pillar.flag.id = 'id'
 
 #########
 # define excitation
 #########
-P_center = 0.5*add(block.lower,block.upper)
-P_Ym1 = [ P_center[0], P_center[1]-1*delta, P_center[2] ]
-
 excitation = Excitation()
-excitation.name = 'excitation'
-excitation.current_source = 7
-excitation.P1 = P_Ym1
-excitation.P2 = P_center
+excitation.P1 = [ block.getCenter()[0], block.getCenter()[1]-1*delta, block.getCenter()[2] ]
+excitation.P2 = block.getCenter()
+excitation.frequency = freq
 
 E = subtract(excitation.P2,excitation.P1)
 E = list(E/linalg.norm(E))
-print 'E = ', E
-
 excitation.E = E
-excitation.H = [ 0, 0, 0 ]
-excitation.Type = 10
-excitation.time_constant = 4.000000E-09; #mus
-excitation.amplitude = 1.000000E+01; #V/mum???
-excitation.time_offset = 2.700000E-08; #mus
-excitation.frequency = freq
-excitation.param1 = 0
-excitation.param2 = 0
-excitation.param3 = 0
-excitation.param4 = 0
 
 pillar.excitation_list = [ excitation ]
 
@@ -84,7 +61,7 @@ pillar.excitation_list = [ excitation ]
 #########
 probe = Probe()
 probe.name = 'probe'
-probe.position = [ block.upper[0]+delta, P_center[1], P_center[2] ]
+probe.position = [ block.upper[0]+delta, block.getCenter()[1], block.getCenter()[2] ]
 probe.step=10
 probe.E=[1,1,1]
 probe.H=[1,1,1]
@@ -153,8 +130,8 @@ pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector
 #########
 # write
 #########
-DSTDIR = os.getenv('DATADIR')
-#DSTDIR = os.getenv('TESTDIR')
+#DSTDIR = os.getenv('DATADIR')
+DSTDIR = os.getenv('TESTDIR')
 BASENAME = 'simple_pillar_2'
 WALLTIME = 360
 

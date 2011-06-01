@@ -54,14 +54,13 @@ class Flag:
     self.name = 'flag'
     self.layer = 'flag'
     self.group = 'flag'
-    
-    self.iterationMethod = 0
+    self.iterationMethod = 5
     self.propagationConstant = 0
     self.flagOne = 0
     self.flagTwo = 0
-    self.iterations = 0
-    self.timeStep = 0
-    self.id = '_id_'
+    self.iterations = 25000
+    self.timeStep = 0.9; #mus
+    self.id = 'id' #'_id_'
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'iMethod = ' + str(self.iterationMethod) + '\n' +\
@@ -409,21 +408,25 @@ class Rotation:
 class Excitation:
   def __init__(self,
                 name = 'excitation',
-                current_source = 0,
+                current_source = 7,
                 P1 = [0,0,0],
                 P2 = [0,0,0],
                 E = [0,0,0],
-                H = [0,0,0],
-                Type = 0,
-                time_constant = 0,
-                amplitude = 0,
-                time_offset = 0,
+                H = [ 0, 0, 0 ],
+                Type = 10,
+                time_constant = 4.000000E-09, #mus
+                amplitude = 1.000000E+01, #V/mum???
+                time_offset = 2.700000E-08, #mus
                 frequency = 0,
                 param1 = 0,
                 param2 = 0,
                 param3 = 0,
-                param4 = 0):
+                param4 = 0,
+                layer = 'excitation',
+                group = 'excitation'):
     self.name = name
+    self.layer = layer
+    self.group = group
     self.current_source = current_source
     self.P1 = P1
     self.P2 = P2

@@ -42,7 +42,10 @@ def mergePictures(directory,FirstPic):
 
   os.chdir(directory)
   
+  print(('os.getcwd() = ',os.getcwd()))
   plane_filenames = glob.glob('[xyz]*.png')
+  print(('plane_filenames = ',plane_filenames))
+  
   plane_list=[]
   
   Xpos_set=set([])
@@ -68,40 +71,53 @@ def mergePictures(directory,FirstPic):
   Zpos_set=sorted(list(Zpos_set))
   lambda_set=sorted(list(lambda_set))
   
-  print Xpos_set
-  print Ypos_set
-  print Zpos_set
-  print lambda_set
+  print(('Xpos_set = ', Xpos_set))
+  print(('Ypos_set = ', Ypos_set))
+  print(('Zpos_set = ', Zpos_set))
+  print(('lambda_set = ', lambda_set))
   
-  if len(Xpos_set)!=3:
+  if len(Xpos_set)!=3 and len(Xpos_set)!=1:
     print 'WARNING: len(Xpos_set)=',len(Xpos_set)
     os.chdir(owd)
     return(1)
     #sys.exit(-1)
   
-  if len(Ypos_set)!=3:
+  if len(Ypos_set)!=3 and len(Ypos_set)!=1:
     print 'WARNING: len(Ypos_set)=',len(Ypos_set)
     os.chdir(owd)
     return(1)
     #sys.exit(-1)
   
-  if len(Zpos_set)!=3:
+  if len(Zpos_set)!=3 and len(Zpos_set)!=1:
     print 'WARNING: len(Zpos_set)=',len(Zpos_set)
     os.chdir(owd)
     return(1)
     #sys.exit(-1)
     
+  if len(Xpos_set)==1:
+    Xmid = 0
+  else:
+    Xmid = 1
+  if len(Ypos_set)==1:
+    Ymid = 0
+  else:
+    Ymid = 1
+  if len(Zpos_set)==1:
+    Zmid = 0
+  else:
+    Zmid = 1
+     
   outFile_list = []
   print '=== To merge: ==='
   for Lambda in lambda_set:
     for p in plane_list:
-      if p.Plane=='x' and p.Pos==Xpos_set[1] and p.Lambda==Lambda:
+      if p.Plane=='x' and p.Pos==Xpos_set[Xmid] and p.Lambda==Lambda:
         #print 'BIP 1'
         p1=p
-      if p.Plane=='y' and p.Pos==Ypos_set[1] and p.Lambda==Lambda:
+      if p.Plane=='y' and p.Pos==Ypos_set[Ymid] and p.Lambda==Lambda:
         #print 'BIP 2'
         p2=p
-      if p.Plane=='z' and p.Pos==Zpos_set[1] and p.Lambda==Lambda:
+      if p.Plane=='z' and p.Pos==Zpos_set[Zmid] and p.Lambda==Lambda:
         #print 'BIP 3'
         p3=p
     print p1.Filename+' + '+p2.Filename+' + '+p3.Filename+' -> '+str(Lambda)+'.png'
@@ -145,6 +161,8 @@ def mergePictures(directory,FirstPic):
 
 # temp main
 # loop recursively through dirs
+print(('sys.argv[1] = ',sys.argv[1]))
+mergePictures(sys.argv[1],sys.argv[2])
 for root, dirs, files in os.walk(sys.argv[1]):
   for d in dirs:
     localdir = os.path.join(root,d)
