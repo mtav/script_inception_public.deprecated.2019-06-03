@@ -74,41 +74,73 @@ pillar.probe_list = [ probe ]
 # define frequency snapshots
 #########
 first = min(65400,pillar.flag.iterations)
-repetition = 524200
-interpolate = 1
-real_dft = 0
-mod_only = 0
-mod_all = 1
+#repetition = 524200
+#interpolate = 1
+#real_dft = 0
+#mod_only = 0
+#mod_all = 1
 frequency_vector = [freq]
-starting_sample = 0
-E=[1,1,1]
-H=[1,1,1]
-J=[0,0,0]
+#starting_sample = 0
+#E=[1,1,1]
+#H=[1,1,1]
+#J=[0,0,0]
 
 # central snapshot planes
-plane = 1
-P1 = [block.getCenter()[0], pillar.box.lower[1], pillar.box.lower[2]]
-P2 = [block.getCenter()[0], pillar.box.upper[1], pillar.box.upper[2]]
-F = Frequency_snapshot('X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
-pillar.snapshot_list.extend([F])
+#plane = 1
+#P1 = [block.getCenter()[0], pillar.box.lower[1], pillar.box.lower[2]]
+#P2 = [block.getCenter()[0], pillar.box.upper[1], pillar.box.upper[2]]
+#F = Frequency_snapshot('X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
+#pillar.snapshot_list.extend([F])
 
-plane = 2
-P1 = [pillar.box.lower[0], block.getCenter()[1], pillar.box.lower[2]]
-P2 = [pillar.box.upper[0], block.getCenter()[1], pillar.box.upper[2]]
-F = Frequency_snapshot('Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
-pillar.snapshot_list.extend([F])
+#plane = 2
+#P1 = [pillar.box.lower[0], block.getCenter()[1], pillar.box.lower[2]]
+#P2 = [pillar.box.upper[0], block.getCenter()[1], pillar.box.upper[2]]
+#F = Frequency_snapshot('Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
+#pillar.snapshot_list.extend([F])
 
-plane = 3
-P1 = [pillar.box.lower[0], pillar.box.lower[1], block.getCenter()[2]]
-P2 = [pillar.box.upper[0], pillar.box.upper[1], block.getCenter()[2]]
-F = Frequency_snapshot('Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
-pillar.snapshot_list.extend([F])
+#plane = 3
+#P1 = [pillar.box.lower[0], pillar.box.lower[1], block.getCenter()[2]]
+#P2 = [pillar.box.upper[0], pillar.box.upper[1], block.getCenter()[2]]
+#F = Frequency_snapshot('Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
+#pillar.snapshot_list.extend([F])
+
+#plane = 1
+#P1 = [self.getPillarCenterX(), 0, 0]
+#P2 = [self.getPillarCenterX(), self.getYlim(), self.getZlim()]
+#F = Frequency_snapshot('X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+#T = Time_snapshot('X time snapshot', first, repetition, plane, P1, P2, E, H, J, power, 0)
+#self.snapshot_list.extend([F,T])
+
+#plane = 2
+#P1 = [0, self.Ymax/2-self.getYoffset(), 0]
+#P2 = [self.Xmax, self.Ymax/2-self.getYoffset(), self.getZlim()]
+#F = Frequency_snapshot('Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+#T = Time_snapshot('Y time snapshot', first, repetition, plane, P1, P2, E, H, J, power, 0)
+#self.snapshot_list.extend([F,T])
+
+#plane = 3
+#P1 = [0, 0, self.Zmax/2-self.getZoffset()]
+#P2 = [self.Xmax, self.getYlim(), self.Zmax/2-self.getZoffset()]
+#F = Frequency_snapshot('Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+#T = Time_snapshot('Z time snapshot', first, repetition, plane, P1, P2, E, H, J, power, 0)
+#self.snapshot_list.extend([F,T])
+
+#####################
+# box
+#P1 = [0,0,0]
+#P2 = [self.Xmax, self.getYlim(), self.getZlim()]
+#F = Frequency_snapshot('Box frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
+#self.snapshot_list.extend([F])
 
 # snapshot box
-P1 = [pillar.box.lower[0], pillar.box.lower[1], pillar.box.lower[2]]
-P2 = [pillar.box.upper[0], pillar.box.upper[1], pillar.box.upper[2]]
-F = Frequency_snapshot('Box frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
-pillar.snapshot_list.extend([F])
+F = pillar.addBoxFrequencySnapshots()
+F.frequency_vector = frequency_vector
+F.first = first
+
+#P1 = [pillar.box.lower[0], pillar.box.lower[1], pillar.box.lower[2]]
+#P2 = [pillar.box.upper[0], pillar.box.upper[1], pillar.box.upper[2]]
+#F = Frequency_snapshot('Box frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, frequency_vector, starting_sample, E, H, J)
+#pillar.snapshot_list.extend([F])
 
 #########
 # define mesh

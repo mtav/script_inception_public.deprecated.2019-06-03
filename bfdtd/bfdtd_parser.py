@@ -647,19 +647,19 @@ class Frequency_snapshot:
   def __init__(self,
     name = 'frequency_snapshot',
     first = 0,
-    repetition = 0,
-    interpolate = 0,
+    repetition = 524200,
+    interpolate = 1,
     real_dft = 0,
     mod_only = 0,
-    mod_all = 0,
-    plane = 0,
+    mod_all = 1,
+    plane = 1,#1,2,3 for x,y,z
     P1 = 0,
     P2 = 0,
     frequency_vector = [0],
     starting_sample = 0,
-    E = 0,
-    H = 0,
-    J = 0,
+    E=[1,1,1],
+    H=[1,1,1],
+    J=[0,0,0],
     layer = 'frequency_snapshot',
     group = 'frequency_snapshot'):
     
@@ -927,6 +927,13 @@ class BFDTDobject:
   
   def getNcells(self):
     return len(self.delta_X_vector)*len(self.delta_Y_vector)*len(self.delta_Z_vector)
+
+  def addBoxFrequencySnapshots(self):
+    L = [self.box.lower[0], self.box.lower[1], self.box.lower[2]]
+    U = [self.box.upper[0], self.box.upper[1], self.box.upper[2]]
+    F = Frequency_snapshot(name='Box frequency snapshot', P1=L, P2=U)
+    self.snapshot_list.append(F)
+    return F
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
