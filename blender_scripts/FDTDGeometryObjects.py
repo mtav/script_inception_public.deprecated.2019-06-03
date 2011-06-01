@@ -440,6 +440,9 @@ class FDTDGeometryObjects:
         probe_size = self.probe_scalefactor_mesh*self.mesh_min
         if probe_size<=0:
           probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
+        if probe_size<=0:
+          probe_size = 1
+        # TODO: define probe_size relative to smallest part of geometry + add way to change it in blender eventually
         # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
         
         mesh = Blender.Mesh.Primitives.Cube(probe_size);
