@@ -45,3 +45,18 @@ def Mag2(vec):
 def Mag(vec):
   ''' return the magnitude (rho in spherical coordinate system) '''
   return math.sqrt(Mag2(vec))
+
+def getProbeColumnFromExcitation(excitation):
+  print(('excitation = ',excitation))
+  probe_col = 0
+  if excitation == [1,0,0]:
+    probe_col = 2
+  elif excitation == [0,1,0]:
+    probe_col = 3
+  elif excitation == [0,0,1]:
+    probe_col = 4
+  else:
+    print('ERROR : Unknown Excitation type')
+    sys.exit(-1)
+  print(('probe_col', probe_col))
+  return probe_col

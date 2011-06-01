@@ -126,14 +126,10 @@ F.first = first
 max_delta_Vector_X = [ delta, delta, delta, delta ]
 max_delta_Vector_Y = [ delta, delta, delta, delta, delta, delta ]
 max_delta_Vector_Z = [ delta, delta, delta, delta ]
-
 thicknessVector_X = LimitsToThickness([ pillar.box.lower[0], block.lower[0], block.upper[0], block.upper[0]+delta, pillar.box.upper[0] ])
 thicknessVector_Y = [ block.lower[1]-pillar.box.lower[1], (block.getCenter()[1]-delta)-block.lower[1], delta, delta, block.upper[1]-(block.getCenter()[1]+delta), pillar.box.upper[1]-block.upper[1] ]
 thicknessVector_Z = LimitsToThickness([ pillar.box.lower[2], block.lower[2], block.getCenter()[2], block.upper[2], pillar.box.upper[2] ])
-
 pillar.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X,thicknessVector_X)
-print 'max_delta_Vector_Y = ', max_delta_Vector_Y
-print 'thicknessVector_Y = ', thicknessVector_Y
 pillar.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y,thicknessVector_Y)
 pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z,thicknessVector_Z)
 
@@ -143,21 +139,7 @@ pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector
 #DSTDIR = os.getenv('DATADIR')
 DSTDIR = os.getenv('TESTDIR')
 BASENAME = 'simple_pillar_2'
-WALLTIME = 360
 
 pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
-
-sh_filename = DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh';
-probe_col = 0
-if pillar.excitation_list[0].E == [1,0,0]:
-  probe_col = 2
-elif pillar.excitation_list[0].E == [0,1,0]:
-  probe_col = 3
-elif pillar.excitation_list[0].E == [0,0,1]:
-  probe_col = 4
-else:
-  print('ERROR : Unknown Excitation type')
-  sys.exit(-1)
-GEOshellscript_advanced(sh_filename, BASENAME, probe_col,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME)
-
+GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 print pillar.getNcells()
