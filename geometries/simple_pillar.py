@@ -15,10 +15,10 @@ pillar = BFDTDobject()
 #########
 n_Diamond = 2.4
 Lambda_mum = 0.637
-delta = Lambda_mum/(16*n_Diamond)
+delta = Lambda_mum/(10*n_Diamond)
 freq = get_c0()/Lambda_mum
 radius = 0.25
-height = 2.*40.*Lambda_mum/(2.*n_Diamond) + Lambda_mum/n_Diamond
+height = 2.*20.*Lambda_mum/(2.*n_Diamond) + Lambda_mum/n_Diamond
 
 #########
 # define box
@@ -45,7 +45,7 @@ pillar.flag.iterationMethod = 5
 pillar.flag.propagationConstant = 0
 pillar.flag.flagOne = 0
 pillar.flag.flagTwo = 0
-pillar.flag.iterations = 100000
+pillar.flag.iterations = 25000
 pillar.flag.timeStep = 0.9; #mus
 pillar.flag.id = 'id'
 
@@ -154,7 +154,8 @@ pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector
 # write
 #########
 DSTDIR = os.getenv('DATADIR')
-BASENAME = 'simple_pillar'
+#DSTDIR = os.getenv('TESTDIR')
+BASENAME = 'simple_pillar_2'
 WALLTIME = 360
 
 pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
@@ -171,3 +172,5 @@ else:
   print('ERROR : Unknown Excitation type')
   sys.exit(-1)
 GEOshellscript_advanced(sh_filename, BASENAME, probe_col,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME)
+
+print pillar.getNcells()

@@ -921,6 +921,9 @@ class BFDTDobject:
           ret += self.geometry_object_list[i].__str__()+'\n'
           
       return ret
+  
+  def getNcells(self):
+    return len(self.delta_X_vector)*len(self.delta_Y_vector)*len(self.delta_Z_vector)
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
