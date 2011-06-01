@@ -766,14 +766,14 @@ class Probe:
   def __init__(self,
     name = 'probe',
     position = [0,0,0],
-    step = 0,
-    E = [0,0,0],
-    H = [0,0,0],
-    J = [0,0,0],
+    step=10,
+    E=[1,1,1],
+    H=[1,1,1],
+    J=[0,0,0],
     power = 0,
     layer = 'probe',
     group = 'probe'):
-    
+        
     self.name = name
     self.layer = layer
     self.group = group
