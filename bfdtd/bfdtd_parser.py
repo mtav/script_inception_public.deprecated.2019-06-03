@@ -934,7 +934,27 @@ class BFDTDobject:
     F = Frequency_snapshot(name='Box frequency snapshot', P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
-
+  
+  def addFrequencySnapshot(self, plane, position):
+    if plane == 1:
+      name='X frequency snapshot'
+      L = [position, self.box.lower[1], self.box.lower[2]]
+      U = [position, self.box.upper[1], self.box.upper[2]]
+    elif plane == 2:
+      name='Y frequency snapshot'
+      L = [self.box.lower[0], position, self.box.lower[2]]
+      U = [self.box.upper[0], position, self.box.upper[2]]
+    elif plane == 3:
+      name='Z frequency snapshot'
+      L = [self.box.lower[0], self.box.lower[1], position]
+      U = [self.box.upper[0], self.box.upper[1], position]
+    else:
+      print(('ERROR: Invalid plane : ',plane))
+      sys.exit(1)
+    F = Frequency_snapshot(name=name, plane=plane, P1=L, P2=U)
+    self.snapshot_list.append(F)
+    return F
+  
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
       print 'Processing ', filename

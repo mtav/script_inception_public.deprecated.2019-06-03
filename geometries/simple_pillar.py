@@ -34,7 +34,6 @@ block.lower = [ pillar.box.getCenter()[0]-0.5*height, pillar.box.getCenter()[1]-
 block.upper = [ pillar.box.getCenter()[0]+0.5*height, pillar.box.getCenter()[1]+radius, pillar.box.getCenter()[2]+radius ]
 block.permittivity = pow(n_Diamond,2)
 block.conductivity = 0
-
 pillar.geometry_object_list = [ block ]
 
 #########
@@ -50,7 +49,6 @@ excitation.P1 = [ block.getCenter()[0], block.getCenter()[1]-1*delta, block.getC
 excitation.P2 = block.getCenter()
 excitation.frequency = freq
 excitation.E = list(Unit(subtract(excitation.P2,excitation.P1)))
-
 pillar.excitation_list = [ excitation ]
 
 #########
@@ -64,61 +62,10 @@ pillar.probe_list = [ probe ]
 #########
 first = min(65400,pillar.flag.iterations)
 frequency_vector = [freq]
-
-# central snapshot planes
-plane = 1
-P1 = [block.getCenter()[0], pillar.box.lower[1], pillar.box.lower[2]]
-P2 = [block.getCenter()[0], pillar.box.upper[1], pillar.box.upper[2]]
-F = Frequency_snapshot(name='X frequency snapshot', first=first, plane=plane, P1=P1, P2=P2, frequency_vector=frequency_vector)
-pillar.snapshot_list.extend([F])
-
-plane = 2
-P1 = [pillar.box.lower[0], block.getCenter()[1], pillar.box.lower[2]]
-P2 = [pillar.box.upper[0], block.getCenter()[1], pillar.box.upper[2]]
-F = Frequency_snapshot(name='Y frequency snapshot', first=first, plane=plane, P1=P1, P2=P2, frequency_vector=frequency_vector)
-pillar.snapshot_list.extend([F])
-
-plane = 3
-P1 = [pillar.box.lower[0], pillar.box.lower[1], block.getCenter()[2]]
-P2 = [pillar.box.upper[0], pillar.box.upper[1], block.getCenter()[2]]
-F = Frequency_snapshot(name='Z frequency snapshot', first=first, plane=plane, P1=P1, P2=P2, frequency_vector=frequency_vector)
-pillar.snapshot_list.extend([F])
-
-#0
-#self.getPillarCenterX() *
-#self.Xmax
-
-#0
-#self.Ymax/2-self.getYoffset() *
-#self.getYlim()
-
-#0
-#self.Zmax/2-self.getZoffset() *
-#self.getZlim()
-
-#plane = 1
-#P1 = [self.getPillarCenterX(), 0, 0]
-#P2 = [self.getPillarCenterX(), self.getYlim(), self.getZlim()]
-#F = Frequency_snapshot('X frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-#self.snapshot_list.extend([F])
-
-#plane = 2
-#P1 = [0, self.Ymax/2-self.getYoffset(), 0]
-#P2 = [self.Xmax, self.Ymax/2-self.getYoffset(), self.getZlim()]
-#F = Frequency_snapshot('Y frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-#self.snapshot_list.extend([F])
-
-#plane = 3
-#P1 = [0, 0, self.Zmax/2-self.getZoffset()]
-#P2 = [self.Xmax, self.getYlim(), self.Zmax/2-self.getZoffset()]
-#F = Frequency_snapshot('Z frequency snapshot', first, repetition, interpolate, real_dft, mod_only, mod_all, plane, P1, P2, self.SNAPSHOTS_FREQUENCY, starting_sample, E, H, J)
-#self.snapshot_list.extend([F])
-
-#####################
-# snapshot box
-F = pillar.addBoxFrequencySnapshots()
-F.frequency_vector = frequency_vector
-F.first = first
+F = pillar.addFrequencySnapshot(1,block.getCenter()[0]); F.first = first; F.frequency_vector = frequency_vector
+F = pillar.addFrequencySnapshot(2,block.getCenter()[1]); F.first = first; F.frequency_vector = frequency_vector
+F = pillar.addFrequencySnapshot(3,block.getCenter()[2]); F.first = first; F.frequency_vector = frequency_vector
+F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = frequency_vector
 
 #########
 # define mesh
@@ -139,7 +86,6 @@ pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector
 #DSTDIR = os.getenv('DATADIR')
 DSTDIR = os.getenv('TESTDIR')
 BASENAME = 'simple_pillar_2'
-
 pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
 GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 print pillar.getNcells()
