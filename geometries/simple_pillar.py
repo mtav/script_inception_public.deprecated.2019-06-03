@@ -45,7 +45,7 @@ pillar.flag.iterationMethod = 5
 pillar.flag.propagationConstant = 0
 pillar.flag.flagOne = 0
 pillar.flag.flagTwo = 0
-pillar.flag.iterations = 32000
+pillar.flag.iterations = 100000
 pillar.flag.timeStep = 0.9; #mus
 pillar.flag.id = 'id'
 

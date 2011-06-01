@@ -4,7 +4,7 @@
 import sys
 import getopt
 import fnmatch
-import os
+import os, os.path
 import string
 from optparse import OptionParser
 import glob
@@ -38,6 +38,8 @@ class Foo:
     #self.i = imagpart
 
 def mergePictures(directory,FirstPic):
+  owd = os.getcwd()
+
   os.chdir(directory)
   
   plane_filenames = glob.glob('[xyz]*.png')
@@ -72,16 +74,22 @@ def mergePictures(directory,FirstPic):
   print lambda_set
   
   if len(Xpos_set)!=3:
-    print 'len(Xpos_set)=',len(Xpos_set)
-    sys.exit(-1)
+    print 'WARNING: len(Xpos_set)=',len(Xpos_set)
+    os.chdir(owd)
+    return(1)
+    #sys.exit(-1)
   
   if len(Ypos_set)!=3:
-    print 'len(Ypos_set)=',len(Ypos_set)
-    sys.exit(-1)
+    print 'WARNING: len(Ypos_set)=',len(Ypos_set)
+    os.chdir(owd)
+    return(1)
+    #sys.exit(-1)
   
   if len(Zpos_set)!=3:
-    print 'len(Zpos_set)=',len(Zpos_set)
-    sys.exit(-1)
+    print 'WARNING: len(Zpos_set)=',len(Zpos_set)
+    os.chdir(owd)
+    return(1)
+    #sys.exit(-1)
     
   outFile_list = []
   print '=== To merge: ==='
@@ -131,7 +139,14 @@ def mergePictures(directory,FirstPic):
       #print p.Filename
       #os.remove(p.Filename)
     
-  sys.exit(0)
+  os.chdir(owd)
+  return(0)
+  #sys.exit(0)
 
 # temp main
-mergePictures(sys.argv[1],sys.argv[2])
+# loop recursively through dirs
+for root, dirs, files in os.walk(sys.argv[1]):
+  for d in dirs:
+    localdir = os.path.join(root,d)
+    print 'localdir = ', localdir
+    mergePictures(localdir,sys.argv[2])
