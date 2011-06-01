@@ -254,7 +254,7 @@ class Block(Geometry_object):
     group = 'block',
     lower = [0,0,0],
     upper = [0,0,0],
-    permittivity = 0,
+    permittivity = 1,# vacuum by default
     conductivity = 0):
     
     Geometry_object.__init__(self)

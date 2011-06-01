@@ -437,7 +437,9 @@ class FDTDGeometryObjects:
         scene = Blender.Scene.GetCurrent();
         
         #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
-        probe_size = self.probe_scalefactor_mesh*self.mesh_min;
+        probe_size = self.probe_scalefactor_mesh*self.mesh_min
+        if probe_size<=0:
+          probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
         # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
         
         mesh = Blender.Mesh.Primitives.Cube(probe_size);
