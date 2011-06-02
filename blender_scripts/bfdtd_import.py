@@ -86,14 +86,14 @@ def importBristolFDTD(filename):
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
     for sphere in structured_entries.sphere_list:
         # variables
-        center = Vector(sphere.center)
+        centre = Vector(sphere.centre)
 
         # initialise rotation_matrix
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
         # position object
-        T = Blender.Mathutils.TranslationMatrix(center)
+        T = Blender.Mathutils.TranslationMatrix(centre)
         rotation_matrix *= T;
         
         # add rotations
@@ -144,7 +144,7 @@ def importBristolFDTD(filename):
         rotation_matrix *= rotationMatrix(Blender.Mathutils.Vector(0,0,0), Blender.Mathutils.Vector(1,0,0), -90)
         
         # position object
-        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
+        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.centre[0],cylinder.centre[1],cylinder.centre[2]))
         rotation_matrix *= T;
         
         # add rotations

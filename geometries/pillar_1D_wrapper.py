@@ -12,6 +12,10 @@ from optparse import OptionParser
 def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
   print('======== cylinder START ============')
+  
+  n_Diamond = 2.4
+  n_Air = 1
+
   P.DSTDIR = DSTDIR
   P.setIterations(iterations)
   P.print_holes_top = True
@@ -20,22 +24,27 @@ def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P.SNAPSHOTS_FREQUENCY = freq_snapshots
   
   P.HOLE_TYPE = 'cylinder'
-  P.setRadiusPillarYZ(0.150/2.0,0.150/2.0)
+  #P.setRadiusPillarYZ(0.150/2.0,0.150/2.0)
+  P.setRadiusPillarYZ(0.5*P.getLambda()/(4*n_Air)+0.015,0.5*P.getLambda()/(4*n_Air)+0.015)
   P.print_podium = False;
   P.thickness_X_bottomSquare = 0;
   
-  P.d_holes_mum = 0.220; #mum
-  P.setRadiusHole(0.28*P.d_holes_mum,P.radius_Y_pillar_mum,0.28*P.d_holes_mum)
+  #P.d_holes_mum = 0.220; #mum
+  #P.setRadiusHole(0.28*P.d_holes_mum,P.radius_Y_pillar_mum,0.28*P.d_holes_mum)
+  P.d_holes_mum = P.getLambda()/(4*n_Air)+P.getLambda()/(4*n_Diamond)
+  P.setRadiusHole(0.5*P.getLambda()/(4*n_Air),P.radius_Y_pillar_mum,0.5*P.getLambda()/(4*n_Air))
   
   P.bottom_N = bottomN; #no unit
   P.top_N = topN; #no unit
   
-  P.setDistanceBetweenDefectCentersInCavity(2*P.d_holes_mum) #mum
+  #P.setDistanceBetweenDefectCentersInCavity(2*P.d_holes_mum) #mum
   # P.setDistanceBetweenDefectPairsInCavity(P.getDistanceBetweenDefectCentersInCavity() - P.d_holes_mum) # mum
+  P.setDistanceBetweenDefectBordersInCavity(1*P.getLambda()/n_Diamond)
+
   delta_diamond = 0.5*P.getLambda()/(15*P.n_Substrate)
   P.setDeltaHole(delta_diamond,delta_diamond,delta_diamond)
-  P.setDeltaSubstrate(delta_diamond,delta_diamond,delta_diamond)
-  P.setDeltaOutside(2*delta_diamond,2*delta_diamond,2*delta_diamond)
+  P.setDeltaSubstrate(delta_diamond,delta_diamond,0.5*delta_diamond)
+  P.setDeltaOutside(2*delta_diamond,4*delta_diamond,4*delta_diamond)
   P.setDeltaCenter(delta_diamond,delta_diamond,delta_diamond)
   P.setDeltaBuffer(delta_diamond,delta_diamond,delta_diamond)
   P.setThicknessBuffer(0,4*delta_diamond,4*delta_diamond)
@@ -52,6 +61,7 @@ def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   P.write(P.DSTDIR,P.BASENAME)
+  return P
   
 def cylinder_mission3(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
@@ -309,12 +319,15 @@ def main(argv=None):
   print options.iterations
 
   if os.path.isdir(options.destdir):
-    freq_snapshots = []
-    for excitationType in range(4):
-      mission1(options.destdir+os.sep+'mission1', excitationType, options.iterations, freq_snapshots)
-      mission2(options.destdir+os.sep+'mission2', excitationType, options.iterations, freq_snapshots)
-      mission3(options.destdir+os.sep+'mission3', excitationType, options.iterations, freq_snapshots)
-      mission4(options.destdir+os.sep+'mission4', excitationType, options.iterations, freq_snapshots)
+    freq_snapshots = [get_c0()/0.637]
+    excitationType = 0 #Ym1
+    P = cylinder(options.destdir, 3, 3, excitationType, options.iterations, freq_snapshots)
+    print P.getNcells()
+    #for excitationType in range(4):
+      #mission1(options.destdir+os.sep+'mission1', excitationType, options.iterations, freq_snapshots)
+      #mission2(options.destdir+os.sep+'mission2', excitationType, options.iterations, freq_snapshots)
+      #mission3(options.destdir+os.sep+'mission3', excitationType, options.iterations, freq_snapshots)
+      #mission4(options.destdir+os.sep+'mission4', excitationType, options.iterations, freq_snapshots)
   else:
     print('options.destdir = ' + options.destdir + ' is not a directory')
 
