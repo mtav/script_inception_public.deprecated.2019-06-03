@@ -137,7 +137,7 @@ def mergePictures(directory,FirstPic):
   texfile = base+'.report.tex'
 
   #texfile = 'tmp.tex'
-  #picture_list = ['p005id.png']
+  #picture_list = ['p001id.png']
   picture_list = [FirstPic]
   picture_list.extend(outFile_list)
   title_list = [title]*len(picture_list)

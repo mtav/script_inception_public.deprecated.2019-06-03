@@ -55,7 +55,7 @@ function propagation_analysis(INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FRE
     plot_simulation('p04id.prn');
     plot_theory(30,'g-');
     
-    plot_simulation('p05id.prn');
+    plot_simulation('p01id.prn');
     plot_theory(40,'b-');
 
 end

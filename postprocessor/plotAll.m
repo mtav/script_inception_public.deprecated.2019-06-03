@@ -1,7 +1,7 @@
 function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_patternCellArray, FrequencySnapshot_patternCellArray)
 
   % ex: Probe_patternCellArray = {'pxx.prn','ptyruytue.prn',etc}
-  % ex: plotAll('~/Labortablo/nano_meeting/',1,{'p05id.prn','p005id.prn'},{'y.*id.*\.prn'},{'y.*id.*\.prn'})
+  % ex: plotAll('~/Labortablo/nano_meeting/',1,{'p01id.prn','p001id.prn'},{'y.*id.*\.prn'},{'y.*id.*\.prn'})
   % TODO: Make it work with relative path too (i.e. '.' for example)
   
   if exist('directory','var')==0
