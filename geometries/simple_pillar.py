@@ -90,7 +90,8 @@ pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector
 
 # write
 #DSTDIR = os.getenv('DATADIR')
-DSTDIR = os.getenv('TESTDIR')
+#DSTDIR = os.getenv('TESTDIR')
+DSTDIR = os.getenv('DATADIR')+os.sep+'run_20110602'
 BASENAME = 'simple_pillar'
 pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
 GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)

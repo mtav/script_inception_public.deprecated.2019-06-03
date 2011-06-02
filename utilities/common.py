@@ -60,3 +60,20 @@ def getProbeColumnFromExcitation(excitation):
     sys.exit(-1)
   print(('probe_col', probe_col))
   return probe_col
+
+def symmetrifyEven(vec):
+  ''' [1, 2, 3]->[1, 2, 3, 3, 2, 1] '''
+  sym = vec[:]; sym.reverse()
+  return vec + sym
+
+def symmetrifyOdd(vec):
+  ''' [1, 2, 3]->[1, 2, 3, 2, 1] '''
+  sym = vec[:]; sym.reverse()
+  return vec + sym[1:]
+
+def symmetrifyAndSubtractOdd(vec,max):
+  ''' [1, 2, 3]->[1, 2, 3, 8, 9] for max = 10
+      [0, 1, 2, 3]->[0, 1, 2, 3, 4, 5, 6] for max = 6 '''
+  sym = vec[:]; sym.reverse()
+  sym_cut = [max-x for x in sym[1:]]
+  return vec + sym_cut
