@@ -372,11 +372,16 @@ class Cylinder(Geometry_object):
     FILE.write('\n')
 
 class Rotation:
-  def __init__(self):
-    self.name = 'rotation'
-    self.axis_point = [0,0,0]
-    self.axis_direction = [0,0,0]
-    self.angle_degrees = 0
+  def __init__(self,
+      name = 'rotation',
+      axis_point = [0,0,0],
+      axis_direction = [0,0,0],
+      angle_degrees = 0):
+        
+    self.name = name
+    self.axis_point = axis_point
+    self.axis_direction = axis_direction
+    self.angle_degrees = angle_degrees
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'axis_point = ' + str(self.axis_point) + '\n'

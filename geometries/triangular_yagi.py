@@ -60,4 +60,4 @@ def triangular_yagi(DSTDIR, bottomN, topN, excitationType, iterations, freq_snap
   P.setExcitationType(excitationType)
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
-  P.write()
+  P.write(P.DSTDIR,P.BASENAME)

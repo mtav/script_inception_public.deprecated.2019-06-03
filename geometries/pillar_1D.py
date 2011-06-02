@@ -765,11 +765,11 @@ class pillar_1D(BFDTDobject):
       lower = [ X_current - self.radius_X_hole/sqrt(2), self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum - self.radius_X_hole/sqrt(2)]
       upper = [ X_current + self.radius_X_hole/sqrt(2), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 - self.radius_Z_pillar_mum + self.radius_X_hole/sqrt(2)]
       self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-      GEOrotation(FILE, COMMENT, numpy.add(lower,upper)/2.0, [0,1,0], 45)
+      self.geometry_object_list.append(Rotation(name=COMMENT, axis_point=numpy.add(lower,upper)/2.0, axis_direction=[0,1,0], angle_degrees=45))
       lower = [ X_current - self.radius_X_hole/sqrt(2), self.Ymax/2 - self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum - self.radius_X_hole/sqrt(2)]
       upper = [ X_current + self.radius_X_hole/sqrt(2), self.Ymax/2 + self.radius_Y_pillar_mum, self.Zmax/2 + self.radius_Z_pillar_mum + self.radius_X_hole/sqrt(2)]
       self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-      GEOrotation(FILE, COMMENT, numpy.add(lower,upper)/2.0, [0,1,0], 45)
+      self.geometry_object_list.append(Rotation(name=COMMENT, axis_point=numpy.add(lower,upper)/2.0, axis_direction=[0,1,0], angle_degrees=45))
     elif self.HOLE_TYPE == 'triangular_yagi_voxel':
       voxel_Ymin = self.Ymax/2.0 - self.radius_Y_pillar_mum
       voxel_Ymax = self.Ymax/2.0 + self.radius_Y_pillar_mum

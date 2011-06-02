@@ -51,7 +51,7 @@ def cylinder(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P.setExcitationType(excitationType)
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
-  P.write()
+  P.write(P.DSTDIR,P.BASENAME)
   
 def cylinder_mission3(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
@@ -109,7 +109,7 @@ def cylinder_mission3(DSTDIR, bottomN, topN, excitationType, iterations, freq_sn
 
   dumpObj(P)
   P.verbose = True
-  P.write()
+  P.write(P.DSTDIR,P.BASENAME)
 
 def square_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
@@ -157,7 +157,7 @@ def square_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapsho
   P.setExcitationType(excitationType)
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
-  P.write()
+  P.write(P.DSTDIR,P.BASENAME)
 
 def rectangular_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_snapshots):
   P = pillar_1D()
@@ -215,7 +215,7 @@ def rectangular_holes(DSTDIR, bottomN, topN, excitationType, iterations, freq_sn
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
   #P.verbose = True
-  P.write()
+  P.write(P.DSTDIR,P.BASENAME)
   #dumpObj(P)
 
 def test(DSTDIR,bottomN,topN):
@@ -276,8 +276,9 @@ def mission1(DSTDIR,excitationType,iterations,freq_snapshots):
 def mission2(DSTDIR,excitationType,iterations,freq_snapshots):
   if not os.path.isdir(DSTDIR):
     os.mkdir(DSTDIR)
-  rectangular_yagi(DSTDIR,20,10,excitationType,iterations,freq_snapshots,1)
-
+  P = rectangular_yagi(20,10,excitationType,iterations,freq_snapshots,1)
+  P.write(DSTDIR,'rectangular_yagi.CavityScalingFactor_1.bottomN_%BOTTOMN.topN_%TOPN.excitationType_%EXCITATIONTYPESTR')
+  
 def mission3(DSTDIR,excitationType,iterations,freq_snapshots):
   if not os.path.isdir(DSTDIR):
     os.mkdir(DSTDIR)

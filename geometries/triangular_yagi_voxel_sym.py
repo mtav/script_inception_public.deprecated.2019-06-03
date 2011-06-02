@@ -63,4 +63,4 @@ def triangular_yagi_voxel_sym(DSTDIR, bottomN, topN, excitationType, iterations,
   P.setExcitationType(excitationType)
   P.BASENAME = P.HOLE_TYPE+'.bottomN_'+str(bottomN)+'.topN_'+str(topN)+'.excitationType_'+P.getExcitationTypeStr()
 
-  P.write()
+  P.write(P.DSTDIR,P.BASENAME)
