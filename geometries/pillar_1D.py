@@ -939,7 +939,7 @@ class pillar_1D(BFDTDobject):
       self.boundaries.Zneg_bc = 2; self.boundaries.Zneg_param = [1,1,0]
       
       self.MeshName = 'mesh'
-          
+      
       # frequency snapshots
       first = self.FIRST
       repetition = self.REPETITION
@@ -1009,6 +1009,19 @@ class pillar_1D(BFDTDobject):
         H=[1,1,1]
         J=[0,0,0]
         power = 0
+        
+        x = self.thickness_X_bottomSquare + self.getPillarHeight()+1*self.delta_X_buffer
+        if self.Ysymmetry:
+          y = self.Ymax/2-self.delta_Y_center
+        else:
+          y = self.Ymax/2
+        
+        if self.Zsymmetry:
+          z = self.Zmax/2-self.delta_Z_center
+        else:
+          z = self.Zmax/2
+        self.probe_list = [ Probe('main_probe', [x, y, z], step, E, H, J, power ) ]
+
         for iX in range(len(self.probes_X_vector)):
           # XY probes
           for iY in range(len(self.probes_Y_vector)):

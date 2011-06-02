@@ -11,14 +11,12 @@ import os
 pillar = BFDTDobject()
 
 # constants
-n_air = 1
-n_diamond = 2.4
+n_air = 1; n_diamond = 2.4
 Lambda_mum = 0.637
 delta = Lambda_mum/(10*n_diamond)
 freq = get_c0()/Lambda_mum
 k=1; radius = k*Lambda_mum/(4*n_diamond)
-Nbottom = 40
-Ntop = 20
+Nbottom = 40; Ntop = 20
 h_air = Lambda_mum/(4*n_air)
 h_diamond = Lambda_mum/(4*n_diamond)
 h_cavity = Lambda_mum/(n_diamond)
@@ -79,7 +77,10 @@ excitation.E = list(Unit(subtract(excitation.P2,excitation.P1)))
 pillar.excitation_list = [ excitation ]
 
 # define probe
-probe = Probe(position = [ buffer+height+delta, P_centre[1], P_centre[2] ])
+if pillar.boundaries.Ypos_bc == 2:
+  probe = Probe(position = [ buffer+height+delta, P_centre[1], P_centre[2] ])
+else:
+  probe = Probe(position = [ buffer+height+delta, P_centre[1]-delta, P_centre[2] ])
 pillar.probe_list = [ probe ]
 
 # define frequency snapshots
@@ -104,11 +105,9 @@ if pillar.boundaries.Ypos_bc == 2:
 else:
   thicknessVector_Y = [ block.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-block.lower[1], delta ]
 thicknessVector_Z = LimitsToThickness([ pillar.box.lower[2], block.lower[2], P_centre[2], block.upper[2], pillar.box.upper[2] ])
-
 max_delta_Vector_X = [ delta ]*len(thicknessVector_X)
 max_delta_Vector_Y = [ delta ]*len(thicknessVector_Y)
 max_delta_Vector_Z = [ delta ]*len(thicknessVector_Z)
-
 pillar.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X, thicknessVector_X)
 pillar.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y, thicknessVector_Y)
 pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z, thicknessVector_Z)
