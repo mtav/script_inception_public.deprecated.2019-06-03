@@ -17,12 +17,12 @@ delta = Lambda_mum/(10*n_Diamond)
 freq = get_c0()/Lambda_mum
 radius = 0.25
 height = 2.*20.*Lambda_mum/(2.*n_Diamond) + Lambda_mum/n_Diamond
-buffer = 1
+buffer = 0.25
 FullBox_upper = [ height+2*buffer, 2*(radius+buffer), 2*(radius+buffer) ]
 P_centre = [ 0.5*FullBox_upper[0], 0.5*FullBox_upper[1], 0.5*FullBox_upper[2] ]
 
 # define flag
-pillar.flag.iterations = 25000
+pillar.flag.iterations = 100000
 
 # define boundary conditions
 pillar.boundaries.Xpos_bc = 2
