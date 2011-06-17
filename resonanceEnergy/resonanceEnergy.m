@@ -56,9 +56,18 @@ function [ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy
   lambda_vector = sqrt(b.*(neff^2-n_outside^2)+n_outside^2)*Lcav*(n_cavity/neff); % (nm)
   E_vector = (get_h()*get_c0()/get_e())./(lambda_vector.*10^(-9)); %energy (eV)
   E_vector = E_vector'*1000; % energy (meV)
+  %E_vector = 1./lambda_vector
   k0 = 2*pi./lambda_vector; % free space wave number
   kn = k0.*sqrt(neff^2-n_outside^2); 
   radius_vector = v./(kn'*1000); % radius (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
+  
+  %disp('==== sizes ====')
+  %size(lambda_vector)
+  %size(E_vector)
+  %size(k0)
+  %size(kn)
+  %size(radius_vector)
+  
   % lambda_vector = 10^9*get_h()*get_c0()./(E_vector*10^-3*get_e()); % nm
 
   % subplot(2,1,1);
