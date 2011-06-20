@@ -54,13 +54,6 @@ function [ E_meV, lambda_nm, radius_vector_mum, E_vector_meV, lambda_vector_nm ]
       else
         opts = optimset('Display', 'off', 'TolX', 1e-5); % Create/alter optimization OPTIONS structure.
       end
-      %disp('eq_transc_bv')
-      %[u_min u_max]
-      %opts
-      %v(i)
-      %L
-      %eq_transc_bv(u_min, v(i), L)
-      %eq_transc_bv(u_max, v(i), L)
       u(i) = fzero(@(u) eq_transc_bv(u, v(i), L), [u_min u_max], opts); % Single-variable nonlinear zero finding.
     else
       u(i) = v(i);
