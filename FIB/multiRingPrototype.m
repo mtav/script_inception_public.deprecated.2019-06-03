@@ -12,7 +12,8 @@
 % hang your PC with:
 % annularProfiler(getenv('TESTDIR'),1,40000,2,4,'_prefix_',0,'dome + angular ring',[],1)
 
-function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction,profile_type,profile,interRingDistancePxl)
+function annularProfiler(folder,rep,mag,prefix,direction,interRingDistancePxl)
+
   if exist('folder','var')==0
     folder = uigetdir(pwd(),'folder');
   end
@@ -23,16 +24,32 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
   %%%%%%%%PARAMETERS%%%%%%%%%%%%%%%%%%%%%%%%%%% 
   %interRingDistancePxl = 1;  % The distance in pixels between each spiral ring.
 
+  h=0.040;
+  c=0.080;
+  t=0.011667;
+  w=0.080;
+  A=[h];
+  R=[h+w+c+t,h+w*2+c*2+t*3,h+w*3+c*3+t*6,h+w*4+c*4+t*10,h+w*5+c*5+t*15,h+w*6+c*6+t*21];
+  r=[h+w,h+w*2+c+t,h+w*3+c*2+t*3,h+w*4+c*3+t*6,h+w*5+c*4+t*10,h+w*6+c*5+t*15];
+
+%  R=[h+w*6+c*6+t*21];
+%  r=[h+w*6+c*5+t*15];
+
+  r_outer_mum = max([A,max(r),max(R)])
+
   HFW = 304000/mag; % Width of the horizontal scan (um).
   if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
   res = HFW/4096; % size of each pixel (mum/pxl).
   disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl'])
+  
+  A_pxl = round(A/res)
+  r_pxl = round(r/res)
+  R_pxl = round(R/res)
   R_outer_pxl = round(r_outer_mum/res); % Radius in pixels.
-  R_inner_pxl = round(r_inner_mum/res); % Radius in pixels.
-
-  ring_Width = 2.1; %um  
+  
+  ring_Width = 2.1; %um
   Ring_Width = round(ring_Width/res); %in pixels.
 
   ringDwell = 3400;             %unit: 0.1us
@@ -41,36 +58,24 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
 
   writeToFile = 1;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  rvec = (R_inner_pxl+1):interRingDistancePxl:R_outer_pxl;
+  rvec = 1:interRingDistancePxl:R_outer_pxl;
   
-  if strcmpi(profile_type,'dome')
-    %% DOME
-    pf = [prefix,'_dome'];
-    profile = 500*(1-sin(acos(rvec/max(rvec))));
-  elseif strcmpi(profile_type,'sawtooth')
-    %% SAWTOOTH
-    pf = [prefix,'_swt'];
-    profile = 500*(0.5*sawtooth(rvec/8/pi)+0.5);
-  elseif strcmpi(profile_type,'dome + ring')
-    %% DOME+RING
-    pf = [prefix,'_dmr'];
-    profile = domeMaxDwell*(1-sin(acos(rvec/max(rvec))))+domeMinDwell;
-    profile = [profile,ringDwell*ones(1,Ring_Width)];
-  elseif strcmpi(profile_type,'dome + angular ring')
-    %% DOME+ANGULAR RING
-    pf = [prefix,'_dmar'];
-    profile = domeMaxDwell*(1-sin(acos(rvec/max(rvec))))+domeMinDwell;
-    profile = [profile,(Ring_Width:-1:0)/Ring_Width*ringDwell];
-  else
-    disp('Using user-defined profile');
-    pf = [prefix,'_custom'];
+  pf = [prefix,'_ring'];
+  profile = ones(1,A_pxl);
+  for idx=1:length(R)
+      if idx>1
+        profile = [profile,zeros(1,r_pxl(idx)-R_pxl(idx-1)),ones(1,R_pxl(idx)-r_pxl(idx))];
+      else
+        profile = [profile,zeros(1,r_pxl(idx)-A_pxl),ones(1,R_pxl(idx)-r_pxl(idx))];
+      end
   end
-      
+  profile = ringDwell*profile;
+  
   Rad_pxl = length(profile); % Radius in pixels.
   rvec_new = 1:Rad_pxl;
   pxPerRing = round(8*pi*Rad_pxl);
   rad = repmat(rvec_new,pxPerRing,1);
-  rad = rad(:)';
+  rad = rad(:)'; % make vector horizontal (xdim=1)
   
   %% PLOT
   figure;
