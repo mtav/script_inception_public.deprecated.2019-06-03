@@ -1,17 +1,15 @@
-function [ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy(n_cavity, n_mirror, n_outside, Lcav, radius)
+function [ E_meV, lambda_nm, radius_vector_mum, E_vector_meV, lambda_vector_nm ] = resonanceEnergy(n_cavity, n_mirror, n_outside, Lcav_nm, radius)
   %resonanceEnergy(3.521,2.973,1,253,radius)
   %input:
   % n_cavity=3.521;%no unit
   % n_mirror=2.973;%no unit
   % n_outside = 1; % air refractive index
-  % Lcav = 253; % (nm)
+  % Lcav_nm = 253; % (nm)
   % radius (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
   %output:
-  % E (meV)
-  % lambda (nm)
+  % E_meV (meV)
+  % lambda_nm (nm)
   
-  neff = get_neff(n_cavity, n_mirror); % average refractive index
-
   % Mode LPlm
   L = 0;
   M = 1;
@@ -21,93 +19,92 @@ function [ E, lambda, radius_vector, E_vector, lambda_vector ] = resonanceEnergy
 
   switch L
     case {0},
-       borne_u_inf = racines_l_moins_1(M);
-       borne_u_sup = racines_l(M);
+      borne_u_inf = racines_l_moins_1(M);
+      borne_u_sup = racines_l(M);
     case {1},
-       borne_u_inf = racines_l_moins_1(M);
-       borne_u_sup = racines_l(M+1);
+      borne_u_inf = racines_l_moins_1(M);
+      borne_u_sup = racines_l(M+1);
     otherwise,
-       borne_u_inf = racines_l_moins_1(M+1);
-       borne_u_sup = racines_l(M+1);
+      borne_u_inf = racines_l_moins_1(M+1);
+      borne_u_sup = racines_l(M+1);
   end
 
   v_cutoff = borne_u_inf;
   v_max =100;
   % v_max =12;
-  v = (v_cutoff+0.01):0.2:v_max; % waveguide parameter
+  v = (v_cutoff+0.01):0.2:v_max; % normalized waveguide parameter
   n_points = length(v);
   u = zeros(n_points, 1);
 
-  u_min = borne_u_inf + sqrt(eps);
+  u_min = borne_u_inf + sqrt(eps); % eps = Spacing of floating point numbers
 
-  for i = 1:n_points,
-     u_max = min( v(i)-sqrt(eps), abs(borne_u_sup-sqrt(eps)));
-     if sign(eq_transc_bv(u_min, v(i), L)) ~= sign(eq_transc_bv(u_max, v(i), L)),
-      opts = optimset('Display', 'off', 'TolX', 1e-5); 
-      u(i) = fzero('eq_transc_bv', [u_min u_max], opts, v(i), L);
-     else
-     u(i) = v(i);
-     end 
+  % calculate the u values corresponding to v, so that eq_transc_bv(u,v,L)=0
+  for i = 1:n_points
+    u_max = min( v(i)-sqrt(eps), abs(borne_u_sup-sqrt(eps)));
+    if sign(eq_transc_bv(u_min, v(i), L)) ~= sign(eq_transc_bv(u_max, v(i), L))
+      if isnan(eq_transc_bv(u_min, v(i), L))
+        error('NAN type 1')
+      end
+      if isnan(eq_transc_bv(u_max, v(i), L))
+        error('NAN type 2')
+      end
+      
+      if inoctave
+        opts = optimset('TolX', 1e-5); % Create/alter optimization OPTIONS structure.
+      else
+        opts = optimset('Display', 'off', 'TolX', 1e-5); % Create/alter optimization OPTIONS structure.
+      end
+      %disp('eq_transc_bv')
+      %[u_min u_max]
+      %opts
+      %v(i)
+      %L
+      %eq_transc_bv(u_min, v(i), L)
+      %eq_transc_bv(u_max, v(i), L)
+      u(i) = fzero(@(u) eq_transc_bv(u, v(i), L), [u_min u_max], opts); % Single-variable nonlinear zero finding.
+    else
+      u(i) = v(i);
+    end 
   end
 
   b = 1 - (u.^2 ./ v'.^2); % = u^2/v^2
   w = sqrt(v'.^2 - u.^2);
 
-  lambda_vector = sqrt(b.*(neff^2-n_outside^2)+n_outside^2)*Lcav*(n_cavity/neff); % (nm)
-  E_vector = (get_h()*get_c0()/get_e())./(lambda_vector.*10^(-9)); %energy (eV)
-  E_vector = E_vector'*1000; % energy (meV)
-  %E_vector = 1./lambda_vector
-  k0 = 2*pi./lambda_vector; % free space wave number
+  %%%%%%%%%%%%%%%%%%%%%%
+  % calculate lambda_nm and E_meV as a function of the obtained u values (and the related v,w,b)
+  %%%%%%%%%%%%%%%%%%%%%%
+  neff = get_neff(n_cavity, n_mirror); % average refractive index
+  lambda_vector_nm = sqrt(b.*(neff^2-n_outside^2)+n_outside^2)*Lcav_nm*(n_cavity/neff); % (nm)
+  E_vector_eV = (get_h()*get_c0()/get_e())./(lambda_vector_nm.*10^(-9)); %energy (eV)
+  E_vector_meV = E_vector_eV'*1000; % energy (meV)
+  k0 = 2*pi./lambda_vector_nm; % free space wave number
   kn = k0.*sqrt(neff^2-n_outside^2); 
-  radius_vector = v./(kn'*1000); % radius (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
+  radius_vector_mum = v./(kn'*1000); % radius (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
   
-  %disp('==== sizes ====')
-  %size(lambda_vector)
-  %size(E_vector)
-  %size(k0)
-  %size(kn)
-  %size(radius_vector)
-  
-  % lambda_vector = 10^9*get_h()*get_c0()./(E_vector*10^-3*get_e()); % nm
-
-  % subplot(2,1,1);
-  % plot(radius_vector,E_vector,'k-','LineWidth',1);
-  % grid on;
-  % hold on;
-  % xlabel('Radius (\mum)');
-  % ylabel('dE (meV)');
-
-  % subplot(2,1,2);
-  % plot(radius_vector,lambda_vector,'k-','LineWidth',1);
-  % grid on;
-  % hold on;
-  % xlabel('Radius (\mum)');
-  % ylabel('\lambda (nm)');
-  
-  function ret = interpolate(x_vector,y_vector,idx1,idx2,x)
-    ret = y_vector(idx1) + (y_vector(idx2)-y_vector(idx1))/(x_vector(idx2)-x_vector(idx1))*(x-x_vector(idx1));
-  end
-  
-  E=[];
-  lambda=[];
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Calculate E_meV and lambda_nm for the values of radius (input argument) using simple interpolation
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+  E_meV=[];
+  lambda_nm=[];
   for i=1:length(radius)
     r = radius(i);
-    idx = find(min(abs(radius_vector-r))==abs(radius_vector-r));
-    if r<radius_vector(idx)
+    idx = find(min(abs(radius_vector_mum-r))==abs(radius_vector_mum-r));
+    if r<radius_vector_mum(idx)
       if idx-1>0
-        E = [E, interpolate(radius_vector, E_vector, idx-1, idx, r)];
-        lambda = [lambda, interpolate(radius_vector, lambda_vector, idx-1, idx, r)];
+        E_meV = [E_meV, interpolate(radius_vector_mum, E_vector_meV, idx-1, idx, r)];
+        lambda_nm = [lambda_nm, interpolate(radius_vector_mum, lambda_vector_nm, idx-1, idx, r)];
       else
-        E=[E,E_vector(1)];
-        lambda=[lambda,lambda_vector(1)];
+        E_meV = [E_meV, E_vector_meV(1)];
+        lambda_nm = [lambda_nm, lambda_vector_nm(1)];
       end
     else
-      if idx+1 <= length(radius_vector)
-        E = [E, interpolate(radius_vector, E_vector, idx, idx+1, r)];
-        lambda = [lambda, interpolate(radius_vector, lambda_vector, idx, idx+1, r)];
+      if idx+1 <= length(radius_vector_mum)
+        E_meV = [E_meV, interpolate(radius_vector_mum, E_vector_meV, idx, idx+1, r)];
+        lambda_nm = [lambda_nm, interpolate(radius_vector_mum, lambda_vector_nm, idx, idx+1, r)];
       else
-        E=[E,E_vector(length(radius_vector))];
-        lambda=[lambda,lambda_vector(length(radius_vector))];
+        E_meV = [E_meV, E_vector_meV(length(radius_vector_mum))];
+        lambda_nm = [lambda_nm, lambda_vector_nm(length(radius_vector_mum))];
       end
     end
   end
