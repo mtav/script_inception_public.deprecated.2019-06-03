@@ -1,18 +1,6 @@
-function [ E_meV, lambda_nm, real_neff, radius_vector_mum, E_vector_meV, lambda_vector_nm, real_neff_vector, u, v, b, v_cutoff ] = resonanceEnergy(n_cavity, n_mirror, n_outside, Lcav_nm, radius_mum, L, M)
-  %resonanceEnergy(3.521,2.973,1,253,radius_mum)
-  %input:
-  % n_cavity=3.521;%no unit
-  % n_mirror=2.973;%no unit
-  % n_outside = 1; % air refractive index
-  % Lcav_nm = 253; % (nm)
-  % radius_mum (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
-  %output:
-  % E_meV (meV)
-  % lambda_nm (nm)
-  
-  % Mode LPlm
-  %L = 0;
-  %M = 1;
+function real_neff = get_neff_2(n_inside,n_outside,radius_mum)
+  L = 0;
+  M = 1;
 
   racines_l = zero_besselj(L);
   racines_l_moins_1 = zero_besselj(L-1);
@@ -87,22 +75,14 @@ function [ E_meV, lambda_nm, real_neff, radius_vector_mum, E_vector_meV, lambda_
     idx = find(min(abs(radius_vector_mum-r))==abs(radius_vector_mum-r));
     if r<radius_vector_mum(idx)
       if idx-1>0
-        E_meV = [E_meV, interpolate(radius_vector_mum, E_vector_meV, idx-1, idx, r)];
-        lambda_nm = [lambda_nm, interpolate(radius_vector_mum, lambda_vector_nm, idx-1, idx, r)];
         real_neff = [real_neff, interpolate(radius_vector_mum, real_neff_vector, idx-1, idx, r)];
       else
-        E_meV = [E_meV, E_vector_meV(1)];
-        lambda_nm = [lambda_nm, lambda_vector_nm(1)];
         real_neff = [real_neff, real_neff_vector(1)];
       end
     else
       if idx+1 <= length(radius_vector_mum)
-        E_meV = [E_meV, interpolate(radius_vector_mum, E_vector_meV, idx, idx+1, r)];
-        lambda_nm = [lambda_nm, interpolate(radius_vector_mum, lambda_vector_nm, idx, idx+1, r)];
         real_neff = [real_neff, interpolate(radius_vector_mum, real_neff_vector, idx, idx+1, r)];
       else
-        E_meV = [E_meV, E_vector_meV(length(radius_vector_mum))];
-        lambda_nm = [lambda_nm, lambda_vector_nm(length(radius_vector_mum))];
         real_neff = [real_neff, real_neff_vector(length(radius_vector_mum))];
       end
     end
