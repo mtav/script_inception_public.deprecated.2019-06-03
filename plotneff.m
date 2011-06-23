@@ -62,15 +62,30 @@ function plotneff()
   surf(Rad1,Rad2,r);
   title('r');
   xlabel('radius 1 (mum)');
-  ylabel('radius 1 (mum)');
+  ylabel('radius 2 (mum)');
   zlabel('r (no unit)');
+  shading interp;
   
   figure;
   surf(Rad1,Rad2,rg);
   title('rg');
   xlabel('radius 1 (mum)');
-  ylabel('radius 1 (mum)');
+  ylabel('radius 2 (mum)');
   zlabel('rg (no unit)');
   shading interp;
+
+  delta = [0:0.01:1];
+  [r, rg] = reflectivity(get_neff_2(500),get_neff_2(500+delta),1)
+  
+  figure;
+  grid on; hold on;
+  title('reflectivity as a function of delta=rad2-rad1 for rad1=1mum and m=1');
+  xlabel('rad2-rad1 (mum)');
+  ylabel('reflectivity (no unit)');
+  plot(delta,r,'r-');
+  plot(delta,rg,'b-');
+  legend('r','rg');
+
+  [r, rg] = reflectivity(get_neff_2(500),get_neff_2(600),1)
 
 end
