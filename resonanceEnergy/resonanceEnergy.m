@@ -66,14 +66,17 @@ function [ E_meV, lambda_nm, real_neff, radius_vector_mum, E_vector_meV, lambda_
   %%%%%%%%%%%%%%%%%%%%%%
   % calculate lambda_nm and E_meV as a function of the obtained u values (and the related v,w,b)
   %%%%%%%%%%%%%%%%%%%%%%
+  real_neff_vector = n_mirror + b*(n_cavity-n_mirror);
+
   approx_neff = get_neff(n_cavity, n_mirror); % average refractive index
   lambda_vector_nm = sqrt(b.*(approx_neff^2-n_outside^2)+n_outside^2)*Lcav_nm*(n_cavity/approx_neff); % (nm)
+
+  k0 = 2*pi./lambda_vector_nm; % free space wave number
+  kn = k0.*sqrt(n_cavity^2-n_mirror^2); 
+  radius_vector_mum = v./(kn'*1000); % radius_mum (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
+
   E_vector_eV = (get_h()*get_c0()/get_e())./(lambda_vector_nm.*10^(-9)); %energy (eV)
   E_vector_meV = E_vector_eV'*1000; % energy (meV)
-  k0 = 2*pi./lambda_vector_nm; % free space wave number
-  kn = k0.*sqrt(approx_neff^2-n_outside^2); 
-  radius_vector_mum = v./(kn'*1000); % radius_mum (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
-  real_neff_vector = n_mirror + b*(n_cavity-n_mirror);
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Calculate E_meV and lambda_nm for the values of radius_mum (input argument) using simple interpolation

@@ -1,6 +1,12 @@
-function real_neff = get_neff_2(n_inside,n_outside,radius_mum)
-  L = 0;
-  M = 1;
+function [ real_neff_1,real_neff_2,real_neff_1_vector,real_neff_2_vector,radius_vector_mum, u, v, b, v_cutoff ] = get_neff_2(radius_mum,n_inside,n_outside,L,M,lambda_nm)
+
+  if exist('n_inside','var') == 0; n_inside = 2.4; end
+  if exist('n_outside','var') == 0; n_outside = 1; end
+  if exist('lambda_nm','var') == 0; lambda_nm = 637; end
+  
+  % Mode LPlm
+  if exist('L','var') == 0; L = 0; end
+  if exist('M','var') == 0; M = 1; end
 
   racines_l = zero_besselj(L);
   racines_l_moins_1 = zero_besselj(L-1);
@@ -54,36 +60,37 @@ function real_neff = get_neff_2(n_inside,n_outside,radius_mum)
   %%%%%%%%%%%%%%%%%%%%%%
   % calculate lambda_nm and E_meV as a function of the obtained u values (and the related v,w,b)
   %%%%%%%%%%%%%%%%%%%%%%
-  approx_neff = get_neff(n_cavity, n_mirror); % average refractive index
-  lambda_vector_nm = sqrt(b.*(approx_neff^2-n_outside^2)+n_outside^2)*Lcav_nm*(n_cavity/approx_neff); % (nm)
-  E_vector_eV = (get_h()*get_c0()/get_e())./(lambda_vector_nm.*10^(-9)); %energy (eV)
-  E_vector_meV = E_vector_eV'*1000; % energy (meV)
-  k0 = 2*pi./lambda_vector_nm; % free space wave number
-  kn = k0.*sqrt(approx_neff^2-n_outside^2); 
+  real_neff_1_vector = n_outside + b*(n_inside-n_outside);
+  real_neff_2_vector = sqrt(n_outside^2 + b*(n_inside^2-n_outside^2));
+
+  k0 = 2*pi./lambda_nm; % free space wave number in nm^-1
+  kn = k0.*sqrt(n_inside^2-n_outside^2); % nm ^-1
   radius_vector_mum = v./(kn'*1000); % radius_mum (mum) of micropillar microcavity (kn in nm^-1 and v has no unit)
-  real_neff_vector = n_mirror + b*(n_cavity-n_mirror);
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Calculate E_meV and lambda_nm for the values of radius_mum (input argument) using simple interpolation
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
-  E_meV = [];
-  lambda_nm = [];
-  real_neff = [];
+  real_neff_1 = [];
+  real_neff_2 = [];
   for i=1:length(radius_mum)
     r = radius_mum(i);
     idx = find(min(abs(radius_vector_mum-r))==abs(radius_vector_mum-r));
     if r<radius_vector_mum(idx)
       if idx-1>0
-        real_neff = [real_neff, interpolate(radius_vector_mum, real_neff_vector, idx-1, idx, r)];
+        real_neff_1 = [real_neff_1, interpolate(radius_vector_mum, real_neff_1_vector, idx-1, idx, r)];
+        real_neff_2 = [real_neff_2, interpolate(radius_vector_mum, real_neff_2_vector, idx-1, idx, r)];
       else
-        real_neff = [real_neff, real_neff_vector(1)];
+        real_neff_1 = [real_neff_1, real_neff_1_vector(1)];
+        real_neff_2 = [real_neff_2, real_neff_2_vector(1)];
       end
     else
       if idx+1 <= length(radius_vector_mum)
-        real_neff = [real_neff, interpolate(radius_vector_mum, real_neff_vector, idx, idx+1, r)];
+        real_neff_1 = [real_neff_1, interpolate(radius_vector_mum, real_neff_1_vector, idx, idx+1, r)];
+        real_neff_2 = [real_neff_2, interpolate(radius_vector_mum, real_neff_2_vector, idx, idx+1, r)];
       else
-        real_neff = [real_neff, real_neff_vector(length(radius_vector_mum))];
+        real_neff_1 = [real_neff_1, real_neff_1_vector(length(radius_vector_mum))];
+        real_neff_2 = [real_neff_2, real_neff_2_vector(length(radius_vector_mum))];
       end
     end
   end
