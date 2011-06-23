@@ -75,7 +75,7 @@ function plotneff()
   shading interp;
 
   delta = [0:0.01:1];
-  [r, rg] = reflectivity(get_neff_2(500),get_neff_2(500+delta),1)
+  [r, rg] = reflectivity(get_neff_2(0.5),get_neff_2(0.5+delta),1)
   
   figure;
   grid on; hold on;
@@ -86,6 +86,6 @@ function plotneff()
   plot(delta,rg,'b-');
   legend('r','rg');
 
-  [r, rg] = reflectivity(get_neff_2(500),get_neff_2(600),1)
+  [r, rg] = reflectivity(get_neff_2(0.5),get_neff_2(0.6),1)
 
 end
