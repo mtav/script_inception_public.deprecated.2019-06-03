@@ -71,26 +71,31 @@ function [ real_neff_1,real_neff_2,real_neff_1_vector,real_neff_2_vector,radius_
   % Calculate E_meV and lambda_nm for the values of radius_mum (input argument) using simple interpolation
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
-  real_neff_1 = [];
-  real_neff_2 = [];
-  for i=1:length(radius_mum)
-    r = radius_mum(i);
-    idx = find(min(abs(radius_vector_mum-r))==abs(radius_vector_mum-r));
-    if r<radius_vector_mum(idx)
-      if idx-1>0
-        real_neff_1 = [real_neff_1, interpolate(radius_vector_mum, real_neff_1_vector, idx-1, idx, r)];
-        real_neff_2 = [real_neff_2, interpolate(radius_vector_mum, real_neff_2_vector, idx-1, idx, r)];
+  %real_neff_1 = interp2(radius_vector_mum,,real_neff_1_vector,XI,YI);
+  %yi = interp1(x,Y,xi,method)
+  
+  real_neff_1 = radius_mum;
+  real_neff_2 = radius_mum;
+  for i=1:size(radius_mum,1)
+    for j=1:size(radius_mum,2)
+      r = radius_mum(i,j);
+      idx = find(min(abs(radius_vector_mum-r))==abs(radius_vector_mum-r));
+      if r<radius_vector_mum(idx)
+        if idx-1>0
+          real_neff_1(i,j) = interpolate(radius_vector_mum, real_neff_1_vector, idx-1, idx, r);
+          real_neff_2(i,j) = interpolate(radius_vector_mum, real_neff_2_vector, idx-1, idx, r);
+        else
+          real_neff_1(i,j) = real_neff_1_vector(1);
+          real_neff_2(i,j) = real_neff_2_vector(1);
+        end
       else
-        real_neff_1 = [real_neff_1, real_neff_1_vector(1)];
-        real_neff_2 = [real_neff_2, real_neff_2_vector(1)];
-      end
-    else
-      if idx+1 <= length(radius_vector_mum)
-        real_neff_1 = [real_neff_1, interpolate(radius_vector_mum, real_neff_1_vector, idx, idx+1, r)];
-        real_neff_2 = [real_neff_2, interpolate(radius_vector_mum, real_neff_2_vector, idx, idx+1, r)];
-      else
-        real_neff_1 = [real_neff_1, real_neff_1_vector(length(radius_vector_mum))];
-        real_neff_2 = [real_neff_2, real_neff_2_vector(length(radius_vector_mum))];
+        if idx+1 <= length(radius_vector_mum)
+          real_neff_1(i,j) = interpolate(radius_vector_mum, real_neff_1_vector, idx, idx+1, r);
+          real_neff_2(i,j) = interpolate(radius_vector_mum, real_neff_2_vector, idx, idx+1, r);
+        else
+          real_neff_1(i,j) = real_neff_1_vector(length(radius_vector_mum));
+          real_neff_2(i,j) = real_neff_2_vector(length(radius_vector_mum));
+        end
       end
     end
   end

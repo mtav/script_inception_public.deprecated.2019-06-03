@@ -53,4 +53,24 @@ function plotneff()
 
   v_cutoff_mat
 
+  rad1 = radius_mum;
+  rad2 = radius_mum;
+  [Rad1, Rad2]=meshgrid(rad1,rad2);
+  [r, rg] = reflectivity(get_neff_2(Rad1),get_neff_2(Rad2),1);
+  
+  figure;
+  surf(Rad1,Rad2,r);
+  title('r');
+  xlabel('radius 1 (mum)');
+  ylabel('radius 1 (mum)');
+  zlabel('r (no unit)');
+  
+  figure;
+  surf(Rad1,Rad2,rg);
+  title('rg');
+  xlabel('radius 1 (mum)');
+  ylabel('radius 1 (mum)');
+  zlabel('rg (no unit)');
+  shading interp;
+
 end
