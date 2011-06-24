@@ -11,14 +11,14 @@ function [x,y,dwell,rep,numPoints]=readStrFile(filename_cellarray)
     if (nargin==0)
         [FileName,PathName,FilterIndex] = uigetfile('*.str','',pwd());
         filename=[PathName,filesep,FileName];
-        filename_cellarray = {filename}
+        filename_cellarray = {filename};
     end
 
     figure;
     hold on;
     for idx=1:length(filename_cellarray)
-        filename = char(filename_cellarray(idx))
-        disp(['processing : ',filename])
+        filename = char(filename_cellarray(idx));
+        disp(['processing : ',filename]);
 
         try
             fid=fopen(filename);
@@ -28,7 +28,7 @@ function [x,y,dwell,rep,numPoints]=readStrFile(filename_cellarray)
             M=fscanf(fid,'%f %f %f',[3 inf]);
             fclose(fid);
         catch
-            ['Error in oppening file ', filename]
+            disp(['Error in oppening file ', filename]);
             fclose(fid);
         end
 
