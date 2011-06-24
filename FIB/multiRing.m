@@ -1,5 +1,6 @@
 % This function converts a given vector, profile to a concentric etch mask.
 % folder : folder to save to
+% rep_vec : Repetitions (ex: 1,3,5 or 16)
 % mag : Magnification (ex: 10000 or 20000)
 % r_inner_mum : inner radius in mum (ex: 0, 2, 2.8 or 4.2)
 % r_outer_mum : outer radius in mum (ex: 2, 2.8 or 4.2)
@@ -12,6 +13,7 @@
 % annularProfiler(getenv('TESTDIR'),1,40000,2,4,'_prefix_',0,'dome + angular ring',[],1)
 
 function filename_cellarray = multiRing(folder,mag,prefix,direction,interRingDistancePxl)
+  % ex: b=multiRing('TESTDIR/str_ring',36000,'ring',1,1)
 
   filename_cellarray = {};
 
@@ -120,7 +122,7 @@ function filename_cellarray = multiRing(folder,mag,prefix,direction,interRingDis
     else
       %% METHOD 2 IF NOT ENOUGH MEMORY USE THIS METHOD
       disp('WARNING: Using low memory method');
-      disp('Dauxrigante...')
+      disp('Dauxrigante...');
       stackSize = 1e5;
       cc = ceil(length(x)/stackSize);
       xn = [];
