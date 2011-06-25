@@ -320,7 +320,7 @@ end
 
 function [dwell_vector,X,Y] = triangleHoleLeft(beamCurrent,res,dwell,x_center,y_center,x_size,y_size)
   % size of circles in nm as a function of the beamcurrent
-  spotSizes=[1 8;
+  spotSizes = [1 8;
   4 12;
   11 15;
   70 25;
@@ -332,202 +332,40 @@ function [dwell_vector,X,Y] = triangleHoleLeft(beamCurrent,res,dwell,x_center,y_
   11500 500;
   ];
   
-  %projectName='trial9';
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-  %mag=200000;
-  %dwell=20000;
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   rep=1;
   beamCurrent=1; %Beam current.
-  
   % vertical overlap of circles as a proportion of their diameter
   overlap=0.50;
-  
-  % horizontal distance between circles in nm
-  %trenchWidth=150;  % nm
-  %trenchWidth=0;  % nm
-  
-  % width and height of the whole structure in mum
-  %W=1.25; %mum
-  %H=0.5; %mum
-  
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % size of a circle in mum
   spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
-  %spotSize = 0.500
-  
-  %HFW=304000/mag; % Width of the horizontal scan (um).
-  %res=HFW/4096; % size of each pixel (um).
   
   % vertical stepping distance
   BeamStep = max(round((spotSize-spotSize*overlap)/res),1);
-  %'BeamStep'
-  %round((spotSize-spotSize*overlap)/res)
-  %1
-  %BeamStep
-  
   % horizontal stepping distance
-  %stepSize = round((spotSize+trenchWidth*1e-3)/res);
   stepSize = BeamStep;
-   
+  
   W_pxl = round(x_size/res);
   H_pxl = round(y_size/res);
   
-  %xp=[1,1+stepSize,1+(1+2)*stepSize,1+(1+2+3)*stepSize]
-  Xp = 1:stepSize:W_pxl;
   Yp = 1:BeamStep:H_pxl;
-  
-  %'lengths'
-  %length(xp)
-  %length(yp)
-  %return
-  
-  YpFlip = fliplr(Yp);
-  onesVec = ones(1,length(Yp));
   
   dwell_vector = [];
   X = [];
   Y = [];
   
-  N = length(Xp);
-  for m=1:N
-    %disp(['m = ',num2str(m/N)]);
-    X = [X,Xp(m)*onesVec];
+  for m = 1:length(Yp);
+    L_pxl = W_pxl - abs(Yp(m)-0.5*H_pxl)*(2*W_pxl/H_pxl);
+    Xp = -L_pxl:stepSize:-1;
     if (mod(m,2)==0)
-      Y = [Y,Yp];
+      X = [X, Xp];
     else
-      Y = [Y,YpFlip];
+      X = [X, fliplr(Xp)];
     end
+    Y = [Y, Yp(m)*ones(1,length(Xp))];
   end
-  
-  Sx = 2048+round(x_center/res); % shift centre in pixel
-  Sy = 1980+round(y_center/res); % shift centre in pixel
-  
-  X = round(X+Sx-W_pxl/2);
-  Y = round(Y+Sy-H_pxl/2);
-  dwell_vector = dwell*ones(1,length(X));
-end
-
-function [dwell_vector,X,Y] = triangleHoleRight(beamCurrent,res,dwell,x_center,y_center,x_size,y_size)
-  % size of circles in nm as a function of the beamcurrent
-  spotSizes=[1 8;
-  4 12;
-  11 15;
-  70 25;
-  150 35;
-  350 55;
-  1000 80;
-  2700 120;
-  6600 270;
-  11500 500;
-  ];
-  
-  %projectName='trial9';
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-  %mag=200000;
-  %dwell=20000;
-  rep=1;
-  beamCurrent=1; %Beam current.
-  
-  % vertical overlap of circles as a proportion of their diameter
-  overlap=0.50;
-  
-  % horizontal distance between circles in nm
-  %trenchWidth=150;  % nm
-  %trenchWidth=0;  % nm
-  
-  % width and height of the whole structure in mum
-  %W=1.25; %mum
-  %H=0.5; %mum
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
-  % size of a circle in mum
-  spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
-  %spotSize = 0.500
-  
-  %HFW=304000/mag; % Width of the horizontal scan (um).
-  %res=HFW/4096; % size of each pixel (um).
-  
-  % vertical stepping distance
-  BeamStep = max(round((spotSize-spotSize*overlap)/res),1);
-  %'BeamStep'
-  %round((spotSize-spotSize*overlap)/res)
-  %1
-  %BeamStep
-  
-  % horizontal stepping distance
-  %stepSize = round((spotSize+trenchWidth*1e-3)/res);
-  stepSize = BeamStep;
-   
-  W_pxl = round(x_size/res);
-  H_pxl = round(y_size/res);
-  
-  %xp=[1,1+stepSize,1+(1+2)*stepSize,1+(1+2+3)*stepSize]
-  Xp = 1:stepSize:W_pxl;
-  Yp = 1:BeamStep:H_pxl;
-  
-  %'lengths'
-  %length(xp)
-  %length(yp)
-  %return
-  
-  YpFlip = fliplr(Yp);
-  onesVec = ones(1,length(Yp));
-  
-  dwell_vector = [];
-  X = [];
-  Y = [];
-  
-  N = length(Xp);
-  for m=1:N
-    %disp(['m = ',num2str(m/N)]);
-    X = [X,Xp(m)*onesVec];
-    if (mod(m,2)==0)
-      Y = [Y,Yp];
-    else
-      Y = [Y,YpFlip];
-    end
-  end
-
-      %%%%%%%%%%%%%%%%%%
-      %voxel_Ymin = self.Ymax/2.0 - self.radius_Y_pillar_mum
-      %voxel_Ymax = self.Ymax/2.0 + self.radius_Y_pillar_mum
-      %voxel_radius_X = self.radius_X_hole/( 2.*self.Nvoxels + 1.)
-      %D = self.radius_Z_pillar_mum - self.radius_Z_hole
-      %R = self.radius_X_hole
-      %N = self.Nvoxels
-      %Z_left = self.Zmax/2.0 - self.radius_Z_pillar_mum
-      %Z_right = self.Zmax/2.0 + self.radius_Z_pillar_mum
-      %offset = X_current - self.radius_X_hole
-      %for i in range(self.Nvoxels):
-        %% bottom left blocks
-        %lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-        %upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-        %self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-        %% top left blocks
-        %lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-        %upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-        %self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-        %% bottom right blocks
-        %lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-        %upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
-        %self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-        %% top right blocks
-        %lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-        %upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
-        %self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-      %%% middle left block
-      %lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-      %upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
-      %self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-      %%% middle right block
-      %lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-      %upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right-D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
-      %self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-      %%%%%%%%%%%%%%%%%%
   
   % place at desired position
   Sx = 2048+round(x_center/res); % shift centre in pixel
@@ -536,4 +374,68 @@ function [dwell_vector,X,Y] = triangleHoleRight(beamCurrent,res,dwell,x_center,y
   X = round(X+Sx-W_pxl/2);
   Y = round(Y+Sy-H_pxl/2);
   dwell_vector = dwell*ones(1,length(X));
+  size(X)
+  size(Y)
+  size(dwell_vector)
+end
+
+function [dwell_vector,X,Y] = triangleHoleRight(beamCurrent,res,dwell,x_center,y_center,x_size,y_size)
+  % size of circles in nm as a function of the beamcurrent
+  spotSizes = [1 8;
+  4 12;
+  11 15;
+  70 25;
+  150 35;
+  350 55;
+  1000 80;
+  2700 120;
+  6600 270;
+  11500 500;
+  ];
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  rep=1;
+  beamCurrent=1; %Beam current.
+  % vertical overlap of circles as a proportion of their diameter
+  overlap=0.50;
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  % size of a circle in mum
+  spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
+  
+  % vertical stepping distance
+  BeamStep = max(round((spotSize-spotSize*overlap)/res),1);
+  % horizontal stepping distance
+  stepSize = BeamStep;
+  
+  W_pxl = round(x_size/res);
+  H_pxl = round(y_size/res);
+  
+  Yp = 1:BeamStep:H_pxl;
+  
+  dwell_vector = [];
+  X = [];
+  Y = [];
+  
+  for m = 1:length(Yp);
+    L_pxl = W_pxl - abs(Yp(m)-0.5*H_pxl)*(2*W_pxl/H_pxl);
+    Xp = 1:stepSize:L_pxl;
+    if (mod(m,2)==0)
+      X = [X, Xp];
+    else
+      X = [X, fliplr(Xp)];
+    end
+    Y = [Y, Yp(m)*ones(1,length(Xp))];
+  end
+  
+  % place at desired position
+  Sx = 2048+round(x_center/res); % shift centre in pixel
+  Sy = 1980+round(y_center/res); % shift centre in pixel
+  
+  X = round(X+Sx-W_pxl/2);
+  Y = round(Y+Sy-H_pxl/2);
+  dwell_vector = dwell*ones(1,length(X));
+  size(X)
+  size(Y)
+  size(dwell_vector)
 end
