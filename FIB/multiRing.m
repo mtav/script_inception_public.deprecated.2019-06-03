@@ -54,7 +54,7 @@ function filename_cellarray = multiRing(folder,mag,prefix,direction,interRingDis
   ring_Width = 2.1; %um
   Ring_Width = round(ring_Width/res); %in pixels.
 
-  ringDwell = 2400;             %unit: 0.1us
+  ringDwell = 2400; %unit: 0.1us
   domeMaxDwell = 3200;
   domeMinDwell = 50;
 
