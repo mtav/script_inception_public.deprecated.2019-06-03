@@ -202,58 +202,120 @@ function [dwell_vector,X,Y] = spiralHoleRectangular(beamCurrent,res,dwell,x_cent
 end
 
 function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_center,y_center,x_size,y_size)
-  %%%%%%%%Input-PARAMTERS%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  %dwell_vector time (us) - try 800.
-  %radius Width of the square (um).
-  %s shift first hole centre to centre cavity = cavity length(um).
-
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  radius = 0.5*x_size;
+  % size of circles in nm as a function of the beamcurrent
+  spotSizes=[1 8;
+  4 12;
+  11 15;
+  70 25;
+  150 35;
+  350 55;
+  1000 80;
+  2700 120;
+  6600 270;
+  11500 500;
+  ];
   
-  if (radius>4096*res/2)
-     error('Feature is too big for this magnification level..');
+  %projectName='trial9';
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+  %mag=200000;
+  %dwell=20000;
+  rep=1;
+  beamCurrent=1; %Beam current.
+  
+  % vertical overlap of circles as a proportion of their diameter
+  overlap=0.50;
+  
+  % horizontal distance between circles in nm
+  %trenchWidth=150;  % nm
+  %trenchWidth=0;  % nm
+  
+  % width and height of the whole structure in mum
+  %W=1.25; %mum
+  %H=0.5; %mum
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  % size of a circle in mum
+  spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
+  %spotSize = 0.500
+  
+  %HFW=304000/mag; % Width of the horizontal scan (um).
+  %res=HFW/4096; % size of each pixel (um).
+  
+  % vertical stepping distance
+  BeamStep = max(round((spotSize-spotSize*overlap)/res),1);
+  %'BeamStep'
+  %round((spotSize-spotSize*overlap)/res)
+  %1
+  %BeamStep
+  
+  % horizontal stepping distance
+  %stepSize = round((spotSize+trenchWidth*1e-3)/res);
+  stepSize = BeamStep;
+   
+  W_pxl = round(x_size/res);
+  H_pxl = round(y_size/res);
+  
+  %xp=[1,1+stepSize,1+(1+2)*stepSize,1+(1+2+3)*stepSize]
+  Xp = 1:stepSize:W_pxl;
+  Yp = 1:BeamStep:H_pxl;
+  
+  %'lengths'
+  %length(xp)
+  %length(yp)
+  %return
+  
+  YpFlip = fliplr(Yp);
+  onesVec = ones(1,length(Yp));
+  
+  dwell_vector = [];
+  X = [];
+  Y = [];
+  
+  N = length(Xp);
+  for m=1:N
+    %disp(['m = ',num2str(m/N)]);
+    X = [X,Xp(m)*onesVec];
+    if (mod(m,2)==0)
+      Y = [Y,Yp];
+    else
+      Y = [Y,YpFlip];
+    end
   end
-
-  R=radius/res; % Radius in pixels.
-  % R=radius;
-
-  Sx=round(x_center/res); % shift centre in pixel
-  Sy=round(y_center/res); % shift centre in pixel
-
-  % Sx=x_center;
-  % Sy=y_center;
   
-  numPoints=2*pi*R^2;
-  % numPoints=100;
-
-  % t = [];
-
-  % numPoints
-  t=linspace(0,2*pi*R,numPoints);
-
-  X = round(1/(2*pi)*t.*cos(t));
-  Y = round(1/(2*pi)*t.*sin(t));
-
-  X=X-min(X)+2048-round(R);
-  Y=Y-min(Y)+1980-round(R);
-
-  c=[X',Y'];
-  [mixed,k]=unique(c,'rows');
-  kk=sort(k);
-  coordinates=c(kk,:)';
-  % lineLength(coordinates)
-  X=coordinates(1,:);
-  Y=coordinates(2,:);
-
-  shiftXfirst=2048+Sx;
-  shiftYfirst=1980+Sy;
-
-  X = shiftXfirst+X-round((min(X)+max(X))/2);
-  Y = shiftYfirst+Y-round((min(Y)+max(Y))/2);
-  % length(X)
-  % X
-
+  Sx = 2048+round(x_center/res); % shift centre in pixel
+  Sy = 1980+round(y_center/res); % shift centre in pixel
+  
+  X = round(X+Sx-W_pxl/2);
+  Y = round(Y+Sy-H_pxl/2);
   dwell_vector = dwell*ones(1,length(X));
+  
+  %filename = ['snake_',projectName,'_',num2str(mag),'X_dwell',num2str(dwell),'_rep',num2str(rep),'.str'];
+  %disp(['Writing to ',filename]);
+  %fid=fopen(filename,'w+');
+  %fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(x));
+  %fprintf(fid,[num2str(dwell),' %i %i\r\n'],[x;y]);
+  %fclose(fid);
+  
+  % clf
+  %disp('Plotting lines...');
+  %figure;
+  %subplot(2,1,1);
+  %plot(x,y,'.');
+  %subplot(2,1,2);
+  %plot(res*x,res*y,'.');
+  
+  %hold on;
+  
+  %disp('Plotting circles...');
+  %spotR=spotSize/res/2;
+  %for m=1:length(x)
+    %subplot(2,1,1)
+    %rectangle('Position',[x(m)-spotR,y(m)-spotR,spotSize/res,spotSize/res],'Curvature',[1,1])
+    %subplot(2,1,2)
+    %rectangle('Position',res*[x(m)-spotR,y(m)-spotR,spotSize/res,spotSize/res],'Curvature',[1,1])
+  %end
 end
 
 function [dwell_vector,X,Y] = triangleHoleLeft(beamCurrent,res,dwell,x_center,y_center,x_size,y_size)
