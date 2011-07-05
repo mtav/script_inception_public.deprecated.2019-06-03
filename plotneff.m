@@ -123,8 +123,10 @@ function plotneff()
   legend('r','rg');
 
   %%%%%%%%%%%
-  rad1 = linspace(0.25,1.5,7);
-  delta = [0:0.01:1];
+  %rad1 = linspace(0.25,1.5,7);
+  %delta = [0:0.01:1];
+  rad1 = [0.15,0.20,0.25];
+  delta = linspace(0,0.3,100);
   
   r_all = zeros(length(delta),length(rad1));
   rg_all = zeros(length(delta),length(rad1));
