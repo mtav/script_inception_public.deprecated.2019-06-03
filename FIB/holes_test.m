@@ -1,6 +1,15 @@
-function filename_cellarray = holes_test(fileBaseName,type)
+function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent)
 % filename_cellarray = holes_test(fileBaseName,type)
 % type = loncar,DFBrectSpiral,DFBrectRaster,DFBtriangle
+% ex:
+% a=holes_test('loncar.str','loncar');readStrFile(a);
+% a=holes_test('DFBrectSpiral.str','DFBrectSpiral');readStrFile(a);
+% a=holes_test('DFBrectRaster.str','DFBrectRaster');readStrFile(a);
+% a=holes_test('DFBtriangle.str','DFBtriangle');readStrFile(a);
+% a=holes_test('../../../loncar','loncar',30000,3*2400,11);readStrFile(a);
+% a=holes_test('../../../DFBrectSpiral','DFBrectSpiral',30000,3*2400,11);readStrFile(a);
+% a=holes_test('../../../DFBrectRaster','DFBrectRaster',30000,3*2400,11);readStrFile(a);
+% a=holes_test('../../../DFBtriangle','DFBtriangle',30000,3*2400,11);readStrFile(a);
 
   switch type
     case 'loncar'
@@ -39,19 +48,28 @@ function filename_cellarray = holes_test(fileBaseName,type)
       error('Unexpected type. No streamfile created.');
   end
   
-  mag = 30000;
-  dwell = 2400; %unit: 0.1us
-  rep = 1;
-  Ntop = 20;
-  Nbottom = 40;
-  size_x_mum = 0.066;
+  if exist('mag','var')==0;mag = 34000;end;
+  if exist('dwell','var')==0;dwell = 3*2400;end; %unit: 0.1us
+  rep = 2;
+  Ntop = 10;%8;
+  Nbottom = 20;%18;%40;
+  size_x_mum = 2*0.066;
   size_y_mum = 0.200;
-  delta_x_mum = size_x_mum + 0.078;
-  cavity_x_mum = 0.145;
-  radius_mum = 0.500;
+  delta_x_mum = size_x_mum + 2*0.078;
+  cavity_x_mum = 2*0.145;
+  radius_mum = 1;%0.500;%0.450+0.065;
+  
+  height_mum = 9
+  Nsug = (height_mum - cavity_x_mum )/delta_x_mum
+  Ntopsug = 1/3*(height_mum - cavity_x_mum )/delta_x_mum
+  Nbottomsug = 2/3*(height_mum - cavity_x_mum )/delta_x_mum
+  
   height_mum = Nbottom*delta_x_mum + cavity_x_mum + Ntop*delta_x_mum;
   
   [res, HFW] = getResolution(mag);
+  disp(['height_mum = ',num2str(height_mum)]);
+  disp(['HFW = ',num2str(HFW)]);
+  
   if height_mum>HFW
     height_mum
     HFW
@@ -107,5 +125,14 @@ function filename_cellarray = holes_test(fileBaseName,type)
   holes_Size_Y = size_y_mum*ones(1,length(holes_X));
   
   separate_files = 0;
-  filename_cellarray = holes(fileBaseName,mag,dwell,rep,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,separate_files);
+
+  % TODO: Finally create a function for this kind of stuff
+  [ folder, basename, ext ] = fileparts(fileBaseName);
+  if strcmp(ext,'.str')
+        fileBaseName2 = fullfile(folder, basename);
+  else
+        fileBaseName2 = fileBaseName;
+  end
+  fileBaseName3 = [fileBaseName2,'.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep)];
+  filename_cellarray = holes(fileBaseName3,mag,dwell,rep,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,separate_files);
 end

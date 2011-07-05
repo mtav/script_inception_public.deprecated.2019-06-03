@@ -1,0 +1,14 @@
+mag=30000
+%dwell=5000;
+dwell=30000;%1.5*12*2400
+beamCurrent=4
+a=holes_test('../../../loncar','loncar',mag,dwell,beamCurrent);
+a=holes_test('../../../DFBrectSpiral','DFBrectSpiral',mag,dwell,beamCurrent);
+a=holes_test('../../../DFBrectRaster','DFBrectRaster',mag,dwell,beamCurrent);
+a=holes_test('../../../DFBtriangle','DFBtriangle',mag,dwell,beamCurrent);
+%dwell=30000;%12*2400
+beamCurrent=11
+a=holes_test('../../../loncar','loncar',mag,dwell,beamCurrent);
+a=holes_test('../../../DFBrectSpiral','DFBrectSpiral',mag,dwell,beamCurrent);
+a=holes_test('../../../DFBrectRaster','DFBrectRaster',mag,dwell,beamCurrent);
+a=holes_test('../../../DFBtriangle','DFBtriangle',mag,dwell,beamCurrent);
