@@ -10,8 +10,8 @@ Tooltip: 'Import from Bristol FDTD'
 # IMPORTS
 ###############################
 from bfdtd.bfdtd_parser import *
-from FDTDGeometryObjects import *
-from layer_manager import *
+from blender_scripts.FDTDGeometryObjects import *
+from blender_scripts.layer_manager import *
 from bfdtd.bristolFDTD_generator_functions import *
 import os
 import pickle
@@ -52,16 +52,16 @@ def importBristolFDTD(filename):
     
     FDTDGeometryObjects_obj = FDTDGeometryObjects()
     
-    Blender.Window.RedrawAll(); # This must be called before any SetActiveLayer calls!
+    # Blender.Window.RedrawAll(); # This must be called before any SetActiveLayer calls!
     
     layerManager = LayerManagerObjects()
     
     # Box
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('box'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('box'));
     FDTDGeometryObjects_obj.GEObox(structured_entries.box.name, Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
     
     # mesh
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
     FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
     
     # Time_snapshot (time or EPS)
@@ -78,11 +78,11 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
         FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
     # Probe
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
     Nprobes = 0
     for probe in structured_entries.probe_list:
         # print('probe = ',Vector(probe.position))
@@ -92,7 +92,7 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOprobe(ProbeFileName, Vector(probe.position));
     
     # Sphere
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
     for sphere in structured_entries.sphere_list:
         # variables
         center = Vector(sphere.center)
@@ -113,7 +113,7 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
         
     # Block
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
     for block in structured_entries.block_list:
         # variables
         lower = Vector(block.lower)
@@ -142,7 +142,7 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
     
     # Cylinder
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
     for cylinder in structured_entries.cylinder_list:
       
         # initialise rotation_matrix
@@ -179,11 +179,11 @@ def importBristolFDTD(filename):
     print(layersOn)
     #layersOn = [1,2,3]
     #print layersOn
-    Blender.Scene.GetCurrent().setLayers(layersOn)
+    #Blender.Scene.GetCurrent().setLayers(layersOn)
     
     scene.update(0);
-    Blender.Window.RedrawAll();
-    Blender.Window.WaitCursor(0);
+    #Blender.Window.RedrawAll();
+    #Blender.Window.WaitCursor(0);
     #Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print('...done')
     #print Blender.Get('scriptsdir')

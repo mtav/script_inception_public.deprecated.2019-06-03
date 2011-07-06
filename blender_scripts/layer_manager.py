@@ -94,28 +94,29 @@ class LayerManagerObjects:
     'frequency_snapshots_X',
     'frequency_snapshots_Y',
     'frequency_snapshots_Z']
+
+    # TODO: blender 2.5 port
+    #self.txt = Text.New("layernames")
+    #for i in range(20):
+      #if i<len(self.DefaultLayers):
+        #self.txt.write(self.DefaultLayers[i]+'\n')
+      #else:
+        #self.txt.write('\n')
     
-    self.txt = Text.New("layernames")
-    for i in range(20):
-      if i<len(self.DefaultLayers):
-        self.txt.write(self.DefaultLayers[i]+'\n')
-      else:
-        self.txt.write('\n')
-    
-    self.layersets = ["Working Set,1"]
-    for i in self.layersets:
-      self.txt.write(i +"\n")
+    #self.layersets = ["Working Set,1"]
+    #for i in self.layersets:
+      #self.txt.write(i +"\n")
       
-    self.names = self.txt.asLines()
-    self.names.pop()
-    self.layersets = self.names[20:]  
+    #self.names = self.txt.asLines()
+    #self.names.pop()
+    #self.layersets = self.names[20:]  
     
-    self.curset = self.layersets[0][0:self.layersets[0].find(",")]
+    #self.curset = self.layersets[0][0:self.layersets[0].find(",")]
     
-    self.scn = Scene.getCurrent()
-    for i in range(20):
-      if self.scn.layers.count(i):
-        self.toggles[i-1] = 1
+    #self.scn = Scene.getCurrent()
+    #for i in range(20):
+      #if self.scn.layers.count(i):
+        #self.toggles[i-1] = 1
 
   def event(self, evt, val):
     #global offset
