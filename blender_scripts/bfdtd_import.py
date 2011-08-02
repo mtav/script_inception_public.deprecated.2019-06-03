@@ -13,6 +13,7 @@ from bfdtd.bfdtd_parser import *
 from blender_scripts.FDTDGeometryObjects import *
 from blender_scripts.layer_manager import *
 from bfdtd.bristolFDTD_generator_functions import *
+from mathutils import *
 import os
 import pickle
 

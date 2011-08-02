@@ -174,11 +174,12 @@ class FDTDGeometryObjects:
         return
         
     def GEObox(self, name, lower, upper):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.faces.delete(0, list(range(len(mesh.faces))));
+        #scene = bpy.context.scene; Blender.Scene.GetCurrent();
+        mesh = bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+        #mesh = Blender.Mesh.Primitives.Cube(1.0)
+        mesh.faces.delete(0, list(range(len(mesh.faces))))
     
-        obj = scene.objects.new(mesh, name)
+        #obj = scene.objects.new(mesh, name)
         pos = 0.5*(lower+upper);
         diag = upper-lower;
         
