@@ -175,7 +175,15 @@ class FDTDGeometryObjects:
         
     def GEObox(self, name, lower, upper):
         #scene = bpy.context.scene; Blender.Scene.GetCurrent();
-        mesh = bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+        bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+        #mesh = 
+
+        obj = context.active_object
+        #obj.name = "Smoke Domain"
+
+        #obj.location = 0.5 * (max_co + min_co) + Vector((0.0, 0.0, 1.0))
+        #obj.scale = 0.5 * (max_co - min_co) + Vector((1.0, 1.0, 2.0))
+
         #mesh = Blender.Mesh.Primitives.Cube(1.0)
         mesh.faces.delete(0, list(range(len(mesh.faces))))
     
