@@ -177,15 +177,22 @@ class FDTDGeometryObjects:
         #scene = bpy.context.scene; Blender.Scene.GetCurrent();
         bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
         #mesh = 
-
-        obj = context.active_object
-        #obj.name = "Smoke Domain"
+        bpy.data
+        bpy.context
+        obj = bpy.context.active_object
+        obj.name = name
+        mesh = bpy.data.meshes[obj.name]
 
         #obj.location = 0.5 * (max_co + min_co) + Vector((0.0, 0.0, 1.0))
         #obj.scale = 0.5 * (max_co - min_co) + Vector((1.0, 1.0, 2.0))
 
         #mesh = Blender.Mesh.Primitives.Cube(1.0)
         mesh.faces.delete(0, list(range(len(mesh.faces))))
+        bpy.ops.mesh.delete(type='ONLY_FACE')
+    
+        toto = bpy.data.meshes["Cube.004"].faces[0]
+    
+        obj.data.faces
     
         #obj = scene.objects.new(mesh, name)
         pos = 0.5*(lower+upper);
