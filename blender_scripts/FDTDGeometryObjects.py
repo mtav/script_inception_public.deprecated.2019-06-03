@@ -4,12 +4,12 @@
 #import Blender
 #~ from bpy import *
 import math
-import bpy;
+import bpy
 #import BPyAddMesh;
-import os;
-import sys;
-import re;
-import array;
+import os
+import sys
+import re
+import array
 # define Vector+Matrix
 #~ from bpy.Mathutils import Vector;
 #~ from bpy.Mathutils import Matrix;
