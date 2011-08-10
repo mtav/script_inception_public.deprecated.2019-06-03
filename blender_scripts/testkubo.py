@@ -44,5 +44,16 @@ def testkubo():
   scene.objects.link(cube_object)  
   cube_object.select = True
 
+def testkubo2():
+  # add cube
+  bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+  
+  # get added object
+  obj = bpy.context.active_object
+  
+  # deleting faces fails when in object mode, so change.
+  bpy.ops.object.mode_set(mode = 'EDIT') 
+  bpy.ops.mesh.delete(type='ONLY_FACE')
+
 if __name__ == "__main__":
   testkubo()
