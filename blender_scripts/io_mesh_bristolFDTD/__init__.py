@@ -35,11 +35,10 @@ bl_info = {
 # To support reload properly, try to access a package var, if it's there, reload everything
 if "bpy" in locals():
     import imp
-    if "export_bristolFDTD" in locals():
-        imp.reload(export_bristolFDTD)
-    if "import_bristolFDTD" in locals():
-        imp.reload(import_bristolFDTD)
-
+    if "export_BristolFDTD" in locals():
+        imp.reload(export_BristolFDTD)
+    if "import_BristolFDTD" in locals():
+        imp.reload(import_BristolFDTD)
 
 import os
 import bpy
@@ -60,16 +59,20 @@ class ImportBristolFDTD(bpy.types.Operator, ImportHelper):
     directory = StringProperty()
 
     filename_ext = ".BristolFDTD"
-    filter_glob = StringProperty(default="*.BristolFDTD", options={'HIDDEN'})
+    filter_glob = StringProperty(default="*.geo;*.inp;*.in", options={'HIDDEN'})
 
     def execute(self, context):
         paths = [os.path.join(self.directory, name.name) for name in self.files]
         if not paths:
             paths.append(self.filepath)
 
+        print('pre-import')
+        print('os.getcwd() = ',os.getcwd())
         from . import import_BristolFDTD
+        print('post-import')
 
         for path in paths:
+            print('path = ',path)
             import_BristolFDTD.load(self, context, path)
 
         return {'FINISHED'}

@@ -213,6 +213,9 @@ def load_BristolFDTD(filepath):
     from bpy_extras.image_utils import load_image
 
     t = time.time()
+    print('filepath = ',filepath)
+    return
+    
     obj_spec, obj = read(filepath)
     if obj is None:
         print('Invalid file')
@@ -335,3 +338,52 @@ def load_BristolFDTD(filepath):
 def load(operator, context, filepath=""):
     load_BristolFDTD(filepath)
     return {'FINISHED'}
+
+###############################
+# MAIN FUNCTION
+###############################
+def main():
+  ''' MAIN FUNCTION '''
+  print('sys.argv=' + str(sys.argv))
+  print('len(sys.argv)=' + str(len(sys.argv)))
+  
+  # arg[0]='blender'
+  # arg[1]='-P'
+  # arg[2]='scriptname'
+  # arg[3]='--'
+  
+  if len(sys.argv)>4:
+      for i in range(len(sys.argv)- 4):
+          print('Importing ' + sys.argv[4+i])
+          importBristolFDTD(sys.argv[4+i]);
+  else:
+      ###################
+      # load import path
+      ###################
+      # print('tempdir=',Blender.Get('tempdir'))
+      # print('soundsdir=',Blender.Get('soundsdir'))
+  
+      # default_path = Blender.Get('tempdir');
+      # if not default_path:
+          # default_path = os.getenv('DATADIR');
+          
+      default_path = os.getenv('DATADIR')
+      print('cfgfile = ', cfgfile)
+  
+      if os.path.isfile(cfgfile) and os.path.getsize(cfgfile) > 0:
+          #with open(, 'r') as FILE:
+               #= pickle.load(FILE);
+        with open(cfgfile, 'rb') as f:
+          # The protocol version used is detected automatically, so we do not
+          # have to specify it.
+          default_path = pickle.load(f)
+      ###################
+  
+      ###################
+      # import file
+      ###################
+      Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
+      # TestObjects();
+
+if __name__ == "__main__":
+  main()
