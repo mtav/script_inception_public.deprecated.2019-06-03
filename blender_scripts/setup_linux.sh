@@ -11,4 +11,4 @@ do
 #  ln -s $(readlink -f "$f") $BLENDERPATH/scripts
 done
 
-ln -s $(readlink -f "io_mesh_bristolFDTD") $BLENDERPATH/scripts/addons/
+ln -s $(readlink -f "io_mesh_BristolFDTD") $BLENDERPATH/scripts/addons/
