@@ -7,6 +7,9 @@ function BFDTDtoMEEP(file_list)
   % Only one field in the excitation component defined in INP should be one.
   % That is either Ex or Ey ... Hx...etc;  Otherwise the first nonzero
   % component will be translated to ctl.
+  %
+  % ex:
+  % BFDTDtoMEEP({'qedc3_2_05.geo','qedc3_2_05.inp'})
   %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % if exist('geofile','var') == 0
