@@ -42,12 +42,53 @@ else:
   pillar.box.upper = [ FullBox_upper[0], 0.5*FullBox_upper[1], FullBox_upper[2] ]
 
 # define geometry
-block = TriangularPrism()
-#block.lower = [ P_centre[0]-0.5*height, P_centre[1]-radius, P_centre[2]-radius ]
-#block.upper = [ P_centre[0]+0.5*height, P_centre[1]+radius, P_centre[2]+radius ]
-#block.permittivity = pow(n_diamond,2)
-#block.conductivity = 0
-pillar.geometry_object_list = [ block ]
+prism = TriangularPrism()
+prism.lower = [0,0,0]
+prism.upper = [1,10,3]
+prism.orientation = [0,1,2]
+prism.permittivity = pow(n_diamond,2)
+prism.conductivity = 0
+pillar.geometry_object_list.append(prism)
+
+prism = TriangularPrism()
+prism.lower = [0,0,0]
+prism.upper = [1,10,3]
+prism.orientation = [0,2,1]
+prism.permittivity = 2*pow(n_diamond,2)
+prism.conductivity = 0
+pillar.geometry_object_list.append(prism)
+
+prism = TriangularPrism()
+prism.lower = [0,0,0]
+prism.upper = [1,10,3]
+prism.orientation = [1,0,2]
+prism.permittivity = 2*pow(n_diamond,2)
+prism.conductivity = 0
+pillar.geometry_object_list.append(prism)
+
+prism = TriangularPrism()
+prism.lower = [0,0,0]
+prism.upper = [1,10,3]
+prism.orientation = [1,2,0]
+prism.permittivity = 2*pow(n_diamond,2)
+prism.conductivity = 0
+pillar.geometry_object_list.append(prism)
+
+prism = TriangularPrism()
+prism.lower = [0,0,0]
+prism.upper = [1,10,3]
+prism.orientation = [2,0,1]
+prism.permittivity = 2*pow(n_diamond,2)
+prism.conductivity = 0
+pillar.geometry_object_list.append(prism)
+
+prism = TriangularPrism()
+prism.lower = [0,0,0]
+prism.upper = [1,10,3]
+prism.orientation = [2,1,0]
+prism.permittivity = 2*pow(n_diamond,2)
+prism.conductivity = 0
+pillar.geometry_object_list.append(prism)
 
 # define excitation
 excitation = Excitation()
@@ -76,12 +117,12 @@ F = pillar.addFrequencySnapshot(3,P_centre[2]); F.first = first; F.frequency_vec
 F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = frequency_vector
 
 # define mesh
-#thicknessVector_X = [ block.lower[0]-pillar.box.lower[0], P_centre[0]-block.lower[0], block.upper[0]-P_centre[0], delta, pillar.box.upper[0]-(block.upper[0]+delta) ]
+#thicknessVector_X = [ prism.lower[0]-pillar.box.lower[0], P_centre[0]-prism.lower[0], prism.upper[0]-P_centre[0], delta, pillar.box.upper[0]-(prism.upper[0]+delta) ]
 #if pillar.boundaries.Ypos_bc == 2:
-  #thicknessVector_Y = [ block.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-block.lower[1], delta, delta, block.upper[1]-(P_centre[1]+delta), pillar.box.upper[1]-block.upper[1] ]
+  #thicknessVector_Y = [ prism.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-prism.lower[1], delta, delta, prism.upper[1]-(P_centre[1]+delta), pillar.box.upper[1]-prism.upper[1] ]
 #else:
-  #thicknessVector_Y = [ block.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-block.lower[1], delta ]
-#thicknessVector_Z = LimitsToThickness([ pillar.box.lower[2], block.lower[2], P_centre[2], block.upper[2], pillar.box.upper[2] ])
+  #thicknessVector_Y = [ prism.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-prism.lower[1], delta ]
+#thicknessVector_Z = LimitsToThickness([ pillar.box.lower[2], prism.lower[2], P_centre[2], prism.upper[2], pillar.box.upper[2] ])
 #max_delta_Vector_X = [ delta ]*len(thicknessVector_X)
 #max_delta_Vector_Y = [ delta ]*len(thicknessVector_Y)
 #max_delta_Vector_Z = [ delta ]*len(thicknessVector_Z)

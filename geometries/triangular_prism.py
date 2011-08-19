@@ -49,6 +49,9 @@ class TriangularPrism(Geometry_object):
     
   def getVoxels(self):
     voxel_list = []
+    # Z = triangle peak
+    # X = triangle size
+    # Y = prism length
     ####################################
     voxel_Ymin = self.lower[1]#self.Ymax/2.0 - self.radius_Y_pillar_mum
     voxel_Ymax = self.upper[1]#self.Ymax/2.0 + self.radius_Y_pillar_mum
@@ -57,21 +60,27 @@ class TriangularPrism(Geometry_object):
     N = self.Nvoxels
     voxel_radius_X = R/( 2.*self.Nvoxels + 1.)
     Z_left = self.lower[2] #self.Zmax/2.0 - self.radius_Z_pillar_mum
-    offset = 0.5*(self.upper[0]+self.lower[0]) #X_current - self.radius_X_hole
+    offset = self.lower[0] #X_current - self.radius_X_hole
     for i in range(self.Nvoxels):
       # bottom left blocks
       L = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
       U = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1.)/(N+1.)]
       print L, U, offset, R, i, 2*N+1, D, Z_left, i+1, N+1,(i + 1)/(N+1)
-      voxel_list.append(Block(name=self.COMMENT, lower=L, upper=U, permittivity=self.permittivity, conductivity=self.conductivity))
+      LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
+      UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+      voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
       # top left blocks
       L = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
       U = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-      voxel_list.append(Block(name=self.COMMENT, lower=L, upper=U, permittivity=self.permittivity, conductivity=self.conductivity))
+      LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
+      UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+      voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ## middle left block
     L = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
     U = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
-    voxel_list.append(Block(name=self.COMMENT, lower=L, upper=U, permittivity=self.permittivity, conductivity=self.conductivity))
+    LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
+    UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+    voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ####################################
     return voxel_list
         
