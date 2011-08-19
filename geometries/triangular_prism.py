@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 from bfdtd.bfdtd_parser import *
 
 class TriangularPrism(Geometry_object):
@@ -25,6 +26,7 @@ class TriangularPrism(Geometry_object):
     self.conductivity = conductivity
     self.Nvoxels = Nvoxels
     self.orientation = orientation
+    self.COMMENT = 'nada'
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -32,70 +34,68 @@ class TriangularPrism(Geometry_object):
     ret += 'upper = '+str(self.upper)+'\n'
     ret += 'permittivity = '+str(self.permittivity)+'\n'
     ret += 'conductivity = '+str(self.conductivity)+'\n'
+    ret += 'Nvoxels = '+str(self.Nvoxels)+'\n'
+    ret += 'orientation = '+str(self.orientation)+'\n'
     ret += Geometry_object.__str__(self)
-    self.Nvoxels = Nvoxels
-    self.orientation = orientation
     return ret
-  def read_entry(self,entry):
-    if entry.name:
-      self.name = entry.name
-    self.lower = float_array(entry.data[0:3])
-    self.upper = float_array(entry.data[3:6])
-    self.permittivity = float(entry.data[6])
-    self.conductivity = float(entry.data[7])
+    
+  #def read_entry(self,entry):
+    #if entry.name:
+      #self.name = entry.name
+    #self.lower = float_array(entry.data[0:3])
+    #self.upper = float_array(entry.data[3:6])
+    #self.permittivity = float(entry.data[6])
+    #self.conductivity = float(entry.data[7])
+    
+  def getVoxels(self):
+    voxel_list = []
+    ####################################
+    voxel_Ymin = self.lower[1]#self.Ymax/2.0 - self.radius_Y_pillar_mum
+    voxel_Ymax = self.upper[1]#self.Ymax/2.0 + self.radius_Y_pillar_mum
+    D = self.upper[2]-self.lower[2]#self.radius_Z_pillar_mum - self.radius_Z_hole
+    R = 0.5*(self.upper[0]-self.lower[0])
+    N = self.Nvoxels
+    voxel_radius_X = R/( 2.*self.Nvoxels + 1.)
+    Z_left = self.lower[2] #self.Zmax/2.0 - self.radius_Z_pillar_mum
+    offset = 0.5*(self.upper[0]+self.lower[0]) #X_current - self.radius_X_hole
+    for i in range(self.Nvoxels):
+      # bottom left blocks
+      L = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
+      U = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1.)/(N+1.)]
+      print L, U, offset, R, i, 2*N+1, D, Z_left, i+1, N+1,(i + 1)/(N+1)
+      voxel_list.append(Block(name=self.COMMENT, lower=L, upper=U, permittivity=self.permittivity, conductivity=self.conductivity))
+      # top left blocks
+      L = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
+      U = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
+      voxel_list.append(Block(name=self.COMMENT, lower=L, upper=U, permittivity=self.permittivity, conductivity=self.conductivity))
+    ## middle left block
+    L = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
+    U = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
+    voxel_list.append(Block(name=self.COMMENT, lower=L, upper=U, permittivity=self.permittivity, conductivity=self.conductivity))
+    ####################################
+    return voxel_list
+        
   def write_entry(self, FILE):
-    self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
-    FILE.write('BLOCK **name='+self.name+'\n')
-    FILE.write('{\n')
-    FILE.write("%E **XL\n" % self.lower[0])
-    FILE.write("%E **YL\n" % self.lower[1])
-    FILE.write("%E **ZL\n" % self.lower[2])
-    FILE.write("%E **XU\n" % self.upper[0])
-    FILE.write("%E **YU\n" % self.upper[1])
-    FILE.write("%E **ZU\n" % self.upper[2])
-    FILE.write("%E **relative Permittivity\n" % self.permittivity)
-    FILE.write("%E **Conductivity\n" % self.conductivity)
-    FILE.write('}\n')
-    FILE.write('\n')
+    voxels = self.getVoxels()
+    for v in voxels:
+      v.lower, v.upper = fixLowerUpper(v.lower, v.upper)
+      FILE.write('BLOCK **name='+v.name+'\n')
+      FILE.write('{\n')
+      FILE.write("%E **XL\n" % v.lower[0])
+      FILE.write("%E **YL\n" % v.lower[1])
+      FILE.write("%E **ZL\n" % v.lower[2])
+      FILE.write("%E **XU\n" % v.upper[0])
+      FILE.write("%E **YU\n" % v.upper[1])
+      FILE.write("%E **ZU\n" % v.upper[2])
+      FILE.write("%E **relative Permittivity\n" % v.permittivity)
+      FILE.write("%E **Conductivity\n" % v.conductivity)
+      FILE.write('}\n')
+      FILE.write('\n')
+    
   def getCenter(self):
     return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
 
 if __name__ == "__main__":
   foo = TriangularPrism()
-
-####################################
-voxel_Ymin = self.Ymax/2.0 - self.radius_Y_pillar_mum
-voxel_Ymax = self.Ymax/2.0 + self.radius_Y_pillar_mum
-voxel_radius_X = self.radius_X_hole/( 2.*self.Nvoxels + 1.)
-D = self.radius_Z_pillar_mum - self.radius_Z_hole
-R = self.radius_X_hole
-N = self.Nvoxels
-Z_left = self.Zmax/2.0 - self.radius_Z_pillar_mum
-Z_right = self.Zmax/2.0 + self.radius_Z_pillar_mum
-offset = X_current - self.radius_X_hole
-for i in range(self.Nvoxels):
-  # bottom left blocks
-  lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-  upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-  self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-  # top left blocks
-  lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-  upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
-  self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-  # bottom right blocks
-  lower = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-  upper = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
-  self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-  # top right blocks
-  lower = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-  upper = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_right-D*(i + 1)/(N+1)]
-  self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-## middle left block
-lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
-self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-## middle right block
-lower = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_right-D*(0)/(N+1)]
-upper = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_right-D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
-self.geometry_object_list.append(Block(name=COMMENT, lower=lower, upper=upper, permittivity=permittivity, conductivity=conductivity))
-####################################
+  foo.getVoxels()
+  #foo.write_entry()
