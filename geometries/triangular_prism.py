@@ -102,7 +102,9 @@ class TriangularPrism(Geometry_object):
       FILE.write('\n')
     
   def getCenter(self):
-    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    CC = [ C[self.orientation[i]] for i in [0,1,2] ]
+    return(CC)
 
 if __name__ == "__main__":
   foo = TriangularPrism()

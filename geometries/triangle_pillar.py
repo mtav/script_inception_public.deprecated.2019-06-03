@@ -44,53 +44,54 @@ else:
 # define geometry
 prism = TriangularPrism()
 prism.lower = [0,0,0]
-prism.upper = [1,10,3]
-prism.orientation = [0,1,2]
+prism.upper = [1,10,1]
+prism.orientation = [1,0,2]
 prism.permittivity = pow(n_diamond,2)
 prism.conductivity = 0
 pillar.geometry_object_list.append(prism)
 
-prism = TriangularPrism()
-prism.lower = [0,0,0]
-prism.upper = [1,10,3]
-prism.orientation = [0,2,1]
-prism.permittivity = 2*pow(n_diamond,2)
-prism.conductivity = 0
-pillar.geometry_object_list.append(prism)
+#prism = TriangularPrism()
+#prism.lower = [0,0,0]
+#prism.upper = [1,10,3]
+#prism.orientation = [0,2,1]
+#prism.permittivity = 2*pow(n_diamond,2)
+#prism.conductivity = 0
+#pillar.geometry_object_list.append(prism)
 
-prism = TriangularPrism()
-prism.lower = [0,0,0]
-prism.upper = [1,10,3]
-prism.orientation = [1,0,2]
-prism.permittivity = 2*pow(n_diamond,2)
-prism.conductivity = 0
-pillar.geometry_object_list.append(prism)
+#prism = TriangularPrism()
+#prism.lower = [0,0,0]
+#prism.upper = [1,10,3]
+#prism.orientation = [1,0,2]
+#prism.permittivity = 2*pow(n_diamond,2)
+#prism.conductivity = 0
+#pillar.geometry_object_list.append(prism)
 
-prism = TriangularPrism()
-prism.lower = [0,0,0]
-prism.upper = [1,10,3]
-prism.orientation = [1,2,0]
-prism.permittivity = 2*pow(n_diamond,2)
-prism.conductivity = 0
-pillar.geometry_object_list.append(prism)
+#prism = TriangularPrism()
+#prism.lower = [0,0,0]
+#prism.upper = [1,10,3]
+#prism.orientation = [1,2,0]
+#prism.permittivity = 2*pow(n_diamond,2)
+#prism.conductivity = 0
+#pillar.geometry_object_list.append(prism)
 
-prism = TriangularPrism()
-prism.lower = [0,0,0]
-prism.upper = [1,10,3]
-prism.orientation = [2,0,1]
-prism.permittivity = 2*pow(n_diamond,2)
-prism.conductivity = 0
-pillar.geometry_object_list.append(prism)
+#prism = TriangularPrism()
+#prism.lower = [0,0,0]
+#prism.upper = [1,10,3]
+#prism.orientation = [2,0,1]
+#prism.permittivity = 2*pow(n_diamond,2)
+#prism.conductivity = 0
+#pillar.geometry_object_list.append(prism)
 
-prism = TriangularPrism()
-prism.lower = [0,0,0]
-prism.upper = [1,10,3]
-prism.orientation = [2,1,0]
-prism.permittivity = 2*pow(n_diamond,2)
-prism.conductivity = 0
-pillar.geometry_object_list.append(prism)
+#prism = TriangularPrism()
+#prism.lower = [0,0,0]
+#prism.upper = [1,10,3]
+#prism.orientation = [2,1,0]
+#prism.permittivity = 2*pow(n_diamond,2)
+#prism.conductivity = 0
+#pillar.geometry_object_list.append(prism)
 
 # define excitation
+P_centre = prism.getCenter()
 excitation = Excitation()
 excitation.P1 = [ P_centre[0], P_centre[1]-1*delta, P_centre[2] ]
 excitation.P2 = P_centre
