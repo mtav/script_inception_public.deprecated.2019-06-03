@@ -8,6 +8,7 @@ from constants.constants import *
 from meshing.subGridMultiLayer import *
 import os
 from geometries.triangular_prism import TriangularPrism
+from geometries.SpecialTriangularPrism import SpecialTriangularPrism
 
 pillar = BFDTDobject()
 
@@ -42,10 +43,11 @@ else:
   pillar.box.upper = [ FullBox_upper[0], 0.5*FullBox_upper[1], FullBox_upper[2] ]
 
 # define geometry
-prism = TriangularPrism()
+#prism = TriangularPrism()
+prism = SpecialTriangularPrism()
 prism.lower = [0,0,0]
 prism.upper = [1,10,1]
-prism.orientation = [1,0,2]
+#prism.orientation = [1,0,2]
 prism.permittivity = pow(n_diamond,2)
 prism.conductivity = 0
 pillar.geometry_object_list.append(prism)
