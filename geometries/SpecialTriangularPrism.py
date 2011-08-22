@@ -59,9 +59,9 @@ class SpecialTriangularPrism(Geometry_object):
     # X = triangle size
     # Z = prism length
     ####################################
-    voxel_Zmin = self.lower[1]#self.Zmax/2.0 - self.radius_Z_pillar_mum
-    voxel_Zmax = self.upper[1]#self.Zmax/2.0 + self.radius_Z_pillar_mum
-    DY = self.upper[2]-self.lower[2]#self.radius_Y_pillar_mum - self.radius_Y_hole
+    #Z_min = self.lower[2]#self.Zmax/2.0 - self.radius_Z_pillar_mum
+    #Z_max = self.upper[2]#self.Zmax/2.0 + self.radius_Z_pillar_mum
+    DY = self.upper[1]-self.lower[1]#self.radius_Y_pillar_mum - self.radius_Y_hole
     DZ = DY
     R = 0.5*(self.upper[0]-self.lower[0])
     NX = self.NvoxelsX
@@ -69,29 +69,39 @@ class SpecialTriangularPrism(Geometry_object):
     NZ = self.NvoxelsZ
     voxel_radius_X = R/( 2.*self.NvoxelsX + 1.)
     voxel_radius_Y = R/( 2.*self.NvoxelsY + 1.)
-    Y_min = self.lower[1] #self.Ymax/2.0 - self.radius_Y_pillar_mum
-    offset = self.lower[0] #X_current - self.radius_X_hole
+    X_min = self.lower[0]
+    Y_min = self.lower[1]
+    Z_min = self.lower[2]
+    X_max = self.upper[0]
+    Y_max = self.upper[1]
+    Z_max = self.upper[2]
     for iX in range(self.NvoxelsX):
-      for iY in range(self.NvoxelsY):
+      for iY in range(iX+1):
         # bottom blocks
-        L = [ offset+2*R*(iX)/(2*NX+1), Y_min+DY*(0)/(NX+1), voxel_Zmin Z_left+DZ*(0)/(NX+1)]
-        U = [ offset+2*R*(iX + 1)/(2*NX+1), Y_min+DY*(iX + 1.)/(NX+1.), voxel_Zmax]
-        #print L, U, offset, R, iX, 2*NX+1, DY, Y_min, iX+1, NX+1,(iX + 1)/(NX+1)
+        L = [ X_min+2*R*(iX)/(2*NX+1), Y_min+DY*(iY)/(NX+1.), Z_min+DY*(iY)/(NX+1.)]
+        U = [ X_min+2*R*(iX + 1)/(2*NX+1), Y_min+DY*(iY + 1.)/(NX+1.), Z_max-DY*(iY)/(NX+1.)]
+        print iX, iY, L, U, X_min, R, iX, 2*NX+1, DY, Y_min, iX+1, NX+1,(iX + 1)/(NX+1)
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
         # top blocks
-        L = [ offset+2*R*((2*NX+1)-(iX))/(2*NX+1), Y_min+DY*(0)/(NX+1), voxel_Zmin]
-        U = [ offset+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), Y_min+DY*(iX + 1)/(NX+1), voxel_Zmax]
+        L = [ X_min+2*R*((2*NX+1)-(iX))/(2*NX+1), Y_min+DY*(iY)/(NX+1.), Z_min+DY*(iY)/(NX+1.)]
+        U = [ X_min+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), Y_min+DY*(iY + 1.)/(NX+1.), Z_max-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
       ## middle block
-      L = [ offset+2*R*(NX)/(2*NX+1), Y_min+DY*(0)/(NX+1), voxel_Zmin]
-      U = [ offset+2*R*(NX + 1)/(2*NX+1), Y_min+DY*(NX + 1)/(NX+1), voxel_Zmax]
+      L = [ X_min+2*R*(NX)/(2*NX+1), Y_min+DY*(iX)/(NX+1.), Z_min+DY*(iX)/(NX+1.)]
+      U = [ X_min+2*R*(NX + 1)/(2*NX+1), Y_min+DY*(iX+1)/(NX+1.), Z_max-DY*(iX)/(NX+1.)]
       LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
       UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
       voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
+    ## middle block
+    L = [ X_min+2*R*(NX)/(2*NX+1), Y_min+DY*(NX)/(NX+1.), Z_min+DY*(NX)/(NX+1.)]
+    U = [ X_min+2*R*(NX + 1)/(2*NX+1), Y_min+DY, Z_max-DY*(NX)/(NX+1.)]
+    LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
+    UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+    voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ####################################
     return voxel_list
         
