@@ -47,6 +47,8 @@ else:
 prism = SpecialTriangularPrism()
 prism.lower = [0,0,0]
 prism.upper = [1,1,10]
+#prism.lower = [1,2,3]
+#prism.upper = [3,7,13]
 #prism.orientation = [1,0,2]
 prism.permittivity = pow(n_diamond,2)
 prism.conductivity = 0
