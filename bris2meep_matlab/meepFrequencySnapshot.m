@@ -36,15 +36,7 @@ function ret = meepFrequencySnapshot(name,center_vec3,size_vec3,wavelength_mum,c
   if (components_vec9(7) == 1); components_cell_array{end+1} = 'Jx';end;
   if (components_vec9(8) == 1); components_cell_array{end+1} = 'Jy';end;
   if (components_vec9(9) == 1); components_cell_array{end+1} = 'Jz';end;
-  
-  %components_string = '';
-  %if (components_vec9(1) == 1); components_string = [components_string, 'Ex'];end;
-  %if (components_vec9(2) == 1); components_string = [components_string, 'Ey'];end;
-  %if (components_vec9(3) == 1); components_string = [components_string, 'Ez'];end;
-  %if (components_vec9(4) == 1); components_string = [components_string, 'Hx'];end;
-  %if (components_vec9(5) == 1); components_string = [components_string, 'Hy'];end;
-  %if (components_vec9(6) == 1); components_string = [components_string, 'Hz'];end;
-  
+    
   components_string = '';
   for i=1:length(components_cell_array)
     if (i==1)
@@ -54,8 +46,6 @@ function ret = meepFrequencySnapshot(name,center_vec3,size_vec3,wavelength_mum,c
     end
   end
   
-  %caAddRemDirs{end+1} = strStartDir;
-
   ret = [ret, '      (components ',components_string,')\n'];
   ret = [ret, '      (res ',num2str(resolution),')\n'];
   ret = [ret, '    )\n'];
