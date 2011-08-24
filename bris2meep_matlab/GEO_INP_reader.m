@@ -15,14 +15,14 @@ end % end of function
 
 function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries)
   % creates entries + structured_entries from filename
-    
+  
   % ask for input file if not given
   if exist('filename','var') == 0
     disp('filename not given');
     [file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
     filename = [path,file];
   end
-    
+  
   % read the whole file as one string
   fulltext = fileread(filename);
 

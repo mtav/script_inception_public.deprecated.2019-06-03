@@ -224,7 +224,27 @@ function BFDTDtoMEEP(file_list)
   end
 
   %%%%%%%%%%%%%%%%%%%%%%
+  % frequency snapshots
+  str = '\n';
+  if (length(FDTDobj.frequency_snapshots)>0)
+    str = [str, '(set! snapshots\n'];
+    str = [str, '  (list\n'];
+    for idx = 1:length(FDTDobj.frequency_snapshots)
+      snapshot = FDTDobj.frequency_snapshots(idx);
+      name = 'mama';
+      center_vec3 = [1,2,3];
+      size_vec3 = [4,5,6];
+      wavelength_mum = 0.600;
+      components_vec9 = [1,1,1,1,1,1,1,1,1];
+      resolution = 123;
+      str = [str, meepFrequencySnapshot(name,center_vec3,size_vec3,wavelength_mum,components_vec9,resolution)];
+    end
+    str = [str, '  )\n'];
+    str = [str, ')\n'];
+  end
+  fprintf(FILE,str);
   
+  %%%%%%%%%%%%%%%%%%%%%%
   % Run Command
   fprintf(FILE,'\r\n');
   % fprintf(FILE,'(init-fields)\r\n');

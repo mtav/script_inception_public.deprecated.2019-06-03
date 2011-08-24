@@ -1,11 +1,11 @@
-function B=meepBlock(center,size,epsilon)
+function B = meepBlock(center,size,epsilon)
 
     sizeStr='size ';
-    for m=1:length(size)
+    for m = 1:length(size)
         if size(m)==Inf
-            sizeStr=[sizeStr,'infinity '];
+            sizeStr = [sizeStr,'infinity '];
         else
-            sizeStr=[sizeStr,num2str(size(m),'%4.9g'),' '];
+            sizeStr = [sizeStr,num2str(size(m),'%4.9g'),' '];
         end
     end
 
