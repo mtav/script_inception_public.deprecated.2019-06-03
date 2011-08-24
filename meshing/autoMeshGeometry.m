@@ -8,29 +8,24 @@ function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda,offset)
   epsx=[];
   epsy=[];
   epsz=[];
+  
+  simMinX=structured_entries.box.lower(1);
+  simMinY=structured_entries.box.lower(2);
+  simMinZ=structured_entries.box.lower(3);
+  simMaxX=structured_entries.box.upper(1);
+  simMaxY=structured_entries.box.upper(2);
+  simMaxZ=structured_entries.box.upper(3);
+  objx=sort([structured_entries.box.lower(1),structured_entries.box.upper(1)]);
+  objy=sort([structured_entries.box.lower(2),structured_entries.box.upper(2)]);
+  objz=sort([structured_entries.box.lower(3),structured_entries.box.upper(3)]);
 
-  for m=1:length(entries)
-    if(strcmp(entries{m}.type,'BOX'))
-      data=entries{m}.data;
-      simMinX=data(1);
-      simMaxX=data(4);
-      simMinY=data(2);
-      simMaxY=data(5);
-      simMinZ=data(3);
-      simMaxZ=data(6);
-      objx=sort([data(1),data(4)]);
-      objy=sort([data(2),data(5)]);
-      objz=sort([data(3),data(6)]);
-
-      eps=1;
-      xvec=[xvec;objx];
-      yvec=[yvec;objy];
-      zvec=[zvec;objz];
-      epsx=[epsx;eps];
-      epsy=[epsy;eps];
-      epsz=[epsz;eps];
-    end
-  end
+  eps=1;
+  xvec=[xvec;objx];
+  yvec=[yvec;objy];
+  zvec=[zvec;objz];
+  epsx=[epsx;eps];
+  epsy=[epsy;eps];
+  epsz=[epsz;eps];
 
   for m=1:length(entries)
 
