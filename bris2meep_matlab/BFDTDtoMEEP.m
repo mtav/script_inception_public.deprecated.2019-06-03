@@ -231,13 +231,14 @@ function BFDTDtoMEEP(file_list)
     str = [str, '  (list\n'];
     for idx = 1:length(FDTDobj.frequency_snapshots)
       snapshot = FDTDobj.frequency_snapshots(idx);
-      name = 'mama';
-      center_vec3 = [1,2,3];
-      size_vec3 = [4,5,6];
-      wavelength_mum = 0.600;
-      components_vec9 = [1,1,1,1,1,1,1,1,1];
-      resolution = 123;
-      str = [str, meepFrequencySnapshot(name,center_vec3,size_vec3,wavelength_mum,components_vec9,resolution)];
+      name = ['snapshot-',num2str(idx)]; % should be replaced by snapshot.name once the matlab parser is also able to get the name from the comment field
+      center_vec3 = 0.5*(snapshot.P1 + snapshot.P2);
+      size_vec3 = abs(snapshot.P2 - snapshot.P1);
+      wavelength_mum = get_c0()/snapshot.frequency;
+      E_vec3 = snapshot.E;
+      H_vec3 = snapshot.H;
+      J_vec3 = snapshot.J;
+      str = [str, meepFrequencySnapshot(name,center_vec3,size_vec3,wavelength_mum,E_vec3,H_vec3,J_vec3,resolution)];
     end
     str = [str, '  )\n'];
     str = [str, ')\n'];
