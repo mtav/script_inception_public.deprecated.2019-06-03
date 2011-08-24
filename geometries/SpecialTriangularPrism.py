@@ -55,8 +55,8 @@ class SpecialTriangularPrism(Geometry_object):
     
   def getVoxels(self):
     voxel_list = []
-    # Y = triangle peak
     # X = triangle size
+    # Y = triangle peak
     # Z = prism length
     ####################################
     #Z_min = self.lower[2]#self.Zmax/2.0 - self.radius_Z_pillar_mum

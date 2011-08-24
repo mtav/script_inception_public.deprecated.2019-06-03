@@ -49,35 +49,55 @@ class TriangularPrism(Geometry_object):
     
   def getVoxels(self):
     voxel_list = []
-    # Z = triangle peak
     # X = triangle size
-    # Y = prism length
+    # Y = triangle peak
+    # Z = prism length
     ####################################
-    voxel_Ymin = self.lower[1]#self.Ymax/2.0 - self.radius_Y_pillar_mum
-    voxel_Ymax = self.upper[1]#self.Ymax/2.0 + self.radius_Y_pillar_mum
-    D = self.upper[2]-self.lower[2]#self.radius_Z_pillar_mum - self.radius_Z_hole
-    R = 0.5*(self.upper[0]-self.lower[0])
+    mini = [0,0,0]
+    maxi = [0,0,0]
+    #mini[0] = self.lower[self.orientation[0]]
+    #mini[1] = self.lower[self.orientation[1]]
+    #mini[2] = self.lower[self.orientation[2]]
+    #maxi[0] = self.upper[self.orientation[0]]
+    #maxi[1] = self.upper[self.orientation[1]]
+    #maxi[2] = self.upper[self.orientation[2]]
+    mini[0] = self.lower[self.orientation.index(0)]
+    mini[1] = self.lower[self.orientation.index(1)]
+    mini[2] = self.lower[self.orientation.index(2)]
+    maxi[0] = self.upper[self.orientation.index(0)]
+    maxi[1] = self.upper[self.orientation.index(1)]
+    maxi[2] = self.upper[self.orientation.index(2)]
+    #mini[0] = self.lower[0]
+    #mini[1] = self.lower[1]
+    #mini[2] = self.lower[2]
+    #maxi[0] = self.upper[0]
+    #maxi[1] = self.upper[1]
+    #maxi[2] = self.upper[2]
+    print mini[0],maxi[0]
+    print mini[1],maxi[1]
+    print mini[2],maxi[2]
+    D = maxi[1] - mini[1]
+    R = 0.5*(maxi[0]-mini[0])
     N = self.Nvoxels
+    print D
     voxel_radius_X = R/( 2.*self.Nvoxels + 1.)
-    Z_left = self.lower[2] #self.Zmax/2.0 - self.radius_Z_pillar_mum
-    offset = self.lower[0] #X_current - self.radius_X_hole
     for i in range(self.Nvoxels):
       # bottom blocks
-      L = [ offset+2*R*(i)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-      U = [ offset+2*R*(i + 1)/(2*N+1), voxel_Ymax, Z_left+D*(i + 1.)/(N+1.)]
-      print L, U, offset, R, i, 2*N+1, D, Z_left, i+1, N+1,(i + 1)/(N+1)
+      L = [ mini[0]+2*R*(i)/(2*N+1), mini[1]+D*(0)/(N+1), mini[2]]
+      U = [ mini[0]+2*R*(i + 1)/(2*N+1), mini[1]+D*(i + 1.)/(N+1.), maxi[2]]
+      print L, U, mini[0], R, i, 2*N+1, D, mini[1], i+1, N+1,(i + 1)/(N+1)
       LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
       UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
       voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
       # top blocks
-      L = [ offset+2*R*((2*N+1)-(i))/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-      U = [ offset+2*R*((2*N+1)-(i + 1))/(2*N+1), voxel_Ymax, Z_left+D*(i + 1)/(N+1)]
+      L = [ mini[0]+2*R*((2*N+1)-(i))/(2*N+1), mini[1]+D*(0)/(N+1), mini[2]]
+      U = [ mini[0]+2*R*((2*N+1)-(i + 1))/(2*N+1), mini[1]+D*(i + 1)/(N+1), maxi[2]]
       LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
       UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
       voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ## middle block
-    L = [ offset+2*R*(N)/(2*N+1), voxel_Ymin, Z_left+D*(0)/(N+1)]
-    U = [ offset+2*R*(N + 1)/(2*N+1), voxel_Ymax, Z_left+D*(N + 1)/(N+1)]# - self.radius_Z_pillar_mum + D]
+    L = [ mini[0]+2*R*(N)/(2*N+1), mini[1]+D*(0)/(N+1), mini[2]]
+    U = [ mini[0]+2*R*(N + 1)/(2*N+1), mini[1]+D*(N + 1)/(N+1), maxi[2]]
     LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
     UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
     voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
@@ -103,8 +123,8 @@ class TriangularPrism(Geometry_object):
     
   def getCenter(self):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
-    CC = [ C[self.orientation[i]] for i in [0,1,2] ]
-    return(CC)
+    #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
+    return(C)
 
 if __name__ == "__main__":
   foo = TriangularPrism()
