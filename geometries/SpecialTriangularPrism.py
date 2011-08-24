@@ -59,46 +59,50 @@ class SpecialTriangularPrism(Geometry_object):
     # Y = triangle peak
     # Z = prism length
     ####################################
-    #Z_min = self.lower[2]#self.Zmax/2.0 - self.radius_Z_pillar_mum
-    #Z_max = self.upper[2]#self.Zmax/2.0 + self.radius_Z_pillar_mum
-    DY = self.upper[1]-self.lower[1]#self.radius_Y_pillar_mum - self.radius_Y_hole
-    DZ = DY
-    R = 0.5*(self.upper[0]-self.lower[0])
+    mini = [0,0,0]
+    maxi = [0,0,0]
+    mini[0] = self.lower[self.orientation.index(0)]
+    mini[1] = self.lower[self.orientation.index(1)]
+    mini[2] = self.lower[self.orientation.index(2)]
+    maxi[0] = self.upper[self.orientation.index(0)]
+    maxi[1] = self.upper[self.orientation.index(1)]
+    maxi[2] = self.upper[self.orientation.index(2)]
+    print mini[0],maxi[0]
+    print mini[1],maxi[1]
+    print mini[2],maxi[2]
+    DX = maxi[0] - mini[0]
+    DY = maxi[1] - mini[1]
+    DZ = maxi[2] - mini[2]
+    R = 0.5*(maxi[0]-mini[0])
     NX = self.NvoxelsX
     NY = self.NvoxelsY
     NZ = self.NvoxelsZ
+    print DX,DY,DZ
     voxel_radius_X = R/( 2.*self.NvoxelsX + 1.)
-    voxel_radius_Y = R/( 2.*self.NvoxelsY + 1.)
-    X_min = self.lower[0]
-    Y_min = self.lower[1]
-    Z_min = self.lower[2]
-    X_max = self.upper[0]
-    Y_max = self.upper[1]
-    Z_max = self.upper[2]
     for iX in range(self.NvoxelsX):
       for iY in range(iX+1):
         # bottom blocks
-        L = [ X_min+2*R*(iX)/(2*NX+1), Y_min+DY*(iY)/(NX+1.), Z_min+DY*(iY)/(NX+1.)]
-        U = [ X_min+2*R*(iX + 1)/(2*NX+1), Y_min+DY*(iY + 1.)/(NX+1.), Z_max-DY*(iY)/(NX+1.)]
-        print iX, iY, L, U, X_min, R, iX, 2*NX+1, DY, Y_min, iX+1, NX+1,(iX + 1)/(NX+1)
+        L = [ mini[0]+2*R*(iX)/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
+        U = [ mini[0]+2*R*(iX + 1)/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
+        print iX, iY, L, U, mini[0], R, iX, 2*NX+1, DY, mini[1], iX+1, NX+1,(iX + 1)/(NX+1)
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
         # top blocks
-        L = [ X_min+2*R*((2*NX+1)-(iX))/(2*NX+1), Y_min+DY*(iY)/(NX+1.), Z_min+DY*(iY)/(NX+1.)]
-        U = [ X_min+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), Y_min+DY*(iY + 1.)/(NX+1.), Z_max-DY*(iY)/(NX+1.)]
+        L = [ mini[0]+2*R*((2*NX+1)-(iX))/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
+        U = [ mini[0]+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
       ## middle block
-      L = [ X_min+2*R*(NX)/(2*NX+1), Y_min+DY*(iX)/(NX+1.), Z_min+DY*(iX)/(NX+1.)]
-      U = [ X_min+2*R*(NX + 1)/(2*NX+1), Y_min+DY*(iX+1)/(NX+1.), Z_max-DY*(iX)/(NX+1.)]
+      L = [ mini[0]+2*R*(NX)/(2*NX+1), mini[1]+DY*(iX)/(NX+1.), mini[2]+DY*(iX)/(NX+1.)]
+      U = [ mini[0]+2*R*(NX + 1)/(2*NX+1), mini[1]+DY*(iX+1)/(NX+1.), maxi[2]-DY*(iX)/(NX+1.)]
       LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
       UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
       voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ## middle block
-    L = [ X_min+2*R*(NX)/(2*NX+1), Y_min+DY*(NX)/(NX+1.), Z_min+DY*(NX)/(NX+1.)]
-    U = [ X_min+2*R*(NX + 1)/(2*NX+1), Y_min+DY, Z_max-DY*(NX)/(NX+1.)]
+    L = [ mini[0]+2*R*(NX)/(2*NX+1), mini[1]+DY*(NX)/(NX+1.), mini[2]+DY*(NX)/(NX+1.)]
+    U = [ mini[0]+2*R*(NX + 1)/(2*NX+1), mini[1]+DY, maxi[2]-DY*(NX)/(NX+1.)]
     LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
     UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
     voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
@@ -124,8 +128,8 @@ class SpecialTriangularPrism(Geometry_object):
     
   def getCenter(self):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
-    CC = [ C[self.orientation[i]] for i in [0,1,2] ]
-    return(CC)
+    #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
+    return(C)
 
 if __name__ == "__main__":
   foo = TriangularPrism()
