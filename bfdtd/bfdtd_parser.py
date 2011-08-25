@@ -1323,63 +1323,32 @@ class BFDTDobject:
     MX = zeros((xvec.shape[0],len(VX)))
 
     for m in range(xvec.shape[0]):
-      #print(xvec[m,0])
       indmin = nonzero(VX==xvec[m,0])[0][0]
       indmax = nonzero(VX==xvec[m,1])[0][0]
       eps = epsx[m,0]
-      print('----')
-      print(indmin)
-      print(indmax)
-      print(eps)
       vv = zeros(len(VX))
       vv[indmin:indmax] = eps
-      #print(vv.shape)
-      #vv[1:4] = eps
-      #print(vv)
       MX[m,:] = vv
   
-  
-    print(VX)
     thicknessVX = diff(VX)
-    print(thicknessVX)
-    print(MX)
-    print(MX.shape[1])
     epsVX = MX[:,0:MX.shape[1]-1]
-    print(epsVX)
     epsVX = epsVX.max(0)
-    print(epsVX)
 
-    #%%
-    #VY=unique(sort([yvec(:,1);yvec(:,2)]))
-    #MY=zeros(size(yvec,1),length(VY))
+    ##
+    VX = unique(sort(vstack([xvec[:,0],xvec[:,1]])))
+    MX = zeros((xvec.shape[0],len(VX)))
+
+    for m in range(xvec.shape[0]):
+      indmin = nonzero(VX==xvec[m,0])[0][0]
+      indmax = nonzero(VX==xvec[m,1])[0][0]
+      eps = epsx[m,0]
+      vv = zeros(len(VX))
+      vv[indmin:indmax] = eps
+      MX[m,:] = vv
   
-    #for m=1:size(yvec,1)
-      #indmin=find(VY==yvec(m,1))
-      #indmax=find(VY==yvec(m,2))
-      #eps=epsy(m)
-      #vv=zeros(1,length(VY))
-      #vv(indmin:indmax-1)=eps
-      #MY(m,:)=vv
-    #end
-  
-    #thicknessVY=diff(VY)'
-    #epsVY=max(MY(:,1:end-1))
-  
-    #%%
-    #VZ=unique(sort([zvec(:,1);zvec(:,2)]))
-    #MZ=zeros(size(zvec,1),length(VZ))
-  
-    #for m=1:size(zvec,1)
-      #indmin=find(VZ==zvec(m,1))
-      #indmax=find(VZ==zvec(m,2))
-      #eps=epsz(m)
-      #vv=zeros(1,length(VZ))
-      #vv(indmin:indmax-1)=eps
-      #MZ(m,:)=vv
-    #end
-  
-    #thicknessVZ=diff(VZ)'
-    #epsVZ=max(MZ(:,1:end-1))
+    thicknessVX = diff(VX)
+    epsVX = MX[:,0:MX.shape[1]-1]
+    epsVX = epsVX.max(0)
 
 #========================================================================
     
