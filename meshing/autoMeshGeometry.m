@@ -1,4 +1,4 @@
-function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda,offset)
+function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda)
 
   [ entries, structured_entries ] = GEO_INP_reader({geoFilePath});
 
@@ -20,12 +20,14 @@ function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda,offset)
   objz=sort([structured_entries.box.lower(3),structured_entries.box.upper(3)]);
 
   eps=1;
-  xvec=[xvec;objx];
-  yvec=[yvec;objy];
-  zvec=[zvec;objz];
-  epsx=[epsx;eps];
-  epsy=[epsy;eps];
-  epsz=[epsz;eps];
+  xvec
+  objx
+  xvec=[xvec;objx]
+  yvec=[yvec;objy]
+  zvec=[zvec;objz]
+  epsx=[epsx;eps]
+  epsy=[epsy;eps]
+  epsz=[epsz;eps]
 
   for m=1:length(entries)
 

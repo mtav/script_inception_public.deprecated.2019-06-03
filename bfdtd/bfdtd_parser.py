@@ -8,6 +8,7 @@ import sys
 import re
 from utilities.common import *
 from bfdtd.bristolFDTD_generator_functions import *
+from meshing.subGridMultiLayer import *
 
 #==== UTILITIES START ====#
 def float_array(A):
@@ -296,6 +297,19 @@ class Block(Geometry_object):
     FILE.write('\n')
   def getCenter(self):
     return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = sort([self.lower[0],self.upper[0]])
+    objy = sort([self.lower[1],self.upper[1]])
+    objz = sort([self.lower[2],self.upper[2]])
+    eps = self.permittivity
+    xvec = vstack([xvec,objx])
+    yvec = vstack([yvec,objy])
+    zvec = vstack([zvec,objz])
+    epsx = vstack([epsx,eps])
+    epsy = vstack([epsy,eps])
+    epsz = vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Cylinder(Geometry_object):
   def __init__(self,
@@ -836,6 +850,15 @@ class Entry:
     self.Type = ''
     self.data = []
 
+class MeshingParameters:
+  def __init__(self):
+    self.maxDeltaVector_X = [1]
+    self.thicknessVector_X = [1]
+    self.maxDeltaVector_Y = [1]
+    self.thicknessVector_Y = [1]
+    self.maxDeltaVector_Z = [1]
+    self.thicknessVector_Z = [1]
+
 # TODO: add addSnapshot, addProbe, etc functions to BFDTDobject to make adding stuff easier (should copy value from last similar)
 # TODO: beware of the multiple snapshot lists! reduce duplicate info and add set/get functions
 class BFDTDobject:
@@ -1254,6 +1277,127 @@ class BFDTDobject:
     self.writeFileList(inFileName,self.fileList)
     #self.writeCondorScript(cmdFileName)
     #self.writeShellScript(shFileName)
+  
+  def calculateMeshingParameters(self):
+    ''' returns parameters that can be used for meshing:
+    -Section_MaxDeltaVector_X
+    -Section_ThicknessVector_X
+    -Section_MaxDeltaVector_Y
+    -Section_ThicknessVector_Y
+    -Section_MaxDeltaVector_Z
+    -Section_ThicknessVector_Z
+    '''
+
+    simMinX = self.box.lower[0]
+    simMinY = self.box.lower[1]
+    simMinZ = self.box.lower[2]
+    simMaxX = self.box.upper[0]
+    simMaxY = self.box.upper[1]
+    simMaxZ = self.box.upper[2]
+
+    xvec = array([simMinX,simMaxX])
+    yvec = array([simMinY,simMaxY])
+    zvec = array([simMinZ,simMaxZ])
+    
+    epsx = array([1])
+    epsy = array([1])
+    epsz = array([1])
+
+#========================================================================
+    for obj in self.geometry_object_list:
+    #print('>>>>>>>>>>>')
+    #for obj in self.block_list:
+      #print('(((((((((((((')
+      #print('hello')
+      xvec,yvec,zvec,epsx,epsy,epsz = obj.getMeshingParameters(xvec,yvec,zvec,epsx,epsy,epsz)
+      
+    xvec[xvec<simMinX] = simMinX
+    xvec[xvec>simMaxX] = simMaxX
+    yvec[yvec<simMinY] = simMinY
+    yvec[yvec>simMaxY] = simMaxY
+    zvec[zvec<simMinZ] = simMinZ
+    zvec[zvec>simMaxZ] = simMaxZ
+
+    ##
+    VX = unique(sort(vstack([xvec[:,0],xvec[:,1]])))
+    MX = zeros((xvec.shape[0],len(VX)))
+
+    for m in range(xvec.shape[0]):
+      #print(xvec[m,0])
+      indmin = nonzero(VX==xvec[m,0])[0][0]
+      indmax = nonzero(VX==xvec[m,1])[0][0]
+      eps = epsx[m,0]
+      print('----')
+      print(indmin)
+      print(indmax)
+      print(eps)
+      vv = zeros(len(VX))
+      vv[indmin:indmax] = eps
+      #print(vv.shape)
+      #vv[1:4] = eps
+      #print(vv)
+      MX[m,:] = vv
+  
+  
+    print(VX)
+    thicknessVX = diff(VX)
+    print(thicknessVX)
+    print(MX)
+    print(MX.shape[1])
+    epsVX = MX[:,0:MX.shape[1]-1]
+    print(epsVX)
+    epsVX = epsVX.max(0)
+    print(epsVX)
+
+    #%%
+    #VY=unique(sort([yvec(:,1);yvec(:,2)]))
+    #MY=zeros(size(yvec,1),length(VY))
+  
+    #for m=1:size(yvec,1)
+      #indmin=find(VY==yvec(m,1))
+      #indmax=find(VY==yvec(m,2))
+      #eps=epsy(m)
+      #vv=zeros(1,length(VY))
+      #vv(indmin:indmax-1)=eps
+      #MY(m,:)=vv
+    #end
+  
+    #thicknessVY=diff(VY)'
+    #epsVY=max(MY(:,1:end-1))
+  
+    #%%
+    #VZ=unique(sort([zvec(:,1);zvec(:,2)]))
+    #MZ=zeros(size(zvec,1),length(VZ))
+  
+    #for m=1:size(zvec,1)
+      #indmin=find(VZ==zvec(m,1))
+      #indmax=find(VZ==zvec(m,2))
+      #eps=epsz(m)
+      #vv=zeros(1,length(VZ))
+      #vv(indmin:indmax-1)=eps
+      #MZ(m,:)=vv
+    #end
+  
+    #thicknessVZ=diff(VZ)'
+    #epsVZ=max(MZ(:,1:end-1))
+
+#========================================================================
+    
+    
+    meshing_parameters = MeshingParameters()
+    meshing_parameters.maxDeltaVector_X = [1]
+    meshing_parameters.thicknessVector_X = [1]
+    meshing_parameters.maxDeltaVector_Y = [1]
+    meshing_parameters.thicknessVector_Y = [1]
+    meshing_parameters.maxDeltaVector_Z = [1]
+    meshing_parameters.thicknessVector_Z = [1]
+    return meshing_parameters
+    
+  def autoMeshGeometry(self):
+    meshing_parameters = self.calculateMeshingParameters()
+    self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_parameters.maxDeltaVector_X, meshing_parameters.thicknessVector_X)
+    self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_parameters.maxDeltaVector_Y, meshing_parameters.thicknessVector_Y)
+    self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_parameters.maxDeltaVector_Z, meshing_parameters.thicknessVector_Z)
     
 #==== CLASSES END ====#
 
