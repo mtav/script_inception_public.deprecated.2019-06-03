@@ -36,7 +36,7 @@ prism.permittivity = 42
 pillar.geometry_object_list.append(prism)
 
 # define mesh
-pillar.autoMeshGeometry(10*0.637/16.)
+pillar.autoMeshGeometry(0.637/16.)
 
 # write
 DSTDIR = os.getenv('TESTDIR')

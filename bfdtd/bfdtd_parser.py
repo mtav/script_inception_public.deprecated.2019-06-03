@@ -852,6 +852,9 @@ class Entry:
     self.data = []
 
 class MeshingParameters:
+  # TODO: think about the best way to design this class and then do it.
+  # Might be better to really have delta+thickness for each object and then some global MeshingParameters with addMeshingParameters function.
+  # permittivity to delta conversion could be specified differently for each object.
   # thickness <-> limits
   # delta <factor*1/sqrt(permittivity)> permittivity <sqrt> refractive index
   def __init__(self):

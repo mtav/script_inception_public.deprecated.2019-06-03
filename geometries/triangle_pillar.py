@@ -69,6 +69,9 @@ prism.orientation = [2,0,1]
 #prism.orientation = [2,1,0]
 prism.permittivity = pow(n_diamond,2)
 prism.conductivity = 0
+prism.NvoxelsX = 30
+prism.NvoxelsY = 30
+prism.NvoxelsZ = 30
 pillar.geometry_object_list.append(prism)
 
 L = [1,2,3]
@@ -169,7 +172,7 @@ F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = fre
 #pillar.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y, thicknessVector_Y)
 #pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z, thicknessVector_Z)
 
-pillar.autoMeshGeometry(0.637/16)
+pillar.autoMeshGeometry(0.1*0.637/16)
 
 # write
 #DSTDIR = os.getenv('DATADIR')

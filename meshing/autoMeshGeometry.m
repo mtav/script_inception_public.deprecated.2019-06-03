@@ -119,7 +119,6 @@ function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda)
   thicknessVX=diff(VX)';
   epsVX=max(MX(:,1:end-1));
 
-
   %%
   VY=unique(sort([yvec(:,1);yvec(:,2)]));
   MY=zeros(size(yvec,1),length(VY));
@@ -135,7 +134,6 @@ function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda)
 
   thicknessVY=diff(VY)';
   epsVY=max(MY(:,1:end-1));
-
 
   %%
   VZ=unique(sort([zvec(:,1);zvec(:,2)]));
