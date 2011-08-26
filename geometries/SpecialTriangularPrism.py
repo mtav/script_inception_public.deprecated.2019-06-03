@@ -54,6 +54,7 @@ class SpecialTriangularPrism(Geometry_object):
     #self.conductivity = float(entry.data[7])
     
   def getVoxels(self):
+    #meshing_parameters = MeshingParameters()
     voxel_list = []
     # X = triangle size
     # Y = triangle peak
@@ -84,29 +85,41 @@ class SpecialTriangularPrism(Geometry_object):
         # bottom blocks
         L = [ mini[0]+2*R*(iX)/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
         U = [ mini[0]+2*R*(iX + 1)/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
-        print iX, iY, L, U, mini[0], R, iX, 2*NX+1, DY, mini[1], iX+1, NX+1,(iX + 1)/(NX+1)
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+        self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
+        self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
+        self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
         # top blocks
         L = [ mini[0]+2*R*((2*NX+1)-(iX))/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
         U = [ mini[0]+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+        self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
+        self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
+        self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
       ## middle block
       L = [ mini[0]+2*R*(NX)/(2*NX+1), mini[1]+DY*(iX)/(NX+1.), mini[2]+DY*(iX)/(NX+1.)]
       U = [ mini[0]+2*R*(NX + 1)/(2*NX+1), mini[1]+DY*(iX+1)/(NX+1.), maxi[2]-DY*(iX)/(NX+1.)]
       LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
       UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+      self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
+      self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
+      self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
       voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ## middle block
     L = [ mini[0]+2*R*(NX)/(2*NX+1), mini[1]+DY*(NX)/(NX+1.), mini[2]+DY*(NX)/(NX+1.)]
     U = [ mini[0]+2*R*(NX + 1)/(2*NX+1), mini[1]+DY, maxi[2]-DY*(NX)/(NX+1.)]
     LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
     UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
+    self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
+    self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
+    self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
     voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ####################################
+    #return (voxel_list, meshing_parameters)
     return voxel_list
 
   def write_entry(self, FILE):
@@ -130,6 +143,18 @@ class SpecialTriangularPrism(Geometry_object):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
     return(C)
+
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    #meshing_parameters = MeshingParameters()
+    voxel_list = self.getVoxels()
+    #voxel_list, meshing_parameters = self.getVoxels()
+    xvec = vstack([xvec,self.meshing_parameters.limits_X])
+    yvec = vstack([yvec,self.meshing_parameters.limits_Y])
+    zvec = vstack([zvec,self.meshing_parameters.limits_Z])
+    epsx = vstack([epsx,self.meshing_parameters.maxPermittivityVector_X])
+    epsy = vstack([epsy,self.meshing_parameters.maxPermittivityVector_Y])
+    epsz = vstack([epsz,self.meshing_parameters.maxPermittivityVector_Z])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 if __name__ == "__main__":
   foo = TriangularPrism()

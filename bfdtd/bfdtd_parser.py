@@ -191,6 +191,7 @@ class Geometry_object:
     def __init__(self):
         self.name = 'geometry object'
         self.rotation_list = []
+        self.meshing_parameters = MeshingParameters()
     def __str__(self):
         ret = '--->object rotation_list'
         for i in range(len(self.rotation_list)):
@@ -851,6 +852,8 @@ class Entry:
     self.data = []
 
 class MeshingParameters:
+  # thickness <-> limits
+  # delta <factor*1/sqrt(permittivity)> permittivity <sqrt> refractive index
   def __init__(self):
     self.maxPermittivityVector_X = [1]
     self.thicknessVector_X = [1]
@@ -858,6 +861,10 @@ class MeshingParameters:
     self.thicknessVector_Y = [1]
     self.maxPermittivityVector_Z = [1]
     self.thicknessVector_Z = [1]
+    self.limits_X = [0,1]
+    self.limits_Y = [0,1]
+    self.limits_Z = [0,1]
+    
   def __str__(self):
     ret = 'maxPermittivityVector_X = '+str(self.maxPermittivityVector_X)+'\n'
     ret += 'thicknessVector_X = '+str(self.thicknessVector_X)+'\n'
@@ -866,6 +873,24 @@ class MeshingParameters:
     ret += 'maxPermittivityVector_Z = '+str(self.maxPermittivityVector_Z)+'\n'
     ret += 'thicknessVector_Z = '+str(self.thicknessVector_Z)
     return ret
+  
+  def addLimits_X(self,limits,permittivity):
+    print(limits)
+    print(permittivity)
+    print(limits.shape)
+    #print(permittivity.shape)
+    
+    self.limits_X = vstack([self.limits_X,limits])
+    self.maxPermittivityVector_X = vstack([self.maxPermittivityVector_X,permittivity])
+    
+  def addLimits_Y(self,limits,permittivity):
+    self.limits_Y = vstack([self.limits_Y,limits])
+    self.maxPermittivityVector_Y = vstack([self.maxPermittivityVector_Y,permittivity])
+    
+  def addLimits_Z(self,limits,permittivity):
+    self.limits_Z = vstack([self.limits_Z,limits])
+    self.maxPermittivityVector_Z = vstack([self.maxPermittivityVector_Z,permittivity])
+    
 
 # TODO: add addSnapshot, addProbe, etc functions to BFDTDobject to make adding stuff easier (should copy value from last similar)
 # TODO: beware of the multiple snapshot lists! reduce duplicate info and add set/get functions

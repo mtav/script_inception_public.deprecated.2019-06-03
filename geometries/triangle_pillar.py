@@ -169,7 +169,7 @@ F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = fre
 #pillar.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y, thicknessVector_Y)
 #pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z, thicknessVector_Z)
 
-pillar.autoMeshGeometry()
+pillar.autoMeshGeometry(0.637/16)
 
 # write
 #DSTDIR = os.getenv('DATADIR')
