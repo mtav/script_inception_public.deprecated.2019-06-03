@@ -157,8 +157,8 @@ function [dx,dy,dz] = autoMeshGeometry(geoFilePath,lambda)
   % dy = subGridMultiLayer(sqrt(epsVY), thicknessVY, lambda,offset);
   % dz = subGridMultiLayer(sqrt(epsVZ), thicknessVZ, lambda,offset);
 
-  dx = subGridMultiLayer(lambda/16./epsVX, thicknessVX);
-  dy = subGridMultiLayer(lambda/16./epsVY, thicknessVY);
-  dz = subGridMultiLayer(lambda/16./epsVZ, thicknessVZ);
+  dx = subGridMultiLayer(lambda/16./sqrt(epsVX), thicknessVX);
+  dy = subGridMultiLayer(lambda/16./sqrt(epsVY), thicknessVY);
+  dz = subGridMultiLayer(lambda/16./sqrt(epsVZ), thicknessVZ);
 
 end

@@ -852,12 +852,20 @@ class Entry:
 
 class MeshingParameters:
   def __init__(self):
-    self.maxDeltaVector_X = [1]
+    self.maxPermittivityVector_X = [1]
     self.thicknessVector_X = [1]
-    self.maxDeltaVector_Y = [1]
+    self.maxPermittivityVector_Y = [1]
     self.thicknessVector_Y = [1]
-    self.maxDeltaVector_Z = [1]
+    self.maxPermittivityVector_Z = [1]
     self.thicknessVector_Z = [1]
+  def __str__(self):
+    ret = 'maxPermittivityVector_X = '+str(self.maxPermittivityVector_X)+'\n'
+    ret += 'thicknessVector_X = '+str(self.thicknessVector_X)+'\n'
+    ret += 'maxPermittivityVector_Y = '+str(self.maxPermittivityVector_Y)+'\n'
+    ret += 'thicknessVector_Y = '+str(self.thicknessVector_Y)+'\n'
+    ret += 'maxPermittivityVector_Z = '+str(self.maxPermittivityVector_Z)+'\n'
+    ret += 'thicknessVector_Z = '+str(self.thicknessVector_Z)
+    return ret
 
 # TODO: add addSnapshot, addProbe, etc functions to BFDTDobject to make adding stuff easier (should copy value from last similar)
 # TODO: beware of the multiple snapshot lists! reduce duplicate info and add set/get functions
@@ -1280,54 +1288,50 @@ class BFDTDobject:
   
   def calculateMeshingParameters(self):
     ''' returns parameters that can be used for meshing:
-    -Section_MaxDeltaVector_X
+    -Section_MaXDeltaVector_X
     -Section_ThicknessVector_X
-    -Section_MaxDeltaVector_Y
+    -Section_MaXDeltaVector_Y
     -Section_ThicknessVector_Y
-    -Section_MaxDeltaVector_Z
+    -Section_MaXDeltaVector_Z
     -Section_ThicknessVector_Z
     '''
 
     simMinX = self.box.lower[0]
     simMinY = self.box.lower[1]
     simMinZ = self.box.lower[2]
-    simMaxX = self.box.upper[0]
-    simMaxY = self.box.upper[1]
-    simMaxZ = self.box.upper[2]
+    simMaXX = self.box.upper[0]
+    simMaXY = self.box.upper[1]
+    simMaXZ = self.box.upper[2]
 
-    xvec = array([simMinX,simMaxX])
-    yvec = array([simMinY,simMaxY])
-    zvec = array([simMinZ,simMaxZ])
+    Xvec = array([simMinX,simMaXX])
+    Yvec = array([simMinY,simMaXY])
+    Zvec = array([simMinZ,simMaXZ])
     
-    epsx = array([1])
-    epsy = array([1])
-    epsz = array([1])
+    epsX = array([1])
+    epsY = array([1])
+    epsZ = array([1])
 
 #========================================================================
     for obj in self.geometry_object_list:
-    #print('>>>>>>>>>>>')
-    #for obj in self.block_list:
-      #print('(((((((((((((')
-      #print('hello')
-      xvec,yvec,zvec,epsx,epsy,epsz = obj.getMeshingParameters(xvec,yvec,zvec,epsx,epsy,epsz)
+      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
       
-    xvec[xvec<simMinX] = simMinX
-    xvec[xvec>simMaxX] = simMaxX
-    yvec[yvec<simMinY] = simMinY
-    yvec[yvec>simMaxY] = simMaxY
-    zvec[zvec<simMinZ] = simMinZ
-    zvec[zvec>simMaxZ] = simMaxZ
+    Xvec[Xvec<simMinX] = simMinX
+    Xvec[Xvec>simMaXX] = simMaXX
+    Yvec[Yvec<simMinY] = simMinY
+    Yvec[Yvec>simMaXY] = simMaXY
+    Zvec[Zvec<simMinZ] = simMinZ
+    Zvec[Zvec>simMaXZ] = simMaXZ
 
     ##
-    VX = unique(sort(vstack([xvec[:,0],xvec[:,1]])))
-    MX = zeros((xvec.shape[0],len(VX)))
+    VX = unique(sort(vstack([Xvec[:,0],Xvec[:,1]])))
+    MX = zeros((Xvec.shape[0],len(VX)))
 
-    for m in range(xvec.shape[0]):
-      indmin = nonzero(VX==xvec[m,0])[0][0]
-      indmax = nonzero(VX==xvec[m,1])[0][0]
-      eps = epsx[m,0]
+    for m in range(Xvec.shape[0]):
+      indmin = nonzero(VX==Xvec[m,0])[0][0]
+      indmaX = nonzero(VX==Xvec[m,1])[0][0]
+      eps = epsX[m,0]
       vv = zeros(len(VX))
-      vv[indmin:indmax] = eps
+      vv[indmin:indmaX] = eps
       MX[m,:] = vv
   
     thicknessVX = diff(VX)
@@ -1335,38 +1339,54 @@ class BFDTDobject:
     epsVX = epsVX.max(0)
 
     ##
-    VX = unique(sort(vstack([xvec[:,0],xvec[:,1]])))
-    MX = zeros((xvec.shape[0],len(VX)))
+    VY = unique(sort(vstack([Yvec[:,0],Yvec[:,1]])))
+    MY = zeros((Yvec.shape[0],len(VY)))
 
-    for m in range(xvec.shape[0]):
-      indmin = nonzero(VX==xvec[m,0])[0][0]
-      indmax = nonzero(VX==xvec[m,1])[0][0]
-      eps = epsx[m,0]
-      vv = zeros(len(VX))
+    for m in range(Yvec.shape[0]):
+      indmin = nonzero(VY==Yvec[m,0])[0][0]
+      indmax = nonzero(VY==Yvec[m,1])[0][0]
+      eps = epsY[m,0]
+      vv = zeros(len(VY))
       vv[indmin:indmax] = eps
-      MX[m,:] = vv
+      MY[m,:] = vv
   
-    thicknessVX = diff(VX)
-    epsVX = MX[:,0:MX.shape[1]-1]
-    epsVX = epsVX.max(0)
+    thicknessVY = diff(VY)
+    epsVY = MY[:,0:MY.shape[1]-1]
+    epsVY = epsVY.max(0)
 
+    ##
+    VZ = unique(sort(vstack([Zvec[:,0],Zvec[:,1]])))
+    MZ = zeros((Zvec.shape[0],len(VZ)))
+
+    for m in range(Zvec.shape[0]):
+      indmin = nonzero(VZ==Zvec[m,0])[0][0]
+      indmax = nonzero(VZ==Zvec[m,1])[0][0]
+      eps = epsZ[m,0]
+      vv = zeros(len(VZ))
+      vv[indmin:indmax] = eps
+      MZ[m,:] = vv
+  
+    thicknessVZ = diff(VZ)
+    epsVZ = MZ[:,0:MZ.shape[1]-1]
+    epsVZ = epsVZ.max(0)
+    
 #========================================================================
     
-    
     meshing_parameters = MeshingParameters()
-    meshing_parameters.maxDeltaVector_X = [1]
-    meshing_parameters.thicknessVector_X = [1]
-    meshing_parameters.maxDeltaVector_Y = [1]
-    meshing_parameters.thicknessVector_Y = [1]
-    meshing_parameters.maxDeltaVector_Z = [1]
-    meshing_parameters.thicknessVector_Z = [1]
+    meshing_parameters.maxPermittivityVector_X = epsVX
+    meshing_parameters.thicknessVector_X = thicknessVX
+    meshing_parameters.maxPermittivityVector_Y = epsVY
+    meshing_parameters.thicknessVector_Y = thicknessVY
+    meshing_parameters.maxPermittivityVector_Z = epsVZ
+    meshing_parameters.thicknessVector_Z = thicknessVZ
     return meshing_parameters
     
-  def autoMeshGeometry(self):
+  def autoMeshGeometry(self,meshing_factor):
     meshing_parameters = self.calculateMeshingParameters()
-    self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_parameters.maxDeltaVector_X, meshing_parameters.thicknessVector_X)
-    self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_parameters.maxDeltaVector_Y, meshing_parameters.thicknessVector_Y)
-    self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_parameters.maxDeltaVector_Z, meshing_parameters.thicknessVector_Z)
+    print(meshing_parameters)
+    self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
+    self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
+    self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
     
 #==== CLASSES END ====#
 
