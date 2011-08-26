@@ -461,6 +461,7 @@ class Excitation:
     self.param2 = param2
     self.param3 = param3
     self.param4 = param4
+    self.meshing_parameters = MeshingParameters()
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'current_source = ' + str(self.current_source) + '\n' +\
@@ -525,6 +526,19 @@ class Excitation:
     FILE.write("%d **UNUSED PARAMETER\n" % self.param4)
     FILE.write('}\n')
     FILE.write('\n')
+
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = sort([self.P1[0],self.P2[0]])
+    objy = sort([self.P1[1],self.P2[1]])
+    objz = sort([self.P1[2],self.P2[2]])
+    eps = 1
+    xvec = vstack([xvec,objx])
+    yvec = vstack([yvec,objy])
+    zvec = vstack([zvec,objz])
+    epsx = vstack([epsx,eps])
+    epsy = vstack([epsy,eps])
+    epsz = vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 # measurement objects
 class Time_snapshot:
@@ -782,6 +796,19 @@ class Frequency_snapshot:
         snapshot(self.name + ' Z-', 3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]],self.frequency_vector[i])
         snapshot(self.name + ' Z+', 3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
 
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = sort([self.P1[0],self.P2[0]])
+    objy = sort([self.P1[1],self.P2[1]])
+    objz = sort([self.P1[2],self.P2[2]])
+    eps = 1
+    xvec = vstack([xvec,objx])
+    yvec = vstack([yvec,objy])
+    zvec = vstack([zvec,objz])
+    epsx = vstack([epsx,eps])
+    epsy = vstack([epsy,eps])
+    epsz = vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
+
 class Probe:
   def __init__(self,
     name = 'probe',
@@ -841,6 +868,19 @@ class Probe:
     FILE.write("%d **POW\n" % self.power)
     FILE.write('}\n')
     FILE.write('\n')
+
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = sort([0,self.position[0]])
+    objy = sort([0,self.position[1]])
+    objz = sort([0,self.position[2]])
+    eps = 1
+    xvec = vstack([xvec,objx])
+    yvec = vstack([yvec,objy])
+    zvec = vstack([zvec,objz])
+    epsx = vstack([epsx,eps])
+    epsy = vstack([epsy,eps])
+    epsz = vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Entry:
   def __init__(self):
@@ -1331,6 +1371,7 @@ class BFDTDobject:
     simMaXY = self.box.upper[1]
     simMaXZ = self.box.upper[2]
 
+    # box mesh
     Xvec = array([simMinX,simMaXX])
     Yvec = array([simMinY,simMaXY])
     Zvec = array([simMinZ,simMaXZ])
@@ -1339,10 +1380,23 @@ class BFDTDobject:
     epsY = array([1])
     epsZ = array([1])
 
-#========================================================================
+    # geometry object meshes
     for obj in self.geometry_object_list:
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+
+    # excitation object meshes
+    for obj in self.excitation_list:
+      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+
+    # probe object meshes
+    for obj in self.probe_list:
+      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+
+    # snapshot object meshes
+    for obj in self.snapshot_list:
+      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
       
+    # postprocess the meshes
     Xvec[Xvec<simMinX] = simMinX
     Xvec[Xvec>simMaXX] = simMaXX
     Yvec[Yvec<simMinY] = simMinY
@@ -1397,9 +1451,7 @@ class BFDTDobject:
     thicknessVZ = diff(VZ)
     epsVZ = MZ[:,0:MZ.shape[1]-1]
     epsVZ = epsVZ.max(0)
-    
-#========================================================================
-    
+        
     meshing_parameters = MeshingParameters()
     meshing_parameters.maxPermittivityVector_X = epsVX
     meshing_parameters.thicknessVector_X = thicknessVX
