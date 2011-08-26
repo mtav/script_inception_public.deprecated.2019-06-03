@@ -26,7 +26,7 @@ class TriangularPrism(Geometry_object):
     self.conductivity = conductivity
     self.Nvoxels = Nvoxels
     self.orientation = orientation
-    self.COMMENT = 'nada'
+    self.COMMENT = 'triangularprism'
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'

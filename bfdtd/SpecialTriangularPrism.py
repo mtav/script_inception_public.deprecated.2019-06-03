@@ -6,9 +6,9 @@ from bfdtd.bfdtd_parser import *
 
 class SpecialTriangularPrism(Geometry_object):
   def __init__(self,
-    name = 'triangularprism',
-    layer = 'triangularprism',
-    group = 'triangularprism',
+    name = 'SpecialTriangularPrism',
+    layer = 'SpecialTriangularPrism',
+    group = 'SpecialTriangularPrism',
     lower = [0,0,0],
     upper = [1,1,1],
     permittivity = 1,# vacuum by default
@@ -30,7 +30,7 @@ class SpecialTriangularPrism(Geometry_object):
     self.NvoxelsY = NvoxelsY
     self.NvoxelsZ = NvoxelsZ
     self.orientation = orientation
-    self.COMMENT = 'nada'
+    self.COMMENT = 'SpecialTriangularPrism'
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'

@@ -443,7 +443,13 @@ class Excitation:
                 param3 = 0,
                 param4 = 0,
                 layer = 'excitation',
-                group = 'excitation'):
+                group = 'excitation',
+                template_filename = 'template.dat',
+                template_excitation_plane = 'x',
+                template_original_plane = 'x',
+                template_direction = 0,
+                template_rotation = 0):
+                
     self.name = name
     self.layer = layer
     self.group = group
@@ -461,7 +467,15 @@ class Excitation:
     self.param2 = param2
     self.param3 = param3
     self.param4 = param4
+
+    self.template_filename = template_filename
+    self.template_excitation_plane = template_excitation_plane
+    self.template_original_plane = template_original_plane
+    self.template_direction = template_direction
+    self.template_rotation = template_rotation
+
     self.meshing_parameters = MeshingParameters()
+
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'current_source = ' + str(self.current_source) + '\n' +\
@@ -499,33 +513,66 @@ class Excitation:
     self.param4 = float(entry.data[idx]); idx = idx+1
     return(0)
   def write_entry(self, FILE):
-    self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
-    FILE.write('EXCITATION **name='+self.name+'\n')
-    FILE.write('{\n')
-    FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
-    FILE.write("%E **X1\n" % self.P1[0])
-    FILE.write("%E **Y1\n" % self.P1[1])
-    FILE.write("%E **Z1\n" % self.P1[2])
-    FILE.write("%E **X2\n" % self.P2[0])
-    FILE.write("%E **Y2\n" % self.P2[1])
-    FILE.write("%E **Z2\n" % self.P2[2])
-    FILE.write("%d **EX\n" % self.E[0])
-    FILE.write("%d **EY\n" % self.E[1])
-    FILE.write("%d **EZ\n" % self.E[2])
-    FILE.write("%d **HX\n" % self.H[0])
-    FILE.write("%d **HY\n" % self.H[1])
-    FILE.write("%d **HZ\n" % self.H[2])
-    FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % self.Type)
-    FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
-    FILE.write("%E **AMPLITUDE\n" % self.amplitude)
-    FILE.write("%E **TIME OFFSET\n" % self.time_offset)
-    FILE.write("%E **FREQ (HZ)\n" % self.frequency)
-    FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
-    FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
-    FILE.write("%d **UNUSED PARAMETER\n" % self.param3)
-    FILE.write("%d **UNUSED PARAMETER\n" % self.param4)
-    FILE.write('}\n')
-    FILE.write('\n')
+    if self.current_source != 11:
+      self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
+      FILE.write('EXCITATION **name='+self.name+'\n')
+      FILE.write('{\n')
+      FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
+      FILE.write("%E **X1\n" % self.P1[0])
+      FILE.write("%E **Y1\n" % self.P1[1])
+      FILE.write("%E **Z1\n" % self.P1[2])
+      FILE.write("%E **X2\n" % self.P2[0])
+      FILE.write("%E **Y2\n" % self.P2[1])
+      FILE.write("%E **Z2\n" % self.P2[2])
+      FILE.write("%d **EX\n" % self.E[0])
+      FILE.write("%d **EY\n" % self.E[1])
+      FILE.write("%d **EZ\n" % self.E[2])
+      FILE.write("%d **HX\n" % self.H[0])
+      FILE.write("%d **HY\n" % self.H[1])
+      FILE.write("%d **HZ\n" % self.H[2])
+      FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % self.Type)
+      FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
+      FILE.write("%E **AMPLITUDE\n" % self.amplitude)
+      FILE.write("%E **TIME OFFSET\n" % self.time_offset)
+      FILE.write("%E **FREQ (HZ)\n" % self.frequency)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param3)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param4)
+      FILE.write('}\n')
+      FILE.write('\n')
+    else:
+      self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
+      FILE.write('EXCITATION **name='+self.name+'\n')
+      FILE.write('{\n')
+      FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
+      FILE.write("%E **X1\n" % self.P1[0])
+      FILE.write("%E **Y1\n" % self.P1[1])
+      FILE.write("%E **Z1\n" % self.P1[2])
+      FILE.write("%E **X2\n" % self.P2[0])
+      FILE.write("%E **Y2\n" % self.P2[1])
+      FILE.write("%E **Z2\n" % self.P2[2])
+      FILE.write("%d **EX\n" % self.E[0])
+      FILE.write("%d **EY\n" % self.E[1])
+      FILE.write("%d **EZ\n" % self.E[2])
+      FILE.write("%d **HX\n" % self.H[0])
+      FILE.write("%d **HY\n" % self.H[1])
+      FILE.write("%d **HZ\n" % self.H[2])
+      FILE.write("%d **GAUSSIAN MODULATED SINUSOID\n" % self.Type)
+      FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
+      FILE.write("%E **AMPLITUDE\n" % self.amplitude)
+      FILE.write("%E **TIME OFFSET\n" % self.time_offset)
+      FILE.write("%E **FREQ (HZ)\n" % self.frequency)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
+      FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
+      # template specific
+      FILE.write('"'+self.template_filename+'" ** TEMPLATE FILENAME\n')
+      FILE.write('"'+self.template_excitation_plane+'" ** EXCITATION PLANE\n')
+      FILE.write('"'+self.template_original_plane+'" ** ORIGINAL TEMPLATE PLANE\n')
+      FILE.write("%d ** DIRECTION 0=-ve 1=+ve\n" % self.template_direction)
+      FILE.write("%d ** ROTATE 0=no, 1=yes\n" % self.template_rotation)
+      FILE.write('}\n')
+      FILE.write('\n')
 
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = sort([self.P1[0],self.P2[0]])
