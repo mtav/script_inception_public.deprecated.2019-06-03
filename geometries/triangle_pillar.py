@@ -7,8 +7,8 @@ from utilities.common import *
 from constants.constants import *
 from meshing.subGridMultiLayer import *
 import os
-from geometries.triangular_prism import TriangularPrism
-from geometries.SpecialTriangularPrism import SpecialTriangularPrism
+from bfdtd.triangular_prism import TriangularPrism
+from bfdtd.SpecialTriangularPrism import SpecialTriangularPrism
 
 pillar = BFDTDobject()
 
