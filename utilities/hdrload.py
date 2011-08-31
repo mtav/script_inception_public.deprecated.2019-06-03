@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-def hdrload(file):
+import sys
+
+def hdrload(filename):
   # HDRLOAD Load data from an ASCII file containing a text header.
   #     [header, data] = HDRLOAD('filename.ext') reads a data file
   #     called 'filename.ext', which contains a text header.  There
@@ -24,15 +26,18 @@ def hdrload(file):
   #     See also the IOFUN directory.
   
   # check number and type of arguments
-  if nargin < 1:
-    error('Function requires one input argument')
-  elseif ~isstr(file):
-    error('Input must be a string representing a filename')
+  #if nargin < 1:
+    #error('Function requires one input argument')
+  #elif ~isstr(filename):
+    #error('Input must be a string representing a filename')
   
   # Open the file.  If this returns a -1, we did not open the file 
   # successfully.
-  print(['Opening file=',file])
-  fid = fopen(file)
+  print('Opening filename = '+filename)
+  header = 'a b c'
+  data = 'nununu'
+  return(header, data)
+  fid = fopen(filename)
   if fid==-1:
     error('File not found or permission denied')
   
@@ -54,7 +59,7 @@ def hdrload(file):
   # Start processing.
   line = fgetl(fid)
   if ~isstr(line):
-    disp('Warning: file contains no header and no data')
+    disp('Warning: filename contains no header and no data')
   # TODO: octave compatibility
   #sscanf(line, "%E","C")
   #[data, ncols, errmsg, nxtindex] = sscanf(line, "%E","C")
@@ -80,7 +85,7 @@ def hdrload(file):
     eval(['line', num2str(no_lines), '=line;'])
     line = fgetl(fid)
     if ~isstr(line):
-      print('Warning: file contains no data')
+      print('Warning: filename contains no data')
       break
     [data, ncols, errmsg, nxtindex] = sscanf(line, '%E')
   
@@ -88,7 +93,7 @@ def hdrload(file):
   # the processing that stores header information, and just read 
   # in the rest of the data. 
   #data = [data; fscanf(fid, '%E')]
-  data = [data; fscanf(fid, '%f')]
+  #TOPORT: data = [data; fscanf(fid, '%f')]
   fclose(fid)
   
   # Create header output from line information. The number of lines
@@ -99,12 +104,13 @@ def hdrload(file):
   # function and save some work. First, initialize the header to an
   # array of spaces.
   header = setstr(' '*ones(no_lines, max_line))
-  for i = 1:no_lines:
-    varname = ['line' num2str(i)]
+  for idx in range(no_lines):
+    i = idx + 1
+    varname = 'line'+num2str(i)
     # Note that we only assign this line variable to a subset of 
     # this row of the header array.  We thus ensure that the matrix
     # sizes in the assignment are equal.
-    eval(['header(i, 1:length(' varname ')) = ' varname ';'])
+    #TOPORT: eval(['header(i, 1:length(' varname ')) = ' varname ';'])
   
   # Resize output data, based on the number of columns (as returned
   # from the sscanf of the first line of data) and the total number
@@ -118,3 +124,9 @@ def hdrload(file):
   
   # And we're done!
   return(header, data)
+
+if __name__ == "__main__":
+  print(sys.argv[1])
+  header, data = hdrload(sys.argv[1])
+  print(header)
+  print(data)
