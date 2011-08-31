@@ -25,41 +25,41 @@ def hdrload(file):
   
   # check number and type of arguments
   if nargin < 1:
-    error('Function requires one input argument');
+    error('Function requires one input argument')
   elseif ~isstr(file):
-    error('Input must be a string representing a filename');
+    error('Input must be a string representing a filename')
   
   # Open the file.  If this returns a -1, we did not open the file 
   # successfully.
-  print(['Opening file=',file]);
-  fid = fopen(file);
+  print(['Opening file=',file])
+  fid = fopen(file)
   if fid==-1:
-    error('File not found or permission denied');
+    error('File not found or permission denied')
   
   # Initialize loop variables
   # We store the number of lines in the header, and the maximum 
   # length of any one line in the header.  These are used later 
   # in assigning the 'header' output variable.
-  no_lines = 0;
-  max_line = 0;
+  no_lines = 0
+  max_line = 0
   
   # We also store the number of columns in the data we read.  This 
   # way we can compute the size of the output based on the number 
   # of columns and the total number of data points.
-  ncols = 0;
+  ncols = 0
   
   # Finally, we initialize the data to [].
-  data = [];
+  data = []
   
   # Start processing.
-  line = fgetl(fid);
+  line = fgetl(fid)
   if ~isstr(line):
     disp('Warning: file contains no header and no data')
   # TODO: octave compatibility
-  #sscanf(line, "%E","C");
-  #[data, ncols, errmsg, nxtindex] = sscanf(line, "%E","C");
-  #[data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
-  [data, ncols, errmsg, nxtindex] = sscanf(line, '%f');
+  #sscanf(line, "%E","C")
+  #[data, ncols, errmsg, nxtindex] = sscanf(line, "%E","C")
+  #[data, ncols, errmsg, nxtindex] = sscanf(line, '%E')
+  [data, ncols, errmsg, nxtindex] = sscanf(line, '%f')
   
   # One slight problem, pointed out by Peter vanderWal: If the 
   # first character of the line is 'e', then this will scan as 
@@ -73,23 +73,23 @@ def hdrload(file):
   # processing time, because fgetl is relatively slow (compared to 
   # fscanf, which we will use later).
   while isempty(data)|(nxtindex==1):
-    no_lines = no_lines+1;
-    max_line = max([max_line, length(line)]);
+    no_lines = no_lines+1
+    max_line = max([max_line, length(line)])
     # Create unique variable to hold this line of text information.
     # Store the last-read line in this variable.
-    eval(['line', num2str(no_lines), '=line;']);
-    line = fgetl(fid);
+    eval(['line', num2str(no_lines), '=line;'])
+    line = fgetl(fid)
     if ~isstr(line):
       print('Warning: file contains no data')
       break
-    [data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
+    [data, ncols, errmsg, nxtindex] = sscanf(line, '%E')
   
   # Now that we have read in the first line of data, we can skip 
   # the processing that stores header information, and just read 
   # in the rest of the data. 
-  #data = [data; fscanf(fid, '%E')];
-  data = [data; fscanf(fid, '%f')];
-  fclose(fid);
+  #data = [data; fscanf(fid, '%E')]
+  data = [data; fscanf(fid, '%f')]
+  fclose(fid)
   
   # Create header output from line information. The number of lines
   # and the maximum line length are stored explicitly, and each 
@@ -98,13 +98,13 @@ def hdrload(file):
   # headers were 10 lines or less, we could use the STR2MAT 
   # function and save some work. First, initialize the header to an
   # array of spaces.
-  header = setstr(' '*ones(no_lines, max_line));
+  header = setstr(' '*ones(no_lines, max_line))
   for i = 1:no_lines:
-    varname = ['line' num2str(i)];
+    varname = ['line' num2str(i)]
     # Note that we only assign this line variable to a subset of 
     # this row of the header array.  We thus ensure that the matrix
     # sizes in the assignment are equal.
-    eval(['header(i, 1:length(' varname ')) = ' varname ';']);
+    eval(['header(i, 1:length(' varname ')) = ' varname ';'])
   
   # Resize output data, based on the number of columns (as returned
   # from the sscanf of the first line of data) and the total number
@@ -114,7 +114,7 @@ def hdrload(file):
   # irregularly spaced data, then the division we are about to do 
   # will not work. Therefore, we will trap the error with an EVAL 
   # call; if the reshape fails, we will just return the data as is.
-  eval('data = reshape(data, ncols, length(data)/ncols)'';', '');
+  eval('data = reshape(data, ncols, length(data)/ncols)'';', '')
   
   # And we're done!
   return(header, data)
