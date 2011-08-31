@@ -197,7 +197,10 @@ function [caAddRemDirs] = addpath_recursively(caAddRemDirs, strStartDir, caStrsI
   % disp('========');
   
   %Get list of directories beneath the specified directory, this two-step process is faster.
-  if ispc & not(inoctave())
+  % Using && instead of & here to remove an octave warning.
+  % && and || perform AND and OR operations on logical expressions containing scalar values.
+  % They are short-circuit operators in that they evaluate their second operand only when the result is not fully determined by the first operand.
+  if (ispc() && not(inoctave()))
       saSubDirs = dir(sprintf('%s%s%s', strStartDir, strFileSep, '*.'));
   else
       saSubDirs = dir(strStartDir);
