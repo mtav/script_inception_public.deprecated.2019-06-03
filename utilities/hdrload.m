@@ -60,7 +60,8 @@ function [header, data] = hdrload(file)
   % TODO: octave compatibility
   %sscanf(line, "%E","C");
   %[data, ncols, errmsg, nxtindex] = sscanf(line, "%E","C");
-  [data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
+  %[data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
+  [data, ncols, errmsg, nxtindex] = sscanf(line, '%f');
   
   % One slight problem, pointed out by Peter vanderWal: If the 
   % first character of the line is 'e', then this will scan as 
@@ -90,7 +91,8 @@ function [header, data] = hdrload(file)
   % Now that we have read in the first line of data, we can skip 
   % the processing that stores header information, and just read 
   % in the rest of the data. 
-  data = [data; fscanf(fid, '%E')];
+  %data = [data; fscanf(fid, '%E')];
+  data = [data; fscanf(fid, '%f')];
   fclose(fid);
   
   % Create header output from line information. The number of lines
