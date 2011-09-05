@@ -160,8 +160,8 @@ step_y = 2.00e-2
 x_list = arange(x_min,x_max,step_x)
 y_list = arange(y_min,y_max,step_y)
 
-excitation_template = excitationTemplate()
-
+template = excitationTemplate()
+template.writeDatFile('template.dat',)
 
 # define probe
 if pillar.boundaries.Ypos_bc == 2:

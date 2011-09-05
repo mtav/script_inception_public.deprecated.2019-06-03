@@ -7,33 +7,27 @@ from bfdtd.bfdtd_parser import *
 import sys
 
 # excitation template object
-#class ExcitationTemplate:
-  #def __init__(self):
-    #x_min_mum = 0.0;
-    #x_max_mum = 4.00;
-    #z_min_mum = 0.0;
-    #z_max_mum = 4.00;
-    #step_x_mum = 2.00e-2;
-    #step_z_mum = 2.00e-2;
-    #beam_centre_x_mum = 2.1732;
-    #beam_centre_z_mum = 2.00;
-    #c_mum = 0;
-    #sigma_mum = 0.5;
-  #def __str__(self):
-    #ret = '--->object rotation_list'
-    #for i in range(len(self.rotation_list)):
-      #ret += '\n'
-      #ret += '-->object rotation '+str(i)+':\n'
-      #ret += self.rotation_list[i].__str__()
-    #return(ret)
+class GaussianExcitation:
+  def __init__(self):
+    beam_centre_x = 2.1732;
+    beam_centre_y = 2.00;
+    c_mum = 0;
+    sigma_mum = 0.5;
+  def __str__(self):
+    ret = '--->object rotation_list'
+    for i in range(len(self.rotation_list)):
+      ret += '\n'
+      ret += '-->object rotation '+str(i)+':\n'
+      ret += self.rotation_list[i].__str__()
+    return(ret)
 
-  #def writeDatFile(self,fileName):
-    #'''Generate template .dat file for a plane excitation'''
-    ## open file
-    #with open(fileName, 'w') as out:
-      #for obj in self.excitation_template_list:
-        #obj.write_entry(out)
-    #return
+  def writeDatFile(self,fileName):
+    '''Generate template .dat file for a plane excitation'''
+    # open file
+    with open(fileName, 'w') as out:
+      for obj in self.excitation_template_list:
+        obj.write_entry(out)
+    return
 
 def drange(start, stop, step):
   r = start
