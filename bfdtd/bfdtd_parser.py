@@ -432,7 +432,7 @@ class Excitation:
                 P1 = [0,0,0],
                 P2 = [0,0,0],
                 E = [0,0,0],
-                H = [ 0, 0, 0 ],
+                H = [0,0,0],
                 Type = 10,
                 time_constant = 4.000000E-09, #mus
                 amplitude = 1.000000E+01, #V/mum???
@@ -1336,6 +1336,14 @@ class BFDTDobject:
       #close file
       out.close()
     return
+    
+  #def writeDatFile(self,fileName):
+    #'''Generate template .dat file for a plane excitation'''
+    ## open file
+    #with open(fileName, 'w') as out:
+      #for obj in self.excitation_template_list:
+        #obj.write_entry(out)
+    #return
     
   def writeFileList(self,fileName,fileList=None):
     ''' Generate .in file '''

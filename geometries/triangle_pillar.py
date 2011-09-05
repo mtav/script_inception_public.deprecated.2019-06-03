@@ -134,10 +134,20 @@ U = numpy.add(L,[1,2,3])
 # define excitation
 P_centre = prism.getCenter()
 excitation = Excitation()
+
+excitation.current_source = 11
+
 excitation.P1 = [ P_centre[0], P_centre[1]-1*delta, P_centre[2] ]
 excitation.P2 = P_centre
 excitation.frequency = freq
 excitation.E = list(Unit(subtract(excitation.P2,excitation.P1)))
+
+excitation.template_filename = 'template.dat'
+excitation.template_excitation_plane = 'y'
+excitation.template_original_plane = 'z'
+excitation.template_direction = 0
+excitation.template_rotation = 0
+
 pillar.excitation_list = [ excitation ]
 
 # define probe
