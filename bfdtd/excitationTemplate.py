@@ -41,33 +41,39 @@ def drange(start, stop, step):
     yield r
     r += step
 
-x_min = 0.0
-x_max = 4.00
-y_min = 0.0
-y_max = 4.00
-step_x = 2.00e-1
-step_y = 2.00e-1
 beam_centre_x = 2.1732
 beam_centre_y = 2.00
 c = 0
 sigma = 0.5
+sigma_x = 0.1
+sigma_y = 0.9
 
-print(step_x)
+x_min = 0.0
+x_max = 4.00
+y_min = 0.0
+y_max = 4.00
+step_x = 2.00e-2
+step_y = 2.00e-1
 x_list = arange(x_min,x_max,step_x)
 y_list = arange(y_min,y_max,step_y)
 
-print(x_list)
+print(len(x_list))
+print(len(y_list))
 
 x_col = []
 y_col = []
 out_col = []
 
 for x in x_list:
-  for z in y_list:
+  for y in y_list:
     x_col.append(x)
-    y_col.append(z)
-    r = abs(sqrt( pow((x-beam_centre_x),2) + pow((z-beam_centre_y),2) ))
-    out_col.append( exp( -pow((r-c),2) / (2*pow(sigma,2)) ) )
+    y_col.append(y)
+    X = x-beam_centre_x
+    Y = y-beam_centre_y
+    R = abs(sqrt( pow((X),2) + pow((Y),2) ))
+    #out = exp( -pow((R-c),2) / (2*pow(sigma,2)) )
+    out = exp( -( pow(X,2)/(2*pow(sigma_x,2)) + pow(Y,2)/(2*pow(sigma_y,2)) ) )
+    out_col.append(out)
 
 fileName = sys.argv[1]
 E = [1,1,1]

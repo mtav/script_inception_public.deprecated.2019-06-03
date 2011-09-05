@@ -143,12 +143,25 @@ excitation.frequency = freq
 excitation.E = list(Unit(subtract(excitation.P2,excitation.P1)))
 
 excitation.template_filename = 'template.dat'
-excitation.template_excitation_plane = 'y'
-excitation.template_original_plane = 'z'
+excitation.template_source_plane = 'y'
+excitation.template_target_plane = 'z'
 excitation.template_direction = 0
 excitation.template_rotation = 0
 
 pillar.excitation_list = [ excitation ]
+
+# create template
+x_min = 0.0
+x_max = 4.00
+y_min = 0.0
+y_max = 4.00
+step_x = 2.00e-2
+step_y = 2.00e-2
+x_list = arange(x_min,x_max,step_x)
+y_list = arange(y_min,y_max,step_y)
+
+excitation_template = excitationTemplate()
+
 
 # define probe
 if pillar.boundaries.Ypos_bc == 2:
