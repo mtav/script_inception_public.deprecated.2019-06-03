@@ -77,3 +77,37 @@ def symmetrifyAndSubtractOdd(vec,max):
   sym = vec[:]; sym.reverse()
   sym_cut = [max-x for x in sym[1:]]
   return vec + sym_cut
+
+def float_array(A):
+    ''' convert string array to float array '''
+    for i in range(len(A)):
+        A[i]=float(A[i])
+    return(A)
+  
+def int_array(A):
+    ''' convert string array to int array '''
+    for i in range(len(A)):
+        A[i]=int(float(A[i]))
+    return(A)
+
+
+def is_number(s):
+    ''' returns true if s can be converted to a float, otherwise false '''
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+def getname(filename, default_extension):
+    ''' add default_extension if the file does not end in .geo or .inp '''
+    
+    extension = getExtension(filename)
+    if extension == 'geo' or extension == 'inp':
+        return filename
+    else:
+        return filename + '.' + default_extension
+
+def getExtension(filename):
+    ''' returns extension of filename '''
+    return filename.split(".")[-1]
