@@ -221,8 +221,8 @@ class pillar_1D(BFDTDobject):
     self.excitation_list[0].frequency = self.EXCITATION_FREQUENCY
     self.excitation_list[0].param1 = 0
     self.excitation_list[0].param2 = 0
-    self.excitation_list[0].param3 = 0
-    self.excitation_list[0].param4 = 0
+    self.excitation_list[0].template_filename = 0
+    self.excitation_list[0].template_source_plane = 0
     self.excitation_list[0].P2 = P_center
   
     # distinct parameters
