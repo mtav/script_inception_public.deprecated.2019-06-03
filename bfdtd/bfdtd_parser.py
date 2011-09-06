@@ -769,6 +769,9 @@ class BFDTDobject:
     self.frequency_snapshot_list = []
     self.probe_list = []
 
+    # excitation template list
+    self.excitation_template_list = []
+
     # special
     self.fileList = []
     
@@ -1044,6 +1047,12 @@ class BFDTDobject:
     FILE.write('}\n')
     FILE.write('\n')
   
+  def writeDatFiles(self,directory):
+    ''' Generate .dat files '''
+    for obj in self.excitation_template_list:
+      obj.writeDatFile(directory)
+    return
+
   def writeGeoFile(self,fileName):
     ''' Generate .geo file '''
     # open file
@@ -1089,7 +1098,7 @@ class BFDTDobject:
         obj.write_entry(out)
       
       #write footer
-      out.write('end\n'); #end the file
+      out.write('end\n') #end the file
       #close file
       out.close()
     return
@@ -1163,6 +1172,7 @@ class BFDTDobject:
     self.writeGeoFile(geoFileName)
     self.writeInpFile(inpFileName)
     self.writeFileList(inFileName,self.fileList)
+    self.writeDatFiles(newDirName)
     #self.writeCondorScript(cmdFileName)
     #self.writeShellScript(shFileName)
   

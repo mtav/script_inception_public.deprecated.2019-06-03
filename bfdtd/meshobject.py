@@ -5,33 +5,47 @@ from numpy import *
 
 class MeshObject:
   def __init__(self):
-    self.delta_X_vector = []
-    self.delta_Y_vector = []
-    self.delta_Z_vector = []
-    self.MeshName = 'mesh'
+    self.name = 'mesh'
+    self.xmesh = array([])
+    self.ymesh = array([])
+    self.zmesh = array([])
+
+  def setXmesh(self,xmesh):
+    self.xmesh = xmesh
+  def setYmesh(self,ymesh):
+    self.ymesh = ymesh
+  def setZmesh(self,zmesh):
+    self.zmesh = zmesh
+  def setMesh(self,xmesh,ymesh,zmesh):
+    self.xmesh = xmesh
+    self.ymesh = ymesh
+    self.zmesh = zmesh
     
-  def __str__(self):
-    ret = 'maxPermittivityVector_X = '+str(self.maxPermittivityVector_X)+'\n'
-    ret += 'thicknessVector_X = '+str(self.thicknessVector_X)+'\n'
-    ret += 'maxPermittivityVector_Y = '+str(self.maxPermittivityVector_Y)+'\n'
-    ret += 'thicknessVector_Y = '+str(self.thicknessVector_Y)+'\n'
-    ret += 'maxPermittivityVector_Z = '+str(self.maxPermittivityVector_Z)+'\n'
-    ret += 'thicknessVector_Z = '+str(self.thicknessVector_Z)
-    return ret
+  def getXmesh(self):
+    return(self.xmesh)
+  def getYmesh(self):
+    return(self.ymesh)
+  def getZmesh(self):
+    return(self.zmesh)
+  def getMesh(self):
+    return(self.xmesh,self.ymesh,self.zmesh)
+
+  def setXmeshDelta(self,xmesh_delta):
+    self.xmesh = cumsum(hstack((0,xmesh_delta)))
+  def setYmeshDelta(self,ymesh_delta):
+    self.ymesh = cumsum(hstack((0,ymesh_delta)))
+  def setZmeshDelta(self,zmesh_delta):
+    self.zmesh = cumsum(hstack((0,zmesh_delta)))
+  def setMeshDelta(self,xmesh_delta,ymesh_delta,zmesh_delta):
+    self.xmesh = cumsum(hstack((0,xmesh_delta)))
+    self.ymesh = cumsum(hstack((0,ymesh_delta)))
+    self.zmesh = cumsum(hstack((0,zmesh_delta)))
   
-  def addLimits_X(self,limits,permittivity):
-    print(limits)
-    print(permittivity)
-    print(limits.shape)
-    #print(permittivity.shape)
-    
-    self.limits_X = vstack([self.limits_X,limits])
-    self.maxPermittivityVector_X = vstack([self.maxPermittivityVector_X,permittivity])
-    
-  def addLimits_Y(self,limits,permittivity):
-    self.limits_Y = vstack([self.limits_Y,limits])
-    self.maxPermittivityVector_Y = vstack([self.maxPermittivityVector_Y,permittivity])
-    
-  def addLimits_Z(self,limits,permittivity):
-    self.limits_Z = vstack([self.limits_Z,limits])
-    self.maxPermittivityVector_Z = vstack([self.maxPermittivityVector_Z,permittivity])
+  def getXmeshDelta(self):
+    return(diff(xmesh))
+  def getYmeshDelta(self):
+    return(diff(ymesh))
+  def getZmeshDelta(self):
+    return(diff(zmesh))
+  def getMeshDelta(self):
+    return(diff(self.xmesh),diff(self.ymesh),diff(self.zmesh))

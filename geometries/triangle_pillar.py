@@ -165,11 +165,11 @@ out_col_name = 'Exre'
 column_titles = ['x','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
 
 template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9)
-#pillar.excitationTemplate_list = [ template1 ]
-template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
+pillar.excitation_template_list.append(template1)
+#template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
 template2 = ExcitationGaussian2(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, c = 0.5, sigma = 0.5)
-#pillar.excitationTemplate_list = [ template2 ]
-template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
+pillar.excitation_template_list.append(template2)
+#template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
 
 # define probe
 if pillar.boundaries.Ypos_bc == 2:
