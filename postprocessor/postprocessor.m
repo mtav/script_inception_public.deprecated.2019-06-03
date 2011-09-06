@@ -32,7 +32,7 @@ function varargout = postprocessor(varargin)
   
   % Edit the above text to modify the response to help postprocessor
   
-  % Last Modified by GUIDE v2.5 14-Apr-2011 14:53:22
+  % Last Modified by GUIDE v2.5 06-Sep-2011 19:37:15
   
   % Begin initialization code - DO NOT EDIT
   gui_Singleton = 1;
@@ -563,4 +563,28 @@ function radiobutton_FrequencySnapshot_Callback(hObject, eventdata, handles)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   % Hint: get(hObject,'Value') returns toggle state of radiobutton_FrequencySnapshot
+end
+
+
+% --- Executes on selection change in popupmenu_ExcitationTemplate.
+function popupmenu_ExcitationTemplate_Callback(hObject, eventdata, handles)
+  % hObject    handle to popupmenu_ExcitationTemplate (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hints: contents = get(hObject,'String') returns popupmenu_ExcitationTemplate contents as cell array
+  %        contents{get(hObject,'Value')} returns selected item from popupmenu_ExcitationTemplate
+end
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu_ExcitationTemplate_CreateFcn(hObject, eventdata, handles)
+  % hObject    handle to popupmenu_ExcitationTemplate (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+  
+  % Hint: popupmenu controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
 end

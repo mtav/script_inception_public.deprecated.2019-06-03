@@ -5,6 +5,7 @@ function [handles, ok] = PP_setupLists(handles)
   handles.ProbeList = {};
   handles.TimeSnapshotList = {};
   handles.FrequencySnapshotList = {};
+  handles.ExcitationTemplateList= {};
   handles.geolist = {};
   handles.inplist = {};
 
@@ -24,8 +25,12 @@ function [handles, ok] = PP_setupLists(handles)
       handles.FrequencySnapshotList{end+1} = handles.data_files{idx};
       unknown = 0;
     end
+    if ~isempty(regexp(handles.data_files{idx},'^.*\.(prn|dat)$','ignorecase'))
+      handles.ExcitationTemplateList{end+1} = handles.data_files{idx};
+      unknown = 0;
+    end
     if unknown & isempty(regexp(handles.data_files{idx},'^ref\.(prn|dat)$','ignorecase'))
-      error(['unknown data : ',handles.data_files{idx}])
+      warning(['unknown data : ',handles.data_files{idx}])
       ok = 0;
       return
     end
@@ -35,7 +40,8 @@ function [handles, ok] = PP_setupLists(handles)
   disp([ 'length(handles.ProbeList)=', num2str(length(handles.ProbeList)) ])
   disp([ 'length(handles.TimeSnapshotList)=', num2str(length(handles.TimeSnapshotList)) ])
   disp([ 'length(handles.FrequencySnapshotList)=', num2str(length(handles.FrequencySnapshotList)) ])
-  total = length(handles.ProbeList) + length(handles.TimeSnapshotList) + length(handles.FrequencySnapshotList) + 1;
+  disp([ 'length(handles.ExcitationTemplateList)=', num2str(length(handles.ExcitationTemplateList)) ])
+  total = length(handles.ProbeList) + length(handles.TimeSnapshotList) + length(handles.FrequencySnapshotList) + length(handles.ExcitationTemplateList) + 1;
   disp(['total = ',num2str(total)])
  
   %prn_files = [dir(fullfile(handles.workdir,'*.prn')); dir(fullfile(handles.workdir,'*.dat'))];
