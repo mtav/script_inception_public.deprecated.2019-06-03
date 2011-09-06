@@ -9,6 +9,7 @@ from meshing.subGridMultiLayer import *
 import os
 from bfdtd.triangular_prism import TriangularPrism
 from bfdtd.SpecialTriangularPrism import SpecialTriangularPrism
+from bfdtd.excitationTemplate import *
 
 pillar = BFDTDobject()
 
@@ -156,12 +157,19 @@ x_max = 4.00
 y_min = 0.0
 y_max = 4.00
 step_x = 2.00e-2
-step_y = 2.00e-2
+step_y = 2.00e-1
 x_list = arange(x_min,x_max,step_x)
 y_list = arange(y_min,y_max,step_y)
 
-template = excitationTemplate()
-template.writeDatFile('template.dat',)
+out_col_name = 'Exre'
+column_titles = ['x','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
+
+template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9)
+#pillar.excitationTemplate_list = [ template1 ]
+template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
+template2 = ExcitationGaussian2(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, c = 0.5, sigma = 0.5)
+#pillar.excitationTemplate_list = [ template2 ]
+template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
 
 # define probe
 if pillar.boundaries.Ypos_bc == 2:
