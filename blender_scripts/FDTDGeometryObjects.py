@@ -193,16 +193,17 @@ class FDTDGeometryObjects:
         ymax = sum(delta_Y_vector);
         zmax = sum(delta_Z_vector);
         
-        delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
-        
+        self.mesh_min = min(min(delta_X_vector), min(delta_Y_vector), min(delta_Z_vector))
+        self.mesh_max = max(max(delta_X_vector), max(delta_Y_vector), max(delta_Z_vector))
         # print("len(delta_X_vector) = ", len(delta_X_vector))
         # print("len(delta_Y_vector) = ", len(delta_Y_vector))
         # print("len(delta_Z_vector) = ", len(delta_Z_vector))
         # print("len(delta_vector) = ", len(delta_vector))
         #~ global mesh_min;
         #~ global mesh_max;
-        self.mesh_min = min(delta_vector);
-        self.mesh_max = max(delta_vector);
+        #delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
+        #self.mesh_min = min(delta_vector);
+        #self.mesh_max = max(delta_vector);
         # print("mesh_min = ", mesh_min)
         # print("mesh_max = ", mesh_max)
         

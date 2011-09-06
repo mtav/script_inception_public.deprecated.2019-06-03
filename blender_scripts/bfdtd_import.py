@@ -53,7 +53,7 @@ def importBristolFDTD(filename):
     
     # mesh
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
-    FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
+    FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.mesh.getXmeshDelta(),structured_entries.mesh.getYmeshDelta(),structured_entries.mesh.getZmeshDelta());
     
     # Time_snapshot (time or EPS)
     for time_snapshot in structured_entries.time_snapshot_list:

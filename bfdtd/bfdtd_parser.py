@@ -1048,7 +1048,7 @@ class BFDTDobject:
   def writeDatFiles(self,directory):
     ''' Generate .dat files '''
     for obj in self.excitation_template_list:
-      obj.writeDatFile(directory)
+      obj.writeDatFile(directory+os.sep+obj.fileName,self.mesh)
     return
 
   def writeGeoFile(self,fileName):
@@ -1288,8 +1288,8 @@ class BFDTDobject:
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
     self.mesh.setXmeshDelta(delta_X_vector)
-    self.mesh.setXmeshDelta(delta_Y_vector)
-    self.mesh.setXmeshDelta(delta_Z_vector)
+    self.mesh.setYmeshDelta(delta_Y_vector)
+    self.mesh.setZmeshDelta(delta_Z_vector)
     
 #==== CLASSES END ====#
 
