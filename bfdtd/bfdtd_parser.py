@@ -10,6 +10,7 @@ from utilities.common import *
 from bfdtd.bristolFDTD_generator_functions import *
 from meshing.subGridMultiLayer import *
 from bfdtd.excitation import *
+from bfdtd.meshobject import *
 
 #==== CLASSES START ====#
 
@@ -744,10 +745,7 @@ class Entry:
 class BFDTDobject:
   def __init__(self):
     # mandatory objects
-    self.delta_X_vector = []
-    self.delta_Y_vector = []
-    self.delta_Z_vector = []
-    self.MeshName = 'mesh'
+    self.mesh = MeshObject()
     self.flag = Flag()
     self.boundaries = Boundaries()
     self.box = Box()
@@ -796,9 +794,9 @@ class BFDTDobject:
           ret += '-->excitation '+str(i)+':\n'
           ret += self.excitation_list[i].__str__()+'\n'
       
-      ret += '--->delta_X_vector\n'+self.delta_X_vector.__str__()+'\n'+\
-      '--->delta_Y_vector\n'+self.delta_Y_vector.__str__()+'\n'+\
-      '--->delta_Z_vector\n'+self.delta_Z_vector.__str__()+'\n'+\
+      ret += '--->delta_X_vector\n'+self.mesh.getXmeshDelta().__str__()+'\n'+\
+      '--->delta_Y_vector\n'+self.mesh.getYmeshDelta().__str__()+'\n'+\
+      '--->delta_Z_vector\n'+self.mesh.getZmeshDelta().__str__()+'\n'+\
       '--->flag\n'+self.flag.__str__()+'\n'+\
       '--->boundaries\n'+self.boundaries.__str__()+'\n'+\
       '--->box\n'+self.box.__str__()+'\n'
@@ -837,7 +835,7 @@ class BFDTDobject:
       return ret
   
   def getNcells(self):
-    return len(self.delta_X_vector)*len(self.delta_Y_vector)*len(self.delta_Z_vector)
+    return len(self.mesh.getXmeshDelta())*len(self.mesh.getYmeshDelta())*len(self.mesh.getZmeshDelta())
 
   def addBoxFrequencySnapshots(self):
     L = [self.box.lower[0], self.box.lower[1], self.box.lower[2]]
@@ -928,12 +926,12 @@ class BFDTDobject:
           
           # mandatory objects
           if entry.Type == 'XMESH':
-              self.delta_X_vector = float_array(entry.data)
+              self.mesh.setXmeshDelta(float_array(entry.data))
               xmesh_read = True
           elif entry.Type == 'YMESH':
-              self.delta_Y_vector = float_array(entry.data)
+              self.mesh.setYmeshDelta(float_array(entry.data))
           elif entry.Type == 'ZMESH':
-              self.delta_Z_vector = float_array(entry.data)
+              self.mesh.setZmeshDelta(float_array(entry.data))
           elif entry.Type == 'FLAG':
               self.flag.read_entry(entry)
           elif entry.Type == 'BOUNDARY':
@@ -1024,26 +1022,26 @@ class BFDTDobject:
   def writeMesh(self,FILE):
     ''' writes mesh to FILE '''
     # mesh X
-    FILE.write('XMESH **name='+self.MeshName+'\n')
+    FILE.write('XMESH **name='+self.mesh.name+'\n')
     FILE.write('{\n')
-    for i in range(len(self.delta_X_vector)):
-      FILE.write("%E\n" % self.delta_X_vector[i])
+    for i in range(len(self.mesh.getXmeshDelta())):
+      FILE.write("%E\n" % self.mesh.getXmeshDelta()[i])
     FILE.write('}\n')
     FILE.write('\n')
   
     # mesh Y
-    FILE.write('YMESH **name='+self.MeshName+'\n')
+    FILE.write('YMESH **name='+self.mesh.name+'\n')
     FILE.write('{\n')
-    for i in range(len(self.delta_Y_vector)):
-      FILE.write("%E\n" % self.delta_Y_vector[i])
+    for i in range(len(self.mesh.getYmeshDelta())):
+      FILE.write("%E\n" % self.mesh.getYmeshDelta()[i])
     FILE.write('}\n')
     FILE.write('\n')
   
     # mesh Z
-    FILE.write('ZMESH **name='+self.MeshName+'\n')
+    FILE.write('ZMESH **name='+self.mesh.name+'\n')
     FILE.write('{\n')
-    for i in range(len(self.delta_Z_vector)):
-      FILE.write("%E\n" % self.delta_Z_vector[i])
+    for i in range(len(self.mesh.getZmeshDelta())):
+      FILE.write("%E\n" % self.mesh.getZmeshDelta()[i])
     FILE.write('}\n')
     FILE.write('\n')
   
@@ -1286,9 +1284,12 @@ class BFDTDobject:
   def autoMeshGeometry(self,meshing_factor):
     meshing_parameters = self.calculateMeshingParameters()
     print(meshing_parameters)
-    self.delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
-    self.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
-    self.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
+    delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
+    delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
+    delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
+    self.mesh.setXmeshDelta(delta_X_vector)
+    self.mesh.setXmeshDelta(delta_Y_vector)
+    self.mesh.setXmeshDelta(delta_Z_vector)
     
 #==== CLASSES END ====#
 

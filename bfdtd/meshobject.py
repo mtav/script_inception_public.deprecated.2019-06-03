@@ -42,10 +42,10 @@ class MeshObject:
     self.zmesh = cumsum(hstack((0,zmesh_delta)))
   
   def getXmeshDelta(self):
-    return(diff(xmesh))
+    return(diff(self.xmesh))
   def getYmeshDelta(self):
-    return(diff(ymesh))
+    return(diff(self.ymesh))
   def getZmeshDelta(self):
-    return(diff(zmesh))
+    return(diff(self.zmesh))
   def getMeshDelta(self):
     return(diff(self.xmesh),diff(self.ymesh),diff(self.zmesh))
