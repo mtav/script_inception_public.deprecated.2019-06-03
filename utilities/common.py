@@ -47,7 +47,6 @@ def Mag(vec):
   return math.sqrt(Mag2(vec))
 
 def getProbeColumnFromExcitation(excitation):
-  print(jio)
   print(('excitation = ',excitation))
   probe_col = 0
   if excitation == [1,0,0]:

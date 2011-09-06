@@ -30,9 +30,9 @@ class MeshingParameters:
     return ret
   
   def addLimits_X(self,limits,permittivity):
-    print(limits)
-    print(permittivity)
-    print(limits.shape)
+    #print(limits)
+    #print(permittivity)
+    #print(limits.shape)
     #print(permittivity.shape)
     
     self.limits_X = vstack([self.limits_X,limits])

@@ -165,10 +165,10 @@ out_col_name = 'Exre'
 column_titles = ['x','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
 
 template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9, fileName='template1.dat')
-pillar.excitation_template_list.append(template1)
+#pillar.excitation_template_list.append(template1)
 #template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
 template2 = ExcitationGaussian2(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, c = 0.5, sigma = 0.5, fileName='template2.dat')
-pillar.excitation_template_list.append(template2)
+#pillar.excitation_template_list.append(template2)
 #template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
 
 # define probe
@@ -202,6 +202,8 @@ F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = fre
 #pillar.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X, thicknessVector_X)
 #pillar.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y, thicknessVector_Y)
 #pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z, thicknessVector_Z)
+
+#pillar.addMeshingBox(lower,upper,)
 
 pillar.autoMeshGeometry(0.1*0.637/16)
 

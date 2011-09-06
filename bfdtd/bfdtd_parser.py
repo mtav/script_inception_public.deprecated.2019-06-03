@@ -1202,6 +1202,7 @@ class BFDTDobject:
 
     # geometry object meshes
     for obj in self.geometry_object_list:
+      print(obj.name)
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # excitation object meshes

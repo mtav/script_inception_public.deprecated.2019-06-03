@@ -68,9 +68,9 @@ class SpecialTriangularPrism(Geometry_object):
     maxi[0] = self.upper[self.orientation.index(0)]
     maxi[1] = self.upper[self.orientation.index(1)]
     maxi[2] = self.upper[self.orientation.index(2)]
-    print mini[0],maxi[0]
-    print mini[1],maxi[1]
-    print mini[2],maxi[2]
+    #print mini[0],maxi[0]
+    #print mini[1],maxi[1]
+    #print mini[2],maxi[2]
     DX = maxi[0] - mini[0]
     DY = maxi[1] - mini[1]
     DZ = maxi[2] - mini[2]
@@ -78,7 +78,7 @@ class SpecialTriangularPrism(Geometry_object):
     NX = self.NvoxelsX
     NY = self.NvoxelsY
     NZ = self.NvoxelsZ
-    print DX,DY,DZ
+    #print DX,DY,DZ
     voxel_radius_X = R/( 2.*self.NvoxelsX + 1.)
     for iX in range(self.NvoxelsX):
       for iY in range(iX+1):

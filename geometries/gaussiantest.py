@@ -93,7 +93,7 @@ def gaussianPillar(source, target, direction, rotation):
   F = pillar.addFrequencySnapshot(3,P_centre[2]); F.first = first; F.frequency_vector = frequency_vector
   F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = frequency_vector
   
-  pillar.autoMeshGeometry(Lambda_mum/16)
+  pillar.autoMeshGeometry(Lambda_mum/8)
   
   # write
   DSTDIR = os.getenv('TESTDIR')+os.sep+'gaussiantest'
