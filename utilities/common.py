@@ -47,6 +47,7 @@ def Mag(vec):
   return math.sqrt(Mag2(vec))
 
 def getProbeColumnFromExcitation(excitation):
+  print(jio)
   print(('excitation = ',excitation))
   probe_col = 0
   if excitation == [1,0,0]:
@@ -56,7 +57,7 @@ def getProbeColumnFromExcitation(excitation):
   elif excitation == [0,0,1]:
     probe_col = 4
   else:
-    print('ERROR : Unknown Excitation type')
+    print('ERROR in getProbeColumnFromExcitation: Unknown Excitation type')
     sys.exit(-1)
   print(('probe_col', probe_col))
   return probe_col

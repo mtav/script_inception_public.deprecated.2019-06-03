@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu
 
 ## To use this script, add the QSUBMAIL variable to your environment. You can add one of the following lines to your ~/.bashrc for example:
 ## single mail address:

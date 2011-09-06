@@ -1283,7 +1283,7 @@ class BFDTDobject:
     
   def autoMeshGeometry(self,meshing_factor):
     meshing_parameters = self.calculateMeshingParameters()
-    print(meshing_parameters)
+    #print(meshing_parameters)
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)

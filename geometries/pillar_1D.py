@@ -712,6 +712,8 @@ class pillar_1D(BFDTDobject):
     return(in_filename)
     
   def writeSH(self):
+    print('FATAL ERROR: Using deprecated function')
+    sys.exit(-1)
     # .sh file
     sh_filename = self.DSTDIR+os.sep+self.BASENAME+os.sep+self.BASENAME+'.sh';
     if self.verbose:
