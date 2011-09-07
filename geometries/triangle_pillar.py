@@ -11,6 +11,25 @@ from bfdtd.triangular_prism import TriangularPrism
 from bfdtd.SpecialTriangularPrism import SpecialTriangularPrism
 from bfdtd.excitationTemplate import *
 
+def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,frequency,template_filename='template.dat'):
+  plane_direction_vector,plane_direction_alpha = getVecAlphaDirectionFromVar(plane_direction)
+  excitation = Excitation()
+  excitation.frequency = frequency
+  excitation.E = excitation_direction
+  excitation.template_filename = template_filename
+  excitation.template_source_plane = plane_direction_alpha
+  excitation.template_target_plane = plane_direction_alpha
+  excitation.template_direction = 1
+  excitation.template_rotation = 1
+  if type=='1D':
+    excitation.current_source = 7
+    excitation.setExtension(centre,centre + size*array(excitation_direction))
+  else:
+    excitation.current_source = 11
+    diagonal = (array(plane_direction_vector)^array([1,1,1]))
+    excitation.setExtension(centre - size*diagonal, centre + size*diagonal)
+  return(excitation)
+  
 pillar = BFDTDobject()
 
 # constants
@@ -27,6 +46,7 @@ height = Nbottom*(h_air+h_diamond) + h_cavity + Ntop*(h_air+h_diamond)
 print('height = ',height)
 buffer = 0.25
 FullBox_upper = [ height+2*buffer, 2*(radius+buffer), 2*(radius+buffer) ]
+
 P_centre = [ buffer + Nbottom*(h_air+h_diamond) + 0.5*h_cavity, 0.5*FullBox_upper[1], 0.5*FullBox_upper[2] ]
 
 # define flag
@@ -44,12 +64,14 @@ if pillar.boundaries.Ypos_bc == 2:
 else:
   pillar.box.upper = [ FullBox_upper[0], 0.5*FullBox_upper[1], FullBox_upper[2] ]
 
+#P_centre = pillar.box.getCenter()
+
 ## define geometry
 
 #prism = TriangularPrism()
 prism = SpecialTriangularPrism()
-prism.lower = [ P_centre[0]-0.5*height, P_centre[1]-radius, P_centre[2]-radius ]
-prism.upper = [ P_centre[0]+0.5*height, P_centre[1]+radius, P_centre[2]+radius ]
+prism.lower = [ P_centre[0]-0.5*height, P_centre[1]-3./2.*radius*1.0/sqrt(3), P_centre[2]-0.5*radius ]
+prism.upper = [ P_centre[0]+0.5*height, P_centre[1]+3./2.*radius*1.0/sqrt(3), P_centre[2]+3*radius ]
 #prism.lower = [1,1,1]
 #prism.upper = [1,10,1]
 #prism.lower = [1,2,3]
@@ -103,23 +125,20 @@ block.upper = [ prism.upper[0], prism.upper[1], prism.upper[2]+buffersize ]
 #U = numpy.add(L,[1,2,3])
 
 # define excitation
-P_centre = prism.getCenter()
-excitation = Excitation()
+P_centre = prism.getGeoCentre()
 
-excitation.current_source = 11
-
-excitation.P1 = [ P_centre[0], P_centre[1]-1*delta, P_centre[2] ]
-excitation.P2 = P_centre
-excitation.frequency = freq
-excitation.E = list(Unit(subtract(excitation.P2,excitation.P1)))
-
-excitation.template_filename = 'template.dat'
-excitation.template_source_plane = 'y'
-excitation.template_target_plane = 'z'
-excitation.template_direction = 0
-excitation.template_rotation = 0
-
-pillar.excitation_list = [ excitation ]
+# centre Ey 1D
+excitation = ExcitationWrapper(centre=P_centre,size=delta,plane_direction='x',type='1D',excitation_direction=[0,1,0],frequency=freq)
+pillar.excitation_list.append(excitation)
+# centre Ez 1D
+excitation = ExcitationWrapper(centre=P_centre,size=delta,plane_direction='x',type='1D',excitation_direction=[0,0,1],frequency=freq)
+pillar.excitation_list.append(excitation)
+# centre Ey 2D
+excitation = ExcitationWrapper(centre=P_centre,size=radius,plane_direction='x',type='2D',excitation_direction=[0,1,0],frequency=freq)
+pillar.excitation_list.append(excitation)
+# centre Ez 2D
+excitation = ExcitationWrapper(centre=P_centre,size=radius,plane_direction='x',type='2D',excitation_direction=[0,0,1],frequency=freq)
+pillar.excitation_list.append(excitation)
 
 # create template
 x_min = 0.0
@@ -169,21 +188,7 @@ F = pillar.addFrequencySnapshot(3,P_centre[2]); F.first = first; F.frequency_vec
 F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = frequency_vector
 
 ## define mesh
-#thicknessVector_X = [ prism.lower[0]-pillar.box.lower[0], P_centre[0]-prism.lower[0], prism.upper[0]-P_centre[0], delta, pillar.box.upper[0]-(prism.upper[0]+delta) ]
-#if pillar.boundaries.Ypos_bc == 2:
-  #thicknessVector_Y = [ prism.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-prism.lower[1], delta, delta, prism.upper[1]-(P_centre[1]+delta), pillar.box.upper[1]-prism.upper[1] ]
-#else:
-  #thicknessVector_Y = [ prism.lower[1]-pillar.box.lower[1], (P_centre[1]-delta)-prism.lower[1], delta ]
-#thicknessVector_Z = LimitsToThickness([ pillar.box.lower[2], prism.lower[2], P_centre[2], prism.upper[2], pillar.box.upper[2] ])
-#max_delta_Vector_X = [ delta ]*len(thicknessVector_X)
-#max_delta_Vector_Y = [ delta ]*len(thicknessVector_Y)
-#max_delta_Vector_Z = [ delta ]*len(thicknessVector_Z)
-#pillar.delta_X_vector, local_delta_X_vector = subGridMultiLayer(max_delta_Vector_X, thicknessVector_X)
-#pillar.delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(max_delta_Vector_Y, thicknessVector_Y)
-#pillar.delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(max_delta_Vector_Z, thicknessVector_Z)
-
 #pillar.addMeshingBox(lower,upper,)
-
 pillar.autoMeshGeometry(0.637/10)
 
 # write
