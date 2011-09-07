@@ -203,6 +203,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   else
     shading flat;
   end
+  
+   % to avoid white patches on the image
+  lighting phong;
+  
   % TODO: handle NaNs
   switch handles.plane
     case 1
@@ -270,7 +274,7 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
       title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
     end
   else
-    error('ERROR: Unknown data type');
+    warning('ERROR: Unknown data type');
     return;
   end
   

@@ -37,12 +37,43 @@ function [ numID, snap_plane, snap_time_number ] = alphaID_to_numID(alphaID, pro
     end
   elseif length(alphaID)>2
     [tokens match] =  regexp(alphaID, ['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn'], 'tokens', 'match', 'warnings');
+    %alphaID
+    %['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn']
+    %tokens
+    %match
+    %probe_ident
+    %alphaID_pattern
+    
     if length(match)==1
       snap_plane = tokens{:}(1);
       just_alphaID = tokens{:}{2};
       snap_time_number = str2num(tokens{:}{3});
+
+      ilo = mod(snap_time_number,10);
+      ihi = div(snap_time_number,10);
+      
+      % filename = strcat({snap_plane}, just_alphaID, {probe_ident}, char(ihi + double('0')), char(ilo + double('0')), '.prn');
+    
+      % disp(filename);
+      
+      % class(just_alphaID)
+      % whos just_alphaID
+      % size(just_alphaID)
+    
+      % disp('===MWAHAHAHAHHAHA===');
+      if length(just_alphaID)==1
+        % disp('single');
+        numID = double(just_alphaID(1)) - double('a') + 1;
+      else
+        % disp('double');
+        numID = 27*(double(just_alphaID(1)) - double('a') + 1) + (double(just_alphaID(2)) - double('a'));
+      end
+
     else
-      error('Match error. Invalid alphaID.');
+      warning(['Match error. Invalid alphaID:',' alphaID=',alphaID,' probe_ident=',probe_ident]);
+      numID = 1;
+      snap_plane = 'a';
+      snap_time_number = -1;
     end
   else
     error('Me thinks you made a little mistake in your alphaID...');
@@ -53,26 +84,6 @@ function [ numID, snap_plane, snap_time_number ] = alphaID_to_numID(alphaID, pro
   % probe_ident
   % snap_time_number
   
-  ilo = mod(snap_time_number,10);
-  ihi = div(snap_time_number,10);
-  
-  % filename = strcat({snap_plane}, just_alphaID, {probe_ident}, char(ihi + double('0')), char(ilo + double('0')), '.prn');
-
-  % disp(filename);
-  
-  % class(just_alphaID)
-  % whos just_alphaID
-  % size(just_alphaID)
-
-  % disp('===MWAHAHAHAHHAHA===');
-  if length(just_alphaID)==1
-    % disp('single');
-    numID = double(just_alphaID(1)) - double('a') + 1;
-  else
-    % disp('double');
-    numID = 27*(double(just_alphaID(1)) - double('a') + 1) + (double(just_alphaID(2)) - double('a'));
-  end
-
   % disp('===THE END===');
   % numID
 end
