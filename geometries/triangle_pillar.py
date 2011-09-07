@@ -19,11 +19,12 @@ Lambda_mum = 0.637
 delta = Lambda_mum/(10*n_diamond)
 freq = get_c0()/Lambda_mum
 k=1; radius = k*Lambda_mum/(4*n_diamond)
-Nbottom = 30; Ntop = 30
+Nbottom = 10; Ntop = 10
 h_air = Lambda_mum/(4*n_air)
 h_diamond = Lambda_mum/(4*n_diamond)
 h_cavity = Lambda_mum/(n_diamond)
 height = Nbottom*(h_air+h_diamond) + h_cavity + Ntop*(h_air+h_diamond)
+print('height = ',height)
 buffer = 0.25
 FullBox_upper = [ height+2*buffer, 2*(radius+buffer), 2*(radius+buffer) ]
 P_centre = [ buffer + Nbottom*(h_air+h_diamond) + 0.5*h_cavity, 0.5*FullBox_upper[1], 0.5*FullBox_upper[2] ]
@@ -44,19 +45,6 @@ else:
   pillar.box.upper = [ FullBox_upper[0], 0.5*FullBox_upper[1], FullBox_upper[2] ]
 
 ## define geometry
-#prism = TriangularPrism()
-##prism = SpecialTriangularPrism()
-#prism.lower = [ P_centre[0]-0.5*height, P_centre[1]-radius, P_centre[2]-radius ]
-#prism.upper = [ P_centre[0]+0.5*height, P_centre[1]+radius, P_centre[2]+radius ]
-##prism.lower = [1,1,1]
-##prism.upper = [1,10,1]
-##prism.lower = [1,2,3]
-##prism.upper = [3,7,13]
-#prism.orientation = [2,0,1]
-##prism.orientation = [2,1,0]
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#pillar.geometry_object_list.append(prism)
 
 #prism = TriangularPrism()
 prism = SpecialTriangularPrism()
@@ -73,64 +61,46 @@ prism.conductivity = 0
 prism.NvoxelsX = 30
 prism.NvoxelsY = 30
 prism.NvoxelsZ = 30
+
 pillar.geometry_object_list.append(prism)
 
-L = [1,2,3]
-U = numpy.add(L,[1,2,3])
+buffersize=3*delta
 
-#prism = SpecialTriangularPrism()
-#prism.lower = L
-#prism.upper = U
-#prism.orientation = [0,1,2]
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#print 'center = ',prism.getCenter()
-#pillar.geometry_object_list.append(prism)
+# X buffers
+block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block.lower = [ prism.lower[0]-buffersize, prism.lower[1], prism.lower[2] ]
+block.upper = [ prism.lower[0], prism.upper[1], prism.upper[2] ]
+#pillar.geometry_object_list.append(block)
 
-#prism = SpecialTriangularPrism()
-#prism.lower = L
-#prism.upper = U
-#prism.orientation = [0,2,1]
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#print 'center = ',prism.getCenter()
-#pillar.geometry_object_list.append(prism)
+block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block.lower = [ prism.upper[0], prism.lower[1], prism.lower[2] ]
+block.upper = [ prism.upper[0]+buffersize, prism.upper[1], prism.upper[2] ]
+#pillar.geometry_object_list.append(block)
 
-#prism = SpecialTriangularPrism()
-#prism.lower = L
-#prism.upper = U
-#prism.orientation = [1,0,2]# -> 3,2,4
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#print 'center = ',prism.getCenter()
-#pillar.geometry_object_list.append(prism)
+# Y buffers
+block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block.lower = [ prism.lower[0], prism.lower[1]-buffersize, prism.lower[2] ]
+block.upper = [ prism.upper[0], prism.lower[1], prism.upper[2] ]
+#pillar.geometry_object_list.append(block)
 
-#prism = SpecialTriangularPrism()
-#prism.lower = L
-#prism.upper = U
-#prism.orientation = [1,2,0]# -> 3,4,0
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#print 'center = ',prism.getCenter()
-#pillar.geometry_object_list.append(prism)
+block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block.lower = [ prism.lower[0], prism.upper[1], prism.lower[2] ]
+block.upper = [ prism.upper[0], prism.upper[1]+buffersize, prism.upper[2] ]
+#pillar.geometry_object_list.append(block)
 
-#prism = SpecialTriangularPrism()
-#prism.lower = L
-#prism.upper = U
-#prism.orientation = [2,0,1]
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#print 'center = ',prism.getCenter()
-#pillar.geometry_object_list.append(prism)
+# Z buffers
+block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block.lower = [ prism.lower[0], prism.lower[1], prism.lower[2]-buffersize ]
+block.upper = [ prism.upper[0], prism.upper[1], prism.lower[2] ]
+#pillar.geometry_object_list.append(block)
 
-#prism = SpecialTriangularPrism()
-#prism.lower = L
-#prism.upper = U
-#prism.orientation = [2,1,0]
-#prism.permittivity = pow(n_diamond,2)
-#prism.conductivity = 0
-#print 'center = ',prism.getCenter()
-#pillar.geometry_object_list.append(prism)
+block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block.lower = [ prism.lower[0], prism.lower[1], prism.upper[2] ]
+block.upper = [ prism.upper[0], prism.upper[1], prism.upper[2]+buffersize ]
+#pillar.geometry_object_list.append(block)
+
+#L = [1,2,3]
+#U = numpy.add(L,[1,2,3])
 
 # define excitation
 P_centre = prism.getCenter()
@@ -172,11 +142,20 @@ template2 = ExcitationGaussian2(amplitude = 1, beam_centre_x = 2.1732, beam_cent
 #template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
 
 # define probe
+probe_X = [ P_centre[0]-(0.5*height+delta), P_centre[0], P_centre[0]+(0.5*height+delta) ]
+
 if pillar.boundaries.Ypos_bc == 2:
-  probe = Probe(position = [ buffer+height+delta, P_centre[1], P_centre[2] ])
+  probe_Y = [ P_centre[1] ]
 else:
-  probe = Probe(position = [ buffer+height+delta, P_centre[1]-delta, P_centre[2] ])
-pillar.probe_list = [ probe ]
+  probe_Y = [ P_centre[1]-delta ]
+
+probe_Z = [ P_centre[2]-radius-delta, P_centre[2] ]
+
+for x in probe_X:
+  for y in probe_Y:
+    for z in probe_Z:
+      probe = Probe(position = [ x,y,z ])
+      pillar.probe_list.append(probe)
 
 # define frequency snapshots
 first = min(65400,pillar.flag.iterations)
@@ -205,7 +184,7 @@ F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = fre
 
 #pillar.addMeshingBox(lower,upper,)
 
-pillar.autoMeshGeometry(0.1*0.637/16)
+pillar.autoMeshGeometry(0.637/10)
 
 # write
 #DSTDIR = os.getenv('DATADIR')
