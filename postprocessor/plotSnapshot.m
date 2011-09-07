@@ -207,7 +207,9 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   end
   
    % to avoid white patches on the image
-  lighting phong;
+  if(not(inoctave))
+    lighting phong;
+  end
   
   % TODO: handle NaNs
   switch handles.plane
@@ -240,6 +242,9 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
       axis(foo);
   end
 
+  % for octave, but might make things easier for matlab too
+  view(0,90);
+  
   if rotate90
     view(90,90);
     if handles.drawColorBar
@@ -250,9 +255,14 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
       colorbar
     end
   end
+
+  % old code from unknown origin and for unknow use  
+  %snapshot_filename
+  %titlesnap = strread(snapshot_filename,'%s','delimiter','\\');
+  %snapfile_full = char(titlesnap(length(titlesnap)));
   
-  titlesnap = strread(snapshot_filename,'%s','delimiter','\\');
-  snapfile_full = char(titlesnap(length(titlesnap)));
+  % much easier and apparently working solution...
+  snapfile_full = snapshot_filename
 
   [ snapfile_full_folder, snapfile_full_basename, snapfile_full_ext ] = fileparts(snapfile_full);
   [ snapfile_full_folder_folder, snapfile_full_folder_basename ] = fileparts(snapfile_full_folder);
