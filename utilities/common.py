@@ -111,3 +111,48 @@ def getname(filename, default_extension):
 def getExtension(filename):
     ''' returns extension of filename '''
     return filename.split(".")[-1]
+
+''' Returns ([1,0,0],'x'),etc corresponding to var(alpha or vector) '''
+def getVecAlphaDirectionFromVar(var):
+  S=['x','y','z']
+  V=[[1,0,0],[0,1,0],[0,0,1]]
+  if var in V:
+    return var, S[var.index(1)]
+  elif var.lower() in S:
+    return V[S.index(var.lower())],var.lower()
+  else:
+    print('unknown direction: '+str(var))
+    sys.exit(-1)
+  
+''' Returns numindex(1,2,3) and char('X','Y','Z') corresponding  to var(num or alpha index) '''
+def planeNumberName(var):
+  S=['X','Y','Z']
+  if var in [1,2,3]:
+    return var, S[var-1]
+  elif var.upper() in S:
+    return S.index(var.upper())+1,var.upper()
+  else:
+    print('unknown plane: '+str(var))
+    sys.exit(-1)
+  #~ elif var == 'x' or var == 'X':
+    #~ return 1
+  #~ elif var == 'y' or var == 'Y':
+    #~ return 2
+  #~ elif var == 'z' or var == 'Z':
+    #~ return 3
+  #~ else:
+    #~ print('unknown plane: '+str(x))
+    #~ sys.exit(-1)
+#~ 
+#~ def planeName(var):
+  #~ if var.lower() in ['x','y','z']:
+    #~ return var.lower()
+  #~ elif var == 1:
+    #~ return 'x'
+  #~ elif var == 2:
+    #~ return 'y'
+  #~ elif var == 3:
+    #~ return 'z'
+  #~ else:
+    #~ print('unknown plane: '+str(x))
+    #~ sys.exit(-1)

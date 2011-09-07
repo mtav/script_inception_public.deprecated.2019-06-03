@@ -7,39 +7,7 @@ import getopt
 #~ import utilities.getuserdir
 from utilities.getuserdir import *
 #from bfdtd.bfdtd_parser import *
-from utilities.common import fixLowerUpper
-
-def planeNumberName(var):
-  S=['X','Y','Z']
-  if var in [1,2,3]:
-    return var, S[var-1]
-  elif var.upper() in S:
-    return S.index(var.upper())+1,var.upper()
-  else:
-    print('unknown plane: '+str(var))
-    sys.exit(-1)
-  #~ elif var == 'x' or var == 'X':
-    #~ return 1
-  #~ elif var == 'y' or var == 'Y':
-    #~ return 2
-  #~ elif var == 'z' or var == 'Z':
-    #~ return 3
-  #~ else:
-    #~ print('unknown plane: '+str(x))
-    #~ sys.exit(-1)
-#~ 
-#~ def planeName(var):
-  #~ if var.lower() in ['x','y','z']:
-    #~ return var.lower()
-  #~ elif var == 1:
-    #~ return 'x'
-  #~ elif var == 2:
-    #~ return 'y'
-  #~ elif var == 3:
-    #~ return 'z'
-  #~ else:
-    #~ print('unknown plane: '+str(x))
-    #~ sys.exit(-1)
+from utilities.common import *
 
 ########################
 # GENERATOR FUNCTIONS
