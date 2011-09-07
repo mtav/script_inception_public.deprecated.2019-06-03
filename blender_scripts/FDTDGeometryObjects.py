@@ -330,6 +330,10 @@ class FDTDGeometryObjects:
         return
         
     def GEOexcitation(self, name, P1, P2):
+        print(Blender.Window.GetActiveLayer())
+        scene = Blender.Scene.GetCurrent();
+        print(Blender.Window.GetActiveLayer())
+
         # arrow dimensions:
         arrow_length = (P2-P1).length;
         cone_length = arrow_length/5.0;
@@ -346,9 +350,7 @@ class FDTDGeometryObjects:
         axisY.normalize();
         axisZ.normalize();
         rotmat = Matrix(axisX,axisY,axisZ);
-        
-        scene = Blender.Scene.GetCurrent();
-        
+                
         mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
         mesh.materials = [ self.excitation_material ];
         for f in mesh.faces:

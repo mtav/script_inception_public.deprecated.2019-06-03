@@ -69,8 +69,10 @@ def importBristolFDTD(filename):
         FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
+        Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
+        print(Blender.Window.GetActiveLayer())
+        print(excitation)
         FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
     # Probe
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
