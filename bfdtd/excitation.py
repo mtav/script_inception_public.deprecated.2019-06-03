@@ -72,6 +72,9 @@ class Excitation:
     'template_rotation = ' + str(self.template_rotation)
     return ret
     
+  def setExtension(self,P1,P2):
+    self.P1, self.P2 = fixLowerUpper(P1, P2)
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -123,8 +126,8 @@ class Excitation:
       FILE.write("%E **FREQ (HZ)\n" % self.frequency)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
-      FILE.write("%d **TEMPLATE FILENAME\n" % self.template_filename)
-      FILE.write("%d **TEMPLATE SOURCE PLANE\n" % self.template_source_plane)
+      FILE.write('"'+self.template_filename+'" ** TEMPLATE FILENAME\n')
+      FILE.write('"'+self.template_source_plane+'" ** TEMPLATE SOURCE PLANE\n')
       FILE.write('}\n')
       FILE.write('\n')
     else:
