@@ -17,6 +17,8 @@ function postprocessor_CLI()
   handles.ProbeID = 1;
   handles.TimeSnapshotID = 1;
   handles.FrequencySnapshotID = 1;
+  handles.ExcitationTemplateID = 1;
+  handles.SnapshotID = 1;
   handles.geometryfile = 1;
   handles.inputfile = 1;
   

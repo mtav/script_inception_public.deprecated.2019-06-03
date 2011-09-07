@@ -22,6 +22,12 @@ function [ handles, ok ] = PP_generate_plot(handles)
   elseif handles.Type == 3
     handles.snapfile = handles.FrequencySnapshotFile;
     plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
+  elseif handles.Type == 4
+    handles.snapfile = handles.ExcitationTemplateFile;
+    plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
+  elseif handles.Type == 5
+    handles.snapfile = handles.SnapshotFile;
+    plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
   else
     error('Unknown data type');
     ok = 0;
