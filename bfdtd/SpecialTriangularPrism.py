@@ -139,10 +139,30 @@ class SpecialTriangularPrism(Geometry_object):
       FILE.write('}\n')
       FILE.write('\n')
     
-  def getCenter(self):
+  def getBoundingBoxCentre(self):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
     return(C)
+
+  # TODO
+  def getGeoCentre(self):
+    #C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
+    A = 
+    B = 
+    C = 
+    G = (A+B+C)/3
+    return(C)
+  
+  # TODO
+  def getInscribedSquarePlaneRadius(G = self.getGeoCentre()):
+    B = 
+    C = 
+    v = [-1;-1]
+    BC = []
+    [k;l] = [v,BC]^-1 * (G-B)
+    radius = k
+    return(radius)
 
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     #meshing_parameters = MeshingParameters()
