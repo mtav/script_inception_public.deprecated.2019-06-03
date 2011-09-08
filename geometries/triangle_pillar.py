@@ -11,7 +11,7 @@ from bfdtd.triangular_prism import TriangularPrism
 from bfdtd.SpecialTriangularPrism import SpecialTriangularPrism
 from bfdtd.excitationTemplate import *
 
-def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,frequency,template_filename='template.dat'):
+def ExcitationWrapper(Ysym,centre,size,plane_direction,type,excitation_direction,frequency,template_filename='template.dat'):
   plane_direction_vector,plane_direction_alpha = getVecAlphaDirectionFromVar(plane_direction)
   excitation = Excitation()
   excitation.frequency = frequency
@@ -23,11 +23,17 @@ def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,freq
   excitation.template_rotation = 1
   if type=='1D':
     excitation.current_source = 7
-    excitation.setExtension(centre,centre + size*array(excitation_direction))
+    if not(Ysym):
+      excitation.setExtension(centre,centre + size*array(excitation_direction))
+    else:
+      excitation.setExtension(centre,centre - size*array(excitation_direction))
   else:
     excitation.current_source = 11
     diagonal = (array(plane_direction_vector)^array([1,1,1]))
-    excitation.setExtension(centre - size*diagonal, centre + size*diagonal)
+    if not(Ysym):
+      excitation.setExtension(centre - size*diagonal, centre + size*diagonal)
+    else:
+      excitation.setExtension(centre - size*diagonal, centre)
 
   if excitation_direction==[1,0,0]:
     out_col_name = 'Exre'
@@ -62,7 +68,7 @@ def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,freq
   return(excitation, template)
   #return excitation
 
-def QuadrupleExcitation(pillar,P,direction,delta,template_radius,freq,exc):
+def QuadrupleExcitation(Ysym,pillar,P,direction,delta,template_radius,freq,exc):
   if direction == 'x':
     E1=[0,1,0]
     E2=[0,0,1]
@@ -77,20 +83,20 @@ def QuadrupleExcitation(pillar,P,direction,delta,template_radius,freq,exc):
 
   if exc == 0:
     # E1 1D
-    excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=E1,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym,centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=E1,frequency=freq)
     pillar.excitation_list.append(excitation)
   elif exc == 1:
     # E2 1D
-    excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=E2,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym,centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=E2,frequency=freq)
     pillar.excitation_list.append(excitation)
   elif exc == 2:
     # E1 2D
-    excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=E1,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym,centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=E1,frequency=freq)
     pillar.excitation_list.append(excitation)
     pillar.excitation_template_list.append(template)
   elif exc == 3:
     # E2 2D
-    excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=E2,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym,centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=E2,frequency=freq)
     pillar.excitation_list.append(excitation)
     pillar.excitation_template_list.append(template)
   else:
@@ -117,7 +123,8 @@ def prismPillar(BASENAME,pos,exc):
   P_centre = [ buffer + Nbottom*(h_air+h_diamond) + 0.5*h_cavity, 0.5*FullBox_upper[1], 0.5*FullBox_upper[2] ]
   
   # define flag
-  pillar.flag.iterations = 100000
+  #pillar.flag.iterations = 100000
+  pillar.flag.iterations = 1
   
   # define boundary conditions
   pillar.boundaries.Xpos_bc = 2
@@ -237,16 +244,21 @@ def prismPillar(BASENAME,pos,exc):
   
   # define excitation
   ################
+  if pillar.boundaries.Ypos_bc == 2:
+    Ysym = False
+  else:
+    Ysym = True
+
   if pos == 0:
-    QuadrupleExcitation(pillar,P1,'x',delta,template_radius,freq,exc)
+    QuadrupleExcitation(Ysym,pillar,P1,'x',delta,template_radius,freq,exc)
   elif pos == 1:
-    QuadrupleExcitation(pillar,P2,'z',delta,template_radius,freq,exc)
+    QuadrupleExcitation(Ysym,pillar,P2,'z',delta,template_radius,freq,exc)
   elif pos == 2:
-    QuadrupleExcitation(pillar,P3,'x',delta,template_radius,freq,exc)
+    QuadrupleExcitation(Ysym,pillar,P3,'x',delta,template_radius,freq,exc)
   elif pos == 3:
-    QuadrupleExcitation(pillar,P4,'z',delta,template_radius,freq,exc)
+    QuadrupleExcitation(Ysym,pillar,P4,'z',delta,template_radius,freq,exc)
   elif pos == 4:
-    QuadrupleExcitation(pillar,P5,'x',delta,template_radius,freq,exc)
+    QuadrupleExcitation(Ysym,pillar,P5,'x',delta,template_radius,freq,exc)
   else:
     sys.exit(-1)
   ################
@@ -319,16 +331,16 @@ def prismPillar(BASENAME,pos,exc):
   # write
   #DSTDIR = os.getenv('DATADIR')
   #DSTDIR = os.getenv('TESTDIR')
-  DSTDIR = os.getenv('TESTDIR')
+  DSTDIR = os.getenv('TESTDIR')+os.sep+'triangle_pillar'
   pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
   GEOshellscript(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
   #GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
   print pillar.getNcells()
   
 if __name__ == "__main__":
-  #for pos in range(5):
-    #for exc in range(4):
-      #prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
-  for pos in range(1):
-    for exc in range(1):
+  for pos in range(5):
+    for exc in range(4):
       prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
+  #pos=0
+  #exc=3
+  #prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
