@@ -28,22 +28,53 @@ def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,freq
     excitation.current_source = 11
     diagonal = (array(plane_direction_vector)^array([1,1,1]))
     excitation.setExtension(centre - size*diagonal, centre + size*diagonal)
-  return(excitation)
+
+  if excitation_direction==[1,0,0]:
+    out_col_name = 'Exre'
+  if excitation_direction==[0,1,0]:
+    out_col_name = 'Eyre'
+  if excitation_direction==[0,0,1]:
+    out_col_name = 'Ezre'
+
+  if plane_direction_alpha=='x':
+    column_titles = ['y','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
+    x = centre[1]
+    y = centre[2]
+  if plane_direction_alpha=='y':
+    column_titles = ['x','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
+    x = centre[0]
+    y = centre[2]
+  if plane_direction_alpha=='z':
+    column_titles = ['x','y','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
+    x = centre[0]
+    y = centre[1]
+    
+    #template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = centre, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9, fileName='template.dat')
+    #pillar.excitation_template_list.append(template1)
+    #template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
+  template = ExcitationGaussian2(amplitude = 1, beam_centre_x = x, beam_centre_y = y, c = 0, sigma = size, fileName='template.dat')
+    #pillar.excitation_template_list.append(template2)
+    #template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
+
+  return(excitation, template)
+  #return excitation
 
 def QuadrupleExcitation(pillar,P,direction):
   # Ey 1D
-  excitation = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=[0,1,0],frequency=freq)
+  excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=[0,1,0],frequency=freq)
   pillar.excitation_list.append(excitation)
   # Ez 1D
-  excitation = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=[0,0,1],frequency=freq)
+  excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=[0,0,1],frequency=freq)
   pillar.excitation_list.append(excitation)
   # Ey 2D
-  excitation = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=[0,1,0],frequency=freq)
+  excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=[0,1,0],frequency=freq)
   pillar.excitation_list.append(excitation)
+  pillar.excitation_template_list.append(template)
   # Ez 2D
-  excitation = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=[0,0,1],frequency=freq)
+  excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=[0,0,1],frequency=freq)
   pillar.excitation_list.append(excitation)
-  
+  pillar.excitation_template_list.append(template)
+
 #def prismPillar(geometry=''):
 pillar = BFDTDobject()
 
@@ -102,39 +133,43 @@ prism.NvoxelsZ = 30
 pillar.geometry_object_list.append(prism)
 
 buffersize=3*delta
+n_meshblock = 2
 
 # X buffers
-block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
 block.lower = [ prism.lower[0]-buffersize, prism.lower[1], prism.lower[2] ]
 block.upper = [ prism.lower[0], prism.upper[1], prism.upper[2] ]
-#pillar.geometry_object_list.append(block)
+pillar.geometry_object_list.append(block)
 
-block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
 block.lower = [ prism.upper[0], prism.lower[1], prism.lower[2] ]
 block.upper = [ prism.upper[0]+buffersize, prism.upper[1], prism.upper[2] ]
-#pillar.geometry_object_list.append(block)
+pillar.geometry_object_list.append(block)
 
 # Y buffers
-block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
 block.lower = [ prism.lower[0], prism.lower[1]-buffersize, prism.lower[2] ]
 block.upper = [ prism.upper[0], prism.lower[1], prism.upper[2] ]
-#pillar.geometry_object_list.append(block)
+pillar.geometry_object_list.append(block)
 
-block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
 block.lower = [ prism.lower[0], prism.upper[1], prism.lower[2] ]
 block.upper = [ prism.upper[0], prism.upper[1]+buffersize, prism.upper[2] ]
-#pillar.geometry_object_list.append(block)
+pillar.geometry_object_list.append(block)
 
 # Z buffers
-block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
 block.lower = [ prism.lower[0], prism.lower[1], prism.lower[2]-buffersize ]
 block.upper = [ prism.upper[0], prism.upper[1], prism.lower[2] ]
-#pillar.geometry_object_list.append(block)
+pillar.geometry_object_list.append(block)
 
-block = Block(permittivity = pow(n_air,2), conductivity = 0)
+block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
 block.lower = [ prism.lower[0], prism.lower[1], prism.upper[2] ]
 block.upper = [ prism.upper[0], prism.upper[1], prism.upper[2]+buffersize ]
-#pillar.geometry_object_list.append(block)
+pillar.geometry_object_list.append(block)
+
+pillar.autoMeshGeometry(0.637/10)
+print pillar.getNcells()
 
 ##################################
 # prepare some points
@@ -171,13 +206,6 @@ P4[2] = A2_global[2] - delta
 P5 = copy(top_centre)
 P5[0] = A2_global[0] + delta
 
-# define probe
-pillar.probe_list.append(Probe(position = P1))
-pillar.probe_list.append(Probe(position = P2))
-pillar.probe_list.append(Probe(position = P3))
-pillar.probe_list.append(Probe(position = P4))
-pillar.probe_list.append(Probe(position = P5))
-
 # define excitation
 ################
 QuadrupleExcitation(pillar,P1,'x')
@@ -197,16 +225,6 @@ QuadrupleExcitation(pillar,P5,'x')
 #x_list = arange(x_min,x_max,step_x)
 #y_list = arange(y_min,y_max,step_y)
 
-out_col_name = 'Exre'
-column_titles = ['x','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
-
-template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9, fileName='template1.dat')
-pillar.excitation_template_list.append(template1)
-#template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
-template2 = ExcitationGaussian2(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, c = 0.5, sigma = 0.5, fileName='template2.dat')
-pillar.excitation_template_list.append(template2)
-#template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
-
 
 #probe_X = [ P_centre[0]-(0.5*height+delta), P_centre[0], P_centre[0]+(0.5*height+delta) ]
 
@@ -223,15 +241,39 @@ pillar.excitation_template_list.append(template2)
       #probe = Probe(position = [ x,y,z ])
       #pillar.probe_list.append(probe)
 
-# define frequency snapshots
+# define frequency snapshots and probes
 first = min(65400,pillar.flag.iterations)
 frequency_vector = [freq]
-F = pillar.addFrequencySnapshot(1,P_centre[0]); F.first = first; F.frequency_vector = frequency_vector
-if pillar.boundaries.Ypos_bc == 2:
-  F = pillar.addFrequencySnapshot(2,P_centre[1]); F.first = first; F.frequency_vector = frequency_vector
-else:
-  F = pillar.addFrequencySnapshot(2,P_centre[1]-delta); F.first = first; F.frequency_vector = frequency_vector
-F = pillar.addFrequencySnapshot(3,P_centre[2]); F.first = first; F.frequency_vector = frequency_vector
+
+P1_m = copy(P1)
+P2_m = copy(P2)
+P3_m = copy(P3)
+P4_m = copy(P4)
+P5_m = copy(P5)
+if pillar.boundaries.Ypos_bc == 1:
+  voxeldim_global = prism.getVoxelDimensions()
+  P1_m[1] = P1_m[1] - voxeldim_global[1]
+  P2_m[1] = P2_m[1] - voxeldim_global[1]
+  P3_m[1] = P3_m[1] - voxeldim_global[1]
+  P4_m[1] = P4_m[1] - voxeldim_global[1]
+  P5_m[1] = P5_m[1] - voxeldim_global[1]
+
+Plist = [P1_m,P2_m,P3_m,P4_m,P5_m]
+for idx in range(len(Plist)):
+  P = Plist[idx]
+  F = pillar.addFrequencySnapshot(1,P[0]); F.first = first; F.frequency_vector = frequency_vector; F.name='x_'+str(idx)
+  F = pillar.addFrequencySnapshot(2,P[1]); F.first = first; F.frequency_vector = frequency_vector; F.name='y_'+str(idx)
+  F = pillar.addFrequencySnapshot(3,P[2]); F.first = first; F.frequency_vector = frequency_vector; F.name='z_'+str(idx)
+  probe = Probe(position = P); probe.name = 'p_'+str(idx)
+  pillar.probe_list.append(probe)
+
+#F = pillar.addFrequencySnapshot(1,P_centre[0]); F.first = first; F.frequency_vector = frequency_vector
+#if pillar.boundaries.Ypos_bc == 2:
+  #F = pillar.addFrequencySnapshot(2,P_centre[1]); F.first = first; F.frequency_vector = frequency_vector
+#else:
+  #F = pillar.addFrequencySnapshot(2,P_centre[1]-delta); F.first = first; F.frequency_vector = frequency_vector
+#F = pillar.addFrequencySnapshot(3,P_centre[2]); F.first = first; F.frequency_vector = frequency_vector
+
 F = pillar.addBoxFrequencySnapshots(); F.first = first; F.frequency_vector = frequency_vector
 
 ## define mesh
@@ -244,5 +286,6 @@ pillar.autoMeshGeometry(0.637/10)
 DSTDIR = os.getenv('TESTDIR')
 BASENAME = 'triangle_pillar'
 pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
+GEOshellscript(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 #GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 print pillar.getNcells()

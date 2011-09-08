@@ -245,6 +245,44 @@ class SpecialTriangularPrism(Geometry_object):
     epsz = vstack([epsz,self.meshing_parameters.maxPermittivityVector_Z])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
+  def getVoxelDimensions(self):
+    #dX = self.meshing_parameters.limits_X[1]-self.meshing_parameters.limits_X[0]
+    #dY = self.meshing_parameters.limits_Y[1]-self.meshing_parameters.limits_Y[0]
+    #dZ = self.meshing_parameters.limits_Z[1]-self.meshing_parameters.limits_Z[0]
+        ##meshing_parameters = MeshingParameters()
+    #voxel_list = []
+    #####################################
+    ## X = triangle size
+    ## Y = triangle peak
+    ## Z = prism length
+    #####################################
+    mini = self.global2local(self.lower)
+    maxi = self.global2local(self.upper)
+    ##maxi = [0,0,0]
+    ##mini[0] = self.lower[self.orientation.index(0)]
+    ##mini[1] = self.lower[self.orientation.index(1)]
+    ##mini[2] = self.lower[self.orientation.index(2)]
+    ##maxi[0] = self.upper[self.orientation.index(0)]
+    ##maxi[1] = self.upper[self.orientation.index(1)]
+    ##maxi[2] = self.upper[self.orientation.index(2)]
+    ##print mini[0],maxi[0]
+    ##print mini[1],maxi[1]
+    ##print mini[2],maxi[2]
+    DX = maxi[0] - mini[0]
+    DY = maxi[1] - mini[1]
+    DZ = maxi[2] - mini[2]
+    NX = self.NvoxelsX
+    NY = self.NvoxelsY
+    NZ = self.NvoxelsZ
+    ##print DX,DY,DZ
+    # TODO: Correct this
+    dX = DX/( 2.*self.NvoxelsX + 1.)
+    dY = DY/(self.NvoxelsY)
+    dZ = DZ/(self.NvoxelsZ)
+    voxeldim_local = [dX,dY,dZ]
+    voxeldim_global = self.local2global(voxeldim_local)
+    return voxeldim_global
+
 if __name__ == "__main__":
   foo = TriangularPrism()
   foo.getVoxels()
