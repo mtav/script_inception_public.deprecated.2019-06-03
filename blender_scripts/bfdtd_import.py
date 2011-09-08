@@ -73,7 +73,7 @@ def importBristolFDTD(filename):
         Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
         print(Blender.Window.GetActiveLayer())
         print(excitation)
-        FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
+        FDTDGeometryObjects_obj.GEOexcitation(excitation);
     # Probe
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
     Nprobes = 0

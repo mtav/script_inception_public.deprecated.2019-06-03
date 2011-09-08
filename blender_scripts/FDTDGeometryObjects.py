@@ -329,10 +329,17 @@ class FDTDGeometryObjects:
     
         return
         
-    def GEOexcitation(self, name, P1, P2):
-        print(Blender.Window.GetActiveLayer())
+    def GEOexcitation(self, excitation):
+        name = excitation.name
+        P1 = Vector(excitation.P1)
+        P2 = Vector(excitation.P2)
+        
+        if excitation.current_source != 11:
+          print('template excitation')
+        else:
+          print('normal excitation')
+      
         scene = Blender.Scene.GetCurrent();
-        print(Blender.Window.GetActiveLayer())
 
         # arrow dimensions:
         arrow_length = (P2-P1).length;
@@ -496,21 +503,21 @@ def TestObjects():
     GEOmesh(False, [1, 1], [1, 2, 3], [4, 3, 2, 1]);
     
     Blender.Window.SetActiveLayer(1<<1);
-    GEOexcitation(Vector(0,0,0), Vector(1,0,0));
-    GEOexcitation(Vector(0,0,0), Vector(0,1,0));
-    GEOexcitation(Vector(0,0,0), Vector(0,0,1));
+    #GEOexcitation(Vector(0,0,0), Vector(1,0,0));
+    #GEOexcitation(Vector(0,0,0), Vector(0,1,0));
+    #GEOexcitation(Vector(0,0,0), Vector(0,0,1));
 
-    GEOexcitation(Vector(1,0,0), Vector(2,0,0));
-    GEOexcitation(Vector(0,1,0), Vector(0,2,0));
-    GEOexcitation(Vector(0,0,1), Vector(0,0,2));
+    #GEOexcitation(Vector(1,0,0), Vector(2,0,0));
+    #GEOexcitation(Vector(0,1,0), Vector(0,2,0));
+    #GEOexcitation(Vector(0,0,1), Vector(0,0,2));
 
-    GEOexcitation(Vector(0,0,0), Vector(1,1,1));
-    GEOexcitation(Vector(1,1,1), Vector(2,2,2));
-    GEOexcitation(Vector(2,2,2), Vector(3,3,3));
+    #GEOexcitation(Vector(0,0,0), Vector(1,1,1));
+    #GEOexcitation(Vector(1,1,1), Vector(2,2,2));
+    #GEOexcitation(Vector(2,2,2), Vector(3,3,3));
 
-    GEOexcitation(Vector(1,1,1), Vector(2,1,2));
-    GEOexcitation(Vector(2,1,2), Vector(2,2,3));
-    GEOexcitation(Vector(2,2,3), Vector(1,2,4));
+    #GEOexcitation(Vector(1,1,1), Vector(2,1,2));
+    #GEOexcitation(Vector(2,1,2), Vector(2,2,3));
+    #GEOexcitation(Vector(2,2,3), Vector(1,2,4));
 
     # The death spiral!
     # x1=0;y1=0;z1=0;
