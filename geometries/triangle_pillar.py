@@ -104,14 +104,14 @@ def prismPillar(BASENAME,pos,exc):
   Lambda_mum = 0.637
   delta = Lambda_mum/(10*n_diamond)
   freq = get_c0()/Lambda_mum
-  k=1; radius = k*Lambda_mum/(4*n_diamond)
-  Nbottom = 10; Ntop = 10
+  k=4; radius = k*Lambda_mum/(4*n_diamond)
+  Nbottom = 3; Ntop = 3
   h_air = Lambda_mum/(4*n_air)
   h_diamond = Lambda_mum/(4*n_diamond)
   h_cavity = Lambda_mum/(n_diamond)
   height = Nbottom*(h_air+h_diamond) + h_cavity + Ntop*(h_air+h_diamond)
   print('height = ',height)
-  buffer = 0.25
+  buffer = 0.05
   FullBox_upper = [ height+2*buffer, 2*(radius+buffer), 2*(radius+buffer) ]
   
   P_centre = [ buffer + Nbottom*(h_air+h_diamond) + 0.5*h_cavity, 0.5*FullBox_upper[1], 0.5*FullBox_upper[2] ]
@@ -137,8 +137,8 @@ def prismPillar(BASENAME,pos,exc):
   
   #prism = TriangularPrism()
   prism = SpecialTriangularPrism()
-  prism.lower = [ P_centre[0]-0.5*height, P_centre[1]-3./2.*radius*1.0/sqrt(3), P_centre[2]-0.5*radius ]
-  prism.upper = [ P_centre[0]+0.5*height, P_centre[1]+3./2.*radius*1.0/sqrt(3), P_centre[2]+3*radius ]
+  prism.lower = [ 0, 0, 0 ]
+  prism.upper = [ height, 2*3./2.*radius*1.0/sqrt(3), 3./2.*radius ]
   #prism.lower = [1,1,1]
   #prism.upper = [1,10,1]
   #prism.lower = [1,2,3]
@@ -161,8 +161,8 @@ def prismPillar(BASENAME,pos,exc):
   
   pillar.geometry_object_list.append(prism)
   
-  buffersize=3*delta
-  n_meshblock = 2
+  buffersize=10*delta
+  n_meshblock = 2.4
   
   # X buffers
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
