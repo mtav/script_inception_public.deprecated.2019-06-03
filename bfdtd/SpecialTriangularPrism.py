@@ -56,6 +56,7 @@ class SpecialTriangularPrism(Geometry_object):
   def getVoxels(self):
     #meshing_parameters = MeshingParameters()
     voxel_list = []
+    ####################################
     # X = triangle size
     # Y = triangle peak
     # Z = prism length
@@ -82,7 +83,7 @@ class SpecialTriangularPrism(Geometry_object):
     voxel_radius_X = R/( 2.*self.NvoxelsX + 1.)
     for iX in range(self.NvoxelsX):
       for iY in range(iX+1):
-        # bottom blocks
+        # X- blocks
         L = [ mini[0]+2*R*(iX)/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
         U = [ mini[0]+2*R*(iX + 1)/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
@@ -91,7 +92,7 @@ class SpecialTriangularPrism(Geometry_object):
         self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
         self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
-        # top blocks
+        # X+ blocks
         L = [ mini[0]+2*R*((2*NX+1)-(iX))/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
         U = [ mini[0]+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
@@ -141,27 +142,92 @@ class SpecialTriangularPrism(Geometry_object):
     
   def getBoundingBoxCentre(self):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
-    #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
     return(C)
 
   # TODO
   def getGeoCentre(self):
-    #C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
-    #CC = [ C[self.orientation[i]] for i in [0,1,2] ]
-    A = 
-    B = 
-    C = 
-    G = (A+B+C)/3
-    return(C)
+    (A1,B1,C1,A2,B2,C2) = self.getLocalEnvelopPoints()
+    G = (A1+B1+C1+A2+B2+C2)/6.0
+    GG = [ G[self.orientation[0]],G[self.orientation[1]],G[self.orientation[2]] ]
+    return(GG)
+
+  def getGlobalEnvelopPoints(self):
+    (A1_local,B1_local,C1_local,A2_local,B2_local,C2_local) = self.getLocalEnvelopPoints()
+    A1_global = self.local2global(A1_local)
+    B1_global = self.local2global(B1_local)
+    C1_global = self.local2global(C1_local)
+    A2_global = self.local2global(A2_local)
+    B2_global = self.local2global(B2_local)
+    C2_global = self.local2global(C2_local)
+    return(A1_global,B1_global,C1_global,A2_global,B2_global,C2_global)
   
+  def getLocalEnvelopPoints(self):
+    ####################################
+    # X = triangle size
+    # Y = triangle peak
+    # Z = prism length
+    ####################################
+    mini = [0,0,0]
+    maxi = [0,0,0]
+    mini[0] = self.lower[self.orientation.index(0)]
+    mini[1] = self.lower[self.orientation.index(1)]
+    mini[2] = self.lower[self.orientation.index(2)]
+    maxi[0] = self.upper[self.orientation.index(0)]
+    maxi[1] = self.upper[self.orientation.index(1)]
+    maxi[2] = self.upper[self.orientation.index(2)]
+    DX = maxi[0] - mini[0]
+    DY = maxi[1] - mini[1]
+    DZ = maxi[2] - mini[2]
+    print('Prism dimensions = ',[DX,DY,DZ])
+    #x
+    #mini[0]
+    #0.5*(maxi[0]+mini[0])
+    #maxi[0]
+
+    #y
+    #mini[1]
+    #maxi[1]
+    
+    #z
+    #mini[2]
+    #mini[2]+DY
+    #maxi[2]-DY
+    #maxi[2]
+    
+    #bottom triangle
+    A1 = array([mini[0],mini[1],mini[2]])
+    B1 = array([0.5*(maxi[0]+mini[0]),maxi[1],mini[2]+DY])
+    C1 = array([maxi[0],mini[1],mini[2]])
+    #top triangle
+    A2 = array([mini[0],mini[1],maxi[2]])
+    B2 = array([0.5*(maxi[0]+mini[0]),maxi[1],maxi[2]-DY])
+    C2 = array([maxi[0],mini[1],maxi[2]])
+
+    return(A1,B1,C1,A2,B2,C2)
+  
+  def global2local(self, P_global):
+    P_local = [ P_global[self.orientation.index(0)], P_global[self.orientation.index(1)], P_global[self.orientation.index(2)] ]
+    return P_local
+
+  def local2global(self, P_local):
+    P_global = [ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ]
+    return P_global
+    
   # TODO
-  def getInscribedSquarePlaneRadius(G = self.getGeoCentre()):
-    B = 
-    C = 
-    v = [-1;-1]
-    BC = []
-    [k;l] = [v,BC]^-1 * (G-B)
-    radius = k
+  def getInscribedSquarePlaneRadius(self, G_global):
+    G_local = self.global2local(G_global)
+    (A1,B1,C1,A2,B2,C2) = self.getLocalEnvelopPoints()
+    B = matrix([ [B1[0]], [B1[1]] ])
+    C = matrix([ [C1[0]], [C1[1]] ])
+    v = matrix([ [-1], [-1] ])
+    BC = C-B
+    print(v)
+    print(BC)
+    M = hstack((v,BC))
+    print(M)
+    kl = M.getI() * (G_local-B)
+    k = kl[0,0]
+    radius = abs(k)
     return(radius)
 
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):

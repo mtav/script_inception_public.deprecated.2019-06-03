@@ -126,6 +126,9 @@ block.upper = [ prism.upper[0], prism.upper[1], prism.upper[2]+buffersize ]
 
 # define excitation
 P_centre = prism.getGeoCentre()
+template_radius = prism.getInscribedSquarePlaneRadius(P_centre)
+print('template_radius = ',template_radius)
+template_radius = 0.0307
 
 # centre Ey 1D
 excitation = ExcitationWrapper(centre=P_centre,size=delta,plane_direction='x',type='1D',excitation_direction=[0,1,0],frequency=freq)
