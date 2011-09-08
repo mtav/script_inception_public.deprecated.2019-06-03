@@ -40,7 +40,7 @@ http://sourceforge.net/projects/numpy/files/NumPy/1.6.1/numpy-1.6.1-win32-superp
 
 http://download.blender.org/release/Blender2.49b/blender-2.49b-windows.exe
 
-4) Download and extract the latest version of the repository wherever you want, let's say "H:\script_inception_public" for example.
+4) Download and extract the latest version of the repository wherever you want, let's say "H:\script_inception_public" for example: https://github.com/mtav/script_inception_public/archives/master
 
 5) Copy all the .py files from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts"
 
