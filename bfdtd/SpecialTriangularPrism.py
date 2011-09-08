@@ -206,11 +206,11 @@ class SpecialTriangularPrism(Geometry_object):
     return(A1,B1,C1,A2,B2,C2)
   
   def global2local(self, P_global):
-    P_local = [ P_global[self.orientation.index(0)], P_global[self.orientation.index(1)], P_global[self.orientation.index(2)] ]
+    P_local = array([ P_global[self.orientation.index(0)], P_global[self.orientation.index(1)], P_global[self.orientation.index(2)] ])
     return P_local
 
   def local2global(self, P_local):
-    P_global = [ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ]
+    P_global = array([ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ])
     return P_global
     
   def getInscribedSquarePlaneRadius(self, G_global):
