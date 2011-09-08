@@ -332,7 +332,8 @@ def prismPillar(BASENAME,pos,exc):
   # write
   #DSTDIR = os.getenv('DATADIR')
   #DSTDIR = os.getenv('TESTDIR')
-  DSTDIR = os.getenv('TESTDIR')+os.sep+'triangle_pillar'
+  #DSTDIR = os.getenv('TESTDIR')+os.sep+'triangle_pillar'
+  DSTDIR = os.getenv('DATADIR')+os.sep+'triangle_pillar'
   pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
   GEOshellscript(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
   #GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
