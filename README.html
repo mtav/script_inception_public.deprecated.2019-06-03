@@ -561,7 +561,7 @@ footnotes: function () {
 <h2 id="_license">License:</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Unless otherwise specified inside a file or folder, everything is under GPLv3 (cf COPYING.txt).</p></div>
-<div class="paragraph"><p>The following are under the LGPL:</p></div>
+<div class="paragraph"><p>The following (written by Ian Buss) are under the LGPL:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -584,34 +584,52 @@ Geo2Str
 <div class="sectionbody">
 <div class="paragraph"><p>For more info: <a href="https://wikis.bris.ac.uk/display/Photonics/Public+scripts+repository">https://wikis.bris.ac.uk/display/Photonics/Public+scripts+repository</a></p></div>
 </div>
-<h2 id="_blender_scripts_installation_howto">Blender scripts installation HOWTO:</h2>
+<h2 id="_blender_scripts">Blender scripts</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>I still need to make it a bit more user-friendly, but to install it, here&#8217;s what you have to do:</p></div>
-<div class="paragraph"><p>1) Install blender 2.49b (so, not the latest version, but I&#8217;ll try to fix that later. The problem is that the latest blender version uses python 3 instead of python 2.6)</p></div>
-<div class="paragraph"><p><a href="http://download.blender.org/release/Blender2.49b/blender-2.49b-windows.exe">http://download.blender.org/release/Blender2.49b/blender-2.49b-windows.exe</a></p></div>
-<div class="paragraph"><p>2) Install python 2.6 (normally, there is a bundled package with blender+python, but apparently they only keep it for the latest stable release)</p></div>
+<h3 id="_installation_howto">Installation HOWTO:</h3><div style="clear:left"></div>
+<div class="paragraph"><p>I still need to make it a bit more user-friendly, but to install it, here&#8217;s what you have to do (tested on Windows XP):</p></div>
+<div class="paragraph"><p>1) Install python 2.6 (normally, there is a bundled package with blender+python, but apparently they only keep it for the latest stable release)</p></div>
 <div class="paragraph"><p><a href="http://www.python.org/download/releases/2.6.6/">http://www.python.org/download/releases/2.6.6/</a></p></div>
-<div class="paragraph"><p>3) Download and extract the latest version of the repository wherever you want, let&#8217;s say "H:\script_inception_public" for example.</p></div>
-<div class="paragraph"><p>4) copy all the .py files from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts"</p></div>
-<div class="paragraph"><p>5) Define the following environment variables (cf <a href="http://support.microsoft.com/kb/310519">http://support.microsoft.com/kb/310519</a> for how to do this) :</p></div>
+<div class="paragraph"><p>2) Install numpy from:</p></div>
+<div class="paragraph"><p><a href="http://sourceforge.net/projects/numpy/files/NumPy/1.6.1/numpy-1.6.1-win32-superpack-python2.6.exe/download">http://sourceforge.net/projects/numpy/files/NumPy/1.6.1/numpy-1.6.1-win32-superpack-python2.6.exe/download</a></p></div>
+<div class="paragraph"><p>3) Install blender 2.49b (so, not the latest version, but I&#8217;ll try to fix that later. The problem is that the latest blender version uses python 3 instead of python 2.6)</p></div>
+<div class="paragraph"><p><a href="http://download.blender.org/release/Blender2.49b/blender-2.49b-windows.exe">http://download.blender.org/release/Blender2.49b/blender-2.49b-windows.exe</a></p></div>
+<div class="paragraph"><p>4) Download and extract the latest version of the repository wherever you want, let&#8217;s say "H:\script_inception_public" for example.</p></div>
+<div class="paragraph"><p>5) Copy all the .py files from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts"</p></div>
+<div class="paragraph"><p><em>Note 1: The "Application Data" folder may be hidden. To unhide it: <a href="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true">http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true</a></em></p></div>
+<div class="paragraph"><p><em>Note 2: The .py extensions may be hidden, but just copy all the contents of the folder. The other files shouldn&#8217;t cause problems.</em></p></div>
+<div class="paragraph"><p>6) Copy the .B.blend file from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender"</p></div>
+<div class="paragraph"><p>7) Define the following environment variables (cf <a href="http://support.microsoft.com/kb/310519">http://support.microsoft.com/kb/310519</a> for how to do this) :</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-DATADIR = H:\ (or whatever else you want to use as the default import directory. It doesn&#8217;t matter much, since the import script will store the last directory you imported from. I&#8217;m going to change it so this variable isn&#8217;t mandatory anymore)
+DATADIR = H:\ (or whatever else you want to use as the default import directory. It does not matter much, since the import script will store the last directory you imported from. Im going to change it so this variable isnt mandatory anymore)
 </p>
 </li>
 <li>
 <p>
-PYTHONPATH = H:\script_inception_public
+PYTHONPATH = H:\script_inception_public (Use the folder you chose in step 4)
 </p>
 </li>
 </ul></div>
+<div class="paragraph"><p>Ok, you are now ready to import BFDTD files with blender.</p></div>
+<h3 id="_usage_instructions">Usage instructions:</h3><div style="clear:left"></div>
+<div class="paragraph"><p>1) Start blender</p></div>
+<div class="paragraph"><p>2) File&#8594;Import&#8594;Bristol FDTD</p></div>
+<div class="paragraph"><p>3) Search for .geo,.inp or .in files and import them (Tip: middle-click on a file opens it)</p></div>
+<h3 id="_other_blender_scripts">Other blender scripts:</h3><div style="clear:left"></div>
+<h4 id="_1_layer_manager">1) Layer manager:</h4>
+<div class="paragraph"><p>It makes it easier to show/hide the diverse components of the BFDTD files.</p></div>
+<div class="paragraph"><p>To use it, in the "scripts window", click on "Scripts&#8594;System&#8594;Layer manager".</p></div>
+<h4 id="_2_blender_caliper">2) Blender caliper:</h4>
+<div class="paragraph"><p>To show dimensions, etc, you can use the blender caliper script.</p></div>
+<div class="paragraph"><p>To use it, in the "scripts window", click on "Scripts&#8594;Wizards&#8594;Blender caliper".</p></div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2011-04-23 02:50:23 BST
+Last updated 2011-09-08 17:06:18 BST
 </div>
 </div>
 </body>

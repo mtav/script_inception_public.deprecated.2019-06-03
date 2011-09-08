@@ -44,9 +44,9 @@ http://download.blender.org/release/Blender2.49b/blender-2.49b-windows.exe
 
 5) Copy all the .py files from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts"
 
-_ Note 1: The "Application Data" folder may be hidden. To unhide it: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true _
+_Note 1: The "Application Data" folder may be hidden. To unhide it: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true_
 
-_ Note 2: The .py extensions may be hidden, but just copy all the contents of the folder. The other files shouldn't cause problems. _
+_Note 2: The .py extensions may be hidden, but just copy all the contents of the folder. The other files shouldn't cause problems._
 
 6) Copy the .B.blend file from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender"
 
