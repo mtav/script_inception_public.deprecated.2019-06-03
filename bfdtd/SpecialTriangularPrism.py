@@ -282,6 +282,12 @@ class SpecialTriangularPrism(Geometry_object):
     voxeldim_local = [dX,dY,dZ]
     voxeldim_global = self.local2global(voxeldim_local)
     return voxeldim_global
+    
+  def setGeoCentre(self,P):
+    current = self.getGeoCentre()
+    print('self.getGeoCentre() = ',current)
+    self.lower = array(self.lower) + (array(P) - current)
+    self.upper = array(self.upper) + (array(P) - current)
 
 if __name__ == "__main__":
   foo = TriangularPrism()

@@ -151,6 +151,14 @@ def prismPillar(BASENAME,pos,exc):
   prism.NvoxelsY = 30
   prism.NvoxelsZ = 30
   
+  prismPos = copy(pillar.box.getCenter())
+  if pillar.boundaries.Ypos_bc == 1:
+    prismPos[1] = pillar.box.upper[1]
+  prism.setGeoCentre(prismPos)
+  #pillar.probe_list.append(Probe(position = prism.getGeoCentre()))
+  #prism.setGeoCentre([0,0,0])
+  #pillar.probe_list.append(Probe(position = prism.getGeoCentre()))
+  
   pillar.geometry_object_list.append(prism)
   
   buffersize=3*delta
@@ -318,6 +326,9 @@ def prismPillar(BASENAME,pos,exc):
   print pillar.getNcells()
   
 if __name__ == "__main__":
-  for pos in range(5):
-    for exc in range(4):
+  #for pos in range(5):
+    #for exc in range(4):
+      #prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
+  for pos in range(1):
+    for exc in range(1):
       prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
