@@ -44,7 +44,7 @@ _Note 1: The "Application Data" folder may be hidden. To unhide it: http://www.m
 _Note 2: The .py extensions may be hidden, but just copy all the contents of the folder. The other files shouldn't cause problems._
 
 . Copy the file *H:\script_inception_public\blender_scripts\.B.blend* into *C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender* +
-_Note: This is just to set up a nicer default workspace, so it is optional. You can save your workspace as the default at any time in Blender with File->Save default settings._
+_Note: This is just to set up a nicer default workspace, so it is optional. You can save your workspace as the default at any time in Blender with *File->Save default settings*._
 
 . Define the following environment variables (cf http://support.microsoft.com/kb/310519 for how to do this) :
 
