@@ -53,6 +53,9 @@ def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,freq
     #pillar.excitation_template_list.append(template1)
     #template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
   template = ExcitationGaussian2(amplitude = 1, beam_centre_x = x, beam_centre_y = y, c = 0, sigma = size, fileName='template.dat')
+  template.out_col_name = out_col_name
+  template.column_titles = column_titles
+  
     #pillar.excitation_template_list.append(template2)
     #template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
 
@@ -60,22 +63,34 @@ def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,freq
   #return excitation
 
 def QuadrupleExcitation(pillar,P,direction,delta,template_radius,freq,exc):
+  if direction == 'x':
+    E1=[0,1,0]
+    E2=[0,0,1]
+  elif direction == 'y':
+    E1=[1,0,0]
+    E2=[0,0,1]
+  elif direction == 'z':
+    E1=[1,0,0]
+    E2=[0,1,0]
+  else:
+    sys.exit(-1)
+
   if exc == 0:
-    # Ey 1D
-    excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=[0,1,0],frequency=freq)
+    # E1 1D
+    excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=E1,frequency=freq)
     pillar.excitation_list.append(excitation)
   elif exc == 1:
-    # Ez 1D
-    excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=[0,0,1],frequency=freq)
+    # E2 1D
+    excitation, template = ExcitationWrapper(centre=P,size=delta,plane_direction=direction,type='1D',excitation_direction=E2,frequency=freq)
     pillar.excitation_list.append(excitation)
   elif exc == 2:
-    # Ey 2D
-    excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=[0,1,0],frequency=freq)
+    # E1 2D
+    excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=E1,frequency=freq)
     pillar.excitation_list.append(excitation)
     pillar.excitation_template_list.append(template)
   elif exc == 3:
-    # Ez 2D
-    excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=[0,0,1],frequency=freq)
+    # E2 2D
+    excitation, template = ExcitationWrapper(centre=P,size=template_radius,plane_direction=direction,type='2D',excitation_direction=E2,frequency=freq)
     pillar.excitation_list.append(excitation)
     pillar.excitation_template_list.append(template)
   else:
