@@ -4,6 +4,7 @@
 from __future__ import division
 from bfdtd.bfdtd_parser import *
 
+#TODO: non 45 degree faces, i.e. generic version which would also allow creation of parallel-sided prism
 class SpecialTriangularPrism(Geometry_object):
   def __init__(self,
     name = 'SpecialTriangularPrism',
@@ -144,7 +145,6 @@ class SpecialTriangularPrism(Geometry_object):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     return(C)
 
-  # TODO
   def getGeoCentre(self):
     (A1,B1,C1,A2,B2,C2) = self.getLocalEnvelopPoints()
     G = (A1+B1+C1+A2+B2+C2)/6.0
@@ -213,19 +213,22 @@ class SpecialTriangularPrism(Geometry_object):
     P_global = [ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ]
     return P_global
     
-  # TODO
   def getInscribedSquarePlaneRadius(self, G_global):
     G_local = self.global2local(G_global)
+    G = matrix([ [G_local[0]], [G_local[1]] ])
     (A1,B1,C1,A2,B2,C2) = self.getLocalEnvelopPoints()
     B = matrix([ [B1[0]], [B1[1]] ])
     C = matrix([ [C1[0]], [C1[1]] ])
     v = matrix([ [-1], [-1] ])
     BC = C-B
-    print(v)
-    print(BC)
+    print('v = '+str(v))
+    print('B = '+str(B))
+    print('C = '+str(C))
+    print('G = '+str(G))
+    
     M = hstack((v,BC))
     print(M)
-    kl = M.getI() * (G_local-B)
+    kl = M.getI() * (G-B)
     k = kl[0,0]
     radius = abs(k)
     return(radius)

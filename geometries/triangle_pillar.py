@@ -137,10 +137,10 @@ pillar.excitation_list.append(excitation)
 excitation = ExcitationWrapper(centre=P_centre,size=delta,plane_direction='x',type='1D',excitation_direction=[0,0,1],frequency=freq)
 pillar.excitation_list.append(excitation)
 # centre Ey 2D
-excitation = ExcitationWrapper(centre=P_centre,size=radius,plane_direction='x',type='2D',excitation_direction=[0,1,0],frequency=freq)
+excitation = ExcitationWrapper(centre=P_centre,size=template_radius,plane_direction='x',type='2D',excitation_direction=[0,1,0],frequency=freq)
 pillar.excitation_list.append(excitation)
 # centre Ez 2D
-excitation = ExcitationWrapper(centre=P_centre,size=radius,plane_direction='x',type='2D',excitation_direction=[0,0,1],frequency=freq)
+excitation = ExcitationWrapper(centre=P_centre,size=template_radius,plane_direction='x',type='2D',excitation_direction=[0,0,1],frequency=freq)
 pillar.excitation_list.append(excitation)
 
 # create template
