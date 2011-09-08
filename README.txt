@@ -50,6 +50,8 @@ _Note 2: The .py extensions may be hidden, but just copy all the contents of the
 
 6) Copy the .B.blend file from "H:\script_inception_public\blender_scripts" into "C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender"
 
+_Note: This is just to set up a nicer default workspace, so it is optional. You can save the your workspace as the default at any time in Blender with File->Save default settings._
+
 7) Define the following environment variables (cf http://support.microsoft.com/kb/310519 for how to do this) :
 
 * DATADIR = H:\ (or whatever else you want to use as the default import directory. It does not matter much, since the import script will store the last directory you imported from. Im going to change it so this variable isnt mandatory anymore)
