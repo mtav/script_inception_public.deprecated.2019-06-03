@@ -60,6 +60,20 @@ _Note: This is just to set up a nicer default workspace, so it is optional. You 
 
 Ok, you are now ready to import BFDTD files with blender.
 
+Example filestructure after installation:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+H:\script_inception_public\addpath_recurse
+
+H:\script_inception_public\README.html
+
+...
+
+H:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\.B.blend
+
+H:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts\FDTDGeometryObjects.py
+
+...
+
 Usage instructions:
 ~~~~~~~~~~~~~~~~~~~
 1) Start blender
