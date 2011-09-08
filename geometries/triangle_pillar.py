@@ -123,8 +123,8 @@ def prismPillar(BASENAME,pos,exc):
   P_centre = [ buffer + Nbottom*(h_air+h_diamond) + 0.5*h_cavity, 0.5*FullBox_upper[1], 0.5*FullBox_upper[2] ]
   
   # define flag
-  #pillar.flag.iterations = 100000
-  pillar.flag.iterations = 1
+  pillar.flag.iterations = 100000
+  #pillar.flag.iterations = 1
   
   # define boundary conditions
   pillar.boundaries.Xpos_bc = 2
@@ -204,8 +204,8 @@ def prismPillar(BASENAME,pos,exc):
   block.upper = [ prism.upper[0], prism.upper[1], prism.upper[2]+buffersize ]
   pillar.geometry_object_list.append(block)
   
-  pillar.autoMeshGeometry(0.637/10)
-  print pillar.getNcells()
+  #pillar.autoMeshGeometry(0.637/10)
+  #print pillar.getNcells()
   
   ##################################
   # prepare some points
@@ -242,6 +242,7 @@ def prismPillar(BASENAME,pos,exc):
   P5 = copy(top_centre)
   P5[0] = A2_global[0] + delta
   
+  pillar.autoMeshGeometry(0.637/10)
   # define excitation
   ################
   if pillar.boundaries.Ypos_bc == 2:
@@ -326,7 +327,7 @@ def prismPillar(BASENAME,pos,exc):
   
   ## define mesh
   #pillar.addMeshingBox(lower,upper,)
-  pillar.autoMeshGeometry(0.637/10)
+  #pillar.autoMeshGeometry(0.637/10)
   
   # write
   #DSTDIR = os.getenv('DATADIR')
@@ -342,5 +343,5 @@ if __name__ == "__main__":
     for exc in range(4):
       prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
   #pos=0
-  #exc=3
+  #exc=0
   #prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
