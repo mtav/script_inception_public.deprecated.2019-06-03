@@ -30,6 +30,7 @@ def ExcitationWrapper(centre,size,plane_direction,type,excitation_direction,freq
     excitation.setExtension(centre - size*diagonal, centre + size*diagonal)
   return(excitation)
   
+def prismPillar():
 pillar = BFDTDobject()
 
 # constants
@@ -130,6 +131,9 @@ template_radius = prism.getInscribedSquarePlaneRadius(P_centre)
 print('template_radius = ',template_radius)
 template_radius = 0.0307
 
+################
+# centre
+################
 # centre Ey 1D
 excitation = ExcitationWrapper(centre=P_centre,size=delta,plane_direction='x',type='1D',excitation_direction=[0,1,0],frequency=freq)
 pillar.excitation_list.append(excitation)
@@ -144,23 +148,23 @@ excitation = ExcitationWrapper(centre=P_centre,size=template_radius,plane_direct
 pillar.excitation_list.append(excitation)
 
 # create template
-x_min = 0.0
-x_max = 4.00
-y_min = 0.0
-y_max = 4.00
-step_x = 2.00e-2
-step_y = 2.00e-1
-x_list = arange(x_min,x_max,step_x)
-y_list = arange(y_min,y_max,step_y)
+#x_min = 0.0
+#x_max = 4.00
+#y_min = 0.0
+#y_max = 4.00
+#step_x = 2.00e-2
+#step_y = 2.00e-1
+#x_list = arange(x_min,x_max,step_x)
+#y_list = arange(y_min,y_max,step_y)
 
 out_col_name = 'Exre'
 column_titles = ['x','z','Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim']
 
 template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9, fileName='template1.dat')
-#pillar.excitation_template_list.append(template1)
+pillar.excitation_template_list.append(template1)
 #template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
 template2 = ExcitationGaussian2(amplitude = 1, beam_centre_x = 2.1732, beam_centre_y = 2.00, c = 0.5, sigma = 0.5, fileName='template2.dat')
-#pillar.excitation_template_list.append(template2)
+pillar.excitation_template_list.append(template2)
 #template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
 
 # define probe
