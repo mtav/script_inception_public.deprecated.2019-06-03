@@ -128,7 +128,7 @@ def prismPillar(DSTDIR,BASENAME,pos,exc):
   
   # define boundary conditions
   pillar.boundaries.Xpos_bc = 2
-  pillar.boundaries.Ypos_bc = 1 #2
+  pillar.boundaries.Ypos_bc = 2 #1
   pillar.boundaries.Zpos_bc = 2
   
   # define box

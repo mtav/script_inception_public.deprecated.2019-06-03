@@ -131,6 +131,8 @@ class Excitation:
       FILE.write('}\n')
       FILE.write('\n')
     else:
+      self.E = [1,1,1]
+      self.H = [1,1,1]
       self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
       FILE.write('EXCITATION **name='+self.name+'\n')
       FILE.write('{\n')
