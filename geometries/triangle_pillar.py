@@ -102,7 +102,7 @@ def QuadrupleExcitation(Ysym,pillar,P,direction,delta,template_radius,freq,exc):
   else:
     sys.exit(-1)
 
-def prismPillar(BASENAME,pos,exc):
+def prismPillar(DSTDIR,BASENAME,pos,exc):
   pillar = BFDTDobject()
   
   # constants
@@ -175,34 +175,34 @@ def prismPillar(BASENAME,pos,exc):
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
   block.lower = [ prism.lower[0]-buffersize, prism.lower[1], prism.lower[2] ]
   block.upper = [ prism.lower[0], prism.upper[1], prism.upper[2] ]
-  pillar.geometry_object_list.append(block)
+  pillar.mesh_object_list.append(block)
   
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
   block.lower = [ prism.upper[0], prism.lower[1], prism.lower[2] ]
   block.upper = [ prism.upper[0]+buffersize, prism.upper[1], prism.upper[2] ]
-  pillar.geometry_object_list.append(block)
+  pillar.mesh_object_list.append(block)
   
   # Y buffers
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
   block.lower = [ prism.lower[0], prism.lower[1]-buffersize, prism.lower[2] ]
   block.upper = [ prism.upper[0], prism.lower[1], prism.upper[2] ]
-  pillar.geometry_object_list.append(block)
+  pillar.mesh_object_list.append(block)
   
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
   block.lower = [ prism.lower[0], prism.upper[1], prism.lower[2] ]
   block.upper = [ prism.upper[0], prism.upper[1]+buffersize, prism.upper[2] ]
-  pillar.geometry_object_list.append(block)
+  pillar.mesh_object_list.append(block)
   
   # Z buffers
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
   block.lower = [ prism.lower[0], prism.lower[1], prism.lower[2]-buffersize ]
   block.upper = [ prism.upper[0], prism.upper[1], prism.lower[2] ]
-  pillar.geometry_object_list.append(block)
+  pillar.mesh_object_list.append(block)
   
   block = Block(permittivity = pow(n_meshblock,2), conductivity = 0)
   block.lower = [ prism.lower[0], prism.lower[1], prism.upper[2] ]
   block.upper = [ prism.upper[0], prism.upper[1], prism.upper[2]+buffersize ]
-  pillar.geometry_object_list.append(block)
+  pillar.mesh_object_list.append(block)
   
   #pillar.autoMeshGeometry(0.637/10)
   #print pillar.getNcells()
@@ -333,16 +333,20 @@ def prismPillar(BASENAME,pos,exc):
   #DSTDIR = os.getenv('DATADIR')
   #DSTDIR = os.getenv('TESTDIR')
   #DSTDIR = os.getenv('TESTDIR')+os.sep+'triangle_pillar'
-  DSTDIR = os.getenv('DATADIR')+os.sep+'triangle_pillar'
+  #DSTDIR = os.getenv('DATADIR')+os.sep+'triangle_pillar'
   pillar.writeAll(DSTDIR+os.sep+BASENAME, BASENAME)
   GEOshellscript(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
   #GEOshellscript_advanced(DSTDIR+os.sep+BASENAME+os.sep+BASENAME+'.sh', BASENAME, getProbeColumnFromExcitation(excitation.E),'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
   print pillar.getNcells()
   
 if __name__ == "__main__":
+  DSTDIR = sys.argv[1]
+  if not os.path.isdir(DSTDIR):
+      os.mkdir(DSTDIR)
+
   for pos in range(5):
     for exc in range(4):
-      prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
+      prismPillar(DSTDIR,'triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)
   #pos=0
   #exc=0
   #prismPillar('triangle_pillar_'+str(pos)+'_'+str(exc),pos,exc)

@@ -769,6 +769,7 @@ class BFDTDobject:
 
     # excitation template list
     self.excitation_template_list = []
+    self.mesh_object_list = []
 
     # special
     self.fileList = []
@@ -1203,6 +1204,10 @@ class BFDTDobject:
     # geometry object meshes
     for obj in self.geometry_object_list:
       print(obj.name)
+      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+
+    # mesh object meshes
+    for obj in self.mesh_object_list:
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # excitation object meshes
