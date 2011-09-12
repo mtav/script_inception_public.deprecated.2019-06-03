@@ -8,6 +8,10 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     directory = pwd();
   end
 
+  if exist('maxplotvalue','var')==0
+    maxplotvalue = NaN;
+  end
+
   % loop through .sh files
   % TODO: Leave looping through files to bash or python :P (externalize it at least)
   [Files,Bytes,Names] = dirr(directory,'\.in\>$','name')
@@ -33,6 +37,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     [entries,FDTDobj] = GEO_INP_reader({handles.geofile,handles.inpfile});
     excitation = FDTDobj.excitations(1).E;
 
+    %excitation
+    %class(excitation)
     if excitation == [1,0,0]
       probe_col = 2;
       TimeSnapshot_col = 3;
@@ -45,6 +51,11 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
       probe_col = 4;
       TimeSnapshot_col = 5;
       FrequencySnapshot_col = 9;
+    elseif excitation == [1,1,1]
+      probe_col = 4;
+      TimeSnapshot_col = 5;
+      FrequencySnapshot_col = 9;
+      error('Template: TODO');
     else
       error('Unknown excitation');
     end

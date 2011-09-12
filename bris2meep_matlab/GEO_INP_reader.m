@@ -61,6 +61,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
     % boundaries = [];
 
   % process blocks
+  disp(['length(names_blocks) = ', num2str(length(names_blocks))]);
   for i = 1:length(names_blocks)
 
     type = names_blocks(:,i).type;
@@ -69,7 +70,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
 
     dataV = [];
     % remove empty lines
-    lines = strread(data,'%s','delimiter','\r');
+    lines = strread(data,'%s','delimiter','\n');
     cellFlag = 0;
     for L = 1:length(lines)
       if ~length(lines{L})
@@ -77,11 +78,13 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
       end
 
       num_val = str2num(lines{L});
+      %L
+      %num_val
             
-            str_val = strtrim(lines{L}); % trim string
-            str_val = str_val(str_val ~= '"');% remove double quotes
+      str_val = strtrim(lines{L}); % trim string
+      str_val = str_val(str_val ~= '"');% remove double quotes
 
-            % TODO: Check if this can't be simplified, or if it's even necessary.
+      % TODO: Check if this can't be simplified, or if it's even necessary.
       if cellFlag
         if length(num_val)  %% num_val is num
           dataV{length(dataV)+1} = num_val;
@@ -336,8 +339,10 @@ function current_excitation = add_excitation(entry)
   current_excitation.current_source = entry.data(idx); idx = idx+1;
   current_excitation.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   current_excitation.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-  current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-  current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+  current_excitation.E = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %current_excitation.E
+  %class(current_excitation.E)
+  current_excitation.H = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
   current_excitation.type = entry.data(idx); idx = idx+1;
   current_excitation.time_constant = entry.data(idx); idx = idx+1;
   current_excitation.amplitude = entry.data(idx); idx = idx+1;
