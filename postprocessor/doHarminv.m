@@ -1,4 +1,4 @@
-function [lambda,Q,outFile,err,minErrInd]=doHarminv(dataFile,dt,lambdaLow,lambdaHigh)
+function [ status, lambda, Q, outFile, err, minErrInd ] = doHarminv(dataFile,dt,lambdaLow,lambdaHigh)
   if ~exist('dataFile')
     [file,path] = uigetfile();
     dataFile = [path,file];
@@ -29,31 +29,42 @@ function [lambda,Q,outFile,err,minErrInd]=doHarminv(dataFile,dt,lambdaLow,lambda
   hcommand=['harminv -t ',num2str(dt,'%2.8e'),' ',num2str(get_c0()/lambdaHigh,'%2.8e'),'-',num2str(get_c0()/lambdaLow,'%2.8e'),' < ',dataFile,' > ',outFile]
   
   [status,result] = system(hcommand);
-  %rund(ftp1,hcommand)
-  %rund(hcommand)
-  
-  %mget(ftp1,remoteOutFile,path);
-  %rm(ftp1, file)
-  %rm(ftp1, remoteOutFile)
+  if (status == 0)
+    %rund(ftp1,hcommand)
+    %rund(hcommand)
     
-  if ~(exist(outFile,'file'))
-    error(['ERROR: File ', outFile, ' does not exist.'])
+    %mget(ftp1,remoteOutFile,path);
+    %rm(ftp1, file)
+    %rm(ftp1, remoteOutFile)
+      
+    if ~(exist(outFile,'file'))
+      error(['ERROR: File ', outFile, ' does not exist.'])
+    end
+  
+    fid = fopen(outFile,'r');
+    tline = fgetl(fid);
+    numCol=length(strfind(tline,','));
+    str=repmat('%f, ',1,numCol);
+    str=[str,'%f'];
+    C = textscan(fid, str);
+    fclose(fid);
+    
+    lambda=get_c0()./C{1};
+    [lambda,k]=sort(lambda);
+    Q=C{3};
+    Q=Q(k);
+    err=C{end};
+    err=err(k);
+    
+    minErrInd=find(err==min(err));
+  else
+    lambda = -1;
+    Q = -1;
+    outFile = -1;
+    err = -1;
+    minErrInd = -1;
+    warning('Failed to execute command:');
+    hcommand
+    disp(result);
   end
-
-  fid = fopen(outFile,'r');
-  tline = fgetl(fid);
-  numCol=length(strfind(tline,','));
-  str=repmat('%f, ',1,numCol);
-  str=[str,'%f'];
-  C = textscan(fid, str);
-  fclose(fid);
-  
-  lambda=get_c0()./C{1};
-  [lambda,k]=sort(lambda);
-  Q=C{3};
-  Q=Q(k);
-  err=C{end};
-  err=err(k);
-  
-  minErrInd=find(err==min(err));
 end

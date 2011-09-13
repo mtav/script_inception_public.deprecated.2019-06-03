@@ -89,7 +89,7 @@ function getResonanceFrequencies(probefile, colnumP)
     fprintf(fid,'%2.8e\r\n',data(:,colnumP));
     fclose(fid);
     
-    [lambdaH,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow,lambdaHigh);
+    [status, lambdaH,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow,lambdaHigh);
     
     figure(3); clf
     plot(lambdaH,Q,'r','LineWidth',2);

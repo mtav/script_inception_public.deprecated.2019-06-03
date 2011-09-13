@@ -141,30 +141,37 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
     fprintf(fid,'%2.8e\r\n',data(:,probe_col));
     fclose(fid);
     
-    [lambdaH_mum,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
-    if length(Q) ~= 0
-      lambdaH_nm = lambdaH_mum*1e3;
-      
-      rel=1./err; rel=rel/max(rel)*max(Q);
-      
-      fid = fopen(parametersFile,'w+');
-      fprintf(fid,'PeakNo\tFrequency(Hz)\tWavelength(nm)\tQFactor\t\r\n');
-      for n=1:size(peaks,1)
-        [indS,val]=closestInd(lambdaH_nm,peaks(n,1));
-        %Q
-        %length(Q)
-        Q_harminv_global(n) = Q(indS);
-        peakWaveLength_nm = peaks(n,1);
-        Frequency_Hz = get_c0()/peakWaveLength_nm*1e9;
-        fprintf(fid,'%i\t%2.8g\t%2.11g\t%2.8g\r\n',n,Frequency_Hz,peakWaveLength_nm,Q(indS));
+    disp('===> Computing harminv:');
+    [ status, lambdaH_mum, Q, outFile, err, minErrInd ] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
+    if ( status == 0 )
+      if ( length(Q) ~= 0 )
+        lambdaH_nm = lambdaH_mum*1e3;
+        
+        rel=1./err; rel=rel/max(rel)*max(Q);
+        
+        fid = fopen(parametersFile,'w+');
+        fprintf(fid,'PeakNo\tFrequency(Hz)\tWavelength(nm)\tQFactor\t\r\n');
+        for n=1:size(peaks,1)
+          [indS,val]=closestInd(lambdaH_nm,peaks(n,1));
+          %Q
+          %length(Q)
+          Q_harminv_global(n) = Q(indS);
+          peakWaveLength_nm = peaks(n,1);
+          Frequency_Hz = get_c0()/peakWaveLength_nm*1e9;
+          fprintf(fid,'%i\t%2.8g\t%2.11g\t%2.8g\r\n',n,Frequency_Hz,peakWaveLength_nm,Q(indS));
+        end
+        fclose(fid);
+      else
+        warning('harminv was unable to find peaks in the specified frequency range.');
       end
-      fclose(fid);
     else
-      warning('harminv was unable to find peaks in the specified frequency range.');
+      warning('harminv command failed.');
     end
   end % end of if computeHarminv
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+  disp('===> Looping through peaks:');
+  peaks
   for n=1:size(peaks,1)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
     plot(peaks(n,3),Y(closestInd(X,peaks(n,3))),'g*'); % plot little stars on detected peaks
