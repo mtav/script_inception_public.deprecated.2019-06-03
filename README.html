@@ -677,11 +677,56 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 <div class="paragraph"><p>To show dimensions, etc, you can use the blender caliper script.<br />
 To use it, in the "scripts window" (On the right if you copied .B.blend from the repository as your default workspace), click on <strong>Scripts&#8594;Wizards&#8594;Blender caliper</strong>.</p></div>
 </div>
+<h2 id="_matlab_octave_scripts">Matlab/Octave scripts:</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>To effectively use the Matlab/Octave scripts from this repository, you should add the paths to your Matlab/Octave path.<br />
+For Matlab, there are several ways to do this:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+First of all, edit <strong>startup.m</strong> by setting <strong>PUBLIC_REPO_DIR</strong> to the directory where you placed the repository (ex: <em>H:\script_inception_public</em>):
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>    % Adapt those settings according to your setup and where you placed the repository
+    PUBLIC_REPO_DIR = H:\script_inception_public;</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+Then choose one of the following options:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Copy <strong>startup.m</strong> from the repository into your Matlab startup folder (you can find out what it is by running <strong>userpath()</strong> in Matlab). Restart Matlab and it should run the startup.m script and recursively add the necessary folders.
+</p>
+</li>
+<li>
+<p>
+Add the repository recursively in Matlab: <strong>File&#8594;Set path&#8230;&#8594;Add with subfolders&#8230;</strong>, select the repository, then <strong>Save</strong>.
+</p>
+</li>
+<li>
+<p>
+If you don&#8217;t use any startup script already, you can also simply add just the repository folder <strong>File&#8594;Set path&#8230;&#8594;Add folder&#8230;</strong>, select the repository, then <strong>Save</strong>. Matlab will then use the startup script from the repository.
+</p>
+</li>
+<li>
+<p>
+Edit your own <strong>startup.m</strong> appropriately.
+</p>
+</li>
+</ul></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>To test if it works, you can run <strong>get_c0()</strong> for example or <strong>postprocessor()</strong>.</p></div>
+</div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2011-09-08 17:50:18 BST
+Last updated 2011-09-13 15:37:23 BST
 </div>
 </div>
 </body>
