@@ -679,8 +679,7 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 </div>
 <h2 id="_matlab_octave_scripts">Matlab/Octave scripts:</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>To effectively use the Matlab/Octave scripts from this repository, you should add the paths to your Matlab/Octave path.<br />
-For Matlab, there are several ways to do this:</p></div>
+<div class="paragraph"><p>To effectively use the Matlab/Octave scripts from this repository, you should add the paths to your Matlab/Octave path.<br /></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -694,8 +693,12 @@ First of all, edit <strong>startup.m</strong> by setting <strong>PUBLIC_REPO_DIR
 </li>
 <li>
 <p>
-Then choose one of the following options:
+Then:
 </p>
+</li>
+</ol></div>
+<h3 id="_if_you_use_matlab">If you use Matlab:</h3><div style="clear:left"></div>
+<div class="paragraph"><p>For Matlab, there are several ways to do this. Choose one of the following options:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -718,15 +721,20 @@ Edit your own <strong>startup.m</strong> appropriately.
 </p>
 </li>
 </ul></div>
-</li>
-</ol></div>
 <div class="paragraph"><p>To test if it works, you can run <strong>get_c0()</strong> for example or <strong>postprocessor()</strong>.</p></div>
+<div class="paragraph"><p><em>Note: You can also set up the environment variable <strong>MATLABPATH</strong> to define the Matlab search path.</em></p></div>
+<h3 id="_if_you_use_octave">If you use Octave:</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Under GNU/Linux:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>ln -s $PATH_TO_REPO/.octaverc ~/.octaverc</tt></pre>
+</div></div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2011-09-13 15:37:23 BST
+Last updated 2011-09-13 15:56:21 BST
 </div>
 </div>
 </body>

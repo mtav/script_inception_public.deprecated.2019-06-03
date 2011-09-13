@@ -89,7 +89,6 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 Matlab/Octave scripts:
 ----------------------
 To effectively use the Matlab/Octave scripts from this repository, you should add the paths to your Matlab/Octave path. +
-For Matlab, there are several ways to do this:
 
 . First of all, edit *startup.m* by setting *PUBLIC_REPO_DIR* to the directory where you placed the repository (ex: _H:\script_inception_public_):
 +
@@ -98,7 +97,11 @@ For Matlab, there are several ways to do this:
     PUBLIC_REPO_DIR = H:\script_inception_public;
 ----
 +
-. Then choose one of the following options:
+. Then:
+
+If you use Matlab:
+~~~~~~~~~~~~~~~~~~
+For Matlab, there are several ways to do this. Choose one of the following options:
 
 * Copy *startup.m* from the repository into your Matlab startup folder (you can find out what it is by running *userpath()* in Matlab). Restart Matlab and it should run the startup.m script and recursively add the necessary folders.
 * Add the repository recursively in Matlab: *File->Set path...->Add with subfolders...*, select the repository, then *Save*.
@@ -106,3 +109,12 @@ For Matlab, there are several ways to do this:
 * Edit your own *startup.m* appropriately.
 
 To test if it works, you can run *get_c0()* for example or *postprocessor()*.
+
+_Note: You can also set up the environment variable *MATLABPATH* to define the Matlab search path._
+
+If you use Octave:
+~~~~~~~~~~~~~~~~~~
+Under GNU/Linux:
+----
+ln -s $PATH_TO_REPO/.octaverc ~/.octaverc 
+----
