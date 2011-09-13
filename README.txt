@@ -1,6 +1,6 @@
 What this is:
 -------------
-Useful scripts for MEEP and Bristol FDTD and maybe other stuff :)
+Useful scripts for MEEP and Bristol FDTD and maybe other stuff. :)
 
 The idea is to centralize scripts used by almost everyone to reduce code duplication and therefore errors and time wasting, as well as improve the overall quality of code over time.
 
