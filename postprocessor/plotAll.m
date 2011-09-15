@@ -57,7 +57,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
       FrequencySnapshot_col = 9;
       error('Template: TODO');
     else
-      error('Unknown excitation');
+      warning('Unknown excitation');
     end
 
     % store workdir
