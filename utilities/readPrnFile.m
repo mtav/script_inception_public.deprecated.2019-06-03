@@ -17,7 +17,7 @@ function [header,data,ux,uy]=readPrnFile(filename)
     ncols=size(words,2);
     
     for m=1:ncols
-       header{m} =words(m).word;
+      header{m} = words(m).word;
     end
     
     M=fscanf(fid,'%E');
