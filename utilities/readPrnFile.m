@@ -11,16 +11,18 @@ function [header,data,ux,uy]=readPrnFile(filename)
   
   fid = fopen(filename,'rt');
   
-  try
+  %try
     dummy = fgets(fid);
-    words=regexp(dummy,'(?<word>\w+)\s*|\s*(?<word>\w+)','names');
-    ncols=size(words,2);
+    words = regexp(dummy,'(?<word>\w+)\s*|\s*(?<word>\w+)','tokens')
+    ncols = size(words,2)
+    %return;
     
+    header = {}
     for m=1:ncols
-      header{m} = words(m).word;
+      header{end+1} = char(words(m));
     end
     
-    M=fscanf(fid,'%E');
+    M = fscanf(fid,'%e');
     fclose(fid);
     
     data=reshape(M,ncols,length(M)/ncols);
@@ -43,10 +45,11 @@ function [header,data,ux,uy]=readPrnFile(filename)
       xlabel(header(1));
       ylabel(header(2));
     end
-  catch
-    header=[];
-    data=[];
-  end
+  %catch
+    %error('FATAL ERROR: Could not read .prn file correctly.');
+    %header=[];
+    %data=[];
+  %end
   
   % figure
   % plot(data(:,1),data(:,2:end));

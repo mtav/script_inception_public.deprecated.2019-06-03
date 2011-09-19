@@ -60,6 +60,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
       warning('Unknown excitation');
     end
 
+%for j=3:length(header); val = max(data(:,j)); if ( val~=0 ); disp(header(j)); end; end;
+
     % store workdir
     workdir = pwd();
 
