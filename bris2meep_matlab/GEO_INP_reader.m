@@ -46,23 +46,23 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
     
   all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
 
-  excitations = struct(
-    'current_source', {},
-    'P1(1)', {},
-    'P2(1)', {},
-    'E(1)', {},
-    'H(1)', {},
-    'type', {},
-    'time_constant', {},
-    'amplitude', {},
-    'time_offset', {},
-    'frequency', {},
-    'param1', {},
-    'param2', {},
-    'template_filename', {},
-    'template_source_plane', {},
-    'template_target_plane', {},
-    'template_direction', {},
+  excitations = struct(...
+    'current_source', {},...
+    'P1', {},...
+    'P2', {},...
+    'E', {},...
+    'H', {},...
+    'type', {},...
+    'time_constant', {},...
+    'amplitude', {},...
+    'time_offset', {},...
+    'frequency', {},...
+    'param1', {},...
+    'param2', {},...
+    'template_filename', {},...
+    'template_source_plane', {},...
+    'template_target_plane', {},...
+    'template_direction', {},...
     'template_rotation', {});
 
   boundaries = struct('type',{},'position',{});
@@ -157,7 +157,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
         end
       case {'EXCITATION'}
         current_excitation = add_excitation(entry);
-        excitations = [ excitations current_excitation ];
+        excitations = [ excitations, current_excitation ];
       case {'XMESH'}
         structured_entries.xmesh = entry.data;
       case {'YMESH'}
@@ -358,10 +358,15 @@ function current_excitation = add_excitation(entry)
   current_excitation.current_source = entry.data(idx); idx = idx+1;
   current_excitation.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   current_excitation.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+  %idx
+  %entry.data
+  %[entry.data(idx), entry.data(idx+1), entry.data(idx+2)]
   current_excitation.E = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   %current_excitation.E
   %class(current_excitation.E)
-  current_excitation.H = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %current_excitation.H = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   current_excitation.type = entry.data(idx); idx = idx+1;
   current_excitation.time_constant = entry.data(idx); idx = idx+1;
   current_excitation.amplitude = entry.data(idx); idx = idx+1;
@@ -369,12 +374,21 @@ function current_excitation = add_excitation(entry)
   current_excitation.frequency = entry.data(idx); idx = idx+1;
   current_excitation.param1 = entry.data(idx); idx = idx+1;
   current_excitation.param2 = entry.data(idx); idx = idx+1;
-  current_excitation.template_filename = entry.data(idx); idx = idx+1
-  current_excitation.template_source_plane = entry.data(idx); idx = idx+1
-  if idx<=length(entry.data):
-    current_excitation.template_target_plane = entry.data(idx); idx = idx+1
-  if idx<=length(entry.data):
-    current_excitation.template_direction = entry.data(idx); idx = idx+1
-  if idx<=length(entry.data):
-    current_excitation.template_rotation = entry.data(idx); idx = idx+1
+  current_excitation.template_filename = entry.data(idx); idx = idx+1;
+  current_excitation.template_source_plane = entry.data(idx); idx = idx+1;
+  if idx<=length(entry.data)
+    current_excitation.template_target_plane = entry.data(idx); idx = idx+1;
+  else
+    current_excitation.template_target_plane = 'x'; idx = idx+1;
+  end
+  if idx<=length(entry.data)
+    current_excitation.template_direction = entry.data(idx); idx = idx+1;
+  else
+    current_excitation.template_direction = 0; idx = idx+1;
+  end
+  if idx<=length(entry.data)
+    current_excitation.template_rotation = entry.data(idx); idx = idx+1;
+  else
+    current_excitation.template_rotation = 0; idx = idx+1;
+  end
 end

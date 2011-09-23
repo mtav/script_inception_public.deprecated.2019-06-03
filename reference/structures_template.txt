@@ -44,10 +44,10 @@ all_snapshots = struct(
 
 excitations = struct(
   'current_source', {},
-  'P1(1)', {},
-  'P2(1)', {},
-  'E(1)', {},
-  'H(1)', {},
+  'P1', {},
+  'P2', {},
+  'E', {},
+  'H', {},
   'type', {},
   'time_constant', {},
   'amplitude', {},
