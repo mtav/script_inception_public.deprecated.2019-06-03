@@ -9,6 +9,9 @@ function [header,data,ux,uy]=readPrnFile(filename)
     filename=[PathName,filesep,FileName];
   end
   
+  disp(['Opening: ',filename]);
+  %class filename
+  %filename
   fid = fopen(filename,'rt');
   
   try

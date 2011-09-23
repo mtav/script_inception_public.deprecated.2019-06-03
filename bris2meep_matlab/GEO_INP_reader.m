@@ -388,7 +388,7 @@ function current_excitation = add_excitation(entry)
   current_excitation.frequency = entry.data(idx); idx = idx+1;
   current_excitation.param1 = entry.data(idx); idx = idx+1;
   current_excitation.param2 = entry.data(idx); idx = idx+1;
-  current_excitation.template_filename = entry.data(idx); idx = idx+1;
+  current_excitation.template_filename = char(entry.data(idx)); idx = idx+1;
   current_excitation.template_source_plane = entry.data(idx); idx = idx+1;
   if idx<=length(entry.data)
     current_excitation.template_target_plane = entry.data(idx); idx = idx+1;
