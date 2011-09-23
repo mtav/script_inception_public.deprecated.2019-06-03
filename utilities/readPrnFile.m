@@ -9,12 +9,15 @@ function [header,data,ux,uy]=readPrnFile(filename)
     filename=[PathName,filesep,FileName];
   end
   
-  disp(['Opening: ',filename]);
+  disp(['Opening: ',filename,' from ',pwd()]);
   %class filename
   %filename
-  fid = fopen(filename,'rt');
+  [fid, message] = fopen(filename,'r');
+  if fid == -1
+    error(message);
+  end
   
-  try
+  %try
     dummy = fgets(fid);
     words = regexp(dummy,'(?<word>\w+)\s*|\s*(?<word>\w+)','tokens');
     ncols = size(words,2);
@@ -47,11 +50,11 @@ function [header,data,ux,uy]=readPrnFile(filename)
       xlabel(header(1));
       ylabel(header(2));
     end
-  catch
-    error('FATAL ERROR: Could not read .prn file correctly.');
-    header=[];
-    data=[];
-  end
+  %catch
+    %error('FATAL ERROR: Could not read .prn file correctly.');
+    %header=[];
+    %data=[];
+  %end
   
   % figure
   % plot(data(:,1),data(:,2:end));

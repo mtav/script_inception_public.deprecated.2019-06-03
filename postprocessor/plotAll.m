@@ -29,8 +29,9 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     handles.geofile = [ script_folder, filesep, script_basename, '.geo' ];
     handles.inpfile = [ script_folder, filesep, script_basename, '.inp' ];
     
-    %handles.geofile
+    %disp(handles.geofile)
     %handles.inpfile
+    %continue
     %which GEO_INP_reader
     
     disp(['Processing script_folder = ', script_folder]);
@@ -50,7 +51,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
       measurement_direction = 'z';
     elseif excitation_direction == [1,1,1]
       excitation.template_filename
-      [header,data]=readPrnFile(excitation.template_filename);
+      [header,data]=readPrnFile([script_folder, filesep, excitation.template_filename]);
       for j=3:length(header);
         val = max(data(:,j));
         if ( val~=0 );
