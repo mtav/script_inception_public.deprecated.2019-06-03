@@ -7,7 +7,8 @@ function DProcess(folder)
   ZFsnapFiles=dir([folder,'\z*01.prn']);
   
   % [InpFileName,InpPathName] = uigetfile('*.inp','Select INP file','J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400');
-  inpfile=dir([folder,'\*.inp']);
+  inpfile=dir([folder,filesep,'*.inp']);
+  inpfile
   inpfile=[folder,filesep,inpfile(1).name];
   inpEntries=GEO_INP_reader({inpfile});
   
@@ -16,17 +17,17 @@ function DProcess(folder)
     if strcmp(lower(inpEntries{m}.type),'frequency_snapshot')
       % Findout which plane it is
       data=inpEntries{m}.data;
-      if data(8)==data(11)
+      if cell2mat(data(8))==cell2mat(data(11))
         snapNo=length(XSnaps)+1;
         XSnapEntry.fileName=XFsnapFiles(snapNo).name;
         XSnapEntry.pos=data(8);
         XSnaps{snapNo}=XSnapEntry;  
-      elseif data(9)==data(12)
+      elseif cell2mat(data(9))==cell2mat(data(12))
         snapNo=length(YSnaps)+1;
         YSnapEntry.fileName=YFsnapFiles(snapNo).name;
         YSnapEntry.pos=data(9);
         YSnaps{snapNo}=YSnapEntry;
-      elseif data(10)==data(13)
+      elseif cell2mat(data(10))==cell2mat(data(13))
         snapNo=length(ZSnaps)+1;
         ZSnapEntry.fileName=ZFsnapFiles(snapNo).name;
         ZSnapEntry.pos=data(10);
