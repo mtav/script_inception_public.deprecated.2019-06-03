@@ -45,7 +45,26 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
   frequency_snapshots_Z = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
     
   all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
-  excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
+
+  excitations = struct(
+    'current_source', {},
+    'P1(1)', {},
+    'P2(1)', {},
+    'E(1)', {},
+    'H(1)', {},
+    'type', {},
+    'time_constant', {},
+    'amplitude', {},
+    'time_offset', {},
+    'frequency', {},
+    'param1', {},
+    'param2', {},
+    'template_filename', {},
+    'template_source_plane', {},
+    'template_target_plane', {},
+    'template_direction', {},
+    'template_rotation', {});
+
   boundaries = struct('type',{},'position',{});
   box = struct('lower',{},'upper',{});
   sphere_list = struct('center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
@@ -350,6 +369,12 @@ function current_excitation = add_excitation(entry)
   current_excitation.frequency = entry.data(idx); idx = idx+1;
   current_excitation.param1 = entry.data(idx); idx = idx+1;
   current_excitation.param2 = entry.data(idx); idx = idx+1;
-  current_excitation.param3 = entry.data(idx); idx = idx+1;
-  current_excitation.param4 = entry.data(idx); idx = idx+1;
+  current_excitation.template_filename = entry.data(idx); idx = idx+1
+  current_excitation.template_source_plane = entry.data(idx); idx = idx+1
+  if idx<=length(entry.data):
+    current_excitation.template_target_plane = entry.data(idx); idx = idx+1
+  if idx<=length(entry.data):
+    current_excitation.template_direction = entry.data(idx); idx = idx+1
+  if idx<=length(entry.data):
+    current_excitation.template_rotation = entry.data(idx); idx = idx+1
 end

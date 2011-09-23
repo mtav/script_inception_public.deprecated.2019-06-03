@@ -42,7 +42,7 @@ all_snapshots = struct(
   'J', {}, 
   'power', {})
 
-EXCITATIONS:
+excitations = struct(
   'current_source', {},
   'P1(1)', {},
   'P2(1)', {},
@@ -55,5 +55,8 @@ EXCITATIONS:
   'frequency', {},
   'param1', {},
   'param2', {},
-  'param3', {},
-  'param4', {},
+  'template_filename', {},
+  'template_source_plane', {},
+  'template_target_plane', {},
+  'template_direction', {},
+  'template_rotation', {})
