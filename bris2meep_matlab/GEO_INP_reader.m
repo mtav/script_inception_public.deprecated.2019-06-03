@@ -90,7 +90,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
     dataV = [];
     % remove empty lines
     lines = strread(data,'%s','delimiter','\n');
-    cellFlag = 0;
+    cellFlag = 1;
     for L = 1:length(lines)
       if ~length(lines{L})
         continue;
@@ -224,7 +224,12 @@ function flag = add_flag(entry)
 end
 
 function boundaries = add_boundary(entry)
-  M = reshape(entry.data,4,length(entry.data)/4)';
+  %entry.data
+  d = cell2mat(entry.data);
+  %length(entry.data)
+  % overly complex, but it works for cell and non-cell data...
+  M = reshape(d',4,size(d,1)*size(d,2)/4)';
+  %M = reshape(entry.data,4,length(entry.data)/4)';
   for i = 1:6
     boundaries(i).type = M(i,1);
     boundaries(i).position = M(i,2:4);
@@ -232,11 +237,13 @@ function boundaries = add_boundary(entry)
 end
 
 function box = add_box(entry)
+  entry.data = cell2mat(entry.data);
   box.lower = entry.data(1:3);
   box.upper = entry.data(4:6);
 end
 
 function sphere = add_sphere(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   sphere.center = entry.data(idx:idx+2); idx = idx+3;
   sphere.outer_radius = entry.data(idx); idx = idx+1;
@@ -246,6 +253,7 @@ function sphere = add_sphere(entry)
 end
 
 function block = add_block(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   block.lower = entry.data(idx:idx+2); idx = idx+3;
   block.upper = entry.data(idx:idx+2); idx = idx+3;
@@ -254,6 +262,7 @@ function block = add_block(entry)
 end
 
 function cylinder = add_cylinder(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   cylinder.center = entry.data(idx:idx+2); idx = idx+3;
   cylinder.inner_radius = entry.data(idx); idx = idx+1;
@@ -265,6 +274,7 @@ function cylinder = add_cylinder(entry)
 end
 
 function rotation = add_rotation(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   rotation.axis_point = entry.data(idx:idx+2); idx = idx+3;
   rotation.axis_direction = entry.data(idx:idx+2); idx = idx+3;
@@ -272,6 +282,7 @@ function rotation = add_rotation(entry)
 end
 
 function probe = add_probe(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   probe.position = entry.data(idx:idx+2); idx = idx+3;
   probe.step = entry.data(idx); idx = idx+1;
@@ -281,7 +292,9 @@ function probe = add_probe(entry)
   probe.pow = entry.data(idx); idx = idx+1;
 end
 
+% TODO: check necessity of those multiple snapshot adding functions.
 function snapshot = add_frequency_snapshot(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   snapshot.first = entry.data(idx); idx = idx+1;
   snapshot.repetition = entry.data(idx); idx = idx+1;
@@ -300,6 +313,7 @@ function snapshot = add_frequency_snapshot(entry)
 end
 
 function snapshot = add_time_snapshot(entry)
+  entry.data = cell2mat(entry.data);
   idx = 1;
   snapshot.first = entry.data(idx); idx = idx+1;
   snapshot.repetition = entry.data(idx); idx = idx+1;
@@ -365,8 +379,8 @@ function current_excitation = add_excitation(entry)
   %current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   %current_excitation.E
   %class(current_excitation.E)
-  %current_excitation.H = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
-  current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+  current_excitation.H = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   current_excitation.type = entry.data(idx); idx = idx+1;
   current_excitation.time_constant = entry.data(idx); idx = idx+1;
   current_excitation.amplitude = entry.data(idx); idx = idx+1;
