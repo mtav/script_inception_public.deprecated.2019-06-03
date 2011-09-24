@@ -1,8 +1,12 @@
 function [header,data,ux,uy]=readPrnFile(filename)
   % function [header,data,ux,uy]=readPrnFile(filename)
   % header = first line
-  % data = rest of file
+  % data = rest of file, matrix of size(NX*NY, N_columns)
+  % NOTE:
   % if ux and uy are asked for, it will create a 3D plot of col(3) vs ( col(1), col(2) )
+  % ux will be the list of unique values in column 1 and of size NX
+  % uy will be the list of unique values in column 2 and of size NY
+  % data will then also be of size (NY, NX, N_data_columns)
   
   if (nargin==0)
     [FileName,PathName] = uigetfile({'*.prn *.dat'},'Select the prn-file',getenv('DATADIR'));
