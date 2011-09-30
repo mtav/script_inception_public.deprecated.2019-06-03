@@ -1,4 +1,5 @@
 function [ real_neff_1,real_neff_2,real_neff_1_vector,real_neff_2_vector,radius_vector_mum, u, v, b, v_cutoff ] = get_neff_2(radius_mum,n_inside,n_outside,L,M,lambda_nm)
+  % cf optical electronics in modern communications, fifth edition, by Amnon Yariv, chapter 3, p 88-95 notably
 
   if exist('n_inside','var') == 0; n_inside = 2.4; end
   if exist('n_outside','var') == 0; n_outside = 1; end

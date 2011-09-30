@@ -137,7 +137,7 @@ function plotneff()
   end
   
   figure;
-  subplot(2,1,1);
+  %subplot(2,1,1);
   grid on; hold on;
   title(['reflectivity r as a function of delta=rad2-rad1 for m=',num2str(m_reflectivity),' and various radiuses']);
   xlabel('rad2-rad1 (mum)');
@@ -145,7 +145,8 @@ function plotneff()
   plot(delta,r_all);
   legend([repmat('rad1 = ',length(rad1'),1), num2str(rad1')]);
 
-  subplot(2,1,2);
+  figure;
+  %subplot(2,1,2);
   grid on; hold on;
   title(['reflectivity rg as a function of delta=rad2-rad1 for m=',num2str(m_reflectivity),' and various radiuses']);
   xlabel('rad2-rad1 (mum)');
