@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import bpy
+from blender_scripts.FDTDGeometryObjects import *
 
 def testkubo():
   verts = [(1.0, 1.0, -1.0),
@@ -50,10 +51,26 @@ def testkubo2():
   
   # get added object
   obj = bpy.context.active_object
+  print(obj)
+  #for obj in bpy.data.objects:
+    #print(obj.name)
+    
+  #bpy.data.objects[-1].name = 'testkubo2'
+  obj.name = 'testkubo2'
+  obj.scale = Vector((1,2,3))
   
   # deleting faces fails when in object mode, so change.
   bpy.ops.object.mode_set(mode = 'EDIT') 
   bpy.ops.mesh.delete(type='ONLY_FACE')
+  bpy.ops.object.mode_set(mode = 'OBJECT')
+    
+#bpy.ops.object.add_named(linked=False, name="Cube")
 
+def boxtest():
+  FDTDGeometryObjects_obj = FDTDGeometryObjects()
+  FDTDGeometryObjects_obj.GEObox('boxtest', Vector([0,0,0]), Vector([1,2,3]));
+  
 if __name__ == "__main__":
-  testkubo()
+  #testkubo()
+  #boxtest()
+  testkubo2()

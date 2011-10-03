@@ -15,7 +15,8 @@ import array
 #~ from bpy.Mathutils import Matrix;
 #from Blender.Mathutils import Vector;
 #from Blender.Mathutils import Matrix;
-from mathutils import Color
+#from mathutils import Color
+from mathutils import *
 
 class FDTDGeometryObjects:
     def __init__(self):
