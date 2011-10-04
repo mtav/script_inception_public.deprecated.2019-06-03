@@ -56,7 +56,19 @@ function DProcess(folder)
   % NOTE 1: You must select 1*X,2*Y and 2*Z snapshots for things to work correctly. This is because the structure is assumed to have an X-symmetry.
   % NOTE 2: They should be so that the 2 Y snapshots are not on the same Y-line and the 2 Z snapshots are not on the same Z-line.
   % NOTE 3: output is Y- by default
-  [prnFileNames,prnPathName] = uigetfile('*.prn','Select 6 PRN files',folder,'MultiSelect','on');
+  %[prnFileNames,prnPathName] = uigetfile('*.prn','Select 6 PRN files',folder,'MultiSelect','on');
+  
+  prnPathName = ['.',filesep];
+  
+  inputFileList = {'triangle_pillar_1_1.inp','triangle_pillar_1_1.geo'}
+  PrnFileNameList_xm = findPrnByName(inputFileList,'Box frequency snapshot X-')
+  PrnFileNameList_xp = findPrnByName(inputFileList,'Box frequency snapshot X+')
+  PrnFileNameList_ym = findPrnByName(inputFileList,'Box frequency snapshot Y-')
+  PrnFileNameList_yp = findPrnByName(inputFileList,'Box frequency snapshot Y+')
+  PrnFileNameList_zm = findPrnByName(inputFileList,'Box frequency snapshot Z-')
+  PrnFileNameList_zp = findPrnByName(inputFileList,'Box frequency snapshot Z+')
+
+  prnFileNames = [PrnFileNameList_xm,PrnFileNameList_xp,PrnFileNameList_ym,PrnFileNameList_yp,PrnFileNameList_zm,PrnFileNameList_zp]
   prnFileNames = sort(prnFileNames);
   
   % The limits of the surrounding box.
@@ -65,7 +77,7 @@ function DProcess(folder)
   zLimits=[];
 
   % Store the X position of the chosen X snapshots in xLimits. Same for Y and Z.
-  for n = 1:5
+  for n = 1:6
     n
     prnFileName = prnFileNames{n};
     plane = prnFileName(1)-119; % trick to get 1,2,3 from x,y,z
@@ -101,7 +113,7 @@ function DProcess(folder)
   zLimits
   
   % add missing x limit (because only one X snapshot was chosen)
-  xLimits = [xLimits,1e20];
+  %xLimits = [xLimits,1e20];
   
   % sort limits
   xLimits = sort(xLimits);
@@ -109,7 +121,7 @@ function DProcess(folder)
   zLimits = sort(zLimits);
   
   Res = [];
-  for m = 1:5
+  for m = 1:6
   
     % get plane in 1,2,3 format
     [prnFileNameDir,prnFileNameBaseName] = fileparts(prnFileNames{m});
@@ -232,6 +244,12 @@ function DProcess(folder)
   end
   
   % calculate efficiency and show it
-  Res(3)/sum(Res)
+  for i=1:6
+    disp(['Res(',num2str(i),') = ',num2str(Res(i))])
+  end
+  disp(['sum(Res) = ',num2str(sum(Res))])
+  
+  
+  Res(2)/sum(Res)
   
 end

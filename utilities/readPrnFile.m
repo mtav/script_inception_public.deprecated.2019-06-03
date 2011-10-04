@@ -8,6 +8,8 @@ function [header,data,ux,uy]=readPrnFile(filename)
   % uy will be the list of unique values in column 2 and of size NY
   % data will then also be of size (NY, NX, N_data_columns)
   
+  disp(['Opening: ',filename]);
+  
   if (nargin==0)
     [FileName,PathName] = uigetfile({'*.prn *.dat'},'Select the prn-file',getenv('DATADIR'));
     filename=[PathName,filesep,FileName];
