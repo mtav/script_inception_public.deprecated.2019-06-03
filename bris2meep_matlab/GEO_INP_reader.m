@@ -16,24 +16,9 @@ end % end of function
 function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries)
   % creates entries + structured_entries from filename
   
-  % ask for input file if not given
-  if exist('filename','var') == 0
-    disp('filename not given');
-    [file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
-    filename = [path,file];
-  end
-  
-  % read the whole file as one string
-  fulltext = fileread(filename);
-
-  % remove comments
-  pattern_stripcomments = '\*\*.*$';
-  cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
-
-  % extract blocks
-  pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
-  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
-
+  %=====================================================================
+  % define structures (TODO: switch to octave+matlab compatible classes)
+  %=====================================================================
   time_snapshots = struct('name',{},'first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
   frequency_snapshots = struct('name',{},'first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
 
@@ -73,12 +58,31 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
   cylinder_list = struct('name',{},'center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
   rotation_list = struct('name',{},'axis_point',{},'axis_direction',{},'angle_degrees',{});
   probe_list = struct('name',{},'position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
-  
+
   % xmesh = [];
   % ymesh = [];
   % zmesh = [];
-    % flag = [];
-    % boundaries = [];
+  % flag = [];
+  % boundaries = [];
+  %=====================================================================
+
+  % ask for input file if not given
+  if exist('filename','var') == 0
+    disp('filename not given');
+    [file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
+    filename = [path,file];
+  end
+  
+  % read the whole file as one string
+  fulltext = fileread(filename);
+
+  % remove comments
+  pattern_stripcomments = '\*\*.*$';
+  cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
+
+  % extract blocks
+  pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
+  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
   % process blocks
   disp(['length(names_blocks) = ', num2str(length(names_blocks))]);
@@ -127,8 +131,6 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
     entry.data = dataV';
     entries{length(entries)+1} = entry;
 
-    % entry.type
-    % entry.data(1)
     switch upper(entry.type)
       case {'FREQUENCY_SNAPSHOT','SNAPSHOT'}
         % disp('Adding snapshot...');
