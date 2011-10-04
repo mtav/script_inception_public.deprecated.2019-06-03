@@ -71,4 +71,6 @@ function [ entries ] = reader_draft(filename)
     entry.type = type;
     entry.data = dataV';
     entries{length(entries)+1} = entry;
+  end % end of loop through blocks
+
 end
