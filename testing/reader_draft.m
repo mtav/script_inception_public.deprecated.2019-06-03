@@ -1,3 +1,5 @@
+% test with:
+% [ entries ] = reader_draft('test.inp'); for i=1:length(entries);fprintf('%s\n',entries{i}.name);end;
 function [ entries ] = reader_draft(filename)
   entries = {};
 
@@ -5,45 +7,26 @@ function [ entries ] = reader_draft(filename)
   fulltext = fileread(filename);
 
   % remove comments
-  
-  %pattern_stripcomments = '\*\*.*$';
-  %pattern_stripcomments = re.compile("\*\*(?!name=).*\n")
-  pattern_stripcomments = '\*\*(?!name=).*\n'
-
-  %cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
-  %cleantext = pattern_stripcomments.sub("\n", fulltext);
-  cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings')
+  pattern_stripcomments = '\*\*(?!name=).*\n';
+  cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
 
   % extract blocks
-  
-  %pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
-  %pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
-  pattern_objects = '^(?<type>\w+)\s*(?<nameblob>[^\{\}]+)?\{(?<data>[^\{\}]*?)\}'
-  
-  %[tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
-  %objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
-  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_objects, 'tokens', 'match', 'names', 'lineanchors', 'warnings')
-
-  % xmesh = [];
-  % ymesh = [];
-  % zmesh = [];
-  % flag = [];
-  % boundaries = [];
+  pattern_objects = '^(?<type>\w+)\s*(?<nameblob>[^\{\}]+)?\{(?<data>[^\{\}]*?)\}';
+  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_objects, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
   % process blocks
-  disp(['length(names_blocks) = ', num2str(length(names_blocks))]);
+  %disp(['length(names_blocks) = ', num2str(length(names_blocks))]);
   for i = 1:length(names_blocks)
 
     type = names_blocks(:,i).type;
     nameblob = names_blocks(:,i).nameblob;
     
-    name = 'DEFAULT NAME'
-    nameblob
+    name = '';
     if strcmpi(nameblob,'') == 0
-      pattern_nameblob = '\*\*name=(?<name>.*)'
-      [tokens_nameblob match_nameblob names_nameblob] =  regexp(nameblob, pattern_nameblob, 'tokens', 'match', 'names', 'lineanchors', 'warnings')
+      pattern_nameblob = '\*\*name=(?<name>.*)';
+      [tokens_nameblob match_nameblob names_nameblob] =  regexp(nameblob, pattern_nameblob, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
       if length(names_nameblob.name) > 0
-        name = deblank(names_nameblob.name)
+        name = strtrim(names_nameblob.name);
       end
     end
     
@@ -89,58 +72,3 @@ function [ entries ] = reader_draft(filename)
     entry.data = dataV';
     entries{length(entries)+1} = entry;
 end
-
-
-      %# open file
-      %input = open(filename)
-      %# read the whole file as one string
-      %fulltext = input.read()
-      %# close file
-      %input.close()
-  
-      %# print fulltext
-  
-      %# remove comments
-      %# TODO: Add more generic system for functional comments (to add layer, scene and group for example)
-      %pattern_stripcomments = re.compile("\*\*(?!name=).*\n")
-      %cleantext = pattern_stripcomments.sub("\n", fulltext)
-      %#print(cleantext)
-  
-      %# pattern_objects = re.compile("^(?<Type>\w+).*?\{(?<data>[^\{\}]*?)\}")
-      %#pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<name>(?<=\*\*name=)[^{}]*)?{(?P<data>[^{}]*)}",re.DOTALL)
-      %pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
-      %objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
-    
-      %entries = []
-      %# process objects
-      %for i in range(len(objects)):
-          %Type = objects[i]['Type']
-          %name = ''
-          %if 'nameblob' in objects[i].keys():
-            %#print objects[i]['nameblob']
-            %if objects[i]['nameblob']:
-              %#print 'OK'
-              %pattern_nameblob = re.compile("\*\*name=(.*)")
-              %m = pattern_nameblob.match(objects[i]['nameblob'])
-              %if m:
-                %name = m.group(1).strip()
-            %#else:
-              %#print 'NOT OK'
-              %#name = ''
-          %#else:
-            %#print 'NO NAME'
-            %#name = ''
-          %data = objects[i]['data']
-          
-          %# convert Type to upper case and strip it
-          %Type = Type.upper().strip()
-          %# split data by spaces and new lines
-          %data = re.split('\s+',data)
-          %# remove empty lines from data
-          %data = filter(None, data)
-          
-          %entry = Entry()
-          %entry.Type = Type
-          %entry.name = name
-          %entry.data = data
-          %entries.append(entry)
