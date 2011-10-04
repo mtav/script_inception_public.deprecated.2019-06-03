@@ -1,4 +1,4 @@
-EXCITATION **EXCITATION DEFINITION
+EXCITATION **name=foo
 {
 7 ** CURRENT SOURCE 
 0.000000 **X1
@@ -24,3 +24,76 @@ EXCITATION **EXCITATION DEFINITION
 0 **UNUSED PARAMETER
 }
 
+BOUNDARY  **name=boundaries
+{
+2 1 1 0 **X+ 
+2 1 1 0 **Y+ 
+2 1 1 0 **Z+ 
+2 1 1 0 **X- 
+2 1 1 0 **Y- 
+2 1 1 0 **Z- 
+}
+
+BOUNDARY  **name=    boundaries  2   
+{
+2 1 1 0 **X+ 
+2 1 1 0 **Y+ 
+2 1 1 0 **Z+ 
+2 1 1 0 **X- 
+2 1 1 0 **Y- 
+2 1 1 0 **Z- 
+}
+
+BOUNDARY  **name=    boundaries3   
+{
+2 1 1 0 **X+ 
+2 1 1 0 **Y+ 
+2 1 1 0 **Z+ 
+2 1 1 0 **X- 
+2 1 1 0 **Y- 
+2 1 1 0 **Z- 
+}
+
+FLAG  **name=flag
+{
+5 **ITERATION METHOD
+0.000000E+00 **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)
+0 **FLAG ONE
+0 **FLAG TWO
+100000 **ITERATIONS
+9.000000E-01 **TIMESTEP as a proportion of the maximum allowed
+"id" **ID CHARACTER (ALWAYS USE QUOTES)
+}
+
+FLAG
+{
+5 **ITERATION METHOD
+0.000000E+00 **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)
+0 **FLAG ONE
+0 **FLAG TWO
+100000 **ITERATIONS
+9.000000E-01 **TIMESTEP as a proportion of the maximum allowed
+"id" **ID CHARACTER (ALWAYS USE QUOTES)
+}
+
+FLAG **
+{
+5 **ITERATION METHOD
+0.000000E+00 **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)
+0 **FLAG ONE
+0 **FLAG TWO
+100000 **ITERATIONS
+9.000000E-01 **TIMESTEP as a proportion of the maximum allowed
+"id" **ID CHARACTER (ALWAYS USE QUOTES)
+}
+
+FLAG **algo
+{
+5 **ITERATION METHOD
+0.000000E+00 **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)
+0 **FLAG ONE
+0 **FLAG TWO
+100000 **ITERATIONS
+9.000000E-01 **TIMESTEP as a proportion of the maximum allowed
+"id" **ID CHARACTER (ALWAYS USE QUOTES)
+}

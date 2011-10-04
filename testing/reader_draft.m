@@ -5,30 +5,48 @@ function [ entries ] = reader_draft(filename)
   fulltext = fileread(filename);
 
   % remove comments
-  pattern_stripcomments = '\*\*(?!name=).*\n';
-  %cleantext = pattern_stripcomments.sub("\n", fulltext);
   
   %pattern_stripcomments = '\*\*.*$';
-  cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
+  %pattern_stripcomments = re.compile("\*\*(?!name=).*\n")
+  pattern_stripcomments = '\*\*(?!name=).*\n'
+
+  %cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
+  %cleantext = pattern_stripcomments.sub("\n", fulltext);
+  cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings')
 
   % extract blocks
-  pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
-  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+  
+  %pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
+  %pattern_objects = re.compile("(?P<Type>\w+)\s*(?P<nameblob>[^{}]+)?{(?P<data>[^{}]*)}",re.DOTALL)
+  pattern_objects = '^(?<type>\w+)\s*(?<nameblob>[^\{\}]+)?\{(?<data>[^\{\}]*?)\}'
+  
+  %[tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+  %objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
+  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_objects, 'tokens', 'match', 'names', 'lineanchors', 'warnings')
 
-  pattern_objects = '(?P<Type>\w+)\s*(?P<nameblob>[^{}]+)?\{(?P<data>[^\{\}]*)\}'
-  objects = [m.groupdict() for m in pattern_objects.finditer(cleantext)]
-    
   % xmesh = [];
   % ymesh = [];
   % zmesh = [];
-    % flag = [];
-    % boundaries = [];
+  % flag = [];
+  % boundaries = [];
 
   % process blocks
   disp(['length(names_blocks) = ', num2str(length(names_blocks))]);
   for i = 1:length(names_blocks)
 
     type = names_blocks(:,i).type;
+    nameblob = names_blocks(:,i).nameblob;
+    
+    name = 'DEFAULT NAME'
+    nameblob
+    if strcmpi(nameblob,'') == 0
+      pattern_nameblob = '\*\*name=(?<name>.*)'
+      [tokens_nameblob match_nameblob names_nameblob] =  regexp(nameblob, pattern_nameblob, 'tokens', 'match', 'names', 'lineanchors', 'warnings')
+      if length(names_nameblob.name) > 0
+        name = deblank(names_nameblob.name)
+      end
+    end
+    
     data = names_blocks(:,i).data;
     % disp(['===>type = ',type]);
 
@@ -66,6 +84,7 @@ function [ entries ] = reader_draft(filename)
       end
     end % end of loop through lines
 
+    entry.name = name;
     entry.type = type;
     entry.data = dataV';
     entries{length(entries)+1} = entry;
