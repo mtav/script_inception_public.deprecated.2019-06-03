@@ -1,4 +1,4 @@
-function DProcess(folder)
+function DProcess(folder,inputFileList)
   % folder=uigetdir();
   %folder='J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400';
   %folder='J:\optics\Erman\qedc3_3_0525b_6_30_1';
@@ -60,7 +60,7 @@ function DProcess(folder)
   
   prnPathName = ['.',filesep];
   
-  inputFileList = {'triangle_pillar_1_1.inp','triangle_pillar_1_1.geo'}
+  %inputFileList = {'triangle_pillar_1_1.inp','triangle_pillar_1_1.geo'}
   PrnFileNameList_xm = findPrnByName(inputFileList,'Box frequency snapshot X-')
   PrnFileNameList_xp = findPrnByName(inputFileList,'Box frequency snapshot X+')
   PrnFileNameList_ym = findPrnByName(inputFileList,'Box frequency snapshot Y-')
@@ -228,6 +228,7 @@ function DProcess(folder)
     length(ujL)
     
     % create differential surface (dS) matrix
+    % TODO: Take into account direction of the plane
     AreaM = repmat(diff(ujL),1,length(uiL)-1).*repmat(diff(uiL)',length(ujL)-1,1);
     
     % plot dS
