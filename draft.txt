@@ -12,3 +12,5 @@ http://www.blender.org/documentation/blender_python_api_2_57_release/
 https://mogurijin.wordpress.com/2010/08/17/how-to-update-blender-2-49-bge-scripts-to-2-5x/
 http://blenderscripting.blogspot.com/search/label/from_pydata
 http://blenderscripting.blogspot.com/
+http://wiki.blender.org/index.php/Dev:2.5/Source/Python/Mathutils#Consistent_Matrix_Constructor_Argument_order
+http://wiki.blender.org/index.php/Dev:2.5/Py/Scripts/Cookbook/Materials/Multiple_Materials

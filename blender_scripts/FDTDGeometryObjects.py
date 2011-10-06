@@ -88,26 +88,76 @@ class FDTDGeometryObjects:
             
             self.material_dict[permittivity] = permittivity_material;
     
-        return [ self.material_dict[permittivity] ];
+        return self.material_dict[permittivity];
     ###############################
     # OBJECT CREATION FUNCTIONS
     ###############################
     def GEOblock(self, name, lower, upper, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
+
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+      
+      # get added object
+      obj = bpy.context.active_object
+      
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
+        
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+
+      pos = 0.5*(lower+upper);
+      diag = upper-lower;
+      obj.scale = 0.5*diag;
+      obj.location = pos;
+      
+      # deleting faces fails when in object mode, so change.
+      #bpy.ops.object.mode_set(mode = 'EDIT') 
+      #bpy.ops.mesh.delete(type='ONLY_FACE')
+      #bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+
+      ######################################
+      #Assign first material on all the mesh
+      ######################################
+      #Add a material slot
+      bpy.ops.object.material_slot_add()
+       
+      #Assign a material to the last slot
+      obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+       
+      #Go to Edit mode
+      bpy.ops.object.mode_set(mode='EDIT')
+       
+      #Select all the vertices
+      bpy.ops.mesh.select_all(action='SELECT') 
+       
+      #Assign the material on all the vertices
+      bpy.ops.object.material_slot_assign() 
+       
+      #Return to Object Mode
+      bpy.ops.object.mode_set(mode='OBJECT')
+
+      return
+
+
+        #scene = Blender.Scene.GetCurrent();
+        #mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        obj = scene.objects.new(mesh, name);
-        pos = 0.5*(lower+upper);
-        diag = upper-lower;
-        obj.SizeX = abs(diag[0]);
-        obj.SizeY = abs(diag[1]);
-        obj.SizeZ = abs(diag[2]);
-        obj.setLocation(pos[0], pos[1], pos[2]);
-        obj.transp = True; obj.wireMode = True;
-        return;
+        #obj = scene.objects.new(mesh, name);
+        #pos = 0.5*(lower+upper);
+        #diag = upper-lower;
+        #obj.SizeX = abs(diag[0]);
+        #obj.SizeY = abs(diag[1]);
+        #obj.SizeZ = abs(diag[2]);
+        #obj.setLocation(pos[0], pos[1], pos[2]);
+        #obj.transp = True; obj.wireMode = True;
+        #return;
     
     def GEOblock_matrix(self, name, rotation_matrix, permittivity, conductivity):
         #~ Blender.Window.SetActiveLayer(1<<8);

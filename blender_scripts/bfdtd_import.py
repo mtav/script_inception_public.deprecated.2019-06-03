@@ -123,16 +123,16 @@ def importBristolFDTD(filename):
         diag = upper-lower;
 
         # initialise rotation_matrix
-        rotation_matrix = Blender.Mathutils.Matrix()
-        rotation_matrix.identity();
+        rotation_matrix = Matrix()
+        rotation_matrix.identity()
 
         # scale object
-        Sx=Blender.Mathutils.ScaleMatrix(abs(diag[0]),4,Blender.Mathutils.Vector(1,0,0))
-        Sy=Blender.Mathutils.ScaleMatrix(abs(diag[1]),4,Blender.Mathutils.Vector(0,1,0))
-        Sz=Blender.Mathutils.ScaleMatrix(abs(diag[2]),4,Blender.Mathutils.Vector(0,0,1))
+        Sx = Matrix.Scale(abs(diag[0]), 4, Vector((1,0,0)) )
+        Sy = Matrix.Scale(abs(diag[1]), 4, Vector((0,1,0)) )
+        Sz = Matrix.Scale(abs(diag[2]), 4, Vector((0,0,1)) )
         rotation_matrix *= Sx*Sy*Sz;
         # position object
-        T = Blender.Mathutils.TranslationMatrix(pos)
+        T = Matrix.Translation(pos)
         rotation_matrix *= T;
         
         # add rotations

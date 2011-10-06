@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import bpy
+import os
 from blender_scripts.FDTDGeometryObjects import *
+from blender_scripts.bfdtd_import import *
 
 def testkubo():
   verts = [(1.0, 1.0, -1.0),
@@ -68,9 +70,15 @@ def testkubo2():
 
 def boxtest():
   FDTDGeometryObjects_obj = FDTDGeometryObjects()
-  FDTDGeometryObjects_obj.GEObox('boxtest', Vector([1,1,1]), Vector([2,3,4]));
+  FDTDGeometryObjects_obj.GEObox('boxtest', Vector([1,1,1]), Vector([2,3,4]))
+  FDTDGeometryObjects_obj.GEOblock('name', Vector([2,3,4]), Vector([5,5,5]), 1, 1)
+  #FDTDGeometryObjects_obj.GEOblock_matrix('name', Matrix(), 1, 1)
+
+def importTest():
+  importBristolFDTD(os.getenv("HOME")+'/Development/script_inception_public/geometries/qedc3_3_0525b.geo')
   
 if __name__ == "__main__":
   #testkubo()
   boxtest()
   #testkubo2()
+  #importTest()
