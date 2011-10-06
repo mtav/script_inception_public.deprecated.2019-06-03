@@ -172,6 +172,8 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
 
   disp('===> Looping through peaks:');
   peaks
+  size(peaks,1)
+  
   for n=1:size(peaks,1)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
     plot(peaks(n,3),Y(closestInd(X,peaks(n,3))),'g*'); % plot little stars on detected peaks
@@ -188,13 +190,16 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
     Q_lorentz(n) = Q;
     plot(linspace(xmin,xmax,100),lorentz(vEnd,linspace(xmin,xmax,100)),'r.');
     
-    Q_harminv_local(n) = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax);
-    
-    Q1 = ['Q_L=',num2str(Q_lorentz(n))];
-    Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
-    Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
-    %text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
-    text(peakWaveLength, peakValue, {Q1}, 'FontSize', 8);
+    Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)
+    if size(Qfactor_harminv,1)>0
+      Q_harminv_local(n) = Qfactor_harminv;
+      
+      Q1 = ['Q_L=',num2str(Q_lorentz(n))];
+      Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
+      Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
+      %text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
+      text(peakWaveLength, peakValue, {Q1}, 'FontSize', 8);
+    end
 
     %text(peakWaveLength, peakValue + 0*font_size, );
     %text(peakWaveLength, peakValue + 1*font_size, ,'FontSize',font_size;
