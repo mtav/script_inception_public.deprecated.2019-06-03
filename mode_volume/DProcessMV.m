@@ -71,6 +71,8 @@ for m=1:length(Snaps)
     
     nom=(Exmod.^2+Eymod.^2+Ezmod.^2).*eps(:,:);
     
+    % TODO: shouldn't this be:
+    % maxVal=nom;
     maxVal=max(sum(sum(nom)));
     vv=[vv,maxVal];
     
