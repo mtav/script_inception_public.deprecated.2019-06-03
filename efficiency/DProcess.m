@@ -68,8 +68,20 @@ function DProcess(folder,inputFileList)
   PrnFileNameList_zm = findPrnByName(inputFileList,'Box frequency snapshot Z-')
   PrnFileNameList_zp = findPrnByName(inputFileList,'Box frequency snapshot Z+')
 
+
+  PrnFileNameList_xm = findPrnByName(inputFileList,'Efficiency box frequency snapshot X-')
+  PrnFileNameList_xp = findPrnByName(inputFileList,'Efficiency box frequency snapshot X+')
+  PrnFileNameList_ym = findPrnByName(inputFileList,'Efficiency box frequency snapshot Y-')
+  PrnFileNameList_yp = findPrnByName(inputFileList,'Efficiency box frequency snapshot Y+')
+  PrnFileNameList_zm = findPrnByName(inputFileList,'Efficiency box frequency snapshot Z-')
+  PrnFileNameList_zp = findPrnByName(inputFileList,'Efficiency box frequency snapshot Z+')
+
+  
+  
+  %return
+
   prnFileNames = [PrnFileNameList_xm,PrnFileNameList_xp,PrnFileNameList_ym,PrnFileNameList_yp,PrnFileNameList_zm,PrnFileNameList_zp]
-  prnFileNames = sort(prnFileNames);
+  %prnFileNames = sort(prnFileNames);
   
   % The limits of the surrounding box.
   xLimits=[];
@@ -122,6 +134,8 @@ function DProcess(folder,inputFileList)
   
   Res = [];
   for m = 1:6
+    % create new figure
+    figure;
   
     % get plane in 1,2,3 format
     [prnFileNameDir,prnFileNameBaseName] = fileparts(prnFileNames{m});
@@ -140,8 +154,10 @@ function DProcess(folder,inputFileList)
     length(uj)
 
     % plot Exmod
-    figure(1)
+    subplot(2,3,1);
     imagesc(ui,uj,data(:,:,1)')
+    colorbar;
+    title('ui,uj,data(:,:,1)''');
     
     % get integration limits (as indexes!) and prepare colNames according to the snapshot direction
     if plane == 1
@@ -173,12 +189,22 @@ function DProcess(folder,inputFileList)
       
     end
     
+    % quick hack (TODO: do it correctly)
+    if minui==1
+      minui=2
+    end
+    if minuj==1
+      minuj=2
+    end
+    
     % crop data
     data = data(minuj:maxuj,minui:maxui,:);
     
     % plot cropped data
-    figure(2)
+    subplot(2,3,2);
     imagesc(data(:,:,1)')
+    colorbar;
+    title('data(:,:,1)''');
     
     % colIndices = zeros(1,length(colNames));
 
@@ -203,8 +229,10 @@ function DProcess(folder,inputFileList)
     size(PFD)
     
     % plot the poynting field (vertical X, horizontal Y for Z plane for example)
-    figure(3)
+    subplot(2,3,3);
     imagesc(PFD')
+    colorbar;
+    title('PFD''');
 
     % show NX,NY
     'length of ui and uj'
@@ -220,8 +248,8 @@ function DProcess(folder,inputFileList)
     maxuj
 
     % get part of ui,uj over which we will integrate
-    uiL = ui(minui-1:maxui);
-    ujL = uj(minuj-1:maxuj);
+    uiL = ui(max(1,minui-1):maxui);
+    ujL = uj(max(1,minuj-1):maxuj);
     
     % show number of elements over which we will integrate
     length(uiL)
@@ -232,25 +260,30 @@ function DProcess(folder,inputFileList)
     AreaM = repmat(diff(ujL),1,length(uiL)-1).*repmat(diff(uiL)',length(ujL)-1,1);
     
     % plot dS
-    figure(4)
+    subplot(2,3,4);
     imagesc(AreaM')
+    colorbar;
+    title('AreaM''');
     
     % integrate poynting field over area
     Res(m) = sum(sum(PFD.*AreaM));
     
     % plot poynting*dS
-    figure(5)
+    subplot(2,3,5);
     imagesc((PFD.*AreaM)')
+    colorbar;
+    title('(PFD.*AreaM)''');
     
   end
   
   % calculate efficiency and show it
   for i=1:6
-    disp(['Res(',num2str(i),') = ',num2str(Res(i))])
+    disp([prnFileNames{i},' -> Res(',num2str(i),') = ',num2str(Res(i))])
   end
-  disp(['sum(Res) = ',num2str(sum(Res))])
+  total = -Res(1)+Res(2)-Res(3)+Res(4)-Res(5)+Res(6);
+  disp(['sum(Res) = ',num2str(total)]);
   
   
-  Res(2)/sum(Res)
+  Res(2)/total
   
 end
