@@ -68,9 +68,9 @@ def testkubo2():
 
 def boxtest():
   FDTDGeometryObjects_obj = FDTDGeometryObjects()
-  FDTDGeometryObjects_obj.GEObox('boxtest', Vector([0,0,0]), Vector([1,2,3]));
+  FDTDGeometryObjects_obj.GEObox('boxtest', Vector([1,1,1]), Vector([2,3,4]));
   
 if __name__ == "__main__":
   #testkubo()
-  #boxtest()
-  testkubo2()
+  boxtest()
+  #testkubo2()

@@ -175,48 +175,74 @@ class FDTDGeometryObjects:
         return
         
     def GEObox(self, name, lower, upper):
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+      
+      # get added object
+      obj = bpy.context.active_object
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
+        
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+
+      pos = 0.5*(lower+upper);
+      diag = upper-lower;
+      obj.scale = 0.5*diag;
+      obj.location = pos;
+      
+      # deleting faces fails when in object mode, so change.
+      bpy.ops.object.mode_set(mode = 'EDIT') 
+      bpy.ops.mesh.delete(type='ONLY_FACE')
+      bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+  
+      return
+
         #scene = bpy.context.scene; Blender.Scene.GetCurrent();
-        bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+        #bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
         #mesh = 
-        bpy.data
-        bpy.context
-        obj = bpy.context.active_object
-        obj.name = name
-        mesh = bpy.data.meshes[obj.name]
+        #bpy.data
+        #bpy.context
+        #obj = bpy.context.active_object
+        #obj.name = name
+        #mesh = bpy.data.meshes[obj.name]
 
         #obj.location = 0.5 * (max_co + min_co) + Vector((0.0, 0.0, 1.0))
         #obj.scale = 0.5 * (max_co - min_co) + Vector((1.0, 1.0, 2.0))
 
         #mesh = Blender.Mesh.Primitives.Cube(1.0)
-        mesh.faces.delete(0, list(range(len(mesh.faces))))
-        bpy.ops.mesh.delete(type='ONLY_FACE')
+        #mesh.faces.delete(0, list(range(len(mesh.faces))))
+        #bpy.ops.mesh.delete(type='ONLY_FACE')
     
-        toto = bpy.data.meshes["Cube.004"].faces[0]
+        #toto = bpy.data.meshes["Cube.004"].faces[0]
     
-        obj.data.faces
+        #obj.data.faces
     
         #obj = scene.objects.new(mesh, name)
-        pos = 0.5*(lower+upper);
-        diag = upper-lower;
+        #pos = 0.5*(lower+upper);
+        #diag = upper-lower;
         
         #~ global box_SizeX;
         #~ global box_SizeY;
         #~ global box_SizeZ;
-        self.box_SizeX = abs(diag[0]);
-        self.box_SizeY = abs(diag[1]);
-        self.box_SizeZ = abs(diag[2]);
-        print(("box_SizeX = ", self.box_SizeX))
-        print(("box_SizeY = ", self.box_SizeY))
-        print(("box_SizeZ = ", self.box_SizeZ))
+        #self.box_SizeX = abs(diag[0]);
+        #self.box_SizeY = abs(diag[1]);
+        #self.box_SizeZ = abs(diag[2]);
+        #print(("box_SizeX = ", self.box_SizeX))
+        #print(("box_SizeY = ", self.box_SizeY))
+        #print(("box_SizeZ = ", self.box_SizeZ))
         
-        obj.SizeX = self.box_SizeX;
-        obj.SizeY = self.box_SizeY;
-        obj.SizeZ = self.box_SizeZ;
+        #obj.SizeX = self.box_SizeX;
+        #obj.SizeY = self.box_SizeY;
+        #obj.SizeZ = self.box_SizeZ;
         
-        obj.setLocation(pos[0], pos[1], pos[2]);
-        obj.transp = True; obj.wireMode = True;
+        #obj.setLocation(pos[0], pos[1], pos[2]);
+        #obj.transp = True; obj.wireMode = True;
     
-        return
+        #return
     
     def GEOmesh(self, name, full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
         if len(delta_X_vector)<=0 or len(delta_Y_vector)<=0 or len(delta_Z_vector)<=0:
