@@ -363,6 +363,12 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           J = (inner_radius*circle_j)+center(2);
           plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
         end
+        for ii=1:length(FDTDobj.excitations)
+          lower = FDTDobj.excitations(ii).P1;
+          upper = FDTDobj.excitations(ii).P2;
+          plot3([lower(3) lower(3) upper(3) upper(3) lower(3)],...
+            [lower(2) upper(2) upper(2) lower(2) lower(2)], plotting_height_rectangle,'r','LineWidth',1);
+        end
       case 2 % Z,X
         for ii=1:length(FDTDobj.block_list)
           lower = FDTDobj.block_list(ii).lower;
@@ -392,6 +398,12 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(1);
           plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+        end
+        for ii=1:length(FDTDobj.excitations)
+          lower = FDTDobj.excitations(ii).P1;
+          upper = FDTDobj.excitations(ii).P2;
+          plot3([lower(3) lower(3) upper(3) upper(3) lower(3)],...
+            [lower(1) upper(1) upper(1) lower(1) lower(1)], plotting_height_rectangle,'r','LineWidth',1);
         end
       case 3 % X,Y
         for ii=1:length(FDTDobj.block_list)
@@ -453,6 +465,12 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           I = (inner_radius*circle_i)+center(1);
           J = (inner_radius*circle_j)+center(2);
           plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+        end
+        for ii=1:length(FDTDobj.excitations)
+          lower = FDTDobj.excitations(ii).P1;
+          upper = FDTDobj.excitations(ii).P2;
+          plot3([lower(1), lower(1), upper(1), upper(1), lower(1)],...
+            [lower(2), upper(2), upper(2), lower(2), lower(2)], plotting_height_rectangle,'r','LineWidth',1);
         end
     end
   end

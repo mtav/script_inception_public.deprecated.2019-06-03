@@ -397,8 +397,8 @@ function current_excitation = add_excitation(entry)
   current_excitation.name = entry.name;
   idx = 1;
   current_excitation.current_source = entry.data(idx); idx = idx+1;
-  current_excitation.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-  current_excitation.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+  current_excitation.P1 = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  current_excitation.P2 = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
   %idx
   %entry.data
   %[entry.data(idx), entry.data(idx+1), entry.data(idx+2)]
