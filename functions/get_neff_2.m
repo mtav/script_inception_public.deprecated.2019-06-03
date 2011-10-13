@@ -25,7 +25,7 @@ function [ real_neff_1,real_neff_2,real_neff_1_vector,real_neff_2_vector,radius_
   end
 
   v_cutoff = borne_u_inf;
-  v_max =100;
+  v_max = 100;
   % v_max =12;
   v = (v_cutoff+0.01):0.2:v_max; % normalized waveguide parameter
   n_points = length(v);
