@@ -20,15 +20,15 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
   figure;
   hold on;
   
-  N = length(n_vector)
-  L = sum(thickness_vector)
+  N = length(n_vector);
+  L = sum(thickness_vector);
   
   x(1) = object_origin;
   T(1) = 1;
   t(1) = 1;
-  phase(1) = -(2*pi*n_vector(1)/lambda)*signal_origin;
-  reflected_amplitude(1) = 0
-  transmitted_amplitude(1) = 1
+  transmitted_phase(1) = -(2*pi*n_vector(1)/lambda)*signal_origin;
+  reflected_amplitude(1) = 0;
+  transmitted_amplitude(1) = 1;
 
   for i = 1:N
     k(i) = 2*pi*n_vector(i)/lambda;
@@ -38,7 +38,14 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
       R(i) = ((n_vector(i-1)-n_vector(i))/(n_vector(i-1)+n_vector(i)))^2;
       T(i) = (4*n_vector(i-1)*n_vector(i))/(n_vector(i-1)+n_vector(i))^2;
       x(i) = x(i-1) + thickness_vector(i-1);
-      phase(i) = phase(i-1) + (k(i-1)-k(i))*x(i);
+      transmitted_phase(i) = transmitted_phase(i-1) + (k(i-1)-k(i))*x(i);
+      for j = i:-1:1
+        if (j<i)
+          reflected_phase{i}{j} = reflected_phase{i}{j};
+        else
+        
+        end
+      end
       %reflected_amplitude(i) = transmitted_amplitude(i-1)*R(i);
       %transmitted_amplitude(i) = transmitted_amplitude(i-1)*T(i);
       reflected_amplitude(i) = transmitted_amplitude(i-1)*0.5;
@@ -49,15 +56,17 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
 
   for i = 1:N
     if(i>1)
-      reflected_wave_x{i} = linspace(x(i-1),x(i),Npoints);
-      if(n_vector(i)<n_vector(i-1))
-        reflected_wave_y{i} = reflected_amplitude(i)*sin(-k(i-1)*(reflected_wave_x{i}-x(i)) + (phase(i-1)+k(i-1)*x(i)) );
-      else
-        reflected_wave_y{i} = reflected_amplitude(i)*sin(-k(i-1)*(reflected_wave_x{i}-x(i)) + (phase(i-1)+k(i-1)*x(i)) + pi );
+      for j = 1:i
+        reflected_wave_x{i}{j} = linspace(x(j),x(j+1),Npoints);
+        if(n_vector(i)<n_vector(i-1))
+          reflected_wave_y{i}{j} = reflected_amplitude(i)*sin(-k(j)*(reflected_wave_x{i}{j}-x(j+1)) + reflected_phase{i}{j} );
+        else
+          reflected_wave_y{i}{j} = reflected_amplitude(i)*sin(-k(j)*(reflected_wave_x{i}{j}-x(j+1)) + reflected_phase{i}{j} + pi );
+        end
       end
     end
     transmitted_wave_x{i} = linspace(x(i),x(i+1),Npoints);
-    transmitted_wave_y{i} = transmitted_amplitude(i)*sin(k(i)*transmitted_wave_x{i} + phase(i));
+    transmitted_wave_y{i} = transmitted_amplitude(i)*sin(k(i)*transmitted_wave_x{i} + transmitted_phase(i));
   end
 
   for i = 1:N
@@ -68,7 +77,7 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
     for j = 1:i
       if (j<i)
         disp('reflected');
-        plot(reflected_wave_x{i},reflected_wave_y{i},'Color',wave_color_vector{i},'LineWidth',LineWidth_vector{i},'Marker',Marker_vector{i},'LineStyle',LineStyle_vector{i});
+        plot(reflected_wave_x{i}{j},reflected_wave_y{i}{j},'Color',wave_color_vector{i},'LineWidth',LineWidth_vector{i},'Marker',Marker_vector{i},'LineStyle',LineStyle_vector{i});
       else
         disp('transmitted');
         plot(transmitted_wave_x{i},transmitted_wave_y{i},'Color',wave_color_vector{i},'LineWidth',LineWidth_vector{i},'Marker',Marker_vector{i},'LineStyle',LineStyle_vector{i});
