@@ -13,8 +13,12 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
 
   if exist('wave_color_vector','var') == 0; wave_color_vector = {[0,0,0],[1,0,0],[0,1,0],[1,1,0]}; end;
   if exist('LineWidth_vector','var') == 0; LineWidth_vector = {5,5,5,5}; end;
-  if exist('Marker_vector','var') == 0; Marker_vector = {'+','o','*','x'}; end;
-  if exist('LineStyle_vector','var') == 0; LineStyle_vector = {'-','--',':','-.'}; end;
+
+  %if exist('Marker_vector','var') == 0; Marker_vector = {'+','o','*','x'}; end;
+  %if exist('LineStyle_vector','var') == 0; LineStyle_vector = {'-','--',':','-.'}; end;
+
+  if exist('Marker_vector','var') == 0; Marker_vector = {'.','.','.','.'}; end;
+  if exist('LineStyle_vector','var') == 0; LineStyle_vector = {'--','--','--','--'}; end;
 
   Npoints = 25;
 
@@ -78,7 +82,7 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
   
   for i = 1:N
     if (i>1)
-      line([x(i),x(i)],[-1,1],'Color',wave_color_vector{i},'LineWidth',LineWidth_vector{i},'Marker',Marker_vector{i},'LineStyle',LineStyle_vector{i})
+      line([x(i),x(i)],[-1,1],'Color',wave_color_vector{i},'LineWidth',LineWidth_vector{i},'Marker','.','LineStyle','--')
     end
     for j = 1:i
       if (j<i)
