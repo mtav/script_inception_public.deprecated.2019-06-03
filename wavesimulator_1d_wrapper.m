@@ -5,4 +5,6 @@ function wavesimulator_1d_wrapper()
   wavesimulator_1d(thickness_vector);
   thickness_vector = [lambda/n_vector(1),lambda/(2*n_vector(2)),lambda/(2*n_vector(3)),lambda/(n_vector(4))];
   wavesimulator_1d(thickness_vector);
+  %thickness_vector = [lambda/n_vector(1),3*lambda/(2*n_vector(2)),2*lambda/(2*n_vector(3)),5*lambda/(n_vector(4))];
+  %wavesimulator_1d(thickness_vector);
 end

@@ -6,6 +6,7 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
   if exist('lambda','var') == 0; lambda = 0.637; end;
   if exist('n_vector','var') == 0; n_vector = [2.4,1,2.4,1]; end;
   if exist('signal_origin','var') == 0; signal_origin = lambda/(4*n_vector(1)); end;
+  %if exist('signal_origin','var') == 0; signal_origin = 0; end;
   %if exist('thickness_vector','var') == 0; thickness_vector = [lambda/n_vector(1),lambda/(4*n_vector(2)),lambda/(4*n_vector(3)),lambda/(n_vector(4))]; end;
   if exist('thickness_vector','var') == 0; thickness_vector = [lambda/n_vector(1),lambda/(2*n_vector(2)),lambda/(2*n_vector(3)),lambda/(n_vector(4))]; end;
   if exist('medium_color_vector','var') == 0; medium_color_vector = {[0,0,1-0.5*n_vector(1)/2.4],[0,0,1-0.5*n_vector(2)/2.4],[0,0,1-0.5*n_vector(3)/2.4],[0,0,1-0.5*n_vector(4)/2.4]}; end;
@@ -42,16 +43,13 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
       for j = i-1:-1:1
         if (j<i-1)
           disp(['ref-ref: ',num2str(i),',',num2str(j)]);
-          tmp = reflected_phase{i}{j+1} + (k(j+1)-k(j))*x(j+1)
-          reflected_phase{i}{j} = tmp;
+          reflected_phase{i}{j} = reflected_phase{i}{j+1} + (-k(j+1)+k(j))*x(j+1);
         else
           disp(['tra-ref: ',num2str(i),',',num2str(j)]);
           if(n_vector(i)<n_vector(i-1))
-            tmp = transmitted_phase(i-1) + (k(i-1)+k(i-1))*x(i)
-            reflected_phase{i}{j} = tmp;
+            reflected_phase{i}{j} = transmitted_phase(i-1) + (k(i-1)+k(i-1))*x(i);
           else
-            tmp = transmitted_phase(i-1) + (k(i-1)+k(i-1))*x(i) + pi
-            reflected_phase{i}{j} = tmp;
+            reflected_phase{i}{j} = transmitted_phase(i-1) + (k(i-1)+k(i-1))*x(i) + pi;
           end
         end
       end
@@ -67,11 +65,11 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
     if(i>1)
       for j = 1:i-1
         reflected_wave_x{i}{j} = linspace(x(j),x(j+1),Npoints);
-        reflected_wave_y{i}{j} = reflected_amplitude(i)*sin(-k(j)*reflected_wave_x{i}{j} + reflected_phase{i}{j} );
+        reflected_wave_y{i}{j} = reflected_amplitude(i)*sin( -k(j)*reflected_wave_x{i}{j} + reflected_phase{i}{j} );
       end
     end
     transmitted_wave_x{i} = linspace(x(i),x(i+1),Npoints);
-    transmitted_wave_y{i} = transmitted_amplitude(i)*sin(k(i)*transmitted_wave_x{i} + transmitted_phase(i));
+    transmitted_wave_y{i} = transmitted_amplitude(i)*sin( k(i)*transmitted_wave_x{i} + transmitted_phase(i) );
   end
 
   for i = 1:N
