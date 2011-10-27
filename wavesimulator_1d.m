@@ -20,7 +20,7 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
   figure;
   hold on;
   
-  N = length(n_vector);
+  N = length(n_vector)
   L = sum(thickness_vector);
   
   x(1) = object_origin;
@@ -39,11 +39,20 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
       T(i) = (4*n_vector(i-1)*n_vector(i))/(n_vector(i-1)+n_vector(i))^2;
       x(i) = x(i-1) + thickness_vector(i-1);
       transmitted_phase(i) = transmitted_phase(i-1) + (k(i-1)-k(i))*x(i);
-      for j = i:-1:1
-        if (j<i)
-          reflected_phase{i}{j} = reflected_phase{i}{j};
+      for j = i-1:-1:1
+        if (j<i-1)
+          disp(['ref-ref: ',num2str(i),',',num2str(j)]);
+          tmp = reflected_phase{i}{j+1} + (k(j+1)-k(j))*x(j+1)
+          reflected_phase{i}{j} = tmp;
         else
-        
+          disp(['tra-ref: ',num2str(i),',',num2str(j)]);
+          if(n_vector(i)<n_vector(i-1))
+            tmp = transmitted_phase(i-1) + (k(i-1)+k(i-1))*x(i)
+            reflected_phase{i}{j} = tmp;
+          else
+            tmp = transmitted_phase(i-1) + (k(i-1)+k(i-1))*x(i) + pi
+            reflected_phase{i}{j} = tmp;
+          end
         end
       end
       %reflected_amplitude(i) = transmitted_amplitude(i-1)*R(i);
@@ -56,13 +65,9 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
 
   for i = 1:N
     if(i>1)
-      for j = 1:i
+      for j = 1:i-1
         reflected_wave_x{i}{j} = linspace(x(j),x(j+1),Npoints);
-        if(n_vector(i)<n_vector(i-1))
-          reflected_wave_y{i}{j} = reflected_amplitude(i)*sin(-k(j)*(reflected_wave_x{i}{j}-x(j+1)) + reflected_phase{i}{j} );
-        else
-          reflected_wave_y{i}{j} = reflected_amplitude(i)*sin(-k(j)*(reflected_wave_x{i}{j}-x(j+1)) + reflected_phase{i}{j} + pi );
-        end
+        reflected_wave_y{i}{j} = reflected_amplitude(i)*sin(-k(j)*reflected_wave_x{i}{j} + reflected_phase{i}{j} );
       end
     end
     transmitted_wave_x{i} = linspace(x(i),x(i+1),Npoints);
@@ -74,6 +79,9 @@ function wavesimulator_1d(thickness_vector,n_vector,medium_color_vector,wave_col
   end
   
   for i = 1:N
+    if (i>1)
+      line([x(i),x(i)],[-1,1],'Color',wave_color_vector{i},'LineWidth',LineWidth_vector{i},'Marker',Marker_vector{i},'LineStyle',LineStyle_vector{i})
+    end
     for j = 1:i
       if (j<i)
         disp('reflected');
