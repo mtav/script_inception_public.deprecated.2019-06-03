@@ -57,7 +57,7 @@ def reportGenerator(texfile, title_list, picture_list):
 
 def main(argv=None):
   #usagestr = "usage: %prog [-o texfile] [ -t title ] [ -w \"widthA;widthB;...\" ] [ --picture_list=\"picA1,picA2,...;picB1,picB2...;...\" ]"
-  usagestr = 'usage: %prog [-o texfile] [ -t title ]\n ex:\n '+sys.argv[0]+' -t"Title" -o tmp.tex p001id.png !(p001id).png'
+  usagestr = 'usage: %prog [-o texfile] [ -t title ]\n ex:\n '+sys.argv[0]+' -t"Title" -o tmp.tex probeimage.png !(probeimage).png'
   parser = OptionParser(usage=usagestr)
 
   parser.add_option("-o", "--outfile", action="store", type="string", dest="texfile", default='', help='output texfile. ex: tmp.tex, which will lead to tmp.pdf being created')
@@ -101,7 +101,7 @@ def main(argv=None):
   print 'options.texfile = ', options.texfile
 
   #if not args:
-    #args = glob.glob('p001id.png !(p001id).png')
+    #args = glob.glob('probeimage.png !(probeimage).png')
   #print 'args = ', args
 
   picture_list = args
