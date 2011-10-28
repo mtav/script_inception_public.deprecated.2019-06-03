@@ -22,7 +22,6 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
   end
 
   figure;
-  hold on;
   for idx=1:length(filename_cellarray)
     % default values
     x=[];y=[];dwell=[];rep=0;numPoints=0;
@@ -53,13 +52,13 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
 
     if exist('magnitude','var')==1
       subplot(1,2,1);
-      plot(x(1:1:end),y(1:1:end),'r-');
+      plot(x(1:1:end),y(1:1:end),'r-'); hold on;
       plot(x(1:1:end),y(1:1:end),'b.');
       subplot(1,2,2);
-      plot(res*x(1:1:end),res*y(1:1:end),'r-');
+      plot(res*x(1:1:end),res*y(1:1:end),'r-'); hold on;
       plot(res*x(1:1:end),res*y(1:1:end),'b.');
     else
-      plot(x(1:1:end),y(1:1:end),'r-');
+      plot(x(1:1:end),y(1:1:end),'r-'); hold on;
       plot(x(1:1:end),y(1:1:end),'b.');
     end
 
