@@ -40,11 +40,10 @@ function filename_cellarray = multiRing(folder,mag,prefix,direction,interRingDis
 
   r_outer_mum = max([max(r),max(R)]);
 
-  HFW = 304000/mag; % Width of the horizontal scan (um).
+  [res, HFW] = getResolution(mag);
   if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  res = HFW/4096; % size of each pixel (mum/pxl).
   disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl']);
   
   r_pxl = round(r/res);

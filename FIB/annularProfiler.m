@@ -23,11 +23,10 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
   %%%%%%%%PARAMETERS%%%%%%%%%%%%%%%%%%%%%%%%%%% 
   %interRingDistancePxl = 1;  % The distance in pixels between each spiral ring.
 
-  HFW = 304000/mag; % Width of the horizontal scan (um).
+  [res, HFW] = getResolution(mag);
   if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  res = HFW/4096; % size of each pixel (mum/pxl).
   disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl'])
   R_outer_pxl = round(r_outer_mum/res); % Radius in pixels.
   R_inner_pxl = round(r_inner_mum/res); % Radius in pixels.

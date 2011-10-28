@@ -65,10 +65,10 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   Nbottomsug = 2/3*(height_mum - cavity_x_mum )/delta_x_mum
   
   height_mum = Nbottom*delta_x_mum + cavity_x_mum + Ntop*delta_x_mum;
+  disp(['height_mum = ',num2str(height_mum)]);
   
   [res, HFW] = getResolution(mag);
-  disp(['height_mum = ',num2str(height_mum)]);
-  disp(['HFW = ',num2str(HFW)]);
+  disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl'])
   
   if height_mum>HFW
     height_mum

@@ -11,12 +11,11 @@ r_inner=0;
 writeToFile=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HFW=304000/mag; % Width of the horizontal scan (um).
+[res, HFW] = getResolution(mag);
 if (r_outer/1e3>HFW/2)
    'Feature is too big for this magnification level..' 
    return;
 end
-res=HFW/4096; % size of each pixel (um).
 
 R_outer=r_outer/res/Step; % Radius in pixels.
 R_inner=r_inner/res/Step; % Radius in pixels.

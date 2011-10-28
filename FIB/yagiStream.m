@@ -3,8 +3,7 @@ function filename_cellarray = yagiStream(folder,prefix)
     filename_cellarray = {};
     mag = 36000;
     dwell = 2400;             %unit: 0.1us
-    HFW = 304000/mag; % Width of the horizontal scan (um).
-    res = HFW/4096; % size of each pixel (mum/pxl).
+    [res, HFW] = getResolution(mag);
     disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl']);
     
     holes_x_pxl = linspace(-2000,2000,400);
