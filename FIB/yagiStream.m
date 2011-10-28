@@ -4,7 +4,7 @@ function filename_cellarray = yagiStream(folder,prefix)
     mag = 36000;
     dwell = 2400;             %unit: 0.1us
     [res, HFW] = getResolution(mag);
-    disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl']);
+    disp(['Resolution = ',num2str(res),' mum/pxl']);
     
     holes_x_pxl = linspace(-2000,2000,400);
     holes_y_pxl = repmat(400*ones(1,length(holes_x_pxl)),1,2);

@@ -47,7 +47,7 @@ function filename_cellarray = multiLine(folder,mag,prefix,direction,interRingDis
   if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl']);
+  disp(['Resolution = ',num2str(res),' mum/pxl']);
   
   r_pxl = round(r/res);
   R_pxl = round(R/res);

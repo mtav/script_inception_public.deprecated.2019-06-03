@@ -41,7 +41,7 @@ function annularProfiler(folder,rep,mag,prefix,direction,interRingDistancePxl)
   if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl'])
+  disp(['Resolution = ',num2str(res),' mum/pxl'])
   
   A_pxl = round(A/res)
   r_pxl = round(r/res)

@@ -15,7 +15,7 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,beamCurrent,AllInOne,
   if exist('beamCurrent','var')==0;beamCurrent = 1;end;
 
   [res, HFW] = getResolution(mag);
-  disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl']);
+  disp(['Resolution = ',num2str(res),' mum/pxl']);
 
   total_dwell_vector = [];
   total_X = [];
