@@ -14,8 +14,7 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,rep,holes_X,holes_Y,h
   filename_cellarray = {};
   if exist('beamCurrent','var')==0;beamCurrent = 1;end;
 
-  HFW = 304000/mag; %; % Width of the horizontal scan (mum).
-  res = HFW/4096; % size of each pixel (mum).
+  [res, HFW] = getResolution(mag);
   disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl']);
 
   total_dwell_vector = [];
@@ -249,10 +248,7 @@ function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_cent
   % size of a circle in mum
   spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
   %spotSize = 0.500
-  
-  %HFW=304000/mag; % Width of the horizontal scan (um).
-  %res=HFW/4096; % size of each pixel (um).
-  
+    
   % vertical stepping distance
   BeamStep_Y = max(round((spotSize-spotSize*overlap)/res),1);
   %'BeamStep_Y'

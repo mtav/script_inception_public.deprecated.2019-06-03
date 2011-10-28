@@ -7,12 +7,11 @@ r=0.02;  % Width of the square (um).
 writeToFile=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HFW=304000/mag; % Width of the horizontal scan (um).
+[res, HFW] = getResolution(mag);
 if (r/1e3>HFW/2)
    'Feature is too big for this magnification level..' 
    return;
 end
-res=HFW/4096; % size of each pixel (um).
 
 R=r/res; % Radius in pixels.
 

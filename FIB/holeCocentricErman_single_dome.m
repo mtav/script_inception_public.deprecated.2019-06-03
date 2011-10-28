@@ -22,11 +22,10 @@ function holeCocentricErman_single_dome(folder,rep,mag,r_inner,r_outer,minDwell)
   maxDwell=7000;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  HFW=304000/mag; % Width of the horizontal scan (um).
+  [res, HFW] = getResolution(mag);
   if (r_outer/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  res=HFW/4096; % size of each pixel (um).
 
   R_outer=round(r_outer/res/Step); % Radius in pixels.
   R_inner=round(r_inner/res/Step); % Radius in pixels.

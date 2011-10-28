@@ -7,7 +7,7 @@
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [x,y,dwell,rep,numPoints]=readStrFile(filename_cellarray)
+function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
   
   if (nargin==0)
     [FileName,PathName,FilterIndex] = uigetfile('*.str','',pwd());
