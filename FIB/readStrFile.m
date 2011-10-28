@@ -1,11 +1,13 @@
-% This function reads and plots a mask file (.str)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 %       ERMAN ENGIN
 %       UNIVERSSITY OF BRISTOL
 % 
-% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This function reads and plots a mask file (.str)
+% Usage:
+% function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
+% magnitude is optional. If given a second plot in mum will be created.
 
 function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
   
@@ -13,6 +15,10 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
     [FileName,PathName,FilterIndex] = uigetfile('*.str','',pwd());
     filename=[PathName,filesep,FileName];
     filename_cellarray = {filename};
+  end
+
+  if exist('magnitude','var')==1
+    [res, HFW] = getResolution(magnitude);
   end
 
   figure;
@@ -43,9 +49,21 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
       x=M(2,:);
       y=M(3,:);
     end
-    plot(x(1:1:end),y(1:1:end),'r-');
-    plot(x(1:1:end),y(1:1:end),'b.');
 
+
+    if exist('magnitude','var')==1
+      subplot(1,2,1);
+      plot(x(1:1:end),y(1:1:end),'r-');
+      plot(x(1:1:end),y(1:1:end),'b.');
+      subplot(1,2,2);
+      plot(res*x(1:1:end),res*y(1:1:end),'r-');
+      plot(res*x(1:1:end),res*y(1:1:end),'b.');
+    else
+      plot(x(1:1:end),y(1:1:end),'r-');
+      plot(x(1:1:end),y(1:1:end),'b.');
+    end
+
+    % calculate approximate mask duration
     sec = rep*(sum(dwell)*1e-7+0.008163229517396*numPoints);
     hour   = fix(sec/3600);      % get number of hours
     sec    = sec - 3600*hour;    % remove the hours
@@ -54,19 +72,19 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
     second = sec;
     disp(sprintf('Approximate Mask Duration is %2.5f hours %2.5f minutes %2.5f seconds',hour,minute,second));
 
-    if (nargin==0)
-    %     scatter(x,y)
-    % plot(x,y)
-        set(gca,'YDir','reverse');
-        title([num2str(length(x)),' Points']);
-    %     
-    %     spotR=1;
-    %     for m=1:min(55500,length(x))
-    %     % for m=1:length(x)
-    %     rectangle('Position',[x(m)-spotR,y(m)-spotR,2*spotR,2*spotR],'Curvature',[1,1])
-    %     end
-    %     axis equal
-    end
+    %if (nargin==0)
+    %%     scatter(x,y)
+    %% plot(x,y)
+        %set(gca,'YDir','reverse');
+        %title([num2str(length(x)),' Points']);
+    %%     
+    %%     spotR=1;
+    %%     for m=1:min(55500,length(x))
+    %%     % for m=1:length(x)
+    %%     rectangle('Position',[x(m)-spotR,y(m)-spotR,2*spotR,2*spotR],'Curvature',[1,1])
+    %%     end
+    %%     axis equal
+    %end
 
     % A=zeros(4094,4096);
 
@@ -80,9 +98,22 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
 
   end
 
-  xlabel('pixels');
-  ylabel('pixels');
-  axis([0 4096 0 4096]);
-  pbaspect([1,1,1]);
+  if exist('magnitude','var')==1
+    subplot(1,2,1);
+    xlabel('pixels');
+    ylabel('pixels');
+    axis([0 4096 0 4096]);
+    pbaspect([1,1,1]);
+    subplot(1,2,2);
+    xlabel('mum');
+    ylabel('mum');
+    axis([0 res*4096 0 res*4096]);
+    pbaspect([1,1,1]);
+  else
+    xlabel('pixels');
+    ylabel('pixels');
+    axis([0 4096 0 4096]);
+    pbaspect([1,1,1]);
+  end
 
 end
