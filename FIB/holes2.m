@@ -58,7 +58,6 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,beamCurrent,AllInOne,
       y = [y, repmat(y_vec{idx},1,rep_vec(idx))];
     end
     rep=1;
-    % folder = uigetdir();
     filename = [folder,filesep,prefix,'.str'];
     %~ filename = [folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
     disp(['length(x) = ',num2str(length(x))]);
@@ -77,7 +76,6 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,beamCurrent,AllInOne,
       dwell = dwell_vec{idx};
       x = x_vec{idx};
       y = y_vec{idx};
-      % folder = uigetdir();
       filename = [folder,filesep,prefix,'.idx_',num2str(idx),'.rep_',num2str(rep_vec(idx)),'.str'];
       %~ filename = [folder,filesep,prefix,'_holeCC_r',num2str(length(profile)),'px_',datestr(now,'yyyymmdd_HHMMSS'),'.str'];
       disp(['length(x) = ',num2str(length(x))]);
@@ -93,5 +91,5 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,beamCurrent,AllInOne,
       filename_cellarray{end+1} = filename;
     end
   end
-  
+
 end

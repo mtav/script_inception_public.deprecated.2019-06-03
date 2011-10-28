@@ -54,12 +54,8 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,rep,holes_X,holes_Y,h
       fid = fopen(sub_filename,'w+');
       fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(X));
       fprintf(fid,'%i %i %i\r\n',[dwell_vector;X;Y]);
-      % fprintf('s\r\n%i\r\n%i\r\n',rep,length(total_X));
-      % fprintf('%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
       fclose(fid);
       filename_cellarray{end+1}=sub_filename;
-      % surfMask(total_X,total_Y,total_dwell_vector);
-      %~ readStrFile(fileBaseName);
     end
     total_dwell_vector = [total_dwell_vector, dwell_vector];
     total_X = [total_X, X];
@@ -78,20 +74,9 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,rep,holes_X,holes_Y,h
     fid = fopen(filename,'w+');
     fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(total_X));
     fprintf(fid,'%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
-    % fprintf('s\r\n%i\r\n%i\r\n',rep,length(total_X));
-    % fprintf('%i %i %i\r\n',[total_dwell_vector;total_X;total_Y]);
     fclose(fid);
     filename_cellarray{end+1}=filename;
     
-    % surfMask(total_X,total_Y,total_dwell_vector);
-    
-    %readStrFile({fileBaseName});
   end
-  
-  %figure;
-  %plot(res*total_X(1:1:end),res*total_Y(1:1:end),'r');
-  %xlabel('microns');
-  %ylabel('microns');
-  %axis(res*[0 4096 0 4096]);
-  
+
 end
