@@ -3,6 +3,7 @@ import os;from blender_scripts.bfdtd_import import *;importBristolFDTD(os.getenv
 from blender_scripts.testkubo import *; testkubo()
 
 ~/bin/blender-2.58a-linux-glibc27-x86_64/blender --python ~/Development/script_inception_public/blender_scripts/testkubo.py
+~/bin/blender-2.60a-linux-glibc27-x86_64/blender --python ~/Development/script_inception_public/blender_scripts/testkubo.py
 
 links:
 http://www.blender.org/documentation/blender_python_api_2_58_1/bpy.ops.mesh.html?highlight=cylinder#bpy.ops.mesh.primitive_cylinder_add
