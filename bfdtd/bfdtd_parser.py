@@ -1122,7 +1122,7 @@ class BFDTDobject:
     GEOin(fileName,fileList)
     return
     
-  def writeCondorScript(self,fileName, BASENAME=None):
+  def writeCondorScript(self, fileName, BASENAME=None):
     ''' Generate fileName.cmd file for Condor using BASENAME.in, BASENAME.geo, BASENAME.inp '''
     # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object
     if BASENAME is None:
@@ -1130,7 +1130,7 @@ class BFDTDobject:
     GEOcommand(fileName, BASENAME)
     return
     
-  def writeShellScript(self,fileName, BASENAME=None, EXE='fdtd', WORKDIR='$JOBDIR', WALLTIME=12):
+  def writeShellScript(self, fileName, BASENAME=None, EXE='fdtd', WORKDIR='$JOBDIR', WALLTIME=12):
     ''' Generate .sh file '''
     if BASENAME is None:
       BASENAME = os.path.splitext(os.path.basename(fileName))[0]

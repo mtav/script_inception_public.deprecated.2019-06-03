@@ -126,8 +126,8 @@ class Excitation:
       FILE.write("%E **FREQ (HZ)\n" % self.frequency)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
-      FILE.write('"'+self.template_filename+'" ** TEMPLATE FILENAME\n')
-      FILE.write('"'+self.template_source_plane+'" ** TEMPLATE SOURCE PLANE\n')
+      FILE.write('"'+str(self.template_filename)+'" ** TEMPLATE FILENAME\n')
+      FILE.write('"'+str(self.template_source_plane)+'" ** TEMPLATE SOURCE PLANE\n')
       FILE.write('}\n')
       FILE.write('\n')
     else:
