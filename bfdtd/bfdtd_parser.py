@@ -1175,7 +1175,7 @@ class BFDTDobject:
     #self.writeCondorScript(cmdFileName)
     #self.writeShellScript(shFileName)
   
-  def calculateMeshingParameters(self):
+  def calculateMeshingParameters(self, minimum_mesh_delta_vector3):
     ''' returns parameters that can be used for meshing:
     -Section_MaXDeltaVector_X
     -Section_ThicknessVector_X
@@ -1279,17 +1279,34 @@ class BFDTDobject:
     epsVZ = epsVZ.max(0)
         
     meshing_parameters = MeshingParameters()
-    meshing_parameters.maxPermittivityVector_X = epsVX
-    meshing_parameters.thicknessVector_X = thicknessVX
-    meshing_parameters.maxPermittivityVector_Y = epsVY
-    meshing_parameters.thicknessVector_Y = thicknessVY
-    meshing_parameters.maxPermittivityVector_Z = epsVZ
-    meshing_parameters.thicknessVector_Z = thicknessVZ
+    meshing_parameters.maxPermittivityVector_X = []
+    meshing_parameters.thicknessVector_X = []
+    meshing_parameters.maxPermittivityVector_Y = []
+    meshing_parameters.thicknessVector_Y = []
+    meshing_parameters.maxPermittivityVector_Z = []
+    meshing_parameters.thicknessVector_Z = []
+    
+    # TODO: use (thickness, epsilon) tuples so that filter() and similar functions can be used. Also prevents errors if lists have different lengths.
+    # ex: t = filter(lambda x: x>=1, t)
+    # filter out parts smaller than minimum_mesh_delta_vector3[i]
+    for idx in range(len(thicknessVX)):
+      if thicknessVX[idx] >= minimum_mesh_delta_vector3[0]:
+        meshing_parameters.maxPermittivityVector_X.append(epsVX[idx])
+        meshing_parameters.thicknessVector_X.append(thicknessVX[idx])
+    for idx in range(len(thicknessVY)):
+      if thicknessVY[idx] >= minimum_mesh_delta_vector3[1]:
+        meshing_parameters.maxPermittivityVector_Y.append(epsVY[idx])
+        meshing_parameters.thicknessVector_Y.append(thicknessVY[idx])
+    for idx in range(len(thicknessVZ)):
+      if thicknessVZ[idx] >= minimum_mesh_delta_vector3[2]:
+        meshing_parameters.maxPermittivityVector_Z.append(epsVZ[idx])
+        meshing_parameters.thicknessVector_Z.append(thicknessVZ[idx])
+    
     return meshing_parameters
     
-  def autoMeshGeometry(self,meshing_factor):
-    meshing_parameters = self.calculateMeshingParameters()
-    #print(meshing_parameters)
+  def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-15,1e-15,1e-15]):
+    meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
+    print(meshing_parameters)
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
