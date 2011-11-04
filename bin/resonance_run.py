@@ -3,6 +3,7 @@
 
 #from geometries.pillar_1D_wrapper import *
 import re
+from bin.harminv import getFrequencies
 from bfdtd.bfdtd_parser import *
 
 def resonance_run(src, dst, freqListFile):

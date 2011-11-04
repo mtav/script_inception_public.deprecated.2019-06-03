@@ -1,13 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 import os
 import re
 import sys
-
 from optparse import OptionParser
 
 # TODO: probe list input + more modularization (separate harminv log generation and file comparison)
+
+def getFrequencies(filename):
+  '''
+  Returns a list of frequencies based on a file in the following format:
+  PeakNo	Frequency(Hz)	Wavelength(nm)	QFactor	
+  1	4.7257745e+14	634.37741293	40.4569
+  2	4.9540615e+14	605.14480606	90.37
+  '''
+  freq_snapshots = []
+  with open(filename, 'r') as f:
+    f.readline()
+    for line in f:
+      freq_snapshots.append(float(line.split()[1])*1e-6)
+            #read_data = f.read()
+    #print read_data
+  f.closed
+  return freq_snapshots
 
 def getPeaks(filename):
   peak_list = [];
@@ -169,30 +186,35 @@ def batch_harminv(topdir):
       f.write('\n');
   f.close();
   
-usagestr = "usage: %prog [-b topdir] [-t subdir] [infile outfile parameterFile]"
+def main():
+  usagestr = "usage: %prog [-b topdir] [-t subdir] [infile outfile parameterFile]"
+  
+  parser = OptionParser(usage=usagestr)
+  # parser = OptionParser()
+  
+  parser.add_option("-b", "--batch",
+            action="store_true", dest="batch", default=False,
+            help="Process subdirectories (batch job)")
+  
+  parser.add_option("-t", "--top-probes",
+            action="store_true", dest="top_probes", default=False,
+            help="Process all top probes")
+  
+  (options, args) = parser.parse_args()
+  
+  if options.batch:
+    print 'You have selected batch processing.'
+    batch_harminv(args[0])
+    print 'SUCCESS'
+  elif options.top_probes:
+    print 'You have selected top probes processing.'
+    harminv_top_probes(args[0])
+    print 'SUCCESS'
+  else:
+    print 'You have selected single probe processing.'
+    harminv(args[0],args[1],args[2])
+    print 'SUCCESS'
 
-parser = OptionParser(usage=usagestr)
-# parser = OptionParser()
-
-parser.add_option("-b", "--batch",
-          action="store_true", dest="batch", default=False,
-          help="Process subdirectories (batch job)")
-
-parser.add_option("-t", "--top-probes",
-          action="store_true", dest="top_probes", default=False,
-          help="Process all top probes")
-
-(options, args) = parser.parse_args()
-
-if options.batch:
-  print 'You have selected batch processing.'
-  batch_harminv(args[0])
-  print 'SUCCESS'
-elif options.top_probes:
-  print 'You have selected top probes processing.'
-  harminv_top_probes(args[0])
-  print 'SUCCESS'
-else:
-  print 'You have selected single probe processing.'
-  harminv(args[0],args[1],args[2])
-  print 'SUCCESS'
+if __name__ == "__main__":
+  main()
+  
