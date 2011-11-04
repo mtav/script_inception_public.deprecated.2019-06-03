@@ -1203,7 +1203,7 @@ class BFDTDobject:
 
     # geometry object meshes
     for obj in self.geometry_object_list:
-      print(obj.name)
+      #print(obj.name)
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # mesh object meshes
@@ -1306,7 +1306,7 @@ class BFDTDobject:
     
   def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-15,1e-15,1e-15]):
     meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
-    print(meshing_parameters)
+    #print(meshing_parameters)
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
