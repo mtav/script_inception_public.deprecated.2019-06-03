@@ -85,7 +85,7 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   if handles.geometry==1
     if exist('handles','var') && isfield(handles,'geofile') && isfield(handles,'inpfile')
       % load geometry data
-      [entries,FDTDobj]=GEO_INP_reader({handles.geofile,handles.inpfile});
+      [entries,FDTDobj] = GEO_INP_reader({handles.geofile,handles.inpfile});
     else
       error('ERROR: you need to specify geo and inp file in order to show the geometry.');
     end
@@ -211,39 +211,46 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     lighting phong;
   end
   
+  %zmin = 0;
+  %zmax = maxval;
+  %cmin = 0;
+  %cmax = maxval;
+  
   % TODO: handle NaNs
   switch handles.plane
     case 1
-      xlabel('z')
-      ylabel('y')
+      xlabel('z');
+      ylabel('y');
       if handles.geometry
-        foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+        foo = [FDTDobj.box.lower(3), FDTDobj.box.upper(3), FDTDobj.box.lower(2), FDTDobj.box.upper(2)];%, zmin,zmax,cmin,cmax];
       else
-        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1) ];
+        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
       end
-      axis(foo)
+      axis(foo);
     case 2
-      xlabel('z')
-      ylabel('x')
+      xlabel('z');
+      ylabel('x');
       if handles.geometry
-        foo = [FDTDobj.box.lower(3) FDTDobj.box.upper(3) FDTDobj.box.lower(1) FDTDobj.box.upper(1)];
+        foo = [FDTDobj.box.lower(3), FDTDobj.box.upper(3), FDTDobj.box.lower(1), FDTDobj.box.upper(1)];%, zmin,zmax,cmin,cmax];
       else
-        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1) ];
+        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
       end
-      axis(foo)
+      axis(foo);
     case 3
-      xlabel('x')
-      ylabel('y')
+      xlabel('x');
+      ylabel('y');
       if handles.geometry
-        foo = [FDTDobj.box.lower(1) FDTDobj.box.upper(1) FDTDobj.box.lower(2) FDTDobj.box.upper(2)];
+        foo = [FDTDobj.box.lower(1), FDTDobj.box.upper(1), FDTDobj.box.lower(2), FDTDobj.box.upper(2)];%, zmin,zmax,cmin,cmax];
       else
-        foo = [ j(1,1),j(size(j,1),1), i(1,1),i(1,size(i,2)) ];
+        foo = [ j(1,1),j(size(j,1),1), i(1,1),i(1,size(i,2))];%, zmin,zmax,cmin,cmax];
       end
       axis(foo);
   end
 
   % for octave, but might make things easier for matlab too
   view(0,90);
+  %view(45,45);
+  %axis equal;
   
   if rotate90
     view(90,90);
@@ -351,6 +358,7 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
             plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
           end
           clear I J;
+          clearvars I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
           center = FDTDobj.sphere_list(ii).center;
@@ -358,10 +366,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
         end
         for ii=1:length(FDTDobj.excitations)
           lower = FDTDobj.excitations(ii).P1;
@@ -383,10 +391,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           height = FDTDobj.cylinder_list(ii).height;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
           center = FDTDobj.sphere_list(ii).center;
@@ -394,10 +402,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(3);
           J = (outer_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
           I = (inner_radius*circle_i)+center(3);
           J = (inner_radius*circle_j)+center(1);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
         end
         for ii=1:length(FDTDobj.excitations)
           lower = FDTDobj.excitations(ii).P1;
@@ -454,6 +462,7 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
             plot3(I,J,plotting_height_rectangle,'y','LineWidth',1);
           end
           clear I J;
+          clearvars I J;
         end
         for ii=1:length(FDTDobj.sphere_list)
           center = FDTDobj.sphere_list(ii).center;
@@ -461,10 +470,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
           inner_radius = FDTDobj.sphere_list(ii).inner_radius;
           I = (outer_radius*circle_i)+center(1);
           J = (outer_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
           I = (inner_radius*circle_i)+center(1);
           J = (inner_radius*circle_j)+center(2);
-          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J;
+          plot3(I, J, plotting_height_circle, 'y','LineWidth',1); clear I J; clearvars I J;
         end
         for ii=1:length(FDTDobj.excitations)
           lower = FDTDobj.excitations(ii).P1;
@@ -499,21 +508,33 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%MAX', num2str(maxval));
     % additional stuff for frequency snapshots
     if handles.Type == 3 % frequency snapshot
-      Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
-      freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-      pos_mum = FDTDobj.frequency_snapshots(Nsnap).P1(handles.plane);
-      lambda_snap_mum = get_c0()/freq_snap_MHz;
-      lambda_snap_nm = lambda_snap_mum*1e3;
-      imageSaveNameFinal = strrep(imageSaveNameFinal, '%NSNAP', num2str(Nsnap));
-      imageSaveNameFinal = strrep(imageSaveNameFinal, '%FREQ_SNAP_MHZ', num2str(freq_snap_MHz));
-      imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_MUM', num2str(lambda_snap_mum));
-      imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_NM', num2str(lambda_snap_nm));
-      imageSaveNameFinal = strrep(imageSaveNameFinal, '%POS_MUM', num2str(pos_mum));
+      if exist('FDTDobj','var')==1
+        Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+        freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+        pos_mum = FDTDobj.frequency_snapshots(Nsnap).P1(handles.plane);
+        lambda_snap_mum = get_c0()/freq_snap_MHz;
+        lambda_snap_nm = lambda_snap_mum*1e3;
+        imageSaveNameFinal = strrep(imageSaveNameFinal, '%NSNAP', num2str(Nsnap));
+        imageSaveNameFinal = strrep(imageSaveNameFinal, '%FREQ_SNAP_MHZ', num2str(freq_snap_MHz));
+        imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_MUM', num2str(lambda_snap_mum));
+        imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_NM', num2str(lambda_snap_nm));
+        imageSaveNameFinal = strrep(imageSaveNameFinal, '%POS_MUM', num2str(pos_mum));
+      end
     end
     % saving
     disp(['Saving figure as ',imageSaveNameFinal]);
-    %print(fig,'-dpng','-r300',imageSaveNameFinal);
-    print(fig,'-depsc','-r1500',imageSaveNameFinal);
+    print(fig,'-dpng','-r300',imageSaveNameFinal);
+    %print(fig,'-depsc','-r1500',imageSaveNameFinal);
   end
+
+  delete(fig); %clear(fig);
+  clear i;
+  clear j;
+  clear k;
+  clear FDTDobj;
+  clearvars i j k FDTDobj;
+  %clear;
+  clear all;
+  clearvars -global;
 
 end

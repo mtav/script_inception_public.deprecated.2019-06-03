@@ -24,18 +24,16 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     script_filename = char(Names(script_idx));
     [ script_folder, script_basename, script_ext ] = fileparts(script_filename);
 
-    handles = struct;
-
-    handles.geofile = [ script_folder, filesep, script_basename, '.geo' ];
-    handles.inpfile = [ script_folder, filesep, script_basename, '.inp' ];
+    geofile = [ script_folder, filesep, script_basename, '.geo' ];
+    inpfile = [ script_folder, filesep, script_basename, '.inp' ];
     
-    %disp(handles.geofile)
-    %handles.inpfile
+    %disp(geofile)
+    %inpfile
     %continue
     %which GEO_INP_reader
     
     disp(['Processing script_folder = ', script_folder]);
-    [entries,FDTDobj] = GEO_INP_reader({handles.geofile,handles.inpfile});
+    [entries,FDTDobj] = GEO_INP_reader({geofile,inpfile});
     excitation = FDTDobj.excitations(1);
     excitation_direction = excitation.E;
     
@@ -97,6 +95,11 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     cd(script_folder);
     prnFiles = dir('*.prn');
     for prn_idx = 1:length(prnFiles)
+    
+      handles = struct;
+      handles.geofile = geofile;
+      handles.inpfile = inpfile;
+    
       prn_filename = prnFiles(prn_idx).name;
       [ prn_filename_folder, prn_filename_basenameNoExt, prn_filename_ext ] = fileparts(prn_filename);
       prn_filename_basename = [prn_filename_basenameNoExt, prn_filename_ext];
@@ -129,8 +132,11 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           % setting up the handles structure:
           handles.autosave = 0;
           handles.colour = 1;
+          %handles.geometry = 0;
           handles.geometry = 1;
-          handles.interpolate = 0;
+          %handles.interpolate = 0;
+          handles.interpolate = 1;
+          %handles.modulus = 1;
           handles.modulus = 0;
           handles.surface = 1;
   
@@ -140,7 +146,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           imageSaveName = '%BASENAME.%FIELD.max_%MAX.png';
   
           % finally plotting
-          plotSnapshot(snapshot_filename, col, maxplotvalue, handles, false, true, imageSaveName);
+          plotSnapshot(handles.snapfile, col, maxplotvalue, handles, false, true, imageSaveName);
         end
 
       elseif strcmp(type_name, 'FrequencySnapshot')
@@ -178,7 +184,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           % frequency snapshot specific
           handles.Type = 3;
           col = FrequencySnapshot_col;
-          imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.pos(mum)_%POS_MUM.eps';
+          imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.pos(mum)_%POS_MUM.png';
   
           % finally plotting
           plotSnapshot(handles.snapfile, col, maxplotvalue, handles, rotate90, true, imageSaveName);
@@ -188,10 +194,17 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
       else
         warning('Unknown data type');
       end
+    
+      clear handles;
+      clearvars handles;
+    
     end
 
     % restore workdir
     cd(workdir);
     
   end
+  
+  clear all;
+
 end
