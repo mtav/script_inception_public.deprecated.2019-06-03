@@ -126,4 +126,8 @@ function [header, data] = hdrload(file)
   eval('data = reshape(data, ncols, length(data)/ncols)'';', '');
   
   % And we're done!
+  
+  clear all;
+  clearvars -global;
+
 end
