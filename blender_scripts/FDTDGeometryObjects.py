@@ -195,6 +195,10 @@ class FDTDGeometryObjects:
         
         self.mesh_min = min(min(delta_X_vector), min(delta_Y_vector), min(delta_Z_vector))
         self.mesh_max = max(max(delta_X_vector), max(delta_Y_vector), max(delta_Z_vector))
+        print( ('X: min = ', min(delta_X_vector), ' average = ', float(sum(delta_X_vector)) / len(delta_X_vector)) )
+        print( ('Y: min = ', min(delta_Y_vector), ' average = ', float(sum(delta_Y_vector)) / len(delta_Y_vector)) )
+        print( ('Z: min = ', min(delta_Z_vector), ' average = ', float(sum(delta_Z_vector)) / len(delta_Z_vector)) )
+        
         # print("len(delta_X_vector) = ", len(delta_X_vector))
         # print("len(delta_Y_vector) = ", len(delta_Y_vector))
         # print("len(delta_Z_vector) = ", len(delta_Z_vector))
@@ -204,8 +208,8 @@ class FDTDGeometryObjects:
         #delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
         #self.mesh_min = min(delta_vector);
         #self.mesh_max = max(delta_vector);
-        # print("mesh_min = ", mesh_min)
-        # print("mesh_max = ", mesh_max)
+        print("self.mesh_min = ", self.mesh_min)
+        print("self.mesh_max = ", self.mesh_max)
         
         # verts = array.array('d',range());
         # verts = range(Nx*Ny*Nz);
