@@ -103,12 +103,12 @@ class Boundaries:
   def write_entry(self, FILE):
     FILE.write('BOUNDARY  **name='+self.name+'\n')
     FILE.write('{\n')
-    FILE.write("%d %d %d %d **X+\n" % (self.Xpos_bc, self.Xpos_param[0], self.Xpos_param[1], self.Xpos_param[2]))
-    FILE.write("%d %d %d %d **Y+\n" % (self.Ypos_bc, self.Ypos_param[0], self.Ypos_param[1], self.Ypos_param[2]))
-    FILE.write("%d %d %d %d **Z+\n" % (self.Zpos_bc, self.Zpos_param[0], self.Zpos_param[1], self.Zpos_param[2]))
-    FILE.write("%d %d %d %d **X-\n" % (self.Xneg_bc, self.Xneg_param[0], self.Xneg_param[1], self.Xneg_param[2]))
-    FILE.write("%d %d %d %d **Y-\n" % (self.Yneg_bc, self.Yneg_param[0], self.Yneg_param[1], self.Yneg_param[2]))
-    FILE.write("%d %d %d %d **Z-\n" % (self.Zneg_bc, self.Zneg_param[0], self.Zneg_param[1], self.Zneg_param[2]))
+    FILE.write("%d %E %E %E **X+\n" % (self.Xpos_bc, self.Xpos_param[0], self.Xpos_param[1], self.Xpos_param[2]))
+    FILE.write("%d %E %E %E **Y+\n" % (self.Ypos_bc, self.Ypos_param[0], self.Ypos_param[1], self.Ypos_param[2]))
+    FILE.write("%d %E %E %E **Z+\n" % (self.Zpos_bc, self.Zpos_param[0], self.Zpos_param[1], self.Zpos_param[2]))
+    FILE.write("%d %E %E %E **X-\n" % (self.Xneg_bc, self.Xneg_param[0], self.Xneg_param[1], self.Xneg_param[2]))
+    FILE.write("%d %E %E %E **Y-\n" % (self.Yneg_bc, self.Yneg_param[0], self.Yneg_param[1], self.Yneg_param[2]))
+    FILE.write("%d %E %E %E **Z-\n" % (self.Zneg_bc, self.Zneg_param[0], self.Zneg_param[1], self.Zneg_param[2]))
     FILE.write('}\n')
     FILE.write('\n')
 
