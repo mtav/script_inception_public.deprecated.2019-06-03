@@ -1,8 +1,12 @@
+#!/usr/bin/env python
 """
 Converts between numID (01,02,67) and alphaID (df,jk,{l,etc)
 """
+def div(A,B):
+  ret = idivide(int32(A),int32(B))
+  return ret
 
-numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number):
+def numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number):
   '''
   Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
   function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
@@ -29,10 +33,6 @@ numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number):
   #if snap_time_number<0 | snap_time_number>99:
     #error('snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!')
 
-  function ret = div(A,B)
-    ret = idivide(int32(A),int32(B))
-  end
-
   #snap_time_number = mod(snap_time_number,100);
   ilo = mod(snap_time_number,10)
   ihi = floor(snap_time_number/10)
@@ -42,7 +42,7 @@ numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number):
   else:
     alphaID = strcat(char(div(numID, 27) + double('a')-1), char(mod(numID, 27) + double('a')))
 
-  filename = strcat({snap_plane}, alphaID, {probe_ident}, char(ihi + double('0')), char(ilo + double('0')), '.prn')
+  filename = snap_plane + alphaID + probe_ident + char(ihi + double('0')) + char(ilo + double('0')) + '.prn'
   pair = [num2str(numID),':',alphaID]
   
   filename = char(filename)
@@ -61,11 +61,7 @@ def alphaID_to_numID(alphaID, probe_ident):
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE DUPLICATE IDs: 4508 = 26+(6-(ord('a')-1)+256)*27+1 (6=character before non-printable bell character)
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 836 = 26+(126-(ord('a')-1))*27
   '''
-  
-  function ret = div(A,B)
-    ret = idivide(int32(A),int32(B));
-  end
-  
+    
   if exist('probe_ident','var')==0:
     probe_ident = 'id'
 
@@ -82,7 +78,7 @@ def alphaID_to_numID(alphaID, probe_ident):
       snap_time_number = 0
     else:
       error('Match error. Invalid alphaID.')
-  elseif length(alphaID)>2:
+  elif length(alphaID)>2:
     [tokens match] =  regexp(alphaID, ['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn'], 'tokens', 'match', 'warnings')
     
     if length(match)==1:
