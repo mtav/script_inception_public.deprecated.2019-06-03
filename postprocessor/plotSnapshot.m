@@ -525,9 +525,11 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     disp(['Saving figure as ',imageSaveNameFinal]);
     print(fig,'-dpng','-r300',imageSaveNameFinal);
     %print(fig,'-depsc','-r1500',imageSaveNameFinal);
+    
+    % DO NOT CALL THIS IN INTERACTIVE MODE (otherwise the figure never shows up)
+    delete(fig); %clear(fig);
   end
 
-  delete(fig); %clear(fig);
   clear i;
   clear j;
   clear k;
