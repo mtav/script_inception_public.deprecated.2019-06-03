@@ -398,9 +398,9 @@ class Time_snapshot:
     plane = 0,
     P1 = 0,
     P2 = 0,
-    E = 0,
-    H = 0,
-    J = 0,
+    E = [1,1,1],
+    H = [1,1,1],
+    J = [0,0,0],
     power = 0,
     eps = 0,
     layer = 'time_snapshot',
@@ -488,6 +488,8 @@ class Time_snapshot:
         #~ plane_name='Z'
       #~ end
   
+      #print self.__str__()
+  
       FILE.write('SNAPSHOT **name='+self.name+'\n')
       FILE.write('{\n')
   
@@ -525,6 +527,18 @@ class Time_snapshot:
       snapshot(2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = sort([self.P1[0],self.P2[0]])
+    objy = sort([self.P1[1],self.P2[1]])
+    objz = sort([self.P1[2],self.P2[2]])
+    eps = 1
+    xvec = vstack([xvec,objx])
+    yvec = vstack([yvec,objy])
+    zvec = vstack([zvec,objz])
+    epsx = vstack([epsx,eps])
+    epsy = vstack([epsy,eps])
+    epsz = vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Frequency_snapshot:
   def __init__(self,
@@ -540,9 +554,9 @@ class Frequency_snapshot:
     P2 = 0,
     frequency_vector = [0],
     starting_sample = 0,
-    E=[1,1,1],
-    H=[1,1,1],
-    J=[0,0,0],
+    E = [1,1,1],
+    H = [1,1,1],
+    J = [0,0,0],
     layer = 'frequency_snapshot',
     group = 'frequency_snapshot'):
     
@@ -865,6 +879,26 @@ class BFDTDobject:
     self.snapshot_list.append(F)
     return F
   
+  def addTimeSnapshot(self, plane, position):
+    if plane == 1:
+      name='X Time snapshot'
+      L = [position, self.box.lower[1], self.box.lower[2]]
+      U = [position, self.box.upper[1], self.box.upper[2]]
+    elif plane == 2:
+      name='Y Time snapshot'
+      L = [self.box.lower[0], position, self.box.lower[2]]
+      U = [self.box.upper[0], position, self.box.upper[2]]
+    elif plane == 3:
+      name='Z Time snapshot'
+      L = [self.box.lower[0], self.box.lower[1], position]
+      U = [self.box.upper[0], self.box.upper[1], position]
+    else:
+      print(('ERROR: Invalid plane : ',plane))
+      sys.exit(1)
+    F = Time_snapshot(name=name, plane=plane, P1=L, P2=U)
+    self.snapshot_list.append(F)
+    return F
+
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
       print 'Processing ', filename

@@ -58,7 +58,9 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
     end;
   end;
   xmin = time_mus(1);
-  xmax = time_mus(idx_max);
+  %xmax = time_mus(idx_max);
+  xmax = time_mus(length(data_time_domain));
+  
   axis([xmin, xmax, 1.1*ymin, 1.1*ymax]);
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
