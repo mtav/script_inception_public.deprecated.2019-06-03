@@ -393,8 +393,8 @@ class Rotation:
 class Time_snapshot:
   def __init__(self,
     name = 'time_snapshot',
-    first = 0,
-    repetition = 0,
+    first = 1, # crashes if = 0
+    repetition = 524200,
     plane = 0,
     P1 = 0,
     P2 = 0,
