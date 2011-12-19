@@ -18,6 +18,7 @@ class GWLobject:
     self.GWL_voxels.append(write_sequence)
 
   def readGWL(self,filename):
+    Nvoxels = 0
     write_sequence = []
     with open(filename, 'r') as file:
       for line in file:
@@ -27,15 +28,27 @@ class GWLobject:
         if len(line_stripped)>0:
           cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
           cmd = [ i.lower() for i in cmd ]
-          print cmd
-          if cmd[0]=='-999' or cmd[0]=='write':
-            print 'write'
-            self.GWL_voxels.append(write_sequence)
-            write_sequence = []
+          #print cmd
+          if re.match(r"\D",cmd[0][0]):
+            #print '=>COMMAND'
+            if cmd[0]=='-999' or cmd[0]=='write':
+              #print 'write'
+              self.GWL_voxels.append(write_sequence)
+              write_sequence = []
+            #elif cmd[0]=='defocusfactor':
+              #print 'defocusfactor'
+            #elif cmd[0]=='laserpower':
+              #print 'laserpower'
+            #else:
+              #print('UNKNOWN COMMAND: '+cmd[0])
+              #sys.exit(-1)
           else:
-            print 'voxel'
+            #print '=>VOXEL'
             voxel = [ float(i) for i in cmd ]
             write_sequence.append(voxel)
+            Nvoxels = Nvoxels + 1
+            
+    print('Nvoxels = '+str(Nvoxels))
     #return GWL_voxels
   
   def write_GWL(self,filename):
@@ -93,7 +106,7 @@ class Woodpile:
 if __name__ == "__main__":
   GWL_obj = GWLobject()
   GWL_obj.readGWL(sys.argv[1])
-  print GWL_obj.GWL_voxels
+  #print GWL_obj.GWL_voxels
   GWL_obj.write_GWL('copy.gwl')
   woodpile_obj = Woodpile()
   GWL_obj = woodpile_obj.getGWL()

@@ -21,6 +21,8 @@ import os
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
 
+# TODO: create linked duplicates of base voxel for faster loading!
+
 ###############################
 # INITIALIZATIONS
 ###############################
@@ -28,7 +30,7 @@ import os
 # official script data location :)
 cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
 
-def BlenderSphere(name, center, outer_radius, inner_radius = 0):
+def BlenderSphere(name, center, outer_radius):
     scene = Blender.Scene.GetCurrent()
     mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius)
     #mesh.materials = self.materials(permittivity, conductivity)
@@ -39,6 +41,21 @@ def BlenderSphere(name, center, outer_radius, inner_radius = 0):
     obj.transp = True
     obj.wireMode = True
     return
+
+def BlenderBlock(name, center, outer_radius):
+    scene = Blender.Scene.GetCurrent()
+    mesh = Blender.Mesh.Primitives.Cube(1.0)
+
+    obj = scene.objects.new(mesh, name)
+    pos = center
+    diag = 2*outer_radius
+    obj.SizeX = abs(diag)
+    obj.SizeY = abs(diag)
+    obj.SizeZ = abs(diag)
+    obj.setLocation(pos[0], pos[1], pos[2])
+    obj.transp = True
+    obj.wireMode = True
+    return;
 
 #def BlenderLine(name,P1,P2,radius):
   
@@ -89,7 +106,8 @@ def importGWL(filename):
     GWL_obj.readGWL(filename)
     for write_sequence in GWL_obj.GWL_voxels:
       for voxel in write_sequence:
-        BlenderSphere('voxel', Vector(voxel), 0.100)
+        #BlenderSphere('voxel', Vector(voxel), 0.100)
+        BlenderBlock('voxel', Vector(voxel), 0.100)
     
     Blender.Scene.GetCurrent().update(0);
     Blender.Window.RedrawAll();
