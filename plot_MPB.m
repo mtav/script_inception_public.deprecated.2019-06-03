@@ -31,15 +31,16 @@ function plot_MPB(filename,scale_factor)
   %hline(b,'r',num2str(b));
   %text(1,0.5*(a+b),num2str(delta));
 
-  %i = 5
-  %a = data(1+(i-1)*10,find(strcmp(header,'band_2')));
-  %b = data(1+(i-1)*10,find(strcmp(header,'band_3')));
-  %delta = abs(b-a);
+  i = 5
+  a = data(1+(i-1)*10,find(strcmp(header,'band_2')))
+  b = data(1+(i-1)*10,find(strcmp(header,'band_3')))
+  delta = abs(b-a);
   %hline(a,'r',num2str(a));
   %hline(b,'r',num2str(b));
   %text(1,0.5*(a+b),num2str(delta));
-  %gap = abs(b-a)
-  %midgap = 0.5*(a+b)
+  gap = abs(b-a)
+  midgap = 0.5*(a+b)
+  hline(midgap,'r',num2str(midgap));
 
   %hline(0.585,'b',num2str(0.585));
 
