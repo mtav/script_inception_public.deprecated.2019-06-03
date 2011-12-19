@@ -84,8 +84,9 @@ def importGWL(filename):
     FILE.close();
     
     # parse file
-    GWL_object = readGWL(filename)
-    for write_sequence in GWL_object:
+    GWL_obj = GWLobject()
+    GWL_obj.readGWL(filename)
+    for write_sequence in GWL_obj.GWL_voxels:
       for voxel in write_sequence:
         BlenderSphere('voxel', Vector(voxel), 0.100)
     
