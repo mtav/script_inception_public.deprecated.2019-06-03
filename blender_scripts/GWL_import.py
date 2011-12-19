@@ -21,7 +21,9 @@ import os
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
 
-# TODO: create linked duplicates of base voxel for faster loading!
+# TODO: create linked duplicates of base voxel for faster loading! -> failed
+# TODO: see how "Cells" voxelization script works and use that system for faster loading
+
 
 ###############################
 # INITIALIZATIONS
@@ -63,9 +65,9 @@ def BlenderSphere(name, center, outer_radius):
     obj.wireMode = True
     return obj
 
-def BlenderBlock(name, center, outer_radius):
-    scene = Blender.Scene.GetCurrent()
-    mesh = Blender.Mesh.Primitives.Cube(1.0)
+def BlenderBlock(name, center, outer_radius, scene, mesh):
+    #scene = Blender.Scene.GetCurrent()
+    #mesh = Blender.Mesh.Primitives.Cube(1.0)
 
     obj = scene.objects.new(mesh, name)
     pos = center
@@ -74,8 +76,8 @@ def BlenderBlock(name, center, outer_radius):
     obj.SizeY = abs(diag)
     obj.SizeZ = abs(diag)
     obj.setLocation(pos[0], pos[1], pos[2])
-    obj.transp = True
-    obj.wireMode = True
+    #obj.transp = True
+    #obj.wireMode = True
     return obj
 
 #def BlenderLine(name,P1,P2,radius):
@@ -123,6 +125,7 @@ def importGWL(filename):
     FILE.close();
     
     scene = Blender.Scene.GetCurrent()
+    mesh = Blender.Mesh.Primitives.Cube(1.0)
     
     # parse file
     GWL_obj = GWLobject()
@@ -132,7 +135,7 @@ def importGWL(filename):
       for voxel in write_sequence:
         #print voxel
         #BlenderSphere('voxel', Vector(voxel), 0.100)
-        BlenderBlock('voxel', Vector(voxel), 0.100)
+        BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
         #if Nvoxel == 0:
           #first_voxel = BlenderBlock('voxel', Vector(voxel), 0.100)
         #else:
@@ -144,9 +147,9 @@ def importGWL(filename):
         Nvoxel = Nvoxel + 1
     
     print('Nvoxel = '+str(Nvoxel))
-    Blender.Scene.GetCurrent().update(0);
-    Blender.Window.RedrawAll();
-    Blender.Window.WaitCursor(0);
+    Blender.Scene.GetCurrent().update(0)
+    Blender.Window.RedrawAll()
+    Blender.Window.WaitCursor(0)
     #Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print('...done')
 
