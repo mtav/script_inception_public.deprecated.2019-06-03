@@ -10,7 +10,6 @@ import os;
 import sys;
 import re;
 import array;
-import cPickle;
 # define Vector+Matrix
 #~ from bpy.Mathutils import Vector;
 #~ from bpy.Mathutils import Matrix;

@@ -13,6 +13,7 @@ from bfdtd.bfdtd_parser import *
 from FDTDGeometryObjects import *
 from layer_manager import *
 from bfdtd.bristolFDTD_generator_functions import *
+import cPickle
 
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
