@@ -13,6 +13,7 @@ from GWL.GWL_parser import *
 import Blender
 from Blender.Mathutils import Vector
 import cPickle
+import os
 #from FDTDGeometryObjects import *
 #from layer_manager import *
 #from bfdtd.bristolFDTD_generator_functions import *
