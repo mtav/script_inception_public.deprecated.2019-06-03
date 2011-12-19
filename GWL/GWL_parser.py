@@ -29,19 +29,25 @@ class GWLobject:
           cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
           cmd = [ i.lower() for i in cmd ]
           #print cmd
-          if re.match(r"\D",cmd[0][0]):
+          if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
             #print '=>COMMAND'
-            if cmd[0]=='-999' or cmd[0]=='write':
-              #print 'write'
-              self.GWL_voxels.append(write_sequence)
-              write_sequence = []
-            #elif cmd[0]=='defocusfactor':
-              #print 'defocusfactor'
-            #elif cmd[0]=='laserpower':
-              #print 'laserpower'
-            #else:
-              #print('UNKNOWN COMMAND: '+cmd[0])
-              #sys.exit(-1)
+            if cmd[0]=='-999':
+              if cmd[1]=='-999':
+                #print 'write'
+                self.GWL_voxels.append(write_sequence)
+                write_sequence = []
+            else:
+              if cmd[0]=='write':
+                #print 'write'
+                self.GWL_voxels.append(write_sequence)
+                write_sequence = []
+              #elif cmd[0]=='defocusfactor':
+                #print 'defocusfactor'
+              #elif cmd[0]=='laserpower':
+                #print 'laserpower'
+              #else:
+                #print('UNKNOWN COMMAND: '+cmd[0])
+                #sys.exit(-1)
           else:
             #print '=>VOXEL'
             voxel = [ float(i) for i in cmd ]
@@ -109,6 +115,7 @@ if __name__ == "__main__":
   #print GWL_obj.GWL_voxels
   GWL_obj.write_GWL('copy.gwl')
   woodpile_obj = Woodpile()
+  #woodpile_obj.Nlayers_Z = 1
   GWL_obj = woodpile_obj.getGWL()
   GWL_obj.write_GWL('woodpile_test.gwl')
   

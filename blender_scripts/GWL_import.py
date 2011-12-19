@@ -30,6 +30,27 @@ import os
 # official script data location :)
 cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
 
+# Like pressing Alt+D
+def linkedCopy(ob, position, scn=None): # Just like Alt+D
+        if not scn:
+          scn = Blender.Scene.GetCurrent()
+        type = ob.getType()
+        newOb = Blender.Object.New(type)
+        if type != 'Empty':
+          newOb.shareFrom(ob)
+        scn.link(newOb)
+        newOb.setMatrix(ob.getMatrix())
+        # Copy other attributes.
+        newOb.setDrawMode(ob.getDrawMode())
+        newOb.setDrawType(ob.getDrawType())
+        newOb.Layer = ob.Layer
+        # Update the view 
+        #ob.select(0)
+        #newOb.select(1)
+        newOb.setLocation(position[0],position[1],position[2])
+        #return newOb
+        return
+
 def BlenderSphere(name, center, outer_radius):
     scene = Blender.Scene.GetCurrent()
     mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius)
@@ -40,7 +61,7 @@ def BlenderSphere(name, center, outer_radius):
     obj.setLocation(center[0], center[1], center[2])
     obj.transp = True
     obj.wireMode = True
-    return
+    return obj
 
 def BlenderBlock(name, center, outer_radius):
     scene = Blender.Scene.GetCurrent()
@@ -55,7 +76,7 @@ def BlenderBlock(name, center, outer_radius):
     obj.setLocation(pos[0], pos[1], pos[2])
     obj.transp = True
     obj.wireMode = True
-    return;
+    return obj
 
 #def BlenderLine(name,P1,P2,radius):
   
@@ -101,14 +122,28 @@ def importGWL(filename):
     cPickle.dump(filename, FILE);
     FILE.close();
     
+    scene = Blender.Scene.GetCurrent()
+    
     # parse file
     GWL_obj = GWLobject()
     GWL_obj.readGWL(filename)
+    Nvoxel = 0
     for write_sequence in GWL_obj.GWL_voxels:
       for voxel in write_sequence:
+        #print voxel
         #BlenderSphere('voxel', Vector(voxel), 0.100)
         BlenderBlock('voxel', Vector(voxel), 0.100)
+        #if Nvoxel == 0:
+          #first_voxel = BlenderBlock('voxel', Vector(voxel), 0.100)
+        #else:
+          ##new_voxel = first_voxel.copy()
+          ##new_voxel = linkedCopy(first_voxel,scene)
+          ##Redraw()
+          ##new_voxel.setLocation(voxel[0],voxel[1],voxel[2])
+          #linkedCopy(first_voxel,voxel,scene)
+        Nvoxel = Nvoxel + 1
     
+    print('Nvoxel = '+str(Nvoxel))
     Blender.Scene.GetCurrent().update(0);
     Blender.Window.RedrawAll();
     Blender.Window.WaitCursor(0);
