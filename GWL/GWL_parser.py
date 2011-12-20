@@ -58,6 +58,7 @@ class GWLobject:
     #return GWL_voxels
   
   def write_GWL(self,filename):
+    print('Writing GWL to '+filename)
     with open(filename, 'w') as file:
       for write_sequence in self.GWL_voxels:
         for voxel in write_sequence:
@@ -82,6 +83,12 @@ class Woodpile:
     self.Xmax = 5.5
     self.Ymin = -5.5
     self.Ymax = 5.5
+    
+  def adaptXYMinMax(self):
+    self.Xmin = -0.5*(self.NRodsPerLayer_X+1)*self.interRodDistance+0.1
+    self.Xmax = 0.5*(self.NRodsPerLayer_X+1)*self.interRodDistance+0.1
+    self.Ymin = -0.5*(self.NRodsPerLayer_Y+1)*self.interRodDistance+0.1
+    self.Ymax = 0.5*(self.NRodsPerLayer_Y+1)*self.interRodDistance+0.1
     
   def getGWL(self):
     GWL_obj = GWLobject()
@@ -108,6 +115,10 @@ class Woodpile:
       if layer_idx<self.Nlayers_Z-1:
         GWL_obj.addWrite()
     return GWL_obj
+  
+  def write_GWL(self,filename):
+    GWL_obj = self.getGWL()
+    GWL_obj.write_GWL(filename)
   
 if __name__ == "__main__":
   GWL_obj = GWLobject()

@@ -13,8 +13,8 @@ for Lambda in Lambda_list:
   for a_over_Lambda in a_over_Lambda_list:
     a = a_over_Lambda*Lambda
     woodpile_obj = Woodpile()
-    GWL_obj = woodpile_obj.getGWL()
-    GWL_obj.interLayerDistance = a/4.0
-    GWL_obj.interRodDistance = a/sqrt(2.0)
-    GWL_obj.write_GWL('woodpile.Lambda_'+str(Lambda)+'.a_'+a+'.gwl')
+    woodpile_obj.interLayerDistance = a/4.0
+    woodpile_obj.interRodDistance = a/sqrt(2.0)
+    woodpile_obj.adaptXYMinMax()
+    woodpile_obj.write_GWL('woodpile.Lambda_'+str(Lambda)+'.a_'+str(a)+'.gwl')
   
