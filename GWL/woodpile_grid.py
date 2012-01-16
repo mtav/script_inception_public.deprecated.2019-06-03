@@ -42,9 +42,16 @@ def createMainFile(filename, VoxelFile):
   #ScanSpeed = [10,30,50]
   
   VP_values = []
-  VP_values.append([(1,10),(1,20),(1,30),(1,40),(1,50),(1,60)])
-  VP_values.append([(10,15),(10,25),(10,35)])
-  VP_values.append([(20,5),(20,7)])
+  VP_values.append([ (5,i) for i in np.arange(5,25.1,5) ])
+  VP_values.append([ (10,i) for i in np.arange(5,25.1,5) ])
+  VP_values.append([ (20,i) for i in np.arange(5,30.1,5) ])
+  VP_values.append([ (25,i) for i in np.arange(5,30.1,5) ])
+  VP_values.append([ (30,i) for i in np.arange(5,30.1,5) ])
+  VP_values.append([ (40,i) for i in np.arange(5,30.1,5) ])
+  VP_values.append([ (50,i) for i in np.arange(5,30.1,5) ])
+  VP_values.append([ (100,i) for i in np.arange(5,40.1,5) ])
+  VP_values.append([ (150,i) for i in np.arange(5,40.1,5) ])
+  VP_values.append([ (200,i) for i in np.arange(5,40.1,5) ])
   
   #VoxelFile = 'toto.gwl'
   Wait = 4
@@ -68,8 +75,10 @@ def createMainFile(filename, VoxelFile):
     file.write('Yoffset 75\n')
     file.write('ZOffset 0\n')
 
+    Ntotal = 0
     for linio in VP_values:
       for (V,P) in linio:
+        Ntotal = Ntotal + 1
         file.write('%%%%%%%\n')
         file.write('PowerScaling ' + str(PowerScaling) + '\n')
         file.write('LaserPower ' + str(P) + '\n')
@@ -79,8 +88,48 @@ def createMainFile(filename, VoxelFile):
         file.write('Wait '+ str(Wait) +'\n')
         file.write('MoveStageX ' + str(deltaX) + '\n')
       file.write('MoveStageY ' + str(deltaY) + '\n')
+    print('number of woodpiles in this grid: ' + str(Ntotal))
+
+def createMasterFile(filename, mainfile_list):
+  #deltaX = 40
+  #deltaY = 40
+  deltaX = 1000
+  deltaY = 1000
+  PowerScaling = 1
+  Wait = 4
+  print('Writing GWL master to '+filename)
+  with open(filename, 'w') as file:
+    file.write('FindInterfaceAt 0.2\n')
+    file.write('OperationMode 1\n')
+    file.write('%%%%%%%\n')
+    file.write('ConnectPointsOn\n')
+    file.write('LineDistance 0\n')
+    file.write('LineNumber 1\n')
+    file.write('ZOffset 0\n')
+    file.write('Defocusfactor 1.1\n')
+    file.write('PerfectShapeOff\n')
+    file.write('%%%%%%%\n')
+    file.write('PointDistance 25\n')
+    file.write('UpdateRate 1000\n')
+    file.write('DwellTime 200\n')
+    file.write('%%%%%%%\n')
+    file.write('Xoffset 50\n')
+    file.write('Yoffset 75\n')
+    file.write('ZOffset 0\n')
+
+    for f in mainfile_list:
+      file.write('%%%%%%%\n')
+      file.write('Include ' + f + '\n')
+      file.write('write\n')
+      file.write('Wait '+ str(Wait) +'\n')
+      file.write('MoveStageX ' + str(deltaX) + '\n')
+      #file.write('MoveStageY ' + str(deltaY) + '\n')
     
 if __name__ == "__main__":
   subfile_list = createSubFiles()
+  mainfile_list = []
   for subfile in subfile_list:
-    createMainFile('main_'+subfile, subfile)
+    mainfilename = 'main_'+subfile
+    createMainFile(mainfilename, subfile)
+    mainfile_list.append(mainfilename)
+  createMasterFile('master.gwl',mainfile_list)
