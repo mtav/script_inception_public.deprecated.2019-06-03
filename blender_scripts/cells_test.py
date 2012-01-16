@@ -27,7 +27,6 @@ def BlenderBlock(name, center, outer_radius):
   return obj
 
 if __name__ == "__main__":
-  print('UIUIUIU')
   cell = BlenderBlock('voxel',Vector(0,0,0),1)
 
   mesh_new = Mesh.New("newmesh")
