@@ -80,6 +80,21 @@ def BlenderBlock(name, center, outer_radius, scene, mesh):
     #obj.wireMode = True
     return obj
 
+def BlenderBlock2(name, center, outer_radius):
+    scene = Blender.Scene.GetCurrent()
+    mesh = Blender.Mesh.Primitives.Cube(1.0)
+
+    obj = scene.objects.new(mesh, name)
+    pos = center
+    diag = 2*outer_radius
+    obj.SizeX = abs(diag)
+    obj.SizeY = abs(diag)
+    obj.SizeZ = abs(diag)
+    obj.setLocation(pos[0], pos[1], pos[2])
+    #obj.transp = True
+    #obj.wireMode = True
+    return obj
+
 #def BlenderLine(name,P1,P2,radius):
   
   
@@ -131,11 +146,14 @@ def importGWL(filename):
     GWL_obj = GWLobject()
     GWL_obj.readGWL(filename)
     Nvoxel = 0
+    verts = []
     for write_sequence in GWL_obj.GWL_voxels:
       for voxel in write_sequence:
         #print voxel
         #BlenderSphere('voxel', Vector(voxel), 0.100)
-        BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
+        #BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
+        verts.append( Vector(voxel) )
+
         #if Nvoxel == 0:
           #first_voxel = BlenderBlock('voxel', Vector(voxel), 0.100)
         #else:
@@ -145,6 +163,20 @@ def importGWL(filename):
           ##new_voxel.setLocation(voxel[0],voxel[1],voxel[2])
           #linkedCopy(first_voxel,voxel,scene)
         Nvoxel = Nvoxel + 1
+      
+    mesh_new = Blender.Mesh.New("voxelposition_mesh")
+    mesh_new.verts = None
+    mesh_new.verts.extend(verts)
+    scene = Blender.Scene.GetCurrent()
+    object_new = scene.objects.new(mesh_new,"voxelposition_object")
+  
+    cell = BlenderBlock2('voxel',Vector(0,0,0),0.100)
+    cell.layers = object_new.layers
+    scene.update()
+    object_new.makeParent([cell])
+    object_new.enableDupVerts = True
+
+    
     
     print('Nvoxel = '+str(Nvoxel))
     Blender.Scene.GetCurrent().update(0)

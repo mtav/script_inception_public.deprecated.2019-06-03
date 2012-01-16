@@ -96,6 +96,9 @@ def createMainFile(filename, VoxelFile):
       file.write('%%%%%%% END OF LINE \n')
       file.write('MoveStageY ' + str(deltaY) + '\n')
       file.write('MoveStageX ' + str(-len(linio)*deltaX) + '\n')
+      
+    # move back to origin
+    #file.write('MoveStageY ' + str(-len(VP_values)*deltaY) + '\n')
     print('number of woodpiles in this grid: ' + str(Ntotal))
 
 def createMasterFile(filename, mainfile_list):
@@ -114,7 +117,7 @@ def createMasterFile(filename, mainfile_list):
       file.write('Include ' + f + '\n')
       file.write('write\n')
       file.write('Wait '+ str(Wait) +'\n')
-      file.write('MoveStageX ' + str(deltaX) + '\n')
+      #file.write('MoveStageX ' + str(deltaX) + '\n')
       #file.write('MoveStageY ' + str(deltaY) + '\n')
 
 def createMainFile2(filename, file_list):
