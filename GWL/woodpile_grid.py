@@ -31,6 +31,27 @@ def createSubFiles():
         subfile_list.append(subfilename)
   return(subfile_list)
 
+def commonHeader(file):
+  file.write('FindInterfaceAt 0.2\n')
+  file.write('Scanmode 0\n')
+  file.write('OperationMode 1\n')    
+  file.write('%%%%%%%\n')
+  file.write('ConnectPointsOn\n')
+  file.write('LineDistance 0\n')
+  file.write('LineNumber 1\n')
+  file.write('ZOffset 0\n')
+  file.write('Defocusfactor 1.1\n')
+  file.write('PerfectShapeOff\n')
+  file.write('%%%%%%%\n')
+  file.write('PointDistance 25\n')
+  file.write('UpdateRate 1000\n')
+  file.write('DwellTime 200\n')
+  file.write('%%%%%%%\n')
+  file.write('Xoffset 50\n')
+  file.write('Yoffset 75\n')
+  file.write('ZOffset 0\n')
+
+
 def createMainFile(filename, VoxelFile):
   #deltaX = 40
   #deltaY = 40
@@ -57,24 +78,7 @@ def createMainFile(filename, VoxelFile):
   Wait = 4
   print('Writing GWL main to '+filename)
   with open(filename, 'w') as file:
-    file.write('FindInterfaceAt 0.2\n')
-    file.write('Scanmode 0\n')
-    file.write('OperationMode 1\n')    
-    file.write('%%%%%%%\n')
-    file.write('ConnectPointsOn\n')
-    file.write('LineDistance 0\n')
-    file.write('LineNumber 1\n')
-    file.write('ZOffset 0\n')
-    file.write('Defocusfactor 1.1\n')
-    file.write('PerfectShapeOff\n')
-    file.write('%%%%%%%\n')
-    file.write('PointDistance 25\n')
-    file.write('UpdateRate 1000\n')
-    file.write('DwellTime 200\n')
-    file.write('%%%%%%%\n')
-    file.write('Xoffset 50\n')
-    file.write('Yoffset 75\n')
-    file.write('ZOffset 0\n')
+    commonHeader(file)
 
     Ntotal = 0
     for linio in VP_values:
@@ -103,24 +107,7 @@ def createMasterFile(filename, mainfile_list):
   Wait = 4
   print('Writing GWL master to '+filename)
   with open(filename, 'w') as file:
-    file.write('FindInterfaceAt 0.2\n')
-    file.write('Scanmode 0\n')
-    file.write('OperationMode 1\n')
-    file.write('%%%%%%%\n')
-    file.write('ConnectPointsOn\n')
-    file.write('LineDistance 0\n')
-    file.write('LineNumber 1\n')
-    file.write('ZOffset 0\n')
-    file.write('Defocusfactor 1.1\n')
-    file.write('PerfectShapeOff\n')
-    file.write('%%%%%%%\n')
-    file.write('PointDistance 25\n')
-    file.write('UpdateRate 1000\n')
-    file.write('DwellTime 200\n')
-    file.write('%%%%%%%\n')
-    file.write('Xoffset 50\n')
-    file.write('Yoffset 75\n')
-    file.write('ZOffset 0\n')
+    commonHeader(file)
 
     for f in mainfile_list:
       file.write('%%%%%%%\n')
@@ -129,6 +116,41 @@ def createMasterFile(filename, mainfile_list):
       file.write('Wait '+ str(Wait) +'\n')
       file.write('MoveStageX ' + str(deltaX) + '\n')
       #file.write('MoveStageY ' + str(deltaY) + '\n')
+
+def createMainFile2(filename, file_list):
+  #deltaX = 40
+  #deltaY = 40
+  deltaX = 1000
+  deltaY = 1000
+  PowerScaling = 1
+  
+  LaserPower = [15,20,25,30,35]
+  ScanSpeed = 200
+    
+  #VoxelFile = 'toto.gwl'
+  Wait = 4
+  print('Writing GWL main to '+filename)
+  with open(filename, 'w') as file:
+    commonHeader(file)
+
+    Ntotal = 0
+    for VoxelFile in file_list:
+      file.write('%%%%%%% NEW LINE \n')
+      for P in LaserPower:
+        Ntotal = Ntotal + 1
+        file.write('%%%%%%%\n')
+        file.write('PowerScaling ' + str(PowerScaling) + '\n')
+        file.write('LaserPower ' + str(P) + '\n')
+        file.write('ScanSpeed ' + str(ScanSpeed) + '\n')
+        file.write('Include ' + VoxelFile + '\n')
+        file.write('write\n')
+        file.write('Wait '+ str(Wait) +'\n')
+        file.write('MoveStageX ' + str(deltaX) + '\n')
+      file.write('%%%%%%% END OF LINE \n')
+      file.write('MoveStageY ' + str(deltaY) + '\n')
+      file.write('MoveStageX ' + str(-len(LaserPower)*deltaX) + '\n')
+    print('number of woodpiles in this grid: ' + str(Ntotal))
+
     
 if __name__ == "__main__":
   subfile_list = createSubFiles()
@@ -138,3 +160,4 @@ if __name__ == "__main__":
     createMainFile(mainfilename, subfile)
     mainfile_list.append(mainfilename)
   createMasterFile('master.gwl',mainfile_list)
+  createMainFile2('grid_8x5.gwl',subfile_list)
