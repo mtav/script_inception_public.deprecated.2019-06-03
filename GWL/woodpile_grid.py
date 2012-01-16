@@ -58,7 +58,8 @@ def createMainFile(filename, VoxelFile):
   print('Writing GWL main to '+filename)
   with open(filename, 'w') as file:
     file.write('FindInterfaceAt 0.2\n')
-    file.write('OperationMode 1\n')
+    file.write('Scanmode 0\n')
+    file.write('OperationMode 1\n')    
     file.write('%%%%%%%\n')
     file.write('ConnectPointsOn\n')
     file.write('LineDistance 0\n')
@@ -103,6 +104,7 @@ def createMasterFile(filename, mainfile_list):
   print('Writing GWL master to '+filename)
   with open(filename, 'w') as file:
     file.write('FindInterfaceAt 0.2\n')
+    file.write('Scanmode 0\n')
     file.write('OperationMode 1\n')
     file.write('%%%%%%%\n')
     file.write('ConnectPointsOn\n')
