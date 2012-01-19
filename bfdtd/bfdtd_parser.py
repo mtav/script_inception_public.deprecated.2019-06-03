@@ -1376,23 +1376,56 @@ def readBristolFDTD(filename):
     #~ print structured_entries
     #~ print '================'
     return structured_entries
-    
+
 def TestWriting():
+    '''
+    function to test the various functions, might not create working input files, but should create the correct format
+    can be used as a template to create new geometries
+    '''
+    # initialize object
+    obj = BFDTDobject()
+    # mesh
+    obj.mesh.setXmeshDelta([1,2,3])
+    obj.mesh.setYmeshDelta([1,2,3])
+    obj.mesh.setZmeshDelta([1,2,3])
+    # flag
+    obj.flag.iterations = 1048000
+    # boundary
+    obj.boundaries.Xpos_bc = 10
+    obj.boundaries.Ypos_bc = 1
+    obj.boundaries.Zpos_bc = 10
+    obj.boundaries.Xneg_bc = 10
+    obj.boundaries.Yneg_bc = 10
+    obj.boundaries.Zneg_bc = 10
+    obj.boundaries.Xpos_param = [ 8, 2, 1e-3 ]
+    obj.boundaries.Ypos_param = [ 1, 1, 0 ]
+    obj.boundaries.Zpos_param = [ 8, 2, 1e-3 ]
+    obj.boundaries.Xneg_param = [ 8, 2, 1e-3 ]
+    obj.boundaries.Yneg_param = [ 8, 2, 1e-3 ]
+    obj.boundaries.Zneg_param = [ 8, 2, 1e-3 ]
+    # box
+    obj.box.lower = [0,0,0]
+    obj.box.upper = [10,20,30]
+
+    # write object to example_dir/example.***
+    obj.writeAll('example_dir','example')
+    
     # more code, unchanged
     with open('tmp.txt', 'w') as FILE:
       delta_X_vector = [11.25,21.25,31.25]
       delta_Y_vector = [12.25,22.25,32.25]
       delta_Z_vector = [13.25,23.25,33.25]
       COMMENT = 'example comment'
-      GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector)
-      GEOflag(FILE, COMMENT, 70, 12.34, 24, 42, 1000, 0.755025, '_id_')
-      GEOboundary(FILE, COMMENT, 1.2, [3.4,3.4,3.4],\
-                                  5.6, [7.8,7.8,6.2],\
-                                  9.10, [11.12,1,2],\
-                                  13.14, [15.16,3,4],\
-                                  17.18, [19.20,5,6],\
-                                  21.22, [23.24,7.8,5.4])
-      GEObox(FILE, COMMENT, [1.2,3.4,5.6], [9.8,7.6,5.4])
+      
+      #GEOmesh(FILE, COMMENT, delta_X_vector, delta_Y_vector, delta_Z_vector)
+      #GEOflag(FILE, COMMENT, 70, 12.34, 24, 42, 1000, 0.755025, '_id_')
+      #GEOboundary(FILE, COMMENT, 1.2, [3.4,3.4,3.4],\
+                                  #5.6, [7.8,7.8,6.2],\
+                                  #9.10, [11.12,1,2],\
+                                  #13.14, [15.16,3,4],\
+                                  #17.18, [19.20,5,6],\
+                                  #21.22, [23.24,7.8,5.4])
+      #GEObox(FILE, COMMENT, [1.2,3.4,5.6], [9.8,7.6,5.4])
       GEOsphere(FILE, COMMENT, [1,2,3], 9, 8, 7, 6)
       GEOblock(FILE, COMMENT, [1.1,2.2,3.3], [4.4,5.5,6.6], 600, 700)
       GEOcylinder(FILE, COMMENT, [1.2,3.4,5.6], 77, 88, 99, 100, 0.02, 47.42)
