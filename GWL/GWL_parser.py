@@ -3,7 +3,7 @@
 
 import sys
 import re
-from numpy import *
+#from numpy import *
 
 class GWLobject:
   def __init__(self):
