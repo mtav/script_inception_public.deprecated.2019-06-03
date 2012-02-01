@@ -34,3 +34,4 @@ tmp.sh
 *.o[0-9]*
 tmp.dat
 *.gwl
+*.dat
