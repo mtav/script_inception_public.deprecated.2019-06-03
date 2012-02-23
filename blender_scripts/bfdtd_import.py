@@ -23,7 +23,13 @@ import cPickle
 ###############################
 #cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
 # official script data location :)
-cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
+print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
+if Blender.Get("datadir"):
+  print('datadir defined')
+  cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
+else:
+  print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
+  sys.exit(0)
 
 ###############################
 # IMPORT FUNCTION
