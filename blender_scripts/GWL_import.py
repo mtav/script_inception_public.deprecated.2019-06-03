@@ -81,15 +81,32 @@ def BlenderBlock(name, center, outer_radius, scene, mesh):
     return obj
 
 def BlenderBlock2(name, center, outer_radius):
+    diag = 2*outer_radius
+    return BlenderBlock2(name, center, abs(diag), abs(diag), abs(diag))
+
+    #scene = Blender.Scene.GetCurrent()
+    #mesh = Blender.Mesh.Primitives.Cube(1.0)
+
+    #obj = scene.objects.new(mesh, name)
+    #pos = center
+    #diag = 2*outer_radius
+    #obj.SizeX = abs(diag)
+    #obj.SizeY = abs(diag)
+    #obj.SizeZ = abs(diag)
+    #obj.setLocation(pos[0], pos[1], pos[2])
+    ##obj.transp = True
+    ##obj.wireMode = True
+    #return obj
+
+def BlenderBlock2(name, center, SizeX, SizeY, SizeZ):
     scene = Blender.Scene.GetCurrent()
     mesh = Blender.Mesh.Primitives.Cube(1.0)
 
     obj = scene.objects.new(mesh, name)
     pos = center
-    diag = 2*outer_radius
-    obj.SizeX = abs(diag)
-    obj.SizeY = abs(diag)
-    obj.SizeZ = abs(diag)
+    obj.SizeX = SizeX
+    obj.SizeY = SizeY
+    obj.SizeZ = SizeZ
     obj.setLocation(pos[0], pos[1], pos[2])
     #obj.transp = True
     #obj.wireMode = True
@@ -170,7 +187,8 @@ def importGWL(filename):
     scene = Blender.Scene.GetCurrent()
     object_new = scene.objects.new(mesh_new,"voxelposition_object")
   
-    cell = BlenderBlock2('voxel',Vector(0,0,0),0.100)
+    #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100)
+    cell = BlenderBlock2('voxel',Vector(0,0,0),0.100,0.100,0.200)
     cell.layers = object_new.layers
     scene.update()
     object_new.makeParent([cell])

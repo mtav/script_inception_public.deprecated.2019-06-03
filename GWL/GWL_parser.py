@@ -3,7 +3,7 @@
 
 import sys
 import re
-#from numpy import *
+import numpy
 
 class GWLobject:
   def __init__(self):
@@ -13,6 +13,67 @@ class GWLobject:
   def addLine(self,P1,P2):
     write_sequence = [P1,P2]
     self.GWL_voxels.append(write_sequence)
+
+  def addZGrating(self, P1, P2, LineNumber, LineDistance, BottomToTop = False):
+    Zcenter = 0.5*(P1[2] + P2[2])
+    zlist = []
+    L = (LineNumber-1)*LineDistance
+    if BottomToTop:
+      zlist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber)
+    else:
+      zlist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber)
+    #if LineNumber%2: #odd LineNumber
+      #zlist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber)
+    #else: #even LineNumber
+      #zlist = numpy.arange(Zcenter-LineNumber/2*LineDistance, Zcenter+((LineNumber-1)/2+1)*LineDistance, LineDistance)
+    for z in zlist:
+      A = [P1[0],P1[1],z]
+      B = [P2[0],P2[1],z]
+      self.GWL_voxels.append([A,B])
+
+  def addXblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
+    Xcenter = 0.5*(P1[0] + P2[0])
+    Ycenter = 0.5*(P1[1] + P2[1])
+    Zcenter = 0.5*(P1[2] + P2[2])
+
+    ylist = []
+    L = (LineNumber_Horizontal-1)*LineDistance_Horizontal
+    ylist = numpy.linspace(Ycenter-0.5*L, Ycenter+0.5*L, LineNumber_Horizontal)
+    
+    zlist = []
+    L = (LineNumber_Vertical-1)*LineDistance_Vertical
+    if BottomToTop:
+      zlist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber_Vertical)
+    else:
+      zlist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber_Vertical)
+
+    for z in zlist:
+      for y in ylist:
+        A = [P1[0],y,z]
+        B = [P2[0],y,z]
+        self.GWL_voxels.append([A,B])
+
+  def addYblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
+    Xcenter = 0.5*(P1[0] + P2[0])
+    Ycenter = 0.5*(P1[1] + P2[1])
+    Zcenter = 0.5*(P1[2] + P2[2])
+
+    xlist = []
+    L = (LineNumber_Horizontal-1)*LineDistance_Horizontal
+    xlist = numpy.linspace(Xcenter-0.5*L, Xcenter+0.5*L, LineNumber_Horizontal)
+    
+    zlist = []
+    L = (LineNumber_Vertical-1)*LineDistance_Vertical
+    if BottomToTop:
+      zlist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber_Vertical)
+    else:
+      zlist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber_Vertical)
+
+    for z in zlist:
+      for x in xlist:
+        A = [x,P1[1],z]
+        B = [x,P2[1],z]
+        self.GWL_voxels.append([A,B])
 
   def addWrite(self):
     write_sequence = []

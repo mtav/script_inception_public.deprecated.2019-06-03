@@ -30,6 +30,12 @@ def createSubFiles(DSTDIR):
         woodpile_obj.NRodsPerLayer_Y = NRodsPerLayer_Y
         woodpile_obj.interLayerDistance = a/4.0
         woodpile_obj.interRodDistance = a/numpy.sqrt(2.0)
+
+        woodpile_obj.LineDistance_Vertical = 0.100
+        woodpile_obj.LineNumber_Vertical = woodpile_obj.interLayerDistance/woodpile_obj.LineDistance_Vertical
+        woodpile_obj.LineNumber_Horizontal = 1
+        woodpile_obj.LineDistance_Horizontal = 0.050
+
         woodpile_obj.adaptXYMinMax()
         subfilename = 'woodpile.Lambda_'+str(Lambda)+'.a_'+str(a)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.gwl'
         woodpile_obj.write_GWL(DSTDIR + os.path.sep + subfilename)

@@ -9,8 +9,15 @@ class Woodpile:
     self.Nlayers_Z = 12
     self.NRodsPerLayer_X = 17
     self.NRodsPerLayer_Y = 17
+    
     self.rod_width = 0.100
     self.rod_height = 0.200
+    
+    self.LineNumber_Vertical = 1
+    self.LineDistance_Vertical = 0.100
+    self.LineNumber_Horizontal = 1
+    self.LineDistance_Horizontal = 0.050
+    
     self.rod_type = 'cylinder'
     self.interLayerDistance = 0.212
     self.interRodDistance = 0.600
@@ -50,7 +57,8 @@ class Woodpile:
           X = -0.5*(N - 1)*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([X,self.Ymax,layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([X,self.Ymin,layer_idx*self.interLayerDistance])
-          GWL_obj.addLine(P1,P2)
+          #GWL_obj.addLine(P1,P2)
+          GWL_obj.addYblock(P1, P2, self.LineNumber_Horizontal, self.LineDistance_Horizontal, self.LineNumber_Vertical, self.LineDistance_Vertical, self.BottomToTop)
         layer_type_X = (layer_type_X + 1) % 2
       else:
         N = self.NRodsPerLayer_Y+layer_type_Y
@@ -58,7 +66,8 @@ class Woodpile:
           Y = -0.5*(N - 1)*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([self.Xmin,Y,layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([self.Xmax,Y,layer_idx*self.interLayerDistance])
-          GWL_obj.addLine(P1,P2)
+          #GWL_obj.addLine(P1,P2)
+          GWL_obj.addXblock(P1, P2, self.LineNumber_Horizontal, self.LineDistance_Horizontal, self.LineNumber_Vertical, self.LineDistance_Vertical, self.BottomToTop)
         layer_type_Y = (layer_type_Y + 1) % 2
       if layer_idx<self.Nlayers_Z-1:
         GWL_obj.addWrite()
