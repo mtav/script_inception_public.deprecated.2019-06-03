@@ -96,7 +96,8 @@ class Woodpile:
     self.Xmax = 5.5
     self.Ymin = -5.5
     self.Ymax = 5.5
-    
+    self.BottomToTop = 0
+
   def adaptXYMinMax(self):
     self.Xmin = -0.5*(self.NRodsPerLayer_X+1)*self.interRodDistance+0.1
     self.Xmax = 0.5*(self.NRodsPerLayer_X+1)*self.interRodDistance+0.1
@@ -107,7 +108,15 @@ class Woodpile:
     GWL_obj = GWLobject()
     layer_type_X = self.initialLayerType_X
     layer_type_Y = self.initialLayerType_Y
-    for layer_idx in range(self.Nlayers_Z):
+
+    if self.BottomToTop == 1:
+        layer_idx_list = range(self.Nlayers_Z)
+    else:
+        layer_idx_list = range(self.Nlayers_Z-1,-1,-1)
+        layer_type_X = (layer_type_X + 1) % 2
+        layer_type_Y = (layer_type_Y + 1) % 2
+
+    for layer_idx in layer_idx_list:
       direction = layer_idx % 2 + self.initialDirection % 2
       if direction % 2 == 0:
         N = self.NRodsPerLayer_X + layer_type_X

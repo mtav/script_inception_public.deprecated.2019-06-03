@@ -5,15 +5,18 @@
 
 from GWL.GWL_parser import *
 import numpy as np
+from math import *
+from numpy import *
+import os
 
 def createSubFiles():
   subfile_list = []
   Lambda_list = [0.780,1.550]
   wh_list = [(0.2,0.25),(0.3/sqrt(2.0),0.7/sqrt(2.0))]
   a_over_Lambda_list = [0.9199,0.8333]
-  
-  N_list = [(12,17,17),(2*12,2*17,2*17)]
-  
+
+  N_list = [(12,17,17),(2*12,2*17,2*17),(12,17,17)]
+
   for Lambda in Lambda_list:
     for a_over_Lambda in a_over_Lambda_list:
       for (Nlayers_Z,NRodsPerLayer_X,NRodsPerLayer_Y) in N_list:
@@ -31,10 +34,52 @@ def createSubFiles():
         subfile_list.append(subfilename)
   return(subfile_list)
 
+def single_woodpile(DSTDIR, NX, NY, NZ, interRodDistance, LaserPower, ScanSpeed, BottomToTop):
+##        os.chdir(DSTDIR)
+
+        woodpile_obj = Woodpile()
+        woodpile_obj.BottomToTop = BottomToTop
+        woodpile_obj.NRodsPerLayer_X = NX
+        woodpile_obj.NRodsPerLayer_Y = NY
+        woodpile_obj.Nlayers_Z = NZ
+        woodpile_obj.interRodDistance = interRodDistance
+        a = woodpile_obj.interRodDistance*sqrt(2.0)
+        woodpile_obj.interLayerDistance = a/4.0
+        woodpile_obj.adaptXYMinMax()
+        subfilename = 'woodpile'+'.deltaH_'+str(woodpile_obj.interRodDistance)+'.a_'+str(a)+'.NX_'+str(woodpile_obj.NRodsPerLayer_X)+'.NY_'+str(woodpile_obj.NRodsPerLayer_Y)+'.Nlayers_Z_'+str(woodpile_obj.Nlayers_Z)+'.BotToTop._'+str(woodpile_obj.BottomToTop)+'.gwl'
+        woodpile_obj.write_GWL(DSTDIR + os.path.sep + subfilename)
+##        Xoffset = 0.5*(woodpile_obj.Xmax - woodpile_obj.Xmin)
+##        Yoffset = 0.5*(woodpile_obj.Ymax - woodpile_obj.Ymin)
+        Xoffset = -woodpile_obj.Xmin
+        Yoffset = -woodpile_obj.Ymin
+##        LaserPower = 40
+##        ScanSpeed = 200
+        createSingleMainFile(DSTDIR + os.path.sep + 'main.P_'+str(LaserPower)+'.V_'+str(ScanSpeed)+'.'+subfilename, subfilename, LaserPower, ScanSpeed, Xoffset, Yoffset)
+##        LaserPower = 50
+##        ScanSpeed = 200
+##        createSingleMainFile('main.P_'+str(LaserPower)+'.V_'+str(ScanSpeed)+'.'+subfilename, subfilename, LaserPower, ScanSpeed, Xoffset, Yoffset)
+
+def createSingleMainFile(filename, VoxelFile, LaserPower, ScanSpeed, Xoffset, Yoffset):
+  PowerScaling = 1
+  print('Writing GWL main to '+filename)
+  with open(filename, 'w') as file:
+    commonHeader(file)
+
+    file.write('Xoffset '+str(Xoffset)+'\n')
+    file.write('Yoffset '+str(Yoffset)+'\n')
+    file.write('ZOffset 0\n')
+    file.write('%%%%%%%\n')
+    file.write('PowerScaling ' + str(PowerScaling) + '\n')
+    file.write('LaserPower ' + str(LaserPower) + '\n')
+    file.write('ScanSpeed ' + str(ScanSpeed) + '\n')
+    file.write('Include ' + VoxelFile + '\n')
+    file.write('Write\n')
+    file.write('%%%%%%%\n')
+
 def commonHeader(file):
   file.write('FindInterfaceAt 0.2\n')
   file.write('Scanmode 0\n')
-  file.write('OperationMode 1\n')    
+  file.write('OperationMode 1\n')
   file.write('%%%%%%%\n')
   file.write('ConnectPointsOn\n')
   file.write('LineDistance 0\n')
@@ -47,9 +92,9 @@ def commonHeader(file):
   file.write('UpdateRate 1000\n')
   file.write('DwellTime 200\n')
   file.write('%%%%%%%\n')
-  file.write('Xoffset 50\n')
-  file.write('Yoffset 75\n')
-  file.write('ZOffset 0\n')
+##  file.write('Xoffset 50\n')
+##  file.write('Yoffset 75\n')
+##  file.write('ZOffset 0\n')
 
 
 def createMainFile(filename, VoxelFile):
@@ -146,7 +191,7 @@ def createMainFile2(filename, file_list):
         file.write('LaserPower ' + str(P) + '\n')
         file.write('ScanSpeed ' + str(ScanSpeed) + '\n')
         file.write('Include ' + VoxelFile + '\n')
-        file.write('write\n')
+        file.write('Write\n')
         file.write('Wait '+ str(Wait) +'\n')
         file.write('MoveStageX ' + str(deltaX) + '\n')
       file.write('%%%%%%% END OF LINE \n')
@@ -156,11 +201,21 @@ def createMainFile2(filename, file_list):
 
     
 if __name__ == "__main__":
-  subfile_list = createSubFiles()
-  mainfile_list = []
-  for subfile in subfile_list:
-    mainfilename = 'main_'+subfile
-    createMainFile(mainfilename, subfile)
-    mainfile_list.append(mainfilename)
-  createMasterFile('master.gwl',mainfile_list)
-  createMainFile2('grid_8x5.gwl',subfile_list)
+##  single_woodpile()
+
+##  subfile_list = createSubFiles()
+##  mainfile_list = []
+##  for subfile in subfile_list:
+##    mainfilename = 'main_'+subfile
+##    createMainFile(mainfilename, subfile)
+##    mainfile_list.append(mainfilename)
+##  createMasterFile('master.gwl',mainfile_list)
+##  createMainFile2('grid_8x5.gwl',subfile_list)
+    if len(sys.argv)>1:
+        DSTDIR = sys.argv[1]
+    else:
+        DSTDIR = os.getcwd()
+##    single_woodpile(DSTDIR, NX, NY, NZ, interRodDistance, LaserPower, ScanSpeed, BottomToTop)
+    single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 0)
+    single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 1)
+    print( 'Output in ' + os.getcwd())
