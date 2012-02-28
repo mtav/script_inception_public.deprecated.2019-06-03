@@ -22,7 +22,7 @@ class Woodpile:
     self.Xmax = 5.5
     self.Ymin = -5.5
     self.Ymax = 5.5
-    self.BottomToTop = 0
+    self.BottomToTop = 0 # 1=write from bottom to top, 0=write from top to bottom
 
   def adaptXYMinMax(self):
     self.Xmin = -0.5*(self.NRodsPerLayer_X+1)*self.interRodDistance+0.1

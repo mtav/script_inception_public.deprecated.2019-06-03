@@ -9,13 +9,14 @@ import os
 from GWL.GWL_parser import *
 from GWL.woodpile import *
 
-def createSubFiles():
+def createSubFiles(DSTDIR):
   subfile_list = []
   Lambda_list = [0.780,1.550]
-  wh_list = [(0.2,0.25),(0.3/numpy.sqrt(2.0),0.7/sqrt(2.0))]
+  wh_list = [(0.2,0.25),(0.3/numpy.sqrt(2.0),0.7/numpy.sqrt(2.0))]
   a_over_Lambda_list = [0.9199,0.8333]
 
-  N_list = [(12,17,17),(2*12,2*17,2*17),(12,17,17)]
+  #N_list = [(12,17,17),(2*12,2*17,2*17),(12,17,17)]
+  N_list = [(2*12,2*17,2*17)]
 
   for Lambda in Lambda_list:
     for a_over_Lambda in a_over_Lambda_list:
@@ -23,14 +24,15 @@ def createSubFiles():
       
         a = a_over_Lambda*Lambda
         woodpile_obj = Woodpile()
+        woodpile_obj.BottomToTop = 1
         woodpile_obj.Nlayers_Z = Nlayers_Z
         woodpile_obj.NRodsPerLayer_X = NRodsPerLayer_X
         woodpile_obj.NRodsPerLayer_Y = NRodsPerLayer_Y
         woodpile_obj.interLayerDistance = a/4.0
-        woodpile_obj.interRodDistance = a/sqrt(2.0)
+        woodpile_obj.interRodDistance = a/numpy.sqrt(2.0)
         woodpile_obj.adaptXYMinMax()
         subfilename = 'woodpile.Lambda_'+str(Lambda)+'.a_'+str(a)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.gwl'
-        woodpile_obj.write_GWL(subfilename)
+        woodpile_obj.write_GWL(DSTDIR + os.path.sep + subfilename)
         subfile_list.append(subfilename)
   return(subfile_list)
 
@@ -108,16 +110,16 @@ def createMainFile(filename, VoxelFile):
   #ScanSpeed = [10,30,50]
   
   VP_values = []
-  VP_values.append([ (5,i) for i in np.arange(5,25.1,5) ])
-  VP_values.append([ (10,i) for i in np.arange(5,25.1,5) ])
-  VP_values.append([ (20,i) for i in np.arange(5,30.1,5) ])
-  VP_values.append([ (25,i) for i in np.arange(5,30.1,5) ])
-  VP_values.append([ (30,i) for i in np.arange(5,30.1,5) ])
-  VP_values.append([ (40,i) for i in np.arange(5,30.1,5) ])
-  VP_values.append([ (50,i) for i in np.arange(5,30.1,5) ])
-  VP_values.append([ (100,i) for i in np.arange(5,40.1,5) ])
-  VP_values.append([ (150,i) for i in np.arange(5,40.1,5) ])
-  VP_values.append([ (200,i) for i in np.arange(5,40.1,5) ])
+  VP_values.append([ (5,i) for i in numpy.arange(5,25.1,5) ])
+  VP_values.append([ (10,i) for i in numpy.arange(5,25.1,5) ])
+  VP_values.append([ (20,i) for i in numpy.arange(5,30.1,5) ])
+  VP_values.append([ (25,i) for i in numpy.arange(5,30.1,5) ])
+  VP_values.append([ (30,i) for i in numpy.arange(5,30.1,5) ])
+  VP_values.append([ (40,i) for i in numpy.arange(5,30.1,5) ])
+  VP_values.append([ (50,i) for i in numpy.arange(5,30.1,5) ])
+  VP_values.append([ (100,i) for i in numpy.arange(5,40.1,5) ])
+  VP_values.append([ (150,i) for i in numpy.arange(5,40.1,5) ])
+  VP_values.append([ (200,i) for i in numpy.arange(5,40.1,5) ])
   
   #VoxelFile = 'toto.gwl'
   Wait = 4
@@ -201,21 +203,28 @@ def createMainFile2(filename, file_list):
 
     
 if __name__ == "__main__":
-##  single_woodpile()
 
-##  subfile_list = createSubFiles()
-##  mainfile_list = []
-##  for subfile in subfile_list:
-##    mainfilename = 'main_'+subfile
-##    createMainFile(mainfilename, subfile)
-##    mainfile_list.append(mainfilename)
-##  createMasterFile('master.gwl',mainfile_list)
-##  createMainFile2('grid_8x5.gwl',subfile_list)
     if len(sys.argv)>1:
         DSTDIR = sys.argv[1]
     else:
         DSTDIR = os.getcwd()
+
+    # Alex woodpiles
+    subfile_list = createSubFiles(DSTDIR)
+    #mainfile_list = []
+    #for subfile in subfile_list:
+      #mainfilename = 'main_'+subfile
+      #createMainFile(mainfilename, subfile)
+      #mainfile_list.append(mainfilename)
+    #createMasterFile('master.gwl',mainfile_list)
+    #createMainFile2('grid_8x5.gwl',subfile_list)
+
 ##    single_woodpile(DSTDIR, NX, NY, NZ, interRodDistance, LaserPower, ScanSpeed, BottomToTop)
-    single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 0)
-    single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 1)
+    #single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 0)
+    #single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 1)
+    
+    # Alex woodpiles:
+    #single_woodpile(DSTDIR, 34, 34, 24, 0.6, 50, 200, 0)
+    #single_woodpile(DSTDIR, 34, 34, 24, 0.6, 50, 200, 1)
+
     print( 'Output in ' + os.getcwd())
