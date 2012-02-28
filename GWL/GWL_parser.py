@@ -269,5 +269,31 @@ if __name__ == "__main__":
   GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
   GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
+  print '300'
+  HorizontalPointDistance = 0.050
+  VerticalPointDistance = 0.100
+  center = [60,0,3]
+  radius = 0.5*0.300
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
+
+  print '350'
+  center = [70,0,3]
+  radius = 0.5*0.350
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
+
+  print '400'
+  center = [80,0,3]
+  radius = 0.5*0.400
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
+
   GWL_obj.write_GWL('xblock.gwl')
   
