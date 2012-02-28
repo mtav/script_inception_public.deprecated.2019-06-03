@@ -86,6 +86,15 @@ class GWLobject:
       write_sequence.append(P)
     self.GWL_voxels.append(write_sequence)
 
+  def addHorizontalDisk(self, center, radius, power, PointDistance):
+    N = int(radius/float(PointDistance))
+    for i in range(N):
+      if i==0:
+        #print center
+        self.GWL_voxels.append([center])
+      else:
+        self.addHorizontalCircle(center, i*radius/float(N), power, PointDistance)
+
   def addWrite(self):
     write_sequence = []
     self.GWL_voxels.append(write_sequence)
@@ -168,8 +177,20 @@ if __name__ == "__main__":
   GWL_obj.addXblock([0,0,2.75],[1,0,2.75],2,0.050,3,0.100)
   z=7.1038825; GWL_obj.addXblock([0,0,z],[1,0,z],2,0.050,3,0.100)
   
-  GWL_obj.addHorizontalCircle([1,2,3], 5, 50, 0.050)
-  GWL_obj.addHorizontalCircle([1,2,3], 3, 50, 0.100)
-  GWL_obj.addHorizontalCircle([1,2,3], 10, 50, 1)
+  center = [0,0,3]
+  dist = 0.050
+  GWL_obj.addHorizontalCircle(center, 5, 50, dist)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], 5, 35, dist)
+
+  dist = 0.100
+  center = [10,0,5]
+  GWL_obj.addHorizontalCircle(center, 3, 50, dist)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], 3, 35, dist)
+
+  dist = 1
+  center = [30,0,7]
+  GWL_obj.addHorizontalCircle(center, 10, 50, dist)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], 10, 35, dist)
+
   GWL_obj.write_GWL('xblock.gwl')
   
