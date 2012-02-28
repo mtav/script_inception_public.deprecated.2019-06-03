@@ -80,9 +80,12 @@ class GWLobject:
   def addHorizontalCircle(self, center, radius, power, PointDistance):
     #print radius
     write_sequence = []
-    if radius == 0:
+    if radius < 0.5*PointDistance:
       write_sequence.append(center)
     else:
+      print(('PointDistance = ', PointDistance))
+      print radius
+      print PointDistance/float(2*radius)
       alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
       N = int(2*numpy.pi/alphaStep)
       for i in range(N):
@@ -102,15 +105,35 @@ class GWLobject:
         self.addHorizontalCircle(center, i*radius/float(N), power, PointDistance)
 
   def addSphere(self, center, radius, power, HorizontalPointDistance, VerticalPointDistance, solid = False):
-    N = int(radius/float(VerticalPointDistance))
-    for i in range(-N,N+1):
-      z = i*radius/float(N)
-      local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
-      #print 'local_radius = ', local_radius
-      if solid:
-        self.addHorizontalDisk([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
-      else:
-        self.addHorizontalCircle([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
+
+    PointDistance = numpy.sqrt(pow(HorizontalPointDistance,2)+pow(VerticalPointDistance,2))
+    print PointDistance
+    if radius == 0:
+      self.GWL_voxels.append([center])
+    else:
+      alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
+      N = int(numpy.pi/alphaStep)
+      for i in range(N+1):
+        print(('i = ',i,' N = ',N))
+        z = radius*numpy.cos(i*numpy.pi/float(N))
+        local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
+        print(('local_radius 1 = ',local_radius))
+        #local_radius = radius*numpy.sin(i*numpy.pi/float(N))
+        #print(('local_radius 2 = ',local_radius))
+        if solid:
+          self.addHorizontalDisk([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
+        else:
+          self.addHorizontalCircle([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
+
+    #N = int(radius/float(VerticalPointDistance))
+    #for i in range(-N,N+1):
+      #z = i*radius/float(N)
+      #local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
+      ##print 'local_radius = ', local_radius
+      #if solid:
+        #self.addHorizontalDisk([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
+      #else:
+        #self.addHorizontalCircle([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
 
   def addWrite(self):
     write_sequence = []
@@ -220,8 +243,26 @@ if __name__ == "__main__":
   GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
   HorizontalPointDistance = 1
-  VerticalPointDistance = 2
+  VerticalPointDistance = 0.5
   center = [30,0,3]
+  radius = 3
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
+
+  HorizontalPointDistance = 1
+  VerticalPointDistance = 1
+  center = [40,0,3]
+  radius = 3
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
+
+  HorizontalPointDistance = 1
+  VerticalPointDistance = 2
+  center = [50,0,3]
   radius = 3
   GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
   GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
