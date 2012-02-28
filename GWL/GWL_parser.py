@@ -35,6 +35,8 @@ class GWLobject:
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
     Zcenter = 0.5*(P1[2] + P2[2])
+    #print Zcenter
+    #print LineNumber_Vertical
 
     ylist = []
     L = (LineNumber_Horizontal-1)*LineDistance_Horizontal
@@ -140,8 +142,15 @@ class GWLobject:
         file.write('-999\t-999\t-999\n')
           
 if __name__ == "__main__":
+  #GWL_obj = GWLobject()
+  #GWL_obj.readGWL(sys.argv[1])
+  ##print GWL_obj.GWL_voxels
+  #GWL_obj.write_GWL('copy.gwl')
+
   GWL_obj = GWLobject()
-  GWL_obj.readGWL(sys.argv[1])
-  #print GWL_obj.GWL_voxels
-  GWL_obj.write_GWL('copy.gwl')
+  GWL_obj.addXblock([0,0,0],[1,0,0],2,0.050,3,0.100)
+  GWL_obj.addXblock([0,0,1.5],[1,0,1.5],2,0.050,3,0.100)
+  GWL_obj.addXblock([0,0,2.75],[1,0,2.75],2,0.050,3,0.100)
+  z=7.1038825; GWL_obj.addXblock([0,0,z],[1,0,z],2,0.050,3,0.100)
+  GWL_obj.write_GWL('xblock.gwl')
   

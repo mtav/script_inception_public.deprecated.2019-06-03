@@ -69,8 +69,8 @@ class Woodpile:
           #GWL_obj.addLine(P1,P2)
           GWL_obj.addXblock(P1, P2, self.LineNumber_Horizontal, self.LineDistance_Horizontal, self.LineNumber_Vertical, self.LineDistance_Vertical, self.BottomToTop)
         layer_type_Y = (layer_type_Y + 1) % 2
-      if layer_idx<self.Nlayers_Z-1:
-        GWL_obj.addWrite()
+      # optional: just add another write to easily distinguish layers inside file
+      GWL_obj.addWrite()
     return GWL_obj
   
   def write_GWL(self,filename):

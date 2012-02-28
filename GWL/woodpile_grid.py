@@ -24,7 +24,7 @@ def createSubFiles(DSTDIR):
       
         a = a_over_Lambda*Lambda
         woodpile_obj = Woodpile()
-        woodpile_obj.BottomToTop = 1
+        woodpile_obj.BottomToTop = 0
         woodpile_obj.Nlayers_Z = Nlayers_Z
         woodpile_obj.NRodsPerLayer_X = NRodsPerLayer_X
         woodpile_obj.NRodsPerLayer_Y = NRodsPerLayer_Y
@@ -32,7 +32,7 @@ def createSubFiles(DSTDIR):
         woodpile_obj.interRodDistance = a/numpy.sqrt(2.0)
 
         woodpile_obj.LineDistance_Vertical = 0.100
-        woodpile_obj.LineNumber_Vertical = woodpile_obj.interLayerDistance/woodpile_obj.LineDistance_Vertical
+        woodpile_obj.LineNumber_Vertical = int(woodpile_obj.interLayerDistance/woodpile_obj.LineDistance_Vertical)
         woodpile_obj.LineNumber_Horizontal = 1
         woodpile_obj.LineDistance_Horizontal = 0.050
 
