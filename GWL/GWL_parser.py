@@ -9,6 +9,10 @@ class GWLobject:
   def __init__(self):
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
+    
+  def clear(self):
+    self.GWL_voxels = []
+    self.voxel_offset = [0,0,0,0]
   
   def addLine(self,P1,P2):
     write_sequence = [P1,P2]
@@ -26,10 +30,15 @@ class GWLobject:
       #zlist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber)
     #else: #even LineNumber
       #zlist = numpy.arange(Zcenter-LineNumber/2*LineDistance, Zcenter+((LineNumber-1)/2+1)*LineDistance, LineDistance)
+    counter = 0
     for z in zlist:
       A = [P1[0],P1[1],z]
       B = [P2[0],P2[1],z]
-      self.GWL_voxels.append([A,B])
+      if counter%2 == 0:
+        self.GWL_voxels.append([A,B])
+      else:
+        self.GWL_voxels.append([B,A])
+      counter = counter + 1
 
   def addXblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
     Xcenter = 0.5*(P1[0] + P2[0])
@@ -49,11 +58,16 @@ class GWLobject:
     else:
       zlist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber_Vertical)
 
+    counter = 0
     for z in zlist:
       for y in ylist:
         A = [P1[0],y,z]
         B = [P2[0],y,z]
-        self.GWL_voxels.append([A,B])
+        if counter%2 == 0:
+          self.GWL_voxels.append([A,B])
+        else:
+          self.GWL_voxels.append([B,A])
+        counter = counter + 1
 
   def addYblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
     Xcenter = 0.5*(P1[0] + P2[0])
@@ -71,11 +85,16 @@ class GWLobject:
     else:
       zlist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber_Vertical)
 
+    counter = 0
     for z in zlist:
       for x in xlist:
         A = [x,P1[1],z]
         B = [x,P2[1],z]
-        self.GWL_voxels.append([A,B])
+        if counter%2 == 0:
+          self.GWL_voxels.append([A,B])
+        else:
+          self.GWL_voxels.append([B,A])
+        counter = counter + 1
 
   def addHorizontalCircle(self, center, radius, power, PointDistance):
     #print radius
@@ -152,51 +171,62 @@ class GWLobject:
   def readGWL(self,filename):
     Nvoxels = 0
     write_sequence = []
-    with open(filename, 'r') as file:
-      for line in file:
-        #print line
-        line_stripped = line.strip()
-        # TODO: handle comments and other commands
-        if len(line_stripped)>0 and line_stripped[0]!='%':
-          cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
-          #cmd = [ i.lower() for i in cmd ]
-          #print cmd
-          if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
-            #print '=>COMMAND'
-            if cmd[0].lower()=='-999':
-              if cmd[1]=='-999':
-                #print 'write'
-                self.GWL_voxels.append(write_sequence)
-                write_sequence = []
-            else:
-              if cmd[0].lower()=='write':
-                #print 'write'
-                self.GWL_voxels.append(write_sequence)
-                write_sequence = []
-              elif cmd[0].lower()=='include':
-                print 'including cmd[1]'
-                self.readGWL(cmd[1])
-              elif cmd[0].lower()=='movestagex':
-                print 'Moving X by '+cmd[1]
-                self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
-              elif cmd[0].lower()=='movestagey':
-                print 'Moving Y by '+cmd[1]
-                self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
-              #elif cmd[0].lower()=='defocusfactor':
-                #print 'defocusfactor'
-              #elif cmd[0].lower()=='laserpower':
-                #print 'laserpower'
+    try:
+      with open(filename, 'r') as file:
+        for line in file:
+          #print line
+          line_stripped = line.strip()
+          # TODO: handle comments and other commands
+          if len(line_stripped)>0 and line_stripped[0]!='%':
+            cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
+            #cmd = [ i.lower() for i in cmd ]
+            #print cmd
+            if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
+              #print '=>COMMAND'
+              if cmd[0].lower()=='-999':
+                if cmd[1]=='-999':
+                  #print 'write'
+                  self.GWL_voxels.append(write_sequence)
+                  write_sequence = []
               else:
-                print('UNKNOWN COMMAND: '+cmd[0])
-                #sys.exit(-1)
-          else:
-            #print '=>VOXEL'
-            voxel = []
-            for i in range(len(cmd)):
-              voxel.append(float(cmd[i])+self.voxel_offset[i])
-            #voxel = [ float(i) for i in cmd ]
-            write_sequence.append(voxel)
-            Nvoxels = Nvoxels + 1
+                if cmd[0].lower()=='write':
+                  #print 'write'
+                  self.GWL_voxels.append(write_sequence)
+                  write_sequence = []
+                elif cmd[0].lower()=='include':
+                  print 'including cmd[1] = '+cmd[1]
+                  self.readGWL(cmd[1])
+                elif cmd[0].lower()=='movestagex':
+                  print 'Moving X by '+cmd[1]
+                  self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
+                elif cmd[0].lower()=='movestagey':
+                  print 'Moving Y by '+cmd[1]
+                  self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
+                elif cmd[0].lower()=='addxoffset':
+                  print 'Adding X offset of '+cmd[1]
+                  self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
+                elif cmd[0].lower()=='addyoffset':
+                  print 'Adding Y offset of '+cmd[1]
+                  self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
+                #elif cmd[0].lower()=='defocusfactor':
+                  #print 'defocusfactor'
+                #elif cmd[0].lower()=='laserpower':
+                  #print 'laserpower'
+                else:
+                  print('UNKNOWN COMMAND: '+cmd[0])
+                  #sys.exit(-1)
+            else:
+              #print '=>VOXEL'
+              voxel = []
+              for i in range(len(cmd)):
+                voxel.append(float(cmd[i])+self.voxel_offset[i])
+              #voxel = [ float(i) for i in cmd ]
+              write_sequence.append(voxel)
+              Nvoxels = Nvoxels + 1
+    
+    except IOError as (errno, strerror):
+      print "I/O error({0}): {1}".format(errno, strerror)
+      print 'Failed to open '+filename
             
     print('Nvoxels = '+str(Nvoxels))
     #return GWL_voxels
@@ -305,5 +335,10 @@ if __name__ == "__main__":
   GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
   GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
+
   GWL_obj.write_GWL('xblock.gwl')
-  
+
+  GWL_obj.clear()
+  GWL_obj.addXblock([0,0,2.75],[10,0,2.75],5,0.050,8,0.100)
+  GWL_obj.addYblock([1,0,2.75],[1,20,2.75],5,0.050,8,0.100)
+  GWL_obj.write_GWL('xblock2.gwl')
