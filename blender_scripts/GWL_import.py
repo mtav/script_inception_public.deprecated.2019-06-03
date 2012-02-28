@@ -169,7 +169,7 @@ def importGWL(filename):
         #print voxel
         #BlenderSphere('voxel', Vector(voxel), 0.100)
         #BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
-        verts.append( Vector(voxel) )
+        verts.append( Vector(voxel[0:3]) )
 
         #if Nvoxel == 0:
           #first_voxel = BlenderBlock('voxel', Vector(voxel), 0.100)

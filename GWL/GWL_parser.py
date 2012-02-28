@@ -77,6 +77,15 @@ class GWLobject:
         B = [x,P2[1],z]
         self.GWL_voxels.append([A,B])
 
+  def addHorizontalCircle(self, center, radius, power, PointDistance):
+    write_sequence = []
+    alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
+    N = int(2*numpy.pi/alphaStep)
+    for i in range(N):
+      P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2],power]
+      write_sequence.append(P)
+    self.GWL_voxels.append(write_sequence)
+
   def addWrite(self):
     write_sequence = []
     self.GWL_voxels.append(write_sequence)
@@ -138,9 +147,15 @@ class GWLobject:
     with open(filename, 'w') as file:
       for write_sequence in self.GWL_voxels:
         for voxel in write_sequence:
-          file.write(str(voxel[0])+'\t'+str(voxel[1])+'\t'+str(voxel[2])+'\n')
-        file.write('-999\t-999\t-999\n')
-          
+          for i in range(len(voxel)):
+            file.write(str(voxel[i]))
+            if i<len(voxel)-1:
+              file.write('\t')
+            else:
+              file.write('\n')
+        #file.write('-999\t-999\t-999\n')
+        file.write('Write\n')
+        
 if __name__ == "__main__":
   #GWL_obj = GWLobject()
   #GWL_obj.readGWL(sys.argv[1])
@@ -152,5 +167,9 @@ if __name__ == "__main__":
   GWL_obj.addXblock([0,0,1.5],[1,0,1.5],2,0.050,3,0.100)
   GWL_obj.addXblock([0,0,2.75],[1,0,2.75],2,0.050,3,0.100)
   z=7.1038825; GWL_obj.addXblock([0,0,z],[1,0,z],2,0.050,3,0.100)
+  
+  GWL_obj.addHorizontalCircle([1,2,3], 5, 50, 0.050)
+  GWL_obj.addHorizontalCircle([1,2,3], 3, 50, 0.100)
+  GWL_obj.addHorizontalCircle([1,2,3], 10, 50, 1)
   GWL_obj.write_GWL('xblock.gwl')
   
