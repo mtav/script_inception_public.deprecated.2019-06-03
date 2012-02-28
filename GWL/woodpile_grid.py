@@ -3,16 +3,16 @@
 
 # generate grid of woodpiles
 
-from GWL.GWL_parser import *
-import numpy as np
-from math import *
-from numpy import *
+#import math
+import numpy
 import os
+from GWL.GWL_parser import *
+from GWL.woodpile import *
 
 def createSubFiles():
   subfile_list = []
   Lambda_list = [0.780,1.550]
-  wh_list = [(0.2,0.25),(0.3/sqrt(2.0),0.7/sqrt(2.0))]
+  wh_list = [(0.2,0.25),(0.3/numpy.sqrt(2.0),0.7/sqrt(2.0))]
   a_over_Lambda_list = [0.9199,0.8333]
 
   N_list = [(12,17,17),(2*12,2*17,2*17),(12,17,17)]
@@ -43,7 +43,7 @@ def single_woodpile(DSTDIR, NX, NY, NZ, interRodDistance, LaserPower, ScanSpeed,
         woodpile_obj.NRodsPerLayer_Y = NY
         woodpile_obj.Nlayers_Z = NZ
         woodpile_obj.interRodDistance = interRodDistance
-        a = woodpile_obj.interRodDistance*sqrt(2.0)
+        a = woodpile_obj.interRodDistance*numpy.sqrt(2.0)
         woodpile_obj.interLayerDistance = a/4.0
         woodpile_obj.adaptXYMinMax()
         subfilename = 'woodpile'+'.deltaH_'+str(woodpile_obj.interRodDistance)+'.a_'+str(a)+'.NX_'+str(woodpile_obj.NRodsPerLayer_X)+'.NY_'+str(woodpile_obj.NRodsPerLayer_Y)+'.Nlayers_Z_'+str(woodpile_obj.Nlayers_Z)+'.BotToTop._'+str(woodpile_obj.BottomToTop)+'.gwl'
