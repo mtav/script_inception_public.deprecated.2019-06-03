@@ -78,22 +78,39 @@ class GWLobject:
         self.GWL_voxels.append([A,B])
 
   def addHorizontalCircle(self, center, radius, power, PointDistance):
+    #print radius
     write_sequence = []
-    alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
-    N = int(2*numpy.pi/alphaStep)
-    for i in range(N):
-      P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2],power]
-      write_sequence.append(P)
+    if radius == 0:
+      write_sequence.append(center)
+    else:
+      alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
+      N = int(2*numpy.pi/alphaStep)
+      for i in range(N):
+        P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2],power]
+        write_sequence.append(P)
     self.GWL_voxels.append(write_sequence)
 
   def addHorizontalDisk(self, center, radius, power, PointDistance):
     N = int(radius/float(PointDistance))
-    for i in range(N):
+    #print(('N = ',N))
+    for i in range(N+1):
       if i==0:
-        #print center
-        self.GWL_voxels.append([center])
+        self.addHorizontalCircle(center, 0, power, PointDistance)
+        ##print center
+        #self.GWL_voxels.append([center])
       else:
         self.addHorizontalCircle(center, i*radius/float(N), power, PointDistance)
+
+  def addSphere(self, center, radius, power, HorizontalPointDistance, VerticalPointDistance, solid = False):
+    N = int(radius/float(VerticalPointDistance))
+    for i in range(-N,N+1):
+      z = i*radius/float(N)
+      local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
+      #print 'local_radius = ', local_radius
+      if solid:
+        self.addHorizontalDisk([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
+      else:
+        self.addHorizontalCircle([center[0],center[1],center[2]+z], local_radius, power, HorizontalPointDistance)
 
   def addWrite(self):
     write_sequence = []
@@ -175,22 +192,41 @@ if __name__ == "__main__":
   GWL_obj.addXblock([0,0,0],[1,0,0],2,0.050,3,0.100)
   GWL_obj.addXblock([0,0,1.5],[1,0,1.5],2,0.050,3,0.100)
   GWL_obj.addXblock([0,0,2.75],[1,0,2.75],2,0.050,3,0.100)
-  z=7.1038825; GWL_obj.addXblock([0,0,z],[1,0,z],2,0.050,3,0.100)
+  z = 7.1038825; GWL_obj.addXblock([0,0,z],[1,0,z],2,0.050,3,0.100)
+
+  power = 75
   
   center = [0,0,3]
-  dist = 0.050
-  GWL_obj.addHorizontalCircle(center, 5, 50, dist)
-  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], 5, 35, dist)
+  HorizontalPointDistance = 0.050
+  VerticalPointDistance = 0.100
+  radius = 1
+  
+  #print 'addHorizontalCircle'
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  #print 'addHorizontalDisk'
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  #print 'addSphere non-solid'
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  #print 'addSphere solid'
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
-  dist = 0.100
-  center = [10,0,5]
-  GWL_obj.addHorizontalCircle(center, 3, 50, dist)
-  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], 3, 35, dist)
+  HorizontalPointDistance = 0.100
+  VerticalPointDistance = 0.200
+  center = [10,0,3]
+  radius = 2
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
-  dist = 1
-  center = [30,0,7]
-  GWL_obj.addHorizontalCircle(center, 10, 50, dist)
-  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], 10, 35, dist)
+  HorizontalPointDistance = 1
+  VerticalPointDistance = 2
+  center = [30,0,3]
+  radius = 3
+  GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
+  GWL_obj.addHorizontalDisk([center[0],center[1],center[2]+1], radius, power, HorizontalPointDistance)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
+  GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
   GWL_obj.write_GWL('xblock.gwl')
   
