@@ -89,7 +89,10 @@ class GWLobject:
       alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
       N = int(2*numpy.pi/alphaStep)
       for i in range(N):
-        P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2],power]
+        if 0<=power and power<=100:
+          P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2],power]
+        else:
+          P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2]]
         write_sequence.append(P)
     self.GWL_voxels.append(write_sequence)
 
@@ -112,10 +115,17 @@ class GWLobject:
       self.GWL_voxels.append([center])
     else:
       alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
-      N = int(numpy.pi/alphaStep)
+      N = int(0.5*numpy.pi/alphaStep)
+      zlist = []
       for i in range(N+1):
         #print(('i = ',i,' N = ',N))
-        z = radius*numpy.cos(i*numpy.pi/float(N))
+        z = radius*numpy.cos(i*0.5*numpy.pi/float(N))
+        zlist.append(z)
+        
+      # symetrify list
+      zlist = zlist + [ -i for i in zlist[len(zlist)-2::-1] ]
+        
+      for z in zlist:
         local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
         #print(('local_radius 1 = ',local_radius))
         #local_radius = radius*numpy.sin(i*numpy.pi/float(N))
