@@ -83,9 +83,9 @@ class GWLobject:
     if radius < 0.5*PointDistance:
       write_sequence.append(center)
     else:
-      print(('PointDistance = ', PointDistance))
-      print radius
-      print PointDistance/float(2*radius)
+      #print(('PointDistance = ', PointDistance))
+      #print radius
+      #print PointDistance/float(2*radius)
       alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
       N = int(2*numpy.pi/alphaStep)
       for i in range(N):
@@ -107,17 +107,17 @@ class GWLobject:
   def addSphere(self, center, radius, power, HorizontalPointDistance, VerticalPointDistance, solid = False):
 
     PointDistance = numpy.sqrt(pow(HorizontalPointDistance,2)+pow(VerticalPointDistance,2))
-    print PointDistance
+    #print PointDistance
     if radius == 0:
       self.GWL_voxels.append([center])
     else:
       alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
       N = int(numpy.pi/alphaStep)
       for i in range(N+1):
-        print(('i = ',i,' N = ',N))
+        #print(('i = ',i,' N = ',N))
         z = radius*numpy.cos(i*numpy.pi/float(N))
         local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
-        print(('local_radius 1 = ',local_radius))
+        #print(('local_radius 1 = ',local_radius))
         #local_radius = radius*numpy.sin(i*numpy.pi/float(N))
         #print(('local_radius 2 = ',local_radius))
         if solid:
