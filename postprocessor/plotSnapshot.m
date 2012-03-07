@@ -285,6 +285,9 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   elseif handles.Type == 3 % frequency snapshot
     if exist('FDTDobj','var')==1
       Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+      Nsnap
+      length(FDTDobj.frequency_snapshots)
+      
       freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
       lambda_snap_mum = get_c0()/freq_snap_MHz;
       lambda_snap_nm = lambda_snap_mum*1e3;
