@@ -27,13 +27,16 @@ class GWLobject:
 
   def addHorizontalGrating(self, P1, P2, LineNumber, LineDistance):
     u = numpy.array(P2)-numpy.array(P1)
-    v = 0
+    u = u*1.0/numpy.sqrt(pow(u[0],2)+pow(u[1],2)+pow(u[2],2))
+    v = numpy.array([-u[1],u[0],0])
+    L = (LineNumber-1)*LineDistance    
+    P1_min = P1 - 0.5*L*v
+    
     plist = []
-    L = (LineNumber-1)*LineDistance
-    if BottomToTop:
-      plist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber)
-    else:
-      plist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber)
+    for k in range(LineNumber):
+        A = P1_min + k*LineDistance*v
+        B = A + (P2-P1)
+        plist.append((A,B))
 
     counter = 0
     for (A,B) in plist:
@@ -220,7 +223,9 @@ class GWLobject:
                   write_sequence = []
                 elif cmd[0].lower()=='include':
                   print 'including cmd[1] = '+cmd[1]
-                  self.readGWL('C:\\Users\\User\\Desktop\\Daniel+Mike\\nanoscribe_sample_2012-02-29'+os.path.sep+cmd[1])
+                  file_to_include = os.path.dirname(filename)+os.path.sep+cmd[1]
+                  print(file_to_include)
+                  self.readGWL(file_to_include)
                   
                 elif cmd[0].lower()=='movestagex':
                   print 'Moving X by '+cmd[1]
