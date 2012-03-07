@@ -1,16 +1,19 @@
-function [ status, lambda, Q, outFile, err, minErrInd ] = doHarminv(dataFile,dt,lambdaLow,lambdaHigh)
-  if ~exist('dataFile')
+% TODO: Document and use a sane order. This should be a simple wrapper for harminv, with same input/output order, nothing more. (will require changes to all occurences of doHarminv elsewhere)
+function [ status, lambda, Q, outFile, err, minErrInd, frequency, decay_constant, amplitude, phase ] = doHarminv(dataFile,dt,lambdaLow,lambdaHigh)
+
+  if ( exist('dataFile','var')==0 ) | ( exist(dataFile, 'file')==0 )
+    warning('No file specified or found.');
     [file,path] = uigetfile();
     dataFile = [path,file];
-    
-    dt=0.01;
-    lambdaLow=0.75*get_c0();
-    lambdaHigh=1.2*get_c0();
-    
   else
     [path,file,ext] = fileparts(dataFile);
     file = [file,ext];
   end
+
+  if exist('dt','var')==0; dt=0.01; end
+  if exist('lambdaLow','var')==0; lambdaLow=0.75*get_c0(); end
+  if exist('lambdaHigh','var')==0; lambdaHigh=1.2*get_c0(); end
+    
   %hostname='bluecrystalp2.bris.ac.uk';
   %username='yh1714';
   %ftp1=getAvailableSSH(hostname,1,'sftp',username);
@@ -26,7 +29,7 @@ function [ status, lambda, Q, outFile, err, minErrInd ] = doHarminv(dataFile,dt,
   
   outFile=[path,filesep,outfileName];
 
-  hcommand=['harminv -t ',num2str(dt,'%2.8e'),' ',num2str(get_c0()/lambdaHigh,'%2.8e'),'-',num2str(get_c0()/lambdaLow,'%2.8e'),' < ',dataFile,' > ',outFile]
+  hcommand=['harminv -t ',num2str(dt,'%2.8e'),' ',num2str(get_c0()/lambdaHigh,'%2.8e'),'-',num2str(get_c0()/lambdaLow,'%2.8e'),' < ',dataFile,' > ',outFile];
   
   [status,result] = system(hcommand);
   if (status == 0)
@@ -41,6 +44,7 @@ function [ status, lambda, Q, outFile, err, minErrInd ] = doHarminv(dataFile,dt,
       error(['ERROR: File ', outFile, ' does not exist.'])
     end
   
+    % read contents of file into "C"
     fid = fopen(outFile,'r');
     tline = fgetl(fid);
     numCol=length(strfind(tline,','));
@@ -48,13 +52,26 @@ function [ status, lambda, Q, outFile, err, minErrInd ] = doHarminv(dataFile,dt,
     str=[str,'%f'];
     C = textscan(fid, str);
     fclose(fid);
+
+    % fill output variables    
+    frequency = C{1};
+    decay_constant = C{2};
+    Q = C{3};
+    amplitude = C{4};
+    phase = C{5};
+    err = C{6};
+    lambda = get_c0()./C{1};
     
-    lambda=get_c0()./C{1};
+    % sort everything by lambda
     [lambda,k]=sort(lambda);
-    Q=C{3};
-    Q=Q(k);
-    err=C{end};
-    err=err(k);
+
+    frequency = frequency(k);
+    decay_constant = decay_constant(k);
+    Q = Q(k);
+    amplitude = amplitude(k);
+    phase = phase(k);
+    err = err(k);
+
     
     minErrInd=find(err==min(err));
   else
