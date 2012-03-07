@@ -4,11 +4,18 @@
 import sys
 import re
 import numpy
+import os
 
 class GWLobject:
   def __init__(self):
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
+    self.stage_position = [0,0,0,0]
+    self.LineNumber = 1
+    self.LineDistance = 0
+    self.PowerScaling = 1
+    self.LaserPower = 100
+    self.ScanSpeed = 200
     
   def clear(self):
     self.GWL_voxels = []
@@ -18,6 +25,24 @@ class GWLobject:
     write_sequence = [P1,P2]
     self.GWL_voxels.append(write_sequence)
 
+  def addHorizontalGrating(self, P1, P2, LineNumber, LineDistance):
+    u = numpy.array(P2)-numpy.array(P1)
+    v = 0
+    plist = []
+    L = (LineNumber-1)*LineDistance
+    if BottomToTop:
+      plist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber)
+    else:
+      plist = numpy.linspace(Zcenter+0.5*L, Zcenter-0.5*L, LineNumber)
+
+    counter = 0
+    for (A,B) in plist:
+      if counter%2 == 0:
+        self.GWL_voxels.append([A,B])
+      else:
+        self.GWL_voxels.append([B,A])
+      counter = counter + 1
+    
   def addZGrating(self, P1, P2, LineNumber, LineDistance, BottomToTop = False):
     Zcenter = 0.5*(P1[2] + P2[2])
     zlist = []
@@ -195,23 +220,53 @@ class GWLobject:
                   write_sequence = []
                 elif cmd[0].lower()=='include':
                   print 'including cmd[1] = '+cmd[1]
-                  self.readGWL(cmd[1])
+                  self.readGWL('C:\\Users\\User\\Desktop\\Daniel+Mike\\nanoscribe_sample_2012-02-29'+os.path.sep+cmd[1])
+                  
                 elif cmd[0].lower()=='movestagex':
                   print 'Moving X by '+cmd[1]
-                  self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
+                  self.stage_position[0] = self.stage_position[0] + float(cmd[1])
                 elif cmd[0].lower()=='movestagey':
                   print 'Moving Y by '+cmd[1]
-                  self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
+                  self.stage_position[1] = self.stage_position[1] + float(cmd[1])
+                  
                 elif cmd[0].lower()=='addxoffset':
                   print 'Adding X offset of '+cmd[1]
                   self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
                 elif cmd[0].lower()=='addyoffset':
                   print 'Adding Y offset of '+cmd[1]
                   self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
+                elif cmd[0].lower()=='addzoffset':
+                  print 'Adding Z offset of '+cmd[1]
+                  self.voxel_offset[2] = self.voxel_offset[2] + float(cmd[1])
+                  
+                elif cmd[0].lower()=='xoffset':
+                  print 'Setting X offset to '+cmd[1]
+                  self.voxel_offset[0] = float(cmd[1])
+                elif cmd[0].lower()=='yoffset':
+                  print 'Setting Y offset to '+cmd[1]
+                  self.voxel_offset[1] = float(cmd[1])
+                elif cmd[0].lower()=='zoffset':
+                  print 'Setting Z offset to '+cmd[1]
+                  self.voxel_offset[2] = float(cmd[1])
+
+                elif cmd[0].lower()=='linenumber':
+                  print 'Setting LineNumber to '+cmd[1]
+                  self.LineNumber = float(cmd[1])
+                elif cmd[0].lower()=='linedistance':
+                  print 'Setting LineDistance to '+cmd[1]
+                  self.LineDistance = float(cmd[1])
+                elif cmd[0].lower()=='powerscaling':
+                  print 'Setting PowerScaling to '+cmd[1]
+                  self.PowerScaling = float(cmd[1])
+                elif cmd[0].lower()=='laserpower':
+                  print 'Setting LaserPower to '+cmd[1]
+                  self.LaserPower = float(cmd[1])
+                elif cmd[0].lower()=='scanspeed':
+                  print 'Setting ScanSpeed to '+cmd[1]
+                  self.ScanSpeed = float(cmd[1])
+                
                 #elif cmd[0].lower()=='defocusfactor':
                   #print 'defocusfactor'
-                #elif cmd[0].lower()=='laserpower':
-                  #print 'laserpower'
                 else:
                   print('UNKNOWN COMMAND: '+cmd[0])
                   #sys.exit(-1)
@@ -219,7 +274,7 @@ class GWLobject:
               #print '=>VOXEL'
               voxel = []
               for i in range(len(cmd)):
-                voxel.append(float(cmd[i])+self.voxel_offset[i])
+                voxel.append(float(cmd[i])+self.voxel_offset[i]+self.stage_position[i])
               #voxel = [ float(i) for i in cmd ]
               write_sequence.append(voxel)
               Nvoxels = Nvoxels + 1
