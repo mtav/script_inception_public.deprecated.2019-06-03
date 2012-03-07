@@ -8,7 +8,7 @@ function Q_harminv_local = getQfactor_harminv(x, harminvDataFile, dt_mus, lambda
       
       rel=1./err; rel=rel/max(rel)*max(Q);
       
-      [indS,val]=closestInd(lambdaH_nm,x);
+      [indS,val] = closestInd(lambdaH_nm,x)
       Q_harminv_local = Q(indS);
       peakWaveLength_nm = x;
       Frequency_Hz = get_c0()/peakWaveLength_nm*1e9;
