@@ -1,4 +1,13 @@
-function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+
+  disp('~~~~~~~~~~~~~~~~~')
+  disp('plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)')
+  filename
+  probe_col
+  autosave
+  imageSaveName
+  hide_figures
+  disp('~~~~~~~~~~~~~~~~~')
 
   if exist('hide_figures','var')==0
     hide_figures = false;
@@ -8,7 +17,10 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
   [ geoname_folder, geoname_basename ] = fileparts(folder);
 
   % read the PRN file
+  filename
   [header, data] = readPrnFile(filename);
+  header
+  probe_col
   data_name = header(probe_col);
 
   time_mus = 1e-12*data(:,1);
@@ -21,7 +33,8 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
   % calculate the FFT
   % (with NFFT = double the number of points you want in the output = 2^19)
   % (probe_col = whatever column you want from the time probe file, i.e. Ex,Ey,etc)
-  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(data_time_domain,dt_mus, 2^19);
+  %[calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(data_time_domain,dt_mus, 2^19);
+  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(data_time_domain,dt_mus, 2^22);
 
   % convert lambda to nm
   lambda_vec_nm = 1e3*lambda_vec_mum;
@@ -37,6 +50,19 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
   % plot in the time domain to see the ringdown
   subplot(1,2,1);
   plot(time_mus,data_time_domain);
+  
+  % envelope fitting
+  %[xzoom,yzoom]=zoomPlot(time_mus,data_time_domain,4e-8,time_mus(end));
+  [xzoom,yzoom]=zoomPlot(time_mus,data_time_domain,1e-6,time_mus(end));
+  %res.trace1.x = time_mus
+  %res.trace1.y = data_time_domain
+  res.trace1.x = xzoom
+  res.trace1.y = yzoom
+  %ringdown(res,0.01)
+  
+  % go back to normal figure
+  %figure(fig)
+  
   xlabel('time (mus)');
   ylabel(data_name);
   title( [ geoname_basename,' ', basename, ' ', char(data_name) ],'Interpreter','none');
@@ -98,13 +124,14 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
   delta = (max(Y)-aver)/9;
  
   if (delta<0)
-    disp(['ERROR delta<0 : ',delta])
+    disp(['ERROR delta<0 : ',num2str(delta)])
     return;
   end
 
   peaks = peakdet(Y, delta, X);
   peaks
   
+  wavelength_nm = zeros(1,size(peaks,1));
   Q_lorentz = zeros(1,size(peaks,1));
   Q_harminv_local = zeros(1,size(peaks,1));
   Q_harminv_global = zeros(1,size(peaks,1));
@@ -144,9 +171,25 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
     fclose(fid);
     
     disp('===> Computing harminv:');
-    [ status, lambdaH_mum, Q, outFile, err, minErrInd ] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
+    [ status, lambdaH_mum, Q, outFile, err, minErrInd, frequency, decay_constant, amplitude, phase ] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
+        
     if ( status == 0 )
       if ( length(Q) ~= 0 )
+      
+        % calculate time-domain fit based on harminv output
+        harminv_time = zeros(size(time_mus));
+        %harminv_fig = figure(); hold on;
+        for i=1:length(frequency)
+          disp([num2str(frequency(i)),', ', num2str(decay_constant(i)),', ', num2str(Q(i)),', ', num2str(amplitude(i)),', ', num2str(phase(i)),', ', num2str(err(i))]);
+          %harminv_time = harminv_time + amplitude(i)*sin(2*pi*frequency(i)*time_mus+phase(i)).*exp(-decay_constant(i)*time_mus);
+          harminv_time = harminv_time + amplitude(i)*cos(-2*pi*frequency(i).*time_mus+phase(i)).*exp(decay_constant(i).*time_mus);
+          %plot(time_mus, amplitude(i)*exp(-decay_constant(i).*time_mus));
+        end
+        %plot(time_mus,harminv_time);
+        
+        % go back to the regular programming
+        %figure(fig);
+        
         lambdaH_nm = lambdaH_mum*1e3;
         
         rel=1./err; rel=rel/max(rel)*max(Q);
@@ -175,6 +218,10 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
   disp('===> Looping through peaks:');
   peaks
   size(peaks,1)
+
+  fid = fopen('~/tmpQ.txt', 'at');
+  fprintf(fid, '%s\n', [pwd,' | ',filename] );
+  fclose(fid);
   
   for n=1:size(peaks,1)
     plot(peaks(n,1),peaks(n,2),'r*'); % plot little stars on detected peaks
@@ -189,18 +236,45 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
     xmax = peaks(n,3);
     [Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax);
     
+    wavelength_nm(n) = peakWaveLength;
     Q_lorentz(n) = Q;
     plot(linspace(xmin,xmax,100),lorentz(vEnd,linspace(xmin,xmax,100)),'r.');
     
+    disp('=================')
+    disp('Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)')
+    x
+    harminvDataFile
+    dt_mus
+    xmin
+    xmax
+    disp('=================')
     Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)
+    
     if size(Qfactor_harminv,1)>0
+      
+      pwd
+      filename
+      probe_col
+      autosave
+      imageSaveName
+      hide_figures
+      
+      Q_harminv_local
+      n
+      Qfactor_harminv
+      
       Q_harminv_local(n) = Qfactor_harminv;
       
       Q1 = ['Q_L=',num2str(Q_lorentz(n))];
       Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
       Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
-      %text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
-      text(peakWaveLength, peakValue, {Q1}, 'FontSize', 8);
+      text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
+      
+      fid = fopen('~/tmpQ.txt', 'at');
+      fprintf(fid, '%10.0f\t%10.0f\n', peakWaveLength, Q_lorentz(n));
+      fclose(fid);
+
+      %text(peakWaveLength, peakValue, {Q1}, 'FontSize', 8);
     end
 
     %text(peakWaveLength, peakValue + 0*font_size, );
@@ -224,16 +298,16 @@ function plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
 
   % autosaving
   if autosave == 1
-    figout = [folder, filesep, basename, '_', char(data_name), '.png'];
+    figout = [dirname(filename), filesep, basename, '_', char(data_name), '.png'];
     disp(['Saving figure as ',figout]);
     print(fig,'-dpng','-r300',figout);
   end
   
   % normal saving
-  if exist('imageSaveName','var')~=0
+  if ( exist('imageSaveName','var')~=0 ) & (length(imageSaveName)>0)
     disp(['Saving figure as ',imageSaveName]);
-    %print(fig,'-dpng','-r300',imageSaveName);
-    print(fig,'-depsc','-r1500',imageSaveName);
+    print(fig,'-dpng','-r300',imageSaveName);
+    %print(fig,'-depsc','-r1500',imageSaveName);
   end
 
 end

@@ -1,3 +1,8 @@
+% creates a multimode decay and tries various Q-factor finding methods:
+% 1) envelope fitting
+% 2) harminv
+% 3) lorentz fit of the FFT
+
 function harminv_fit()
   
   %f0 = [30,50,100,1000]
@@ -16,15 +21,60 @@ function harminv_fit()
   tmin = 0;
   tmax = Q0(1)*1/(min(f0));
   
-  disp('=== Creating sample function ===')
+  disp('=== Creating sample function ===');
   [x,y,fmin,fmax] = expsine(dt, tmin, tmax, f0, Q0, A0);
   
   orig = figure(); hold on;
-  plot(x,y,'b.')
+  title('raw data');
+  plot(x,y,'b.');
+  
+  
+  disp('=== Running plotProbe ===');
+  %filename = '~/tmp.prn';
+  %probe_col = 2;
+  %autosave = false;
+  %imageSaveName = '';
+  %hide_figures = false;
+  
+  %fid = fopen(filename,'wt');
+  %fprintf(fid,'x\ty\n');
+  %for k=1:length(x)
+    %fprintf(fid,'%f\t%f\n',1e12*x(k),y(k));
+  %end
+  %fclose(fid);
+
+  %[ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+
+%% FFT for frequency estimation
+LV = length(Vfit);
+P = abs(fft(Vfit)); Ppos=P(1:(round(LV/2)+1));
+faxis = 1/sample_int*(0:round(LV/2))/LV;
+peakf=faxis(find(Ppos==max(P(1:(round(LV/2)+1))))); %#ok<FNDSB>
+if plots >= 2
+    fftfig=figure; subplot(1,2,1);
+    semilogy(faxis,Ppos,'-'); hold on
+    plot(peakf,max(Ppos),'dr');
+    title('FFT'); xlabel('Frequency [Hz]'); ylabel('Power')
+    fa=axis; text((fa(2)-fa(1))/2,(fa(4)-fa(3))/2,['f_0: ' num2str(peakf,'%.1f') ' Hz']);
+end
+
+
+  disp('=== Running FFT fit directly ===')
+  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(x,dt, 2^22);
+  % convert lambda to nm
+  lambda_vec_nm = 1e3*lambda_vec_mum;
+  X = lambda_vec_nm;
+  Y = calcFFT_output.* conj(calcFFT_output);
+  directFFT = figure(); hold on;
+  title('direct FFT');
+  plot(X,Y);
+  %[Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax);
+  return;
+
+  disp('=== Running ringdown ===')
   orig_axis = axis();
   res.trace1.x = x;
   res.trace1.y = y;
-  disp('=== Running ringdown ===')
   res_rd = ringdown(res)
   
   harminvDataFile = '~/tmpHarminvData.txt';
