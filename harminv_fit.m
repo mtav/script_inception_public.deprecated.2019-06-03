@@ -19,7 +19,7 @@ function harminv_fit()
 
   dt = 1/(300*max(f0));
   tmin = 0;
-  tmax = Q0(1)*1/(min(f0));
+  tmax = 15*Q0(1)*1/(min(f0));
   
   disp('=== Creating sample function ===');
   [x,y,fmin,fmax] = expsine(dt, tmin, tmax, f0, Q0, A0);
@@ -28,39 +28,26 @@ function harminv_fit()
   title('raw data');
   plot(x,y,'b.');
   
-  
-  disp('=== Running plotProbe ===');
-  %filename = '~/tmp.prn';
-  %probe_col = 2;
-  %autosave = false;
-  %imageSaveName = '';
-  %hide_figures = false;
-  
-  %fid = fopen(filename,'wt');
-  %fprintf(fid,'x\ty\n');
-  %for k=1:length(x)
-    %fprintf(fid,'%f\t%f\n',1e12*x(k),y(k));
-  %end
-  %fclose(fid);
+  disp('=== Running ringdown FFT fit directly ===')
+  %% FFT for frequency estimation
+  LV = length(y);
+  %P = abs(fft(y)); Ppos=P(1:(round(LV/2)+1));
+  P = fft(y); Ppos=P(1:(round(LV/2)+1));
+  Y = Ppos.* conj(Ppos);
+  faxis = 1/dt*(0:round(LV/2))/LV;
+  peakf=faxis(find(Ppos==max(P(1:(round(LV/2)+1))))); %#ok<FNDSB>
+  directRingdownFFT=figure();
+  %semilogy(faxis,Ppos,'-'); hold on
+  %plot(faxis,Ppos,'-'); hold on
+  plot(faxis,Y,'-'); hold on
+  plot(peakf,max(Ppos),'dr');
+  title('direct ringdown FFT'); xlabel('Frequency [Hz]'); ylabel('Power')
+  fa=axis; text((fa(2)-fa(1))/2,(fa(4)-fa(3))/2,['f_0: ' num2str(peakf,'%.1f') ' Hz']);
 
-  %[ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+  [Q, vStart, vEnd] = getQfactor(faxis,Y,990,1010)
 
-%% FFT for frequency estimation
-LV = length(Vfit);
-P = abs(fft(Vfit)); Ppos=P(1:(round(LV/2)+1));
-faxis = 1/sample_int*(0:round(LV/2))/LV;
-peakf=faxis(find(Ppos==max(P(1:(round(LV/2)+1))))); %#ok<FNDSB>
-if plots >= 2
-    fftfig=figure; subplot(1,2,1);
-    semilogy(faxis,Ppos,'-'); hold on
-    plot(peakf,max(Ppos),'dr');
-    title('FFT'); xlabel('Frequency [Hz]'); ylabel('Power')
-    fa=axis; text((fa(2)-fa(1))/2,(fa(4)-fa(3))/2,['f_0: ' num2str(peakf,'%.1f') ' Hz']);
-end
-
-
-  disp('=== Running FFT fit directly ===')
-  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(x,dt, 2^22);
+  disp('=== Running calcFFT fit directly ===')
+  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(y,dt, 2^22);
   % convert lambda to nm
   lambda_vec_nm = 1e3*lambda_vec_mum;
   X = lambda_vec_nm;
@@ -68,8 +55,7 @@ end
   directFFT = figure(); hold on;
   title('direct FFT');
   plot(X,Y);
-  %[Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax);
-  return;
+  [Q, vStart, vEnd] = getQfactor(X,Y,2.98e8,3.02e8)
 
   disp('=== Running ringdown ===')
   orig_axis = axis();
@@ -120,7 +106,26 @@ end
   else
     warning('harminv command failed.');
   end
+
+  disp('=== Running plotProbe ===');
+  filename = '~/tmp.prn';
+  probe_col = 2;
+  autosave = false;
+  imageSaveName = '';
+  hide_figures = false;
   
+  fid = fopen(filename,'wt');
+  fprintf(fid,'x\ty\n');
+  fclose(fid);
+  tab = [1e12*x(:),y(:)];
+  save(filename, 'tab', '-ASCII', '-double', '-tabs', '-append');
+  %for k=1:length(x)
+    %fprintf(fid,'%f\t%f\n',1e12*x(k),y(k));
+  %end
+  %fclose(fid);
+
+  [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+
 end
 
 function [x,y,fmin,fmax] = expsine(dt, tmin, tmax, f0, Q0, A0)
