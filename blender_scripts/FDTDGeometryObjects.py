@@ -139,7 +139,14 @@ class FDTDGeometryObjects:
           local_verts.append( Vector(vertices[i_vert]) )
           
         #print(local_verts)
-          #faces = []
+        faces = []
+        faces.append([3,2,1,0])
+        faces.append([7,6,5,4])
+        faces.append([0,1,6,7])
+        faces.append([1,2,5,6])
+        faces.append([2,3,4,5])
+        faces.append([3,0,7,4])
+
           #for i_face in range(0, Nfaces):
                 #line = in_file.readline()
                 #words = line.split()
@@ -158,10 +165,14 @@ class FDTDGeometryObjects:
                 #faces.append(face_verts)
           
         #print "Adding object ",object_names[i_object]
-        BPyAddMesh.add_mesh_simple(name, local_verts, [], [])
+        BPyAddMesh.add_mesh_simple(name, local_verts, [], faces)
 
         obj = Blender.Object.GetSelected()[0];
         obj.transp = True; obj.wireMode = True;
+        objmesh = obj.getData(mesh=True)
+        objmesh.materials = self.materials(permittivity, conductivity)
+        for f in objmesh.faces:
+          f.mat = 0
 
 ######################################################################################
 
