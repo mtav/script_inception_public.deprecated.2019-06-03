@@ -118,7 +118,7 @@ class Box:
       layer = 'box',
       group = 'box',
       lower = [0,0,0],
-      upper = [0,0,0]):
+      upper = [1,1,1]):
       
       self.name = name
       self.layer = layer
