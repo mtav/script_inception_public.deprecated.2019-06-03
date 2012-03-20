@@ -138,7 +138,7 @@ class FDTDGeometryObjects:
         for i_vert in range(len(vertices)):
           local_verts.append( Vector(vertices[i_vert]) )
           
-        print(local_verts)
+        #print(local_verts)
           #faces = []
           #for i_face in range(0, Nfaces):
                 #line = in_file.readline()

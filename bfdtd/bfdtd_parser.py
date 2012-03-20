@@ -15,7 +15,7 @@ from bfdtd.meshobject import *
 #==== CLASSES START ====#
 
 # mandatory objects
-class Flag:
+class Flag(object):
   def __init__(self):
     self.name = 'flag'
     self.layer = 'flag'
@@ -60,7 +60,7 @@ class Flag:
     FILE.write('}\n')
     FILE.write('\n')
 
-class Boundaries:
+class Boundaries(object):
   def __init__(self):
     self.name = 'boundaries'
     self.layer = 'boundaries'
@@ -112,7 +112,7 @@ class Boundaries:
     FILE.write('}\n')
     FILE.write('\n')
 
-class Box:
+class Box(object):
   def __init__(self,
       name = 'box',
       layer = 'box',
@@ -152,7 +152,7 @@ class Box:
     return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
 
 # geometry objects
-class Geometry_object:
+class Geometry_object(object):
     def __init__(self):
         self.name = 'geometry object'
         self.rotation_list = []
@@ -312,10 +312,6 @@ class Distorted(Geometry_object):
     if entry.name:
       self.name = entry.name
     for i in range(8):
-      entry.data[3*i:3*i+3]
-      float_array(entry.data[3*i:3*i+3])
-      print(self.vertices)
-      print(self.vertices[i])
       self.vertices[i] = float_array(entry.data[3*i:3*i+3])
     self.permittivity = float(entry.data[8*3])
     self.conductivity = float(entry.data[8*3+1])
@@ -425,7 +421,7 @@ class Cylinder(Geometry_object):
     FILE.write('}\n')
     FILE.write('\n')
 
-class Rotation:
+class Rotation(object):
   def __init__(self,
       name = 'rotation',
       axis_point = [0,0,0],
@@ -464,7 +460,7 @@ class Rotation:
     FILE.write('\n')
 
 # measurement objects
-class Time_snapshot:
+class Time_snapshot(object):
   def __init__(self,
     name = 'time_snapshot',
     first = 1, # crashes if = 0
@@ -614,7 +610,7 @@ class Time_snapshot:
     epsz = vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
-class Frequency_snapshot:
+class Frequency_snapshot(object):
   def __init__(self,
     name = 'frequency_snapshot',
     first = 1, # crashes if = 0
@@ -746,7 +742,7 @@ class Frequency_snapshot:
     epsz = vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
-class Probe:
+class Probe(object):
   def __init__(self,
     name = 'probe',
     position = [0,0,0],
@@ -819,7 +815,7 @@ class Probe:
     epsz = vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
-class Entry:
+class Entry(object):
   def __init__(self):
     self.name = 'default_entry'
     self.layer = 'default_layer'
@@ -830,7 +826,7 @@ class Entry:
 
 # TODO: add addSnapshot, addProbe, etc functions to BFDTDobject to make adding stuff easier (should copy value from last similar)
 # TODO: beware of the multiple snapshot lists! reduce duplicate info and add set/get functions
-class BFDTDobject:
+class BFDTDobject(object):
   def __init__(self):
     # mandatory objects
     self.mesh = MeshObject()
@@ -1069,7 +1065,6 @@ class BFDTDobject:
           elif entry.Type == 'DISTORTED':
               distorted = Distorted()
               distorted.read_entry(entry)
-              print(distorted)
               self.distorted_list.append(distorted)
               self.geometry_object_list.append(distorted)
           elif entry.Type == 'CYLINDER':

@@ -144,7 +144,7 @@ def importBristolFDTD(filename):
     # Distorted
     for distorted in structured_entries.distorted_list:
         # create object
-        print(distorted)
+        #print(distorted)
         FDTDGeometryObjects_obj.GEOdistorted(distorted.name, distorted.vertices, distorted.permittivity, distorted.conductivity);
         
     # Cylinder
