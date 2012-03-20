@@ -101,6 +101,72 @@ class FDTDGeometryObjects:
         obj.transp = True; obj.wireMode = True;
         #~ obj.layers = [ 8 ];
         return;
+
+    def GEOdistorted(self, name, vertices, permittivity, conductivity):
+        scene = Blender.Scene.GetCurrent();
+        
+        #mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
+    
+        #obj = scene.objects.new(mesh, name);
+        #pos = 0.5*(lower+upper);
+        #diag = upper-lower;
+        #obj.SizeX = abs(diag[0]);
+        #obj.SizeY = abs(diag[1]);
+        #obj.SizeZ = abs(diag[2]);
+        #obj.setLocation(pos[0], pos[1], pos[2]);
+        #obj.transp = True; obj.wireMode = True;
+
+######################################################################################
+
+        # variables
+        #for i in range(8):
+          #vertices[i] = Vector(distorted.vertices[i])
+    
+        #offset = 0
+        #for i_object in range(0, Nobjects):
+          #line = in_file.readline()
+          #words = line.split()
+          #Nverts = int(words[0])
+          #Nfaces = int(words[1])
+          #print "Nverts=",Nverts
+          #print "Nfaces=",Nfaces
+          
+        local_verts = []
+        for i_vert in range(len(vertices)):
+          local_verts.append( Vector(vertices[i_vert]) )
+          
+        print(local_verts)
+          #faces = []
+          #for i_face in range(0, Nfaces):
+                #line = in_file.readline()
+                #words = line.split()
+                #if len(words) < 3:
+                  #Blender.Draw.PupMenu('Error%t|File format error 4')
+                  #return
+                #Nverts_in_face = int(words[0])
+                #if len(words) != 1 + Nverts_in_face:
+                  #Blender.Draw.PupMenu('Error%t|File format error 5')
+                  #return
+                #face_verts = []
+                #for i_face_vert in range(0, Nverts_in_face):
+                  #idx = int(words[i_face_vert + 1]) - offset
+                  #face_verts.append(idx)
+                ##print "face_verts=",face_verts
+                #faces.append(face_verts)
+          
+        #print "Adding object ",object_names[i_object]
+        BPyAddMesh.add_mesh_simple(name, local_verts, [], [])
+
+        obj = Blender.Object.GetSelected()[0];
+        obj.transp = True; obj.wireMode = True;
+
+######################################################################################
+
+
+        return;
     
     def GEOcylinder(self, name, center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
         scene = Blender.Scene.GetCurrent();

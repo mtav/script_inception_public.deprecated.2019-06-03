@@ -140,7 +140,13 @@ def importBristolFDTD(filename):
 
         # create object
         FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
-    
+
+    # Distorted
+    for distorted in structured_entries.distorted_list:
+        # create object
+        print(distorted)
+        FDTDGeometryObjects_obj.GEOdistorted(distorted.name, distorted.vertices, distorted.permittivity, distorted.conductivity);
+        
     # Cylinder
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
     for cylinder in structured_entries.cylinder_list:

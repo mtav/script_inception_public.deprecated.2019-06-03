@@ -277,6 +277,80 @@ class Block(Geometry_object):
     epsz = vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
+class Distorted(Geometry_object):
+  def __init__(self,
+    name = None,
+    layer = None,
+    group = None,
+    vertices = None,
+    permittivity = None,
+    conductivity = None):
+
+    if name is None: name = 'distorted'
+    if layer is None: layer = 'distorted',
+    if group is None: group = 'distorted',
+    if vertices is None: vertices = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+    if permittivity is None: permittivity = 1 # vacuum by default
+    if conductivity is None: conductivity = 0
+    
+    Geometry_object.__init__(self)
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.vertices = vertices
+    self.permittivity = permittivity
+    self.conductivity = conductivity
+    
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'vertices = '+str(self.vertices)+'\n'
+    ret += 'permittivity = '+str(self.permittivity)+'\n'
+    ret += 'conductivity = '+str(self.conductivity)+'\n'
+    ret += Geometry_object.__str__(self)
+    return ret
+  def read_entry(self,entry):
+    if entry.name:
+      self.name = entry.name
+    for i in range(8):
+      entry.data[3*i:3*i+3]
+      float_array(entry.data[3*i:3*i+3])
+      print(self.vertices)
+      print(self.vertices[i])
+      self.vertices[i] = float_array(entry.data[3*i:3*i+3])
+    self.permittivity = float(entry.data[8*3])
+    self.conductivity = float(entry.data[8*3+1])
+  def write_entry(self, FILE):
+    self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
+    FILE.write('DISTORTED **name='+self.name+'\n')
+    FILE.write('{\n')
+    for i in range(len(self.vertices)):
+      FILE.write("%E **XV%d\n" % self.vertices[i][0],i)
+      FILE.write("%E **YV%d\n" % self.vertices[i][1],i)
+      FILE.write("%E **ZV%d\n" % self.vertices[i][2],i)
+    FILE.write("%E **relative Permittivity\n" % self.permittivity)
+    FILE.write("%E **Conductivity\n" % self.conductivity)
+    FILE.write('}\n')
+    FILE.write('\n')
+  #def getCenter(self):
+    #S = [0,0,0]
+    #for i in range(len(self.vertices)):
+      #S = S + self.vertices[i][0]+self.upper[0])
+      
+    #return [ 1./8.*(, 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    
+  #def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    #objx = sort([self.lower[0],self.upper[0]])
+    #objy = sort([self.lower[1],self.upper[1]])
+    #objz = sort([self.lower[2],self.upper[2]])
+    #eps = self.permittivity
+    #xvec = vstack([xvec,objx])
+    #yvec = vstack([yvec,objy])
+    #zvec = vstack([zvec,objz])
+    #epsx = vstack([epsx,eps])
+    #epsy = vstack([epsy,eps])
+    #epsz = vstack([epsz,eps])
+    #return xvec,yvec,zvec,epsx,epsy,epsz
+
 class Cylinder(Geometry_object):
   def __init__(self,
     name = 'cylinder',
@@ -768,6 +842,7 @@ class BFDTDobject:
     self.geometry_object_list = []
     self.sphere_list = []
     self.block_list = []
+    self.distorted_list = []
     self.cylinder_list = []
     self.global_rotation_list = []
     
@@ -830,6 +905,11 @@ class BFDTDobject:
       for i in range(len(self.block_list)):
           ret += '-->block '+str(i)+':\n'
           ret += self.block_list[i].__str__()+'\n'
+
+      ret += '--->distorted_list\n'
+      for i in range(len(self.distorted_list)):
+          ret += '-->distorted '+str(i)+':\n'
+          ret += self.distorted_list[i].__str__()+'\n'
 
       ret += '--->cylinder_list\n'
       for i in range(len(self.cylinder_list)):
@@ -986,6 +1066,12 @@ class BFDTDobject:
               block.read_entry(entry)
               self.block_list.append(block)
               self.geometry_object_list.append(block)
+          elif entry.Type == 'DISTORTED':
+              distorted = Distorted()
+              distorted.read_entry(entry)
+              print(distorted)
+              self.distorted_list.append(distorted)
+              self.geometry_object_list.append(distorted)
           elif entry.Type == 'CYLINDER':
               cylinder = Cylinder()
               cylinder.read_entry(entry)
