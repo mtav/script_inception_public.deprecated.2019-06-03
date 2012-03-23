@@ -5,29 +5,50 @@ from bfdtd.meshingparameters import *
 from utilities.common import *
 
 # excitation objects
-class Excitation:
+class Excitation(object):
   def __init__(self,
-                name = 'excitation',
-                current_source = 7,
-                P1 = [0,0,0],
-                P2 = [0,0,0],
-                E = [0,0,0],
-                H = [0,0,0],
-                Type = 10,
-                time_constant = 4.000000E-09, #mus
-                amplitude = 1.000000E+01, #V/mum???
-                time_offset = 2.700000E-08, #mus
-                frequency = 0,
-                param1 = 0,
-                param2 = 0,
-                template_filename = 'template.dat',
-                template_source_plane = 'x',
-                template_target_plane = 'x',
-                template_direction = 0,
-                template_rotation = 0,
-                layer = 'excitation',
-                group = 'excitation'):
-                
+                name = None,
+                current_source = None,
+                P1 = None,
+                P2 = None,
+                E = None,
+                H = None,
+                Type = None,
+                time_constant = None,
+                amplitude = None,
+                time_offset = None,
+                frequency = None,
+                param1 = None,
+                param2 = None,
+                template_filename = None,
+                template_source_plane = None,
+                template_target_plane = None,
+                template_direction = None,
+                template_rotation = None,
+                layer = None,
+                group = None):
+
+    if name is None: name = 'excitation'
+    if current_source is None: current_source = 7
+    if P1 is None: P1 = [0,0,0]
+    if P2 is None: P2 = [0,0,0]
+    if E is None: E = [0,0,0]
+    if H is None: H = [0,0,0]
+    if Type is None: Type = 10
+    if time_constant is None: time_constant = 4.000000E-09 #mus
+    if amplitude is None: amplitude = 1.000000E+01 #V/mum???
+    if time_offset is None: time_offset = 2.700000E-08 #mus
+    if frequency is None: frequency = 0
+    if param1 is None: param1 = 0
+    if param2 is None: param2 = 0
+    if template_filename is None: template_filename = 'template.dat'
+    if template_source_plane is None: template_source_plane = 'x'
+    if template_target_plane is None: template_target_plane = 'x'
+    if template_direction is None: template_direction = 0
+    if template_rotation is None: template_rotation = 0
+    if layer is None: layer = 'excitation'
+    if group is None: group = 'excitation'
+
     self.name = name
     self.layer = layer
     self.group = group
@@ -166,14 +187,14 @@ class Excitation:
       FILE.write('\n')
 
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    objx = sort([self.P1[0],self.P2[0]])
-    objy = sort([self.P1[1],self.P2[1]])
-    objz = sort([self.P1[2],self.P2[2]])
+    objx = numpy.sort([self.P1[0],self.P2[0]])
+    objy = numpy.sort([self.P1[1],self.P2[1]])
+    objz = numpy.sort([self.P1[2],self.P2[2]])
     eps = 1
-    xvec = vstack([xvec,objx])
-    yvec = vstack([yvec,objy])
-    zvec = vstack([zvec,objz])
-    epsx = vstack([epsx,eps])
-    epsy = vstack([epsy,eps])
-    epsz = vstack([epsz,eps])
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz

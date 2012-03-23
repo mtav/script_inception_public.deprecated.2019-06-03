@@ -6,9 +6,9 @@ import numpy
 class MeshObject(object):
   def __init__(self):
     self.name = 'mesh'
-    self.xmesh = array([])
-    self.ymesh = array([])
-    self.zmesh = array([])
+    self.xmesh = numpy.array([])
+    self.ymesh = numpy.array([])
+    self.zmesh = numpy.array([])
 
   def setXmesh(self,xmesh):
     self.xmesh = xmesh
@@ -31,21 +31,21 @@ class MeshObject(object):
     return(self.xmesh,self.ymesh,self.zmesh)
 
   def setXmeshDelta(self,xmesh_delta):
-    self.xmesh = cumsum(hstack((0,xmesh_delta)))
+    self.xmesh = numpy.cumsum(numpy.hstack((0,xmesh_delta)))
   def setYmeshDelta(self,ymesh_delta):
-    self.ymesh = cumsum(hstack((0,ymesh_delta)))
+    self.ymesh = numpy.cumsum(numpy.hstack((0,ymesh_delta)))
   def setZmeshDelta(self,zmesh_delta):
-    self.zmesh = cumsum(hstack((0,zmesh_delta)))
+    self.zmesh = numpy.cumsum(numpy.hstack((0,zmesh_delta)))
   def setMeshDelta(self,xmesh_delta,ymesh_delta,zmesh_delta):
-    self.xmesh = cumsum(hstack((0,xmesh_delta)))
-    self.ymesh = cumsum(hstack((0,ymesh_delta)))
-    self.zmesh = cumsum(hstack((0,zmesh_delta)))
+    self.xmesh = numpy.cumsum(numpy.hstack((0,xmesh_delta)))
+    self.ymesh = numpy.cumsum(numpy.hstack((0,ymesh_delta)))
+    self.zmesh = numpy.cumsum(numpy.hstack((0,zmesh_delta)))
   
   def getXmeshDelta(self):
-    return(diff(self.xmesh))
+    return(numpy.diff(self.xmesh))
   def getYmeshDelta(self):
-    return(diff(self.ymesh))
+    return(numpy.diff(self.ymesh))
   def getZmeshDelta(self):
-    return(diff(self.zmesh))
+    return(numpy.diff(self.zmesh))
   def getMeshDelta(self):
-    return(diff(self.xmesh),diff(self.ymesh),diff(self.zmesh))
+    return(numpy.diff(self.xmesh),numpy.diff(self.ymesh),numpy.diff(self.zmesh))

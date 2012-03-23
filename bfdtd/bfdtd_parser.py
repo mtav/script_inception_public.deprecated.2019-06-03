@@ -274,16 +274,16 @@ class Block(Geometry_object):
     return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    objx = sort([self.lower[0],self.upper[0]])
-    objy = sort([self.lower[1],self.upper[1]])
-    objz = sort([self.lower[2],self.upper[2]])
+    objx = numpy.sort([self.lower[0],self.upper[0]])
+    objy = numpy.sort([self.lower[1],self.upper[1]])
+    objz = numpy.sort([self.lower[2],self.upper[2]])
     eps = self.permittivity
-    xvec = vstack([xvec,objx])
-    yvec = vstack([yvec,objy])
-    zvec = vstack([zvec,objz])
-    epsx = vstack([epsx,eps])
-    epsy = vstack([epsy,eps])
-    epsz = vstack([epsz,eps])
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Distorted(Geometry_object):
@@ -344,16 +344,16 @@ class Distorted(Geometry_object):
     #return [ 1./8.*(, 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
   #def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    #objx = sort([self.lower[0],self.upper[0]])
-    #objy = sort([self.lower[1],self.upper[1]])
-    #objz = sort([self.lower[2],self.upper[2]])
+    #objx = numpy.sort([self.lower[0],self.upper[0]])
+    #objy = numpy.sort([self.lower[1],self.upper[1]])
+    #objz = numpy.sort([self.lower[2],self.upper[2]])
     #eps = self.permittivity
-    #xvec = vstack([xvec,objx])
-    #yvec = vstack([yvec,objy])
-    #zvec = vstack([zvec,objz])
-    #epsx = vstack([epsx,eps])
-    #epsy = vstack([epsy,eps])
-    #epsz = vstack([epsz,eps])
+    #xvec = numpy.vstack([xvec,objx])
+    #yvec = numpy.vstack([yvec,objy])
+    #zvec = numpy.vstack([zvec,objz])
+    #epsx = numpy.vstack([epsx,eps])
+    #epsy = numpy.vstack([epsy,eps])
+    #epsz = numpy.vstack([epsz,eps])
     #return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Cylinder(Geometry_object):
@@ -607,16 +607,16 @@ class Time_snapshot(object):
       snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    objx = sort([self.P1[0],self.P2[0]])
-    objy = sort([self.P1[1],self.P2[1]])
-    objz = sort([self.P1[2],self.P2[2]])
+    objx = numpy.sort([self.P1[0],self.P2[0]])
+    objy = numpy.sort([self.P1[1],self.P2[1]])
+    objz = numpy.sort([self.P1[2],self.P2[2]])
     eps = 1
-    xvec = vstack([xvec,objx])
-    yvec = vstack([yvec,objy])
-    zvec = vstack([zvec,objz])
-    epsx = vstack([epsx,eps])
-    epsy = vstack([epsy,eps])
-    epsz = vstack([epsz,eps])
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Frequency_snapshot(object):
@@ -739,16 +739,16 @@ class Frequency_snapshot(object):
         snapshot(self.name + ' Z+', 3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]],self.frequency_vector[i])
 
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    objx = sort([self.P1[0],self.P2[0]])
-    objy = sort([self.P1[1],self.P2[1]])
-    objz = sort([self.P1[2],self.P2[2]])
+    objx = numpy.sort([self.P1[0],self.P2[0]])
+    objy = numpy.sort([self.P1[1],self.P2[1]])
+    objz = numpy.sort([self.P1[2],self.P2[2]])
     eps = 1
-    xvec = vstack([xvec,objx])
-    yvec = vstack([yvec,objy])
-    zvec = vstack([zvec,objz])
-    epsx = vstack([epsx,eps])
-    epsy = vstack([epsy,eps])
-    epsz = vstack([epsz,eps])
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Probe(object):
@@ -812,16 +812,16 @@ class Probe(object):
     FILE.write('\n')
 
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    objx = sort([0,self.position[0]])
-    objy = sort([0,self.position[1]])
-    objz = sort([0,self.position[2]])
+    objx = numpy.sort([0,self.position[0]])
+    objy = numpy.sort([0,self.position[1]])
+    objz = numpy.sort([0,self.position[2]])
     eps = 1
-    xvec = vstack([xvec,objx])
-    yvec = vstack([yvec,objy])
-    zvec = vstack([zvec,objz])
-    epsx = vstack([epsx,eps])
-    epsy = vstack([epsy,eps])
-    epsz = vstack([epsz,eps])
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Entry(object):
@@ -1317,13 +1317,13 @@ class BFDTDobject(object):
     simMaXZ = self.box.upper[2]
 
     # box mesh
-    Xvec = array([simMinX,simMaXX])
-    Yvec = array([simMinY,simMaXY])
-    Zvec = array([simMinZ,simMaXZ])
+    Xvec = numpy.array([simMinX,simMaXX])
+    Yvec = numpy.array([simMinY,simMaXY])
+    Zvec = numpy.array([simMinZ,simMaXZ])
     
-    epsX = array([1])
-    epsY = array([1])
-    epsZ = array([1])
+    epsX = numpy.array([1])
+    epsY = numpy.array([1])
+    epsZ = numpy.array([1])
 
     # geometry object meshes
     for obj in self.geometry_object_list:
@@ -1355,50 +1355,50 @@ class BFDTDobject(object):
     Zvec[Zvec>simMaXZ] = simMaXZ
 
     ##
-    VX = unique(sort(vstack([Xvec[:,0],Xvec[:,1]])))
-    MX = zeros((Xvec.shape[0],len(VX)))
+    VX = numpy.unique(numpy.sort(numpy.vstack([Xvec[:,0],Xvec[:,1]])))
+    MX = numpy.zeros((Xvec.shape[0],len(VX)))
 
     for m in range(Xvec.shape[0]):
-      indmin = nonzero(VX==Xvec[m,0])[0][0]
-      indmaX = nonzero(VX==Xvec[m,1])[0][0]
+      indmin = numpy.nonzero(VX==Xvec[m,0])[0][0]
+      indmaX = numpy.nonzero(VX==Xvec[m,1])[0][0]
       eps = epsX[m,0]
-      vv = zeros(len(VX))
+      vv = numpy.zeros(len(VX))
       vv[indmin:indmaX] = eps
       MX[m,:] = vv
   
-    thicknessVX = diff(VX)
+    thicknessVX = numpy.diff(VX)
     epsVX = MX[:,0:MX.shape[1]-1]
     epsVX = epsVX.max(0)
 
     ##
-    VY = unique(sort(vstack([Yvec[:,0],Yvec[:,1]])))
-    MY = zeros((Yvec.shape[0],len(VY)))
+    VY = numpy.unique(numpy.sort(numpy.vstack([Yvec[:,0],Yvec[:,1]])))
+    MY = numpy.zeros((Yvec.shape[0],len(VY)))
 
     for m in range(Yvec.shape[0]):
-      indmin = nonzero(VY==Yvec[m,0])[0][0]
-      indmax = nonzero(VY==Yvec[m,1])[0][0]
+      indmin = numpy.nonzero(VY==Yvec[m,0])[0][0]
+      indmax = numpy.nonzero(VY==Yvec[m,1])[0][0]
       eps = epsY[m,0]
-      vv = zeros(len(VY))
+      vv = numpy.zeros(len(VY))
       vv[indmin:indmax] = eps
       MY[m,:] = vv
   
-    thicknessVY = diff(VY)
+    thicknessVY = numpy.diff(VY)
     epsVY = MY[:,0:MY.shape[1]-1]
     epsVY = epsVY.max(0)
 
     ##
-    VZ = unique(sort(vstack([Zvec[:,0],Zvec[:,1]])))
-    MZ = zeros((Zvec.shape[0],len(VZ)))
+    VZ = numpy.unique(numpy.sort(numpy.vstack([Zvec[:,0],Zvec[:,1]])))
+    MZ = numpy.zeros((Zvec.shape[0],len(VZ)))
 
     for m in range(Zvec.shape[0]):
-      indmin = nonzero(VZ==Zvec[m,0])[0][0]
-      indmax = nonzero(VZ==Zvec[m,1])[0][0]
+      indmin = numpy.nonzero(VZ==Zvec[m,0])[0][0]
+      indmax = numpy.nonzero(VZ==Zvec[m,1])[0][0]
       eps = epsZ[m,0]
-      vv = zeros(len(VZ))
+      vv = numpy.zeros(len(VZ))
       vv[indmin:indmax] = eps
       MZ[m,:] = vv
   
-    thicknessVZ = diff(VZ)
+    thicknessVZ = numpy.diff(VZ)
     epsVZ = MZ[:,0:MZ.shape[1]-1]
     epsVZ = epsVZ.max(0)
         
@@ -1431,9 +1431,9 @@ class BFDTDobject(object):
   def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-3,1e-3,1e-3]):
     meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
     #print(meshing_parameters)
-    delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
-    delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
-    delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
+    delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
+    delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
+    delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
     self.mesh.setXmeshDelta(delta_X_vector)
     self.mesh.setYmeshDelta(delta_Y_vector)
     self.mesh.setZmeshDelta(delta_Z_vector)
