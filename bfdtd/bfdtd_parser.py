@@ -114,28 +114,37 @@ class Boundaries(object):
 
 class Box(object):
   def __init__(self,
-      name = 'box',
-      layer = 'box',
-      group = 'box',
-      lower = [0,0,0],
-      upper = [1,1,1]):
-      
-      self.name = name
-      self.layer = layer
-      self.group = group
-      self.lower = lower
-      self.upper = upper
-      
+    name = None,
+    layer = None,
+    group = None,
+    lower = None,
+    upper = None):
+
+    if name is None: name = 'box'
+    if layer is None: layer = 'box',
+    if group is None: group = 'box',
+    if lower is None: lower = numpy.array([0,0,0])
+    if upper is None: upper = numpy.array([1,1,1])
+    
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.lower = lower
+    self.upper = upper
+  def setLower(self,lower):
+    self.lower = numpy.array(lower)
+  def setUpper(self,upper):
+    self.upper = numpy.array(upper)
   def __str__(self):
-      ret  = 'name = '+self.name+'\n'
-      ret += 'lower = '+str(self.lower)+'\n'
-      ret += 'upper = '+str(self.upper)
-      return ret
+    ret  = 'name = '+self.name+'\n'
+    ret += 'lower = '+str(self.lower)+'\n'
+    ret += 'upper = '+str(self.upper)
+    return ret
   def read_entry(self,entry):
-      if entry.name:
-        self.name = entry.name
-      self.lower = float_array(entry.data[0:3])
-      self.upper = float_array(entry.data[3:6])
+    if entry.name:
+      self.name = entry.name
+    self.lower = float_array(entry.data[0:3])
+    self.upper = float_array(entry.data[3:6])
   def write_entry(self, FILE):
     self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('BOX  **name='+self.name+'\n')
