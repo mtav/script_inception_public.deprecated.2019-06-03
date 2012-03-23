@@ -61,11 +61,32 @@ class Flag(object):
     FILE.write('\n')
 
 class Boundaries(object):
+  '''
+  The following ABC algorithms are available in the FDTD program
+  0. Magnetic Wall
+  1. Metal wall.
+  2. Mur 1st.
+  6. Dispersive.
+  7. Higdon 1st.
+  9. Higdon 2nd
+  10. PML
+  
+  The parameters are for the second order and Perfectly Matched Layer boundary conditions and have the following
+  meanings:
+  i. Dispersive ABC Parameter 1 and parameter2 are the values of effective permittivity for
+    which perfect absorption may be expected
+  ii. Higdon ABC Parameter 1 and parameter 2 are the values for the angle of incidence
+                ( in degrees ) at which perfect absorption may be expected
+  iii. PML Parameter 1 is the number of layers in the PML region, parameter 2 is
+          the grading index, normally 2, parameter 3 is the minimum reflection
+         coefficient, try 0.01 - 0.001. This is not critical.
+  '''
   def __init__(self):
     self.name = 'boundaries'
     self.layer = 'boundaries'
     self.group = 'boundaries'
 
+    # PML=10, symmetry=1, normal=2
     self.Xpos_bc = 2
     self.Ypos_bc = 2
     self.Zpos_bc = 2
@@ -80,6 +101,25 @@ class Boundaries(object):
     self.Yneg_param = [1,1,0]
     self.Zneg_param = [1,1,0]
     
+  def setBoundaryConditionsXposToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.Xpos_bc = 10
+    self.Xpos_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsYposToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.Ypos_bc = 10
+    self.Ypos_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsZposToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.Zpos_bc = 10
+    self.Zpos_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsXnegToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.Xneg_bc = 10
+    self.Xneg_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsYnegToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.Yneg_bc = 10
+    self.Yneg_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsZnegToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.Zneg_bc = 10
+    self.Zneg_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+      
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'X+: Type = '+str(self.Xpos_bc)+' parameters = '+str(self.Xpos_param)+'\n'

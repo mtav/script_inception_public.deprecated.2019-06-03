@@ -1,5 +1,7 @@
 function propagation_analysis(INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FREQUENCY)
 
+    figure()
+
     % x=0.25;
     % delta=20*1/FREQUENCY;t=[TIME_OFFSET-delta/2:delta/100:TIME_OFFSET+delta/2];
     % t=t-x/get_c0();
@@ -22,7 +24,7 @@ function propagation_analysis(INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FRE
     % plot(t,AMPLITUDE*exp(-log(2)*((t-TIME_OFFSET)/TIME_CONSTANT).^2).*sin(2*pi*FREQUENCY*t));
 
     delta=20*1/FREQUENCY;
-    t_init=[TIME_OFFSET-delta/2:delta/100:TIME_OFFSET+delta/2];
+    t_init=[TIME_OFFSET-delta/2:delta/(100*20):TIME_OFFSET+delta/2];
     hold on;
     % x=0;
     % t=t_init+x/get_c0();
@@ -41,22 +43,22 @@ function propagation_analysis(INFILENAME,AMPLITUDE,TIME_OFFSET,TIME_CONSTANT,FRE
         plot(data(:,1)*10^-12,data(:,2),'ko--');
     end
 
-    plot_theory(0,'y-');
+    plot_theory(0,'b-');
     
-    plot_simulation('p01id.prn');
-    plot_theory(0.25,'m-');
+    %plot_simulation('p01id.prn');
+    %plot_theory(0.25,'m-');
     
-    plot_simulation('p02id.prn');
-    plot_theory(10,'c-');
+    %plot_simulation('p02id.prn');
+    %plot_theory(10,'c-');
     
-    plot_simulation('p03id.prn');
-    plot_theory(20,'r-');
+    %plot_simulation('p03id.prn');
+    %plot_theory(20,'r-');
     
-    plot_simulation('p04id.prn');
-    plot_theory(30,'g-');
+    %plot_simulation('p04id.prn');
+    %plot_theory(30,'g-');
     
-    plot_simulation('p01id.prn');
-    plot_theory(40,'b-');
+    %plot_simulation('p01id.prn');
+    %plot_theory(40,'b-');
 
 end
 

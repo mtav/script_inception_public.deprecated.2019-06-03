@@ -38,7 +38,7 @@ class Excitation(object):
     if time_constant is None: time_constant = 4.000000E-09 #mus
     if amplitude is None: amplitude = 1.000000E+01 #V/mum???
     if time_offset is None: time_offset = 2.700000E-08 #mus
-    if frequency is None: frequency = 0
+    if frequency is None: frequency = 1 # MHz
     if param1 is None: param1 = 0
     if param2 is None: param2 = 0
     if template_filename is None: template_filename = 'template.dat'
@@ -71,6 +71,12 @@ class Excitation(object):
     self.template_rotation = template_rotation
 
     self.meshing_parameters = MeshingParameters()
+
+  def setLambda(self, lambda_mum):
+    self.frequency = get_c0()/lambda_mum
+    
+  def setFrequency(self, freq_MHz):
+    self.frequency = freq_MHz
 
   def __str__(self):
     ret  = 'name = '+self.name+'\n'

@@ -1,14 +1,5 @@
 function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
 
-  disp('~~~~~~~~~~~~~~~~~')
-  disp('plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)')
-  filename
-  probe_col
-  autosave
-  imageSaveName
-  hide_figures
-  disp('~~~~~~~~~~~~~~~~~')
-
   if exist('hide_figures','var')==0
     hide_figures = false;
   end
@@ -251,18 +242,6 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)
     
     if size(Qfactor_harminv,1)>0
-      
-      pwd
-      filename
-      probe_col
-      autosave
-      imageSaveName
-      hide_figures
-      
-      Q_harminv_local
-      n
-      Qfactor_harminv
-      
       Q_harminv_local(n) = Qfactor_harminv;
       
       Q1 = ['Q_L=',num2str(Q_lorentz(n))];
