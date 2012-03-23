@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from numpy import *
+import numpy
 
-class MeshObject:
+class MeshObject(object):
   def __init__(self):
     self.name = 'mesh'
     self.xmesh = array([])

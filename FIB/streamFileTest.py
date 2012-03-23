@@ -6,8 +6,8 @@ import math
 import sys
 import os
 import getopt
-from numpy import *
-      
+import numpy
+
 #projectName='r2';
 ## projectName='29Oct10KXSm_206_800_150pA_m0.5';
 ## folder=['H:\Erman`s Docs\MyMatlab\myPhotonicsPackage\FIB\',projectName,'\'];

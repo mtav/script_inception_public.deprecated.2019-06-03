@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from numpy import *
+import numpy
 
-class MeshingParameters:
+class MeshingParameters(object):
   # TODO: think about the best way to design this class and then do it.
   # Might be better to really have delta+thickness for each object and then some global MeshingParameters with addMeshingParameters function.
   # permittivity to delta conversion could be specified differently for each object.

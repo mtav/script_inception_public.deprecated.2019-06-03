@@ -5,7 +5,7 @@ import math
 import sys
 import os
 import getopt
-from numpy import *
+import numpy
 
 def subGridMultiLayer(Section_MaxDeltaVector_in = [1.76, 2.1385, 2.3535, 1],Section_ThicknessVector_in = [1, 0.5, 1, 1]):
   ''' Create a list of thicknesses for meshing
