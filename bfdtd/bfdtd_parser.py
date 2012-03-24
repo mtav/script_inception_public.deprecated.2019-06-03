@@ -11,6 +11,7 @@ from bfdtd.bristolFDTD_generator_functions import *
 from meshing.subGridMultiLayer import *
 from bfdtd.excitation import *
 from bfdtd.meshobject import *
+#from bfdtd.meshbox import *
 
 #==== CLASSES START ====#
 
@@ -1515,6 +1516,53 @@ class BFDTDobject(object):
     self.mesh.setXmeshDelta(delta_X_vector)
     self.mesh.setYmeshDelta(delta_Y_vector)
     self.mesh.setZmeshDelta(delta_Z_vector)
+    
+class MeshBox(Geometry_object):
+  def __init__(self,
+    name = None,
+    layer = None,
+    group = None,
+    lower = None,
+    upper = None,
+    permittivity3D = None):
+
+    if name is None: name = 'mesh_box'
+    if layer is None: layer = 'mesh_box'
+    if group is None: group = 'mesh_box'
+    if lower is None: lower = [0,0,0]
+    if upper is None: upper = [1,1,1]
+    if permittivity3D is None: permittivity3D = [1e-3,1e-3,1e-3]
+    
+    Geometry_object.__init__(self)
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.lower = lower
+    self.upper = upper
+    self.permittivity3D = permittivity3D
+
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'lower = '+str(self.lower)+'\n'
+    ret += 'upper = '+str(self.upper)+'\n'
+    ret += 'permittivity3D = '+str(self.permittivity3D)+'\n'
+    ret += Geometry_object.__str__(self)
+    return ret
+
+  def getCenter(self):
+    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = numpy.sort([self.lower[0],self.upper[0]])
+    objy = numpy.sort([self.lower[1],self.upper[1]])
+    objz = numpy.sort([self.lower[2],self.upper[2]])
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,self.permittivity3D[0]])
+    epsy = numpy.vstack([epsy,self.permittivity3D[1]])
+    epsz = numpy.vstack([epsz,self.permittivity3D[2]])
+    return xvec,yvec,zvec,epsx,epsy,epsz
     
 #==== CLASSES END ====#
 
