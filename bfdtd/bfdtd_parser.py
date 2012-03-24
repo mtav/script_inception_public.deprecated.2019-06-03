@@ -914,6 +914,7 @@ class Entry(object):
 
 # TODO: add addSnapshot, addProbe, etc functions to BFDTDobject to make adding stuff easier (should copy value from last similar)
 # TODO: beware of the multiple snapshot lists! reduce duplicate info and add set/get functions
+# TODO: implement "orientation" thingie from triangular_prism.py to easily exchange axes.
 class BFDTDobject(object):
   def __init__(self):
     # mandatory objects
