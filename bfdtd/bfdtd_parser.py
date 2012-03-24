@@ -1354,8 +1354,14 @@ class BFDTDobject(object):
   def writeAll(self, newDirName, fileBaseName=None):
     ''' Generate .in,.inp,.geo,.cmd,.sh files in directory newDirName (it will be created if it doesn't exist)'''
     newDirName = os.path.expanduser(newDirName).rstrip('/') # replace ~ or similar and remove any trailing '/'
+    
+    #use_makedirs=False
     if not os.path.isdir(newDirName):
-      os.mkdir(newDirName)
+      os.makedirs(newDirName)
+      #if use_makedirs:
+        #os.makedirs(newDirName)
+      #else:
+        #os.mkdir(newDirName)
 
     if fileBaseName is None:
       fileBaseName = os.path.basename(newDirName)
