@@ -105,6 +105,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   xmin_global = X(idx_max(1)) - ViewingWindowSize;
   xmax_global = X(idx_max(length(idx_max))) + ViewingWindowSize;
 
+  % comment this line to get full FFT plot
   axis([xmin_global, xmax_global, min(Y), 1.1*max(Y)]);
 
   disp(['DATA INFO: maximums at = ',num2str(X(idx_max))]);

@@ -398,16 +398,27 @@ class Distorted(Geometry_object):
 
 class Cylinder(Geometry_object):
   def __init__(self,
-    name = 'cylinder',
-    centre = [0,0,0],
-    inner_radius = 0,
-    outer_radius = 0,
-    height = 0,
-    permittivity = 0,
-    conductivity = 0,
-    angle_deg = 0,
-    layer = 'cylinder',
-    group = 'cylinder'):
+    name = None,
+    centre = None,
+    inner_radius = None,
+    outer_radius = None,
+    height = None,
+    permittivity = None,
+    conductivity = None,
+    angle_deg = None,
+    layer = None,
+    group = None):
+
+    if name is None: name = 'cylinder'
+    if centre is None: centre = [0,0,0]
+    if inner_radius is None: inner_radius = 0
+    if outer_radius is None: outer_radius = 0
+    if height is None: height = 0
+    if permittivity is None: permittivity = 0
+    if conductivity is None: conductivity = 0
+    if angle_deg is None: angle_deg = 0
+    if layer is None: layer = 'cylinder'
+    if group is None: group = 'cylinder'
     
     Geometry_object.__init__(self)
     self.name = name
@@ -420,6 +431,10 @@ class Cylinder(Geometry_object):
     self.permittivity = permittivity
     self.conductivity = conductivity
     self.angle_deg = angle_deg
+    
+  def setDiametre(self,diametre):
+    self.outer_radius = 0.5*diametre
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'centre = ' + str(self.centre) + '\n' +\
@@ -470,6 +485,21 @@ class Cylinder(Geometry_object):
     FILE.write('}\n')
     FILE.write('\n')
 
+  # TODO: take inner_radius into account, create 4 square meshing regions, implement per object meshing finesse (for all object types)
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    objx = numpy.sort([self.centre[0]-self.outer_radius,self.centre[0]+self.outer_radius])
+    objy = numpy.sort([self.centre[0]-0.5*self.height,self.centre[0]+0.5*self.height])
+    objz = numpy.sort([self.centre[0]-self.outer_radius,self.centre[0]+self.outer_radius])
+    eps = self.permittivity
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
+
+# TODO: meshing params in case of rotations
 class Rotation(object):
   def __init__(self,
       name = 'rotation',
@@ -1226,7 +1256,7 @@ class BFDTDobject(object):
       out.write('\n')
 
       # write geometry objects
-      print 'len(self.geometry_object_list) = ', len(self.geometry_object_list)
+      #print 'len(self.geometry_object_list) = ', len(self.geometry_object_list)
       for obj in self.geometry_object_list:
         #print obj.name
         #print obj.__class__.__name__
@@ -1250,7 +1280,7 @@ class BFDTDobject(object):
   
       for obj in self.excitation_list:
         obj.write_entry(out)
-      print self.boundaries
+      #print(self.boundaries)
       self.boundaries.write_entry(out)
       self.flag.write_entry(out)
       self.writeMesh(out)
@@ -1281,8 +1311,8 @@ class BFDTDobject(object):
       #self.fileList = [fileBaseName+'.inp',fileBaseName+'.geo']
     if fileList is None:
       fileList = self.fileList
-    print fileName
-    print 'fileList = ', fileList
+    print('fileName = '+fileName)
+    #print('fileList = '+str(fileList))
     GEOin(fileName,fileList)
     return
     
@@ -1321,7 +1351,7 @@ class BFDTDobject(object):
     if fileBaseName is None:
       fileBaseName = os.path.basename(newDirName)
     
-    print 'fileBaseName = ', fileBaseName
+    #print 'fileBaseName = ', fileBaseName
     
     geoFileName = newDirName+os.sep+fileBaseName+'.geo'
     inpFileName = newDirName+os.sep+fileBaseName+'.inp'
