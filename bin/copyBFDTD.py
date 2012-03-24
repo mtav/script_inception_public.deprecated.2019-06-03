@@ -19,6 +19,7 @@ def copyBFDTD(src,dst):
     fileBaseName = os.path.splitext(os.path.basename(src))[0]
   
   FDTDobj.writeAll(dst,fileBaseName)
+  GEOshellscript(dst+os.sep+fileBaseName+'.sh', fileBaseName,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 
 def main(argv=None):
   # main function
