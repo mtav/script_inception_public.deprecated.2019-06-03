@@ -265,14 +265,22 @@ class Sphere(Geometry_object):
 
 class Block(Geometry_object):
   def __init__(self,
-    name = 'block',
-    layer = 'block',
-    group = 'block',
-    lower = [0,0,0],
-    upper = [0,0,0],
-    permittivity = 1,# vacuum by default
-    conductivity = 0):
-    
+    name = None,
+    layer = None,
+    group = None,
+    lower = None,
+    upper = None,
+    permittivity = None,
+    conductivity = None):
+
+    if name is None: name = 'block'
+    if layer is None: layer = 'block'
+    if group is None: group = 'block'
+    if lower is None: lower = [0,0,0]
+    if upper is None: upper = [0,0,0]
+    if permittivity is None: permittivity = 1 # vacuum by default
+    if conductivity is None: conductivity = 0
+  
     Geometry_object.__init__(self)
     self.name = name
     self.layer = layer
