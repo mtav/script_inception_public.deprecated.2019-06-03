@@ -488,8 +488,8 @@ class Cylinder(Geometry_object):
   # TODO: take inner_radius into account, create 4 square meshing regions, implement per object meshing finesse (for all object types)
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = numpy.sort([self.centre[0]-self.outer_radius,self.centre[0]+self.outer_radius])
-    objy = numpy.sort([self.centre[0]-0.5*self.height,self.centre[0]+0.5*self.height])
-    objz = numpy.sort([self.centre[0]-self.outer_radius,self.centre[0]+self.outer_radius])
+    objy = numpy.sort([self.centre[1]-0.5*self.height,self.centre[1]+0.5*self.height])
+    objz = numpy.sort([self.centre[2]-self.outer_radius,self.centre[2]+self.outer_radius])
     eps = self.permittivity
     xvec = numpy.vstack([xvec,objx])
     yvec = numpy.vstack([yvec,objy])
