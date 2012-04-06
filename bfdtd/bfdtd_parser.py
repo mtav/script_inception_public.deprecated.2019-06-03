@@ -549,6 +549,47 @@ class Rotation(object):
 
 # measurement objects
 class Time_snapshot(object):
+  '''
+  One or more field components may be sampled over a specified plane in the structure after a specified number of iterations.
+  It is possible to take snapshots after every “n” iterations by setting the “iterations between snapshots” parameter to “n”.
+  
+  For each snapshot requested a file is produced in one of two formats:
+  
+  * List format which has a filename of the form “x1idaa.prn”, where “x” is the plane over
+  which the snapshot has been taken, “1"is the snapshot serial number. ie. the snaps are numbered in the order which
+  they appear in the input file.. “id” in an identifier specified in the “flags” object. “aa" is the time serial number ie.
+  if snapshots are asked for at every 100 iterations then the first one will have “aa, the second one “ab" etc
+  The file consists of a single header line followed by columns of numbers, one for each field component wanted and
+  two for the coordinates of the point which has been sampled. These files can be read into Gema.
+  
+  * Matrix format for each snapshot a file is produced for each requested field component with a name of the form
+  “x1idaa_ex” where the “ex” is the field component being sampled. The rest of the filename is tha same as for the list
+  format case. The file consists of a matrix of numbers the first column and first row or which, gives the position of
+  the sample points in each direction. These files can be read into MathCad or to spreadsheet programs.
+  
+  The format of the snapshot object is as follows:
+  
+  1)first: iteration number for the first snapshot
+  2)repetition: number of iterations between snapshots
+  3)plane: 1=x,2=y,3=z
+  4-9)P1,P2: coordinates of the lower left and top right corners of the plane P1(x1,y1,z1), P2(x2,y2,z2)
+  10-18)E,H,J: field components to be sampled E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
+  19)power: print power? =0/1
+  20)eps: create EPS (->epsilon->refractive index) snapshot? =0/1
+  21)???: write an output file in “list” format (NOT IMPLEMENTED YET)(default is list format)
+  22)???: write an output file in “matrix” format (NOT IMPLEMENTED YET)
+  
+  Mode filtered probe files (Requires a template for the first excitation object!):
+  =================================================================================
+  Mode filtered probe files are specified in the same way as a snapshot across the reference plane except that no field components are selected, i.e. E=H=J=power=eps=(0,0,0).
+  In addition, the "repetition" parameter takes the role which the "step" parameter does on normal probes.
+  
+  The output will have the same form as a probe file and will consist of the inner product at each time step of the field distribution across the reference plane with the template specified for the first excitation object.
+  This template will normally be the wanted mode of the guiding structure and, thus, the output of this probe will be the amplitude of just this mode.
+
+  The effect of this is that the amplitude of the mode of interest is sampled across the whole waveguide cross-section.
+  If a normal field probe had been used, then the unwanted effects of other modes would cause inaccuracies in the final result.
+  '''
   def __init__(self,
     name = 'time_snapshot',
     first = 1, # crashes if = 0
@@ -609,45 +650,11 @@ class Time_snapshot(object):
     if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1
     return(0)
   def write_entry(self, FILE):
-    ''' # def GEOtime_snapshot(FILE, first, repetition, plane, P1, P2, E, H, J, power, eps):
-    #
-    # format specification:
-    # 1 iteration number for the first snapshot
-    # 2 number of iterations between snapshots
-    # 3 plane - 1=x 2=y 3=z
-    # 4-9 coordinates of the lower left and top right corners of the plane x1 y1 z1 x2 y2 z2
-    # 10-18 field components to be sampled ex ey ez hx hy hz Ix Iy Iz
-    # 19 print power? =0/1
-    # 20 create EPS (->epsilon->refractive index) snapshot? =0/1
-    # 21 write an output file in "list" format
-    # 22 write an output file in "matrix" format
-    #
-    # List format ( as used in version 11 ) which has a filename of the form "x1idaa.prn", where "x" is the plane over
-    # which the snapshot has been taken, "1"is the snapshot serial number. ie. the snaps are numbered in the order which
-    # they appear in the input file.. "id" in an identifier specified in the "flags" object. "aa" is the time serial number ie.
-    # if snapshots are asked for at every 100 iterations then the first one will have "aa", the second one "ab" etc
-    # The file consists of a single header line followed by columns of numbers, one for each field component wanted and
-    # two for the coordinates of the point which has been sampled. These files can be read into Gema.
-    #
-    # Matrix format for each snapshot a file is produced for each requested field component with a name of the form
-    # "x1idaa_ex" where the "ex" is the field component being sampled. The rest of the filename is tha same as for the list
-    # format case. The file consists of a matrix of numbers the first column and first row or which, gives the position of
-    # the sample points in each direction. These files can be read into MathCad or to spreadsheet programs.'''
-
     self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
   
     def snapshot(plane,P1,P2):
       plane_ID, plane_name = planeNumberName(plane)
-      #~ if plane == 1:
-        #~ plane_name='X'
-      #~ elif plane == 2:
-        #~ plane_name='Y'
-      #~ else: #plane == 3:
-        #~ plane_name='Z'
-      #~ end
-  
-      #print self.__str__()
-  
+    
       FILE.write('SNAPSHOT **name='+self.name+'\n')
       FILE.write('{\n')
   
@@ -699,6 +706,29 @@ class Time_snapshot(object):
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Frequency_snapshot(object):
+  '''
+  The format of a frequency snapshot object is:
+  
+  1)first: iteration number for the first snapshot
+  2)repetition: number of iterations between snapshots
+  3)interpolate:
+  If set to 1 : the H field samples are interpolated to give the value at the plane of the E field nodes
+  If set to 2 : as above but the field values are multiplied by the area of the cell on the plane and interpolated
+  to the centre of the square in the plane of the E field nodes..
+  If set to 3 : as above but the order of the field components in the output file is changed so that for the x,y
+  and z planes the order is (yzx), (zxy) and (xyz) respectively instead of always being (xyz)
+  If set to 4 : as for 2 except that all 3 coordinates are given for each point
+  4)real_dft: Set this if it is not required to write the imaginary component to file
+  5)mod_only: Write only the modulus to file
+  6)mod_all: Write the modulus AND the real and imaginary parts to file
+  7)plane: 0=all, 1=x, 2=y, 3=z
+  8-13)P1,P2: coordinates of the lower left and top right corners of the plane P1(x1,y1,z1), P2(x2,y2,z2)
+  14)frequency_vector: frequency (in Hz! ). Will create a frequency snapshot for each frequency in the list/vector
+  15)starting_sample: iteration number at which to start the running fourier transforms
+  16-24)E,H,J: field components to be sampled E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
+  
+  The output file is of the same format as the snapshot “list format” and the naming is the same except that the time serial number starts at “00" instead of “aa”.
+  '''
   def __init__(self,
     name = 'frequency_snapshot',
     first = 1, # crashes if = 0
@@ -831,6 +861,13 @@ class Frequency_snapshot(object):
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Probe(object):
+  '''
+  The format of the probe object is as follows:
+  
+  1-3)position: Coordinates of the probe position(x,y,z)
+  4)step: Samples may be taken at every time step, by setting the parameter “step” equal to 1, or after every n timesteps by setting “step” to the value “n”.
+  5-13)E,H,J: Field components to be sampled: E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
+  '''
   def __init__(self,
     name = 'probe',
     position = [0,0,0],
@@ -1061,6 +1098,26 @@ class BFDTDobject(object):
       print(('ERROR: Invalid plane : ',plane))
       sys.exit(1)
     F = Time_snapshot(name=name, plane=plane, P1=L, P2=U)
+    self.snapshot_list.append(F)
+    return F
+
+  def addModeFilteredProbe(self, plane, position):
+    if plane == 1:
+      name='X mode filtered probe'
+      L = [position, self.box.lower[1], self.box.lower[2]]
+      U = [position, self.box.upper[1], self.box.upper[2]]
+    elif plane == 2:
+      name='Y mode filtered probe'
+      L = [self.box.lower[0], position, self.box.lower[2]]
+      U = [self.box.upper[0], position, self.box.upper[2]]
+    elif plane == 3:
+      name='Z mode filtered probe'
+      L = [self.box.lower[0], self.box.lower[1], position]
+      U = [self.box.upper[0], self.box.upper[1], position]
+    else:
+      print(('ERROR: Invalid plane : ',plane))
+      sys.exit(1)
+    F = ModeFilteredProbe(name=name, plane=plane, P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
 
