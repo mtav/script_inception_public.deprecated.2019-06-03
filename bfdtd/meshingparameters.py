@@ -35,14 +35,14 @@ class MeshingParameters(object):
     #print(limits.shape)
     #print(permittivity.shape)
     
-    self.limits_X = vstack([self.limits_X,limits])
-    self.maxPermittivityVector_X = vstack([self.maxPermittivityVector_X,permittivity])
+    self.limits_X = numpy.vstack([self.limits_X,limits])
+    self.maxPermittivityVector_X = numpy.vstack([self.maxPermittivityVector_X,permittivity])
     
   def addLimits_Y(self,limits,permittivity):
-    self.limits_Y = vstack([self.limits_Y,limits])
-    self.maxPermittivityVector_Y = vstack([self.maxPermittivityVector_Y,permittivity])
+    self.limits_Y = numpy.vstack([self.limits_Y,limits])
+    self.maxPermittivityVector_Y = numpy.vstack([self.maxPermittivityVector_Y,permittivity])
     
   def addLimits_Z(self,limits,permittivity):
-    self.limits_Z = vstack([self.limits_Z,limits])
-    self.maxPermittivityVector_Z = vstack([self.maxPermittivityVector_Z,permittivity])
+    self.limits_Z = numpy.vstack([self.limits_Z,limits])
+    self.maxPermittivityVector_Z = numpy.vstack([self.maxPermittivityVector_Z,permittivity])
     

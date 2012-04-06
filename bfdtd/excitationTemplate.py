@@ -35,9 +35,9 @@ class ExcitationGaussian1:
         y_col.append(y)
         X = x-self.beam_centre_x
         Y = y-self.beam_centre_y
-        R = abs(sqrt( pow((X),2) + pow((Y),2) ))
-        #out = self.amplitude * exp( -pow((R-self.c),2) / (2*pow(self.sigma,2)) )
-        out = self.amplitude * exp( -( pow(X,2)/(2*pow(self.sigma_x,2)) + pow(Y,2)/(2*pow(self.sigma_y,2)) ) )
+        R = abs(numpy.sqrt( pow((X),2) + pow((Y),2) ))
+        #out = self.amplitude * numpy.exp( -pow((R-self.c),2) / (2*pow(self.sigma,2)) )
+        out = self.amplitude * numpy.exp( -( pow(X,2)/(2*pow(self.sigma_x,2)) + pow(Y,2)/(2*pow(self.sigma_y,2)) ) )
         out_col.append(out)
     
     # write file
@@ -89,9 +89,9 @@ class ExcitationGaussian2:
         y_col.append(y)
         X = x-self.beam_centre_x
         Y = y-self.beam_centre_y
-        R = abs(sqrt( pow((X),2) + pow((Y),2) ))
-        out = self.amplitude * exp( -pow((R-self.c),2) / (2*pow(self.sigma,2)) )
-        #out = self.amplitude * exp( -( pow(X,2)/(2*pow(self.sigma_x,2)) + pow(Y,2)/(2*pow(self.sigma_y,2)) ) )
+        R = abs(numpy.sqrt( pow((X),2) + pow((Y),2) ))
+        out = self.amplitude * numpy.exp( -pow((R-self.c),2) / (2*pow(self.sigma,2)) )
+        #out = self.amplitude * numpy.exp( -( pow(X,2)/(2*pow(self.sigma_x,2)) + pow(Y,2)/(2*pow(self.sigma_y,2)) ) )
         out_col.append(out)
     
     # write file

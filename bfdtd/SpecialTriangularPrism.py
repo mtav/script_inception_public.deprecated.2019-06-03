@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
+import numpy
 from bfdtd.bfdtd_parser import *
 
 #TODO: non 45 degree faces, i.e. generic version which would also allow creation of parallel-sided prism
@@ -89,36 +90,36 @@ class SpecialTriangularPrism(Geometry_object):
         U = [ mini[0]+2*R*(iX + 1)/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
-        self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
-        self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
-        self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
+        self.meshing_parameters.addLimits_X(numpy.sort([LL[0],UU[0]]),self.permittivity)
+        self.meshing_parameters.addLimits_Y(numpy.sort([LL[1],UU[1]]),self.permittivity)
+        self.meshing_parameters.addLimits_Z(numpy.sort([LL[2],UU[2]]),self.permittivity)
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
         # X+ blocks
         L = [ mini[0]+2*R*((2*NX+1)-(iX))/(2*NX+1), mini[1]+DY*(iY)/(NX+1.), mini[2]+DY*(iY)/(NX+1.)]
         U = [ mini[0]+2*R*((2*NX+1)-(iX + 1))/(2*NX+1), mini[1]+DY*(iY + 1.)/(NX+1.), maxi[2]-DY*(iY)/(NX+1.)]
         LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
         UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
-        self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
-        self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
-        self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
+        self.meshing_parameters.addLimits_X(numpy.sort([LL[0],UU[0]]),self.permittivity)
+        self.meshing_parameters.addLimits_Y(numpy.sort([LL[1],UU[1]]),self.permittivity)
+        self.meshing_parameters.addLimits_Z(numpy.sort([LL[2],UU[2]]),self.permittivity)
         voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
       ## middle block
       L = [ mini[0]+2*R*(NX)/(2*NX+1), mini[1]+DY*(iX)/(NX+1.), mini[2]+DY*(iX)/(NX+1.)]
       U = [ mini[0]+2*R*(NX + 1)/(2*NX+1), mini[1]+DY*(iX+1)/(NX+1.), maxi[2]-DY*(iX)/(NX+1.)]
       LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
       UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
-      self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
-      self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
-      self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
+      self.meshing_parameters.addLimits_X(numpy.sort([LL[0],UU[0]]),self.permittivity)
+      self.meshing_parameters.addLimits_Y(numpy.sort([LL[1],UU[1]]),self.permittivity)
+      self.meshing_parameters.addLimits_Z(numpy.sort([LL[2],UU[2]]),self.permittivity)
       voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ## middle block
     L = [ mini[0]+2*R*(NX)/(2*NX+1), mini[1]+DY*(NX)/(NX+1.), mini[2]+DY*(NX)/(NX+1.)]
     U = [ mini[0]+2*R*(NX + 1)/(2*NX+1), mini[1]+DY, maxi[2]-DY*(NX)/(NX+1.)]
     LL = [ L[self.orientation[0]],L[self.orientation[1]],L[self.orientation[2]] ]
     UU = [ U[self.orientation[0]],U[self.orientation[1]],U[self.orientation[2]] ]
-    self.meshing_parameters.addLimits_X(sort([LL[0],UU[0]]),self.permittivity)
-    self.meshing_parameters.addLimits_Y(sort([LL[1],UU[1]]),self.permittivity)
-    self.meshing_parameters.addLimits_Z(sort([LL[2],UU[2]]),self.permittivity)
+    self.meshing_parameters.addLimits_X(numpy.sort([LL[0],UU[0]]),self.permittivity)
+    self.meshing_parameters.addLimits_Y(numpy.sort([LL[1],UU[1]]),self.permittivity)
+    self.meshing_parameters.addLimits_Z(numpy.sort([LL[2],UU[2]]),self.permittivity)
     voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ####################################
     #return (voxel_list, meshing_parameters)
@@ -195,38 +196,38 @@ class SpecialTriangularPrism(Geometry_object):
     #maxi[2]
     
     #bottom triangle
-    A1 = array([mini[0],mini[1],mini[2]])
-    B1 = array([0.5*(maxi[0]+mini[0]),maxi[1],mini[2]+DY])
-    C1 = array([maxi[0],mini[1],mini[2]])
+    A1 = numpy.array([mini[0],mini[1],mini[2]])
+    B1 = numpy.array([0.5*(maxi[0]+mini[0]),maxi[1],mini[2]+DY])
+    C1 = numpy.array([maxi[0],mini[1],mini[2]])
     #top triangle
-    A2 = array([mini[0],mini[1],maxi[2]])
-    B2 = array([0.5*(maxi[0]+mini[0]),maxi[1],maxi[2]-DY])
-    C2 = array([maxi[0],mini[1],maxi[2]])
+    A2 = numpy.array([mini[0],mini[1],maxi[2]])
+    B2 = numpy.array([0.5*(maxi[0]+mini[0]),maxi[1],maxi[2]-DY])
+    C2 = numpy.array([maxi[0],mini[1],maxi[2]])
 
     return(A1,B1,C1,A2,B2,C2)
   
   def global2local(self, P_global):
-    P_local = array([ P_global[self.orientation.index(0)], P_global[self.orientation.index(1)], P_global[self.orientation.index(2)] ])
+    P_local = numpy.array([ P_global[self.orientation.index(0)], P_global[self.orientation.index(1)], P_global[self.orientation.index(2)] ])
     return P_local
 
   def local2global(self, P_local):
-    P_global = array([ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ])
+    P_global = numpy.array([ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ])
     return P_global
     
   def getInscribedSquarePlaneRadius(self, G_global):
     G_local = self.global2local(G_global)
-    G = matrix([ [G_local[0]], [G_local[1]] ])
+    G = numpy.matrix([ [G_local[0]], [G_local[1]] ])
     (A1,B1,C1,A2,B2,C2) = self.getLocalEnvelopPoints()
-    B = matrix([ [B1[0]], [B1[1]] ])
-    C = matrix([ [C1[0]], [C1[1]] ])
-    v = matrix([ [-1], [-1] ])
+    B = numpy.matrix([ [B1[0]], [B1[1]] ])
+    C = numpy.matrix([ [C1[0]], [C1[1]] ])
+    v = numpy.matrix([ [-1], [-1] ])
     BC = C-B
     print('v = '+str(v))
     print('B = '+str(B))
     print('C = '+str(C))
     print('G = '+str(G))
     
-    M = hstack((v,BC))
+    M = numpy.hstack((v,BC))
     print(M)
     kl = M.getI() * (G-B)
     k = kl[0,0]
@@ -237,12 +238,12 @@ class SpecialTriangularPrism(Geometry_object):
     #meshing_parameters = MeshingParameters()
     voxel_list = self.getVoxels()
     #voxel_list, meshing_parameters = self.getVoxels()
-    xvec = vstack([xvec,self.meshing_parameters.limits_X])
-    yvec = vstack([yvec,self.meshing_parameters.limits_Y])
-    zvec = vstack([zvec,self.meshing_parameters.limits_Z])
-    epsx = vstack([epsx,self.meshing_parameters.maxPermittivityVector_X])
-    epsy = vstack([epsy,self.meshing_parameters.maxPermittivityVector_Y])
-    epsz = vstack([epsz,self.meshing_parameters.maxPermittivityVector_Z])
+    xvec = numpy.vstack([xvec,self.meshing_parameters.limits_X])
+    yvec = numpy.vstack([yvec,self.meshing_parameters.limits_Y])
+    zvec = numpy.vstack([zvec,self.meshing_parameters.limits_Z])
+    epsx = numpy.vstack([epsx,self.meshing_parameters.maxPermittivityVector_X])
+    epsy = numpy.vstack([epsy,self.meshing_parameters.maxPermittivityVector_Y])
+    epsz = numpy.vstack([epsz,self.meshing_parameters.maxPermittivityVector_Z])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
   def getVoxelDimensions(self):
@@ -286,8 +287,8 @@ class SpecialTriangularPrism(Geometry_object):
   def setGeoCentre(self,P):
     current = self.getGeoCentre()
     print('self.getGeoCentre() = ',current)
-    self.lower = array(self.lower) + (array(P) - current)
-    self.upper = array(self.upper) + (array(P) - current)
+    self.lower = numpy.array(self.lower) + (numpy.array(P) - current)
+    self.upper = numpy.array(self.upper) + (numpy.array(P) - current)
 
 if __name__ == "__main__":
   foo = TriangularPrism()
