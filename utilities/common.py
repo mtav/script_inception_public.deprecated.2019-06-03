@@ -134,25 +134,3 @@ def planeNumberName(var):
   else:
     print('unknown plane: '+str(var))
     sys.exit(-1)
-  #~ elif var == 'x' or var == 'X':
-    #~ return 1
-  #~ elif var == 'y' or var == 'Y':
-    #~ return 2
-  #~ elif var == 'z' or var == 'Z':
-    #~ return 3
-  #~ else:
-    #~ print('unknown plane: '+str(x))
-    #~ sys.exit(-1)
-#~ 
-#~ def planeName(var):
-  #~ if var.lower() in ['x','y','z']:
-    #~ return var.lower()
-  #~ elif var == 1:
-    #~ return 'x'
-  #~ elif var == 2:
-    #~ return 'y'
-  #~ elif var == 3:
-    #~ return 'z'
-  #~ else:
-    #~ print('unknown plane: '+str(x))
-    #~ sys.exit(-1)
