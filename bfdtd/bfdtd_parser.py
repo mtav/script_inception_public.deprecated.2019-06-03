@@ -594,9 +594,9 @@ class Time_snapshot(object):
     name = 'time_snapshot',
     first = 1, # crashes if = 0
     repetition = 524200,
-    plane = 0,
-    P1 = 0,
-    P2 = 0,
+    plane = 1,#1,2,3 for x,y,z
+    P1 = [0,0,0],
+    P2 = [0,1,1],
     E = [1,1,1],
     H = [1,1,1],
     J = [0,0,0],
@@ -705,6 +705,24 @@ class Time_snapshot(object):
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
+class ModeFilteredProbe(Time_snapshot):
+  def __init__(self,
+      name = 'mode_filtered_probe',
+      first = 1, # crashes if = 0
+      repetition = 524200,
+      plane = 1,#1,2,3 for x,y,z
+      P1 = [0,0,0],
+      P2 = [0,1,1],
+      layer = 'mode_filtered_probe',
+      group = 'mode_filtered_probe'):
+    
+    Time_snapshot.__init__(self)
+    self.E = [0,0,0]
+    self.H = [0,0,0]
+    self.J = [0,0,0]
+    self.power = 0
+    self.eps = 0
+  
 class Frequency_snapshot(object):
   '''
   The format of a frequency snapshot object is:
@@ -738,8 +756,8 @@ class Frequency_snapshot(object):
     mod_only = 0,
     mod_all = 1,
     plane = 1,#1,2,3 for x,y,z
-    P1 = 0,
-    P2 = 0,
+    P1 = [0,0,0],
+    P2 = [0,1,1],
     frequency_vector = [0],
     starting_sample = 0,
     E = [1,1,1],
