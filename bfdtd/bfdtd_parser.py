@@ -278,7 +278,7 @@ class Block(Geometry_object):
     if layer is None: layer = 'block'
     if group is None: group = 'block'
     if lower is None: lower = [0,0,0]
-    if upper is None: upper = [0,0,0]
+    if upper is None: upper = [1,1,1]
     if permittivity is None: permittivity = 1 # vacuum by default
     if conductivity is None: conductivity = 0
   
@@ -1360,6 +1360,12 @@ class BFDTDobject(object):
 
   def writeInpFile(self,fileName):
     ''' Generate .inp file '''
+    
+    # make sure there is at least one excitation. Otherwise Bristol FDTD will crash.
+    if len(self.excitation_list)==0:
+      print('WARNING: No excitation specified. Adding default excitation.')
+      self.excitation_list.append(Excitation())
+    
     # open file
     with open(fileName, 'w') as out:
   
@@ -1477,14 +1483,18 @@ class BFDTDobject(object):
     simMaXY = self.box.upper[1]
     simMaXZ = self.box.upper[2]
 
+    # Xvec, Yvec, Zvec are arrays of size (N,2) containing a list of (lower,upper) pairs corresponding to the meshing subdomains defined by the various geometrical objects.
+    # epsX, epsY, epsZ are arrays of size (N,1) containing a list of epsilon values corresponding to the meshing subdomains defined by the various geometrical objects.
+    # The (lower,upper) pairs from Xvec,Yvec,Zvec are associated with the corresponding epsilon values from epsX,epsY,epsZ to determine an appropriate mesh in the X,Y,Z directions respectively.
+
     # box mesh
-    Xvec = numpy.array([simMinX,simMaXX])
-    Yvec = numpy.array([simMinY,simMaXY])
-    Zvec = numpy.array([simMinZ,simMaXZ])
+    Xvec = numpy.array([[simMinX,simMaXX]])
+    Yvec = numpy.array([[simMinY,simMaXY]])
+    Zvec = numpy.array([[simMinZ,simMaXZ]])
     
-    epsX = numpy.array([1])
-    epsY = numpy.array([1])
-    epsZ = numpy.array([1])
+    epsX = numpy.array([[1]])
+    epsY = numpy.array([[1]])
+    epsZ = numpy.array([[1]])
 
     # geometry object meshes
     for obj in self.geometry_object_list:

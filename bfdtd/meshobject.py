@@ -5,10 +5,17 @@ import numpy
 
 class MeshObject(object):
   def __init__(self):
+    '''
+    xmesh: list of the position (not a thickness list!) of each line of the mesh in the x direction
+    ymesh: list of the position (not a thickness list!) of each line of the mesh in the y direction
+    zmesh: list of the position (not a thickness list!) of each line of the mesh in the z direction
+    ex:
+    xmesh = [0, 0.25, 0.5, 0.75, 1] will create a [0.25, 0.25, 0.25, 0.25] thickness sequence in the XMESH object of the .inp file.
+    '''
     self.name = 'mesh'
-    self.xmesh = numpy.array([])
-    self.ymesh = numpy.array([])
-    self.zmesh = numpy.array([])
+    self.xmesh = numpy.array([0,1])
+    self.ymesh = numpy.array([0,1])
+    self.zmesh = numpy.array([0,1])
 
   def setXmesh(self,xmesh):
     self.xmesh = xmesh
