@@ -17,6 +17,7 @@ class GWLobject:
     self.LaserPower = 100
     self.ScanSpeed = 200
     self.Repeat = 1
+    self.path_substitutes = []
     
   def clear(self):
     self.GWL_voxels = []
@@ -197,7 +198,27 @@ class GWLobject:
     write_sequence = []
     self.GWL_voxels.append(write_sequence)
 
-  def readGWL(self,filename):
+  def readSubstitutes(self, subsFile):
+    print('Reading substitution pairs from '+subsFile)
+    self.path_substitutes = []
+    try:
+      with open(subsFile, 'r') as file:
+        for line in file:
+          t = line.strip().split('->')
+          if len(t)==2:
+            old = t[0].strip()
+            new = t[1].strip()
+            old = old.replace('\\',os.path.sep).replace('/',os.path.sep)
+            new = new.replace('\\',os.path.sep).replace('/',os.path.sep)
+            print(old+' -> '+new)
+            self.path_substitutes.append((old,new))
+    except IOError as (errno, strerror):
+      print "I/O error({0}): {1}".format(errno, strerror)
+      print 'Failed to open '+subsFile
+
+    return self.path_substitutes
+
+  def readGWL(self, filename):
     Nvoxels = 0
     write_sequence = []
     try:
@@ -210,7 +231,8 @@ class GWLobject:
             #print 'pre-split: ', line_stripped
             #cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
             #cmd = re.split('[^a-zA-Z0-9_+-.:\\/]+',line_stripped)
-            cmd = re.split('[ \t]',line_stripped)
+            #cmd = re.split('[ \t]',line_stripped)
+            cmd = re.split('\s+',line_stripped)
             #cmd = [ i.lower() for i in cmd ]
             #print 'post-split: ', cmd
             stopRepeat = True
@@ -228,21 +250,49 @@ class GWLobject:
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                   elif cmd[0].lower()=='include':
-                    print 'including cmd[1] = '+cmd[1]
+                    # TODO: custom replacement strings read from a config file to replace for example C:\utilities with ~/GWLstuff and vice-versa
+                    
+                    
+                    #self.path_substitutes = [('C:','D:'),('C:','E:'),('C:','F:')]
+                    #self.path_substitutes = readSubstitutes(subsFile)
+                    
+                    print('line_stripped = ' + line_stripped)
+                    file_to_include = re.split('\s+',line_stripped,1)[1]
+                    print('including file_to_include = ' + file_to_include)
+                    print('Fixing file separators')
+                    file_to_include = file_to_include.replace('\\',os.path.sep).replace('/',os.path.sep)
+                    print('including file_to_include = ' + file_to_include)                    
                     #self.readGWL('C:\\Users\\User\\Desktop\\Daniel+Mike\\nanoscribe_sample_2012-02-29'+os.path.sep+cmd[1])
-                    print 'cmd[1][0:3] = ', cmd[1][0:3]
-                    if cmd[1][0:3] == 'C:\\':
-                      file_to_include = cmd[1]
-                    else:
-                      file_to_include = os.path.dirname(filename)+os.path.sep+cmd[1]
-                    print(file_to_include)
-                    self.readGWL(file_to_include)
+                    #print('file_to_include[0:3] = ' + file_to_include[0:3])
+                    
+                    file_to_include_fullpath = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_include)))
+
+                    #if file_to_include[0:3] == 'C:\\':
+                      #file_to_include = file_to_include
+                    #else:
+                      ##file_to_include = os.path.dirname(filename) + os.path.sep + file_to_include
+                      #file_to_include = os.path.normpath(os.path.join(os.path.dirname(filename), file_to_include))
+                    print(file_to_include_fullpath)
+                    if not os.path.isfile(file_to_include_fullpath):
+                      print('WARNING: File not found. Attempting path substitutions')
+                      for (old,new) in self.path_substitutes:
+                        file_to_try = file_to_include.replace(old,new)
+                        print('file_to_try = ',file_to_try)
+                        print('filename = ',filename)
+                        print('os.path.dirname(filename) = ',os.path.dirname(filename))
+                        file_to_try = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_try)))
+                        print('file_to_try = ',file_to_try)
+                        print('Trying file_to_try = ' + file_to_try)
+                        if os.path.isfile(file_to_try):
+                          file_to_include_fullpath = file_to_try
+                          break
+                    self.readGWL(file_to_include_fullpath)
                     
                   elif cmd[0].lower()=='movestagex':
-                    print 'Moving X by '+cmd[1]
+                    print('Moving X by '+cmd[1])
                     self.stage_position[0] = self.stage_position[0] + float(cmd[1])
                   elif cmd[0].lower()=='movestagey':
-                    print 'Moving Y by '+cmd[1]
+                    print('Moving Y by '+cmd[1])
                     self.stage_position[1] = self.stage_position[1] + float(cmd[1])
                     
                   elif cmd[0].lower()=='addxoffset':

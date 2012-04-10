@@ -28,9 +28,16 @@ import os
 ###############################
 # INITIALIZATIONS
 ###############################
-#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
+#cfgfile = os.path.expanduser('~')+'/BlenderImportGWL.txt'
 # official script data location :)
-cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
+print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
+if Blender.Get("datadir"):
+  print('datadir defined')
+  cfgfile = Blender.Get("datadir")+'/BlenderImportGWL.txt'
+  substitutes_file = Blender.Get("datadir")+'/BlenderImportGWL_Substitutes.txt'
+else:
+  print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
+  sys.exit(0)
 
 # Like pressing Alt+D
 def linkedCopy(ob, position, scn=None): # Just like Alt+D
@@ -161,6 +168,7 @@ def importGWL(filename):
     
     # parse file
     GWL_obj = GWLobject()
+    GWL_obj.readSubstitutes(substitutes_file)
     GWL_obj.readGWL(filename)
     Nvoxel = 0
     verts = []
