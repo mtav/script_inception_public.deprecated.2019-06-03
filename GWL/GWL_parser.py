@@ -16,6 +16,7 @@ class GWLobject:
     self.PowerScaling = 1
     self.LaserPower = 100
     self.ScanSpeed = 200
+    self.Repeat = 1
     
   def clear(self):
     self.GWL_voxels = []
@@ -206,84 +207,102 @@ class GWLobject:
           line_stripped = line.strip()
           # TODO: handle comments and other commands
           if len(line_stripped)>0 and line_stripped[0]!='%':
-            cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
+            #print 'pre-split: ', line_stripped
+            #cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
+            #cmd = re.split('[^a-zA-Z0-9_+-.:\\/]+',line_stripped)
+            cmd = re.split('[ \t]',line_stripped)
             #cmd = [ i.lower() for i in cmd ]
-            #print cmd
-            if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
-              #print '=>COMMAND'
-              if cmd[0].lower()=='-999':
-                if cmd[1]=='-999':
-                  #print 'write'
-                  self.GWL_voxels.append(write_sequence)
-                  write_sequence = []
-              else:
-                if cmd[0].lower()=='write':
-                  #print 'write'
-                  self.GWL_voxels.append(write_sequence)
-                  write_sequence = []
-                elif cmd[0].lower()=='include':
-                  print 'including cmd[1] = '+cmd[1]
-                  file_to_include = os.path.dirname(filename)+os.path.sep+cmd[1]
-                  print(file_to_include)
-                  self.readGWL(file_to_include)
-                  
-                elif cmd[0].lower()=='movestagex':
-                  print 'Moving X by '+cmd[1]
-                  self.stage_position[0] = self.stage_position[0] + float(cmd[1])
-                elif cmd[0].lower()=='movestagey':
-                  print 'Moving Y by '+cmd[1]
-                  self.stage_position[1] = self.stage_position[1] + float(cmd[1])
-                  
-                elif cmd[0].lower()=='addxoffset':
-                  print 'Adding X offset of '+cmd[1]
-                  self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
-                elif cmd[0].lower()=='addyoffset':
-                  print 'Adding Y offset of '+cmd[1]
-                  self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
-                elif cmd[0].lower()=='addzoffset':
-                  print 'Adding Z offset of '+cmd[1]
-                  self.voxel_offset[2] = self.voxel_offset[2] + float(cmd[1])
-                  
-                elif cmd[0].lower()=='xoffset':
-                  print 'Setting X offset to '+cmd[1]
-                  self.voxel_offset[0] = float(cmd[1])
-                elif cmd[0].lower()=='yoffset':
-                  print 'Setting Y offset to '+cmd[1]
-                  self.voxel_offset[1] = float(cmd[1])
-                elif cmd[0].lower()=='zoffset':
-                  print 'Setting Z offset to '+cmd[1]
-                  self.voxel_offset[2] = float(cmd[1])
-
-                elif cmd[0].lower()=='linenumber':
-                  print 'Setting LineNumber to '+cmd[1]
-                  self.LineNumber = float(cmd[1])
-                elif cmd[0].lower()=='linedistance':
-                  print 'Setting LineDistance to '+cmd[1]
-                  self.LineDistance = float(cmd[1])
-                elif cmd[0].lower()=='powerscaling':
-                  print 'Setting PowerScaling to '+cmd[1]
-                  self.PowerScaling = float(cmd[1])
-                elif cmd[0].lower()=='laserpower':
-                  print 'Setting LaserPower to '+cmd[1]
-                  self.LaserPower = float(cmd[1])
-                elif cmd[0].lower()=='scanspeed':
-                  print 'Setting ScanSpeed to '+cmd[1]
-                  self.ScanSpeed = float(cmd[1])
-                
-                #elif cmd[0].lower()=='defocusfactor':
-                  #print 'defocusfactor'
+            #print 'post-split: ', cmd
+            stopRepeat = True
+            for i in range(self.Repeat):
+              if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
+                #print '=>COMMAND'
+                if cmd[0].lower()=='-999':
+                  if cmd[1]=='-999':
+                    #print 'write'
+                    self.GWL_voxels.append(write_sequence)
+                    write_sequence = []
                 else:
-                  print('UNKNOWN COMMAND: '+cmd[0])
-                  #sys.exit(-1)
-            else:
-              #print '=>VOXEL'
-              voxel = []
-              for i in range(len(cmd)):
-                voxel.append(float(cmd[i])+self.voxel_offset[i]+self.stage_position[i])
-              #voxel = [ float(i) for i in cmd ]
-              write_sequence.append(voxel)
-              Nvoxels = Nvoxels + 1
-    
+                  if cmd[0].lower()=='write':
+                    #print 'write'
+                    self.GWL_voxels.append(write_sequence)
+                    write_sequence = []
+                  elif cmd[0].lower()=='include':
+                    print 'including cmd[1] = '+cmd[1]
+                    #self.readGWL('C:\\Users\\User\\Desktop\\Daniel+Mike\\nanoscribe_sample_2012-02-29'+os.path.sep+cmd[1])
+                    print 'cmd[1][0:3] = ', cmd[1][0:3]
+                    if cmd[1][0:3] == 'C:\\':
+                      file_to_include = cmd[1]
+                    else:
+                      file_to_include = os.path.dirname(filename)+os.path.sep+cmd[1]
+                    print(file_to_include)
+                    self.readGWL(file_to_include)
+                    
+                  elif cmd[0].lower()=='movestagex':
+                    print 'Moving X by '+cmd[1]
+                    self.stage_position[0] = self.stage_position[0] + float(cmd[1])
+                  elif cmd[0].lower()=='movestagey':
+                    print 'Moving Y by '+cmd[1]
+                    self.stage_position[1] = self.stage_position[1] + float(cmd[1])
+                    
+                  elif cmd[0].lower()=='addxoffset':
+                    print 'Adding X offset of '+cmd[1]
+                    self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
+                  elif cmd[0].lower()=='addyoffset':
+                    print 'Adding Y offset of '+cmd[1]
+                    self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
+                  elif cmd[0].lower()=='addzoffset':
+                    print 'Adding Z offset of '+cmd[1]
+                    self.voxel_offset[2] = self.voxel_offset[2] + float(cmd[1])
+                    
+                  elif cmd[0].lower()=='xoffset':
+                    print 'Setting X offset to '+cmd[1]
+                    self.voxel_offset[0] = float(cmd[1])
+                  elif cmd[0].lower()=='yoffset':
+                    print 'Setting Y offset to '+cmd[1]
+                    self.voxel_offset[1] = float(cmd[1])
+                  elif cmd[0].lower()=='zoffset':
+                    print 'Setting Z offset to '+cmd[1]
+                    self.voxel_offset[2] = float(cmd[1])
+
+                  elif cmd[0].lower()=='linenumber':
+                    print 'Setting LineNumber to '+cmd[1]
+                    self.LineNumber = float(cmd[1])
+                  elif cmd[0].lower()=='linedistance':
+                    print 'Setting LineDistance to '+cmd[1]
+                    self.LineDistance = float(cmd[1])
+                  elif cmd[0].lower()=='powerscaling':
+                    print 'Setting PowerScaling to '+cmd[1]
+                    self.PowerScaling = float(cmd[1])
+                  elif cmd[0].lower()=='laserpower':
+                    print 'Setting LaserPower to '+cmd[1]
+                    self.LaserPower = float(cmd[1])
+                  elif cmd[0].lower()=='scanspeed':
+                    print 'Setting ScanSpeed to '+cmd[1]
+                    self.ScanSpeed = float(cmd[1])
+
+                  elif cmd[0].lower()=='repeat':
+                    print 'Repeating next command '+cmd[1]+' times.'
+                    self.Repeat = float(cmd[1])
+                    stopRepeat = False
+                    
+                  #elif cmd[0].lower()=='defocusfactor':
+                    #print 'defocusfactor'
+                  else:
+                    print('UNKNOWN COMMAND: '+cmd[0])
+                    #sys.exit(-1)
+              else:
+                #print '=>VOXEL'
+                voxel = []
+                for i in range(len(cmd)):
+                  voxel.append(float(cmd[i])+self.voxel_offset[i]+self.stage_position[i])
+                #voxel = [ float(i) for i in cmd ]
+                write_sequence.append(voxel)
+                Nvoxels = Nvoxels + 1
+                  
+            # reset repeat
+            if stopRepeat:
+                self.Repeat = 1
     except IOError as (errno, strerror):
       print "I/O error({0}): {1}".format(errno, strerror)
       print 'Failed to open '+filename
