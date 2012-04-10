@@ -238,50 +238,31 @@ class GWLobject:
             stopRepeat = True
             for i in range(self.Repeat):
               if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
-                #print '=>COMMAND'
                 if cmd[0].lower()=='-999':
                   if cmd[1]=='-999':
-                    #print 'write'
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                 else:
                   if cmd[0].lower()=='write':
-                    #print 'write'
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                   elif cmd[0].lower()=='include':
-                    # TODO: custom replacement strings read from a config file to replace for example C:\utilities with ~/GWLstuff and vice-versa
-                    
-                    
-                    #self.path_substitutes = [('C:','D:'),('C:','E:'),('C:','F:')]
-                    #self.path_substitutes = readSubstitutes(subsFile)
-                    
                     print('line_stripped = ' + line_stripped)
                     file_to_include = re.split('\s+',line_stripped,1)[1]
                     print('including file_to_include = ' + file_to_include)
                     print('Fixing file separators')
                     file_to_include = file_to_include.replace('\\',os.path.sep).replace('/',os.path.sep)
                     print('including file_to_include = ' + file_to_include)                    
-                    #self.readGWL('C:\\Users\\User\\Desktop\\Daniel+Mike\\nanoscribe_sample_2012-02-29'+os.path.sep+cmd[1])
-                    #print('file_to_include[0:3] = ' + file_to_include[0:3])
-                    
                     file_to_include_fullpath = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_include)))
-
-                    #if file_to_include[0:3] == 'C:\\':
-                      #file_to_include = file_to_include
-                    #else:
-                      ##file_to_include = os.path.dirname(filename) + os.path.sep + file_to_include
-                      #file_to_include = os.path.normpath(os.path.join(os.path.dirname(filename), file_to_include))
                     print(file_to_include_fullpath)
                     if not os.path.isfile(file_to_include_fullpath):
                       print('WARNING: File not found. Attempting path substitutions')
                       for (old,new) in self.path_substitutes:
                         file_to_try = file_to_include.replace(old,new)
-                        print('file_to_try = ',file_to_try)
-                        print('filename = ',filename)
-                        print('os.path.dirname(filename) = ',os.path.dirname(filename))
+                        #print('file_to_try = ',file_to_try)
+                        #print('filename = ',filename)
+                        #print('os.path.dirname(filename) = ',os.path.dirname(filename))
                         file_to_try = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_try)))
-                        print('file_to_try = ',file_to_try)
                         print('Trying file_to_try = ' + file_to_try)
                         if os.path.isfile(file_to_try):
                           file_to_include_fullpath = file_to_try
