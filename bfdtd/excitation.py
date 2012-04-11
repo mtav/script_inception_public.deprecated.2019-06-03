@@ -204,3 +204,48 @@ class Excitation(object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
+
+class ExcitationWithGaussianTemplate(Excitation):
+  def __init__(self,name=None):
+
+  #centre=P, size=template_radius, plane_direction=propagation_direction, type='2D', excitation_direction=E1, frequency=freq
+
+                #name = None,
+                #current_source = None,
+                #P1 = None,
+                #P2 = None,
+                #E = None,
+                #H = None,
+                #Type = None,
+                #time_constant = None,
+                #amplitude = None,
+                #time_offset = None,
+                #frequency = None,
+                #param1 = None,
+                #param2 = None,
+                #template_filename = None,
+                #template_source_plane = None,
+                #template_target_plane = None,
+                #template_direction = None,
+                #template_rotation = None,
+                #layer = None,
+                #group = None):
+
+  
+
+    #if name is None: name = 'mode_filtered_probe'
+    #if first is None: first = 1 # crashes if = 0
+    #if repetition is None: repetition = 524200,
+    #if plane is None: plane = 1 #1,2,3 for x,y,z
+    #if P1 is None: P1 = [0,0,0]
+    #if P2 is None: P2 = [0,1,1]
+    #if layer is None: layer = 'mode_filtered_probe'
+    #if group is None: group = 'mode_filtered_probe'
+    
+    #Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
+    #self.E = [0,0,0]
+    #self.H = [0,0,0]
+    #self.J = [0,0,0]
+    #self.power = 0
+    #self.eps = 0
+    Excitation.__init__(self,name=name)
