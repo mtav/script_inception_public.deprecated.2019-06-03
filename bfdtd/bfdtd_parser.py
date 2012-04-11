@@ -591,19 +591,33 @@ class Time_snapshot(object):
   If a normal field probe had been used, then the unwanted effects of other modes would cause inaccuracies in the final result.
   '''
   def __init__(self,
-    name = 'time_snapshot',
-    first = 1, # crashes if = 0
-    repetition = 524200,
-    plane = 1,#1,2,3 for x,y,z
-    P1 = [0,0,0],
-    P2 = [0,1,1],
-    E = [1,1,1],
-    H = [1,1,1],
-    J = [0,0,0],
-    power = 0,
-    eps = 0,
-    layer = 'time_snapshot',
-    group = 'time_snapshot'):
+    name = None,
+    first = None,
+    repetition = None,
+    plane = None,
+    P1 = None,
+    P2 = None,
+    E = None,
+    H = None,
+    J = None,
+    power = None,
+    eps = None,
+    layer = None,
+    group = None):
+
+    if name is None: name = 'time_snapshot'
+    if first is None: first = 1 # crashes if = 0
+    if repetition is None: repetition = 524200
+    if plane is None: plane = 1 #1,2,3 for x,y,z
+    if P1 is None: P1 = [0,0,0]
+    if P2 is None: P2 = [0,1,1]
+    if E is None: E = [1,1,1]
+    if H is None: H = [1,1,1]
+    if J is None: J = [0,0,0]
+    if power is None: power = 0
+    if eps is None: eps = 0
+    if layer is None: layer = 'time_snapshot'
+    if group is None: group = 'time_snapshot'
   
     self.name = name
     self.layer = layer
@@ -707,16 +721,25 @@ class Time_snapshot(object):
 
 class ModeFilteredProbe(Time_snapshot):
   def __init__(self,
-      name = 'mode_filtered_probe',
-      first = 1, # crashes if = 0
-      repetition = 524200,
-      plane = 1,#1,2,3 for x,y,z
-      P1 = [0,0,0],
-      P2 = [0,1,1],
-      layer = 'mode_filtered_probe',
-      group = 'mode_filtered_probe'):
+      name = None,
+      first = None,
+      repetition = None,
+      plane = None,
+      P1 = None,
+      P2 = None,
+      layer = None,
+      group = None):
+
+    if name is None: name = 'mode_filtered_probe'
+    if first is None: first = 1 # crashes if = 0
+    if repetition is None: repetition = 524200,
+    if plane is None: plane = 1 #1,2,3 for x,y,z
+    if P1 is None: P1 = [0,0,0]
+    if P2 is None: P2 = [0,1,1]
+    if layer is None: layer = 'mode_filtered_probe'
+    if group is None: group = 'mode_filtered_probe'
     
-    Time_snapshot.__init__(self)
+    Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
     self.E = [0,0,0]
     self.H = [0,0,0]
     self.J = [0,0,0]
@@ -748,23 +771,41 @@ class Frequency_snapshot(object):
   The output file is of the same format as the snapshot “list format” and the naming is the same except that the time serial number starts at “00" instead of “aa”.
   '''
   def __init__(self,
-    name = 'frequency_snapshot',
-    first = 1, # crashes if = 0
-    repetition = 524200,
-    interpolate = 1,
-    real_dft = 0,
-    mod_only = 0,
-    mod_all = 1,
-    plane = 1,#1,2,3 for x,y,z
-    P1 = [0,0,0],
-    P2 = [0,1,1],
-    frequency_vector = [0],
-    starting_sample = 0,
-    E = [1,1,1],
-    H = [1,1,1],
-    J = [0,0,0],
-    layer = 'frequency_snapshot',
-    group = 'frequency_snapshot'):
+    name = None,
+    first = None,
+    repetition = None,
+    interpolate = None,
+    real_dft = None,
+    mod_only = None,
+    mod_all = None,
+    plane = None,
+    P1 = None,
+    P2 = None,
+    frequency_vector = None,
+    starting_sample = None,
+    E = None,
+    H = None,
+    J = None,
+    layer = None,
+    group = None):
+
+    if name is None: name = 'frequency_snapshot'
+    if first is None: first = 1 # crashes if = 0
+    if repetition is None: repetition = 524200
+    if interpolate is None: interpolate = 1
+    if real_dft is None: real_dft = 0
+    if mod_only is None: mod_only = 0
+    if mod_all is None: mod_all = 1
+    if plane is None: plane = 1 #1,2,3 for x,y,z
+    if P1 is None: P1 = [0,0,0]
+    if P2 is None: P2 = [0,1,1]
+    if frequency_vector is None: frequency_vector = [0]
+    if starting_sample is None: starting_sample = 0
+    if E is None: E = [1,1,1]
+    if H is None: H = [1,1,1]
+    if J is None: J = [0,0,0]
+    if layer is None: layer = 'frequency_snapshot'
+    if group is None: group = 'frequency_snapshot'
     
     self.name = name
     self.layer = layer
@@ -783,6 +824,7 @@ class Frequency_snapshot(object):
     self.E = E
     self.H = H
     self.J = J
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'first = ' + str(self.first) + '\n' +\
