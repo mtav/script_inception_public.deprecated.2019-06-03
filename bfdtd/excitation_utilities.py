@@ -5,8 +5,22 @@ from utilities.common import *
 from bfdtd.excitation import *
 from bfdtd.excitationTemplate import *
 
-def ExcitationWrapper(Ysym, centre, size, plane_direction, type,excitation_direction, frequency, template_filename='template.dat'):
-  plane_direction_vector,plane_direction_alpha = getVecAlphaDirectionFromVar(plane_direction)
+def ExcitationWrapper(Ysym, centre, size, plane_direction, type, excitation_direction, frequency, template_filename='template.dat'):
+  '''
+  Returns an Excitation and Template object: (excitation, template)
+
+  Ysym: adapt source extension for "Y symetric simulation"?
+  centre: centre of the source for 2D source or P1 for 1D source
+  size: the sigma value for the gaussian 2D source or the distance between P1 and P2 for a 1D source
+  plane_direction: emission direction of the source (i.e. orthogonal direction to the source plane or excitation direction)
+  type: '1D' or '2D':
+  excitation_direction: direction of the E field
+  frequency: frequency of the excitation
+  template_filename: name of the template file
+  '''
+  
+  plane_direction_vector, plane_direction_alpha = getVecAlphaDirectionFromVar(plane_direction)
+  
   excitation = Excitation()
   excitation.frequency = frequency
   excitation.E = excitation_direction
@@ -15,12 +29,13 @@ def ExcitationWrapper(Ysym, centre, size, plane_direction, type,excitation_direc
   excitation.template_target_plane = plane_direction_alpha
   excitation.template_direction = 1
   excitation.template_rotation = 1
+  
   if type=='1D':
     excitation.current_source = 7
     if not(Ysym):
-      excitation.setExtension(centre,centre + size*numpy.array(excitation_direction))
+      excitation.setExtension(centre, centre + size*numpy.array(excitation_direction))
     else:
-      excitation.setExtension(centre,centre - size*numpy.array(excitation_direction))
+      excitation.setExtension(centre, centre - size*numpy.array(excitation_direction))
   else:
     excitation.current_source = 11
     diagonal = (numpy.array(plane_direction_vector)^numpy.array([1,1,1]))
@@ -51,46 +66,63 @@ def ExcitationWrapper(Ysym, centre, size, plane_direction, type,excitation_direc
     
     #template1 = ExcitationGaussian1(amplitude = 1, beam_centre_x = centre, beam_centre_y = 2.00, sigma_x = 0.1, sigma_y = 0.9, fileName='template.dat')
     #pillar.excitation_template_list.append(template1)
-    #template1.writeDatFile('template1.dat',x_list,y_list, out_col_name, column_titles)
+    #template1.writeDatFile('template1.dat', x_list, y_list, out_col_name, column_titles)
   template = ExcitationGaussian2(amplitude = 1, beam_centre_x = x, beam_centre_y = y, c = 0, sigma = size, fileName='template.dat')
   template.out_col_name = out_col_name
   template.column_titles = column_titles
   
     #pillar.excitation_template_list.append(template2)
-    #template2.writeDatFile('template2.dat',x_list,y_list, out_col_name, column_titles)
+    #template2.writeDatFile('template2.dat', x_list, y_list, out_col_name, column_titles)
 
   return(excitation, template)
   #return excitation
 
-def QuadrupleExcitation(Ysym,pillar,P,propagation_direction,delta,template_radius,freq,exc):
+def QuadrupleExcitation(Ysym, pillar, P, propagation_direction, delta, template_radius, freq, exc):
+  '''
+  Adds an Excitation object and, if necessary, a corresponding Template object to the BFDTDobject "pillar".
+
+  Ysym: adapt source extension for "Y symetric simulation"?
+  pillar: BFDTDobject to which to add the Excitation+Template
+  P: centre of the source for 2D source or P1 for 1D source
+  propagation_direction: emission direction of the source (i.e. orthogonal direction to the source plane or excitation direction)
+  delta: the distance between P1 and P2 for a 1D source (ONLY VALID FOR 1D SOURCE)
+  template_radius: the sigma value for the gaussian 2D source (ONLY VALID FOR 2D SOURCE)
+  freq: frequency of the excitation
+  exc: type of excitation desired:
+    -exc=0: 1D, excitation_direction = 'propagation_direction + 1 in the (x,y,z) cycle'
+    -exc=1: 1D, excitation_direction = 'propagation_direction + 2 in the (x,y,z) cycle'
+    -exc=2: 2D, excitation_direction = 'propagation_direction + 1 in the (x,y,z) cycle'
+    -exc=3: 2D, excitation_direction = 'propagation_direction + 2 in the (x,y,z) cycle'
+  '''
+
   if propagation_direction == 'x':
-    E1=[0,1,0]
-    E2=[0,0,1]
+    E1 = [0,1,0]
+    E2 = [0,0,1]
   elif propagation_direction == 'y':
-    E1=[1,0,0]
-    E2=[0,0,1]
+    E1 = [0,0,1]
+    E2 = [1,0,0]
   elif propagation_direction == 'z':
-    E1=[1,0,0]
-    E2=[0,1,0]
+    E1 = [1,0,0]
+    E2 = [0,1,0]
   else:
     sys.exit(-1)
 
   if exc == 0:
     # E1 1D
-    excitation, template = ExcitationWrapper(Ysym,centre=P,size=delta,plane_direction=propagation_direction,type='1D',excitation_direction=E1,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym, centre=P, size=delta, plane_direction=propagation_direction, type='1D', excitation_direction=E1, frequency=freq)
     pillar.excitation_list.append(excitation)
   elif exc == 1:
     # E2 1D
-    excitation, template = ExcitationWrapper(Ysym,centre=P,size=delta,plane_direction=propagation_direction,type='1D',excitation_direction=E2,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym, centre=P, size=delta, plane_direction=propagation_direction, type='1D', excitation_direction=E2, frequency=freq)
     pillar.excitation_list.append(excitation)
   elif exc == 2:
     # E1 2D
-    excitation, template = ExcitationWrapper(Ysym,centre=P,size=template_radius,plane_direction=propagation_direction,type='2D',excitation_direction=E1,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym, centre=P, size=template_radius, plane_direction=propagation_direction, type='2D', excitation_direction=E1, frequency=freq)
     pillar.excitation_list.append(excitation)
     pillar.excitation_template_list.append(template)
   elif exc == 3:
     # E2 2D
-    excitation, template = ExcitationWrapper(Ysym,centre=P,size=template_radius,plane_direction=propagation_direction,type='2D',excitation_direction=E2,frequency=freq)
+    excitation, template = ExcitationWrapper(Ysym, centre=P, size=template_radius, plane_direction=propagation_direction, type='2D', excitation_direction=E2, frequency=freq)
     pillar.excitation_list.append(excitation)
     pillar.excitation_template_list.append(template)
   else:
