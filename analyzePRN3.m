@@ -1,4 +1,12 @@
 % this is getting out of hand... Oh well, things need to get done. Code can be cleaned up later...
+
+    %if excitation_direction == 'x'
+      %probe_col = 2;
+    %elseif excitation_direction == 'y'
+      %probe_col = 3;
+    %elseif excitation_direction == 'z'
+      %probe_col = 4;
+
 function analyzePRN3(prn_file, logfile, logfile_summary, probe_col)
 
   [ folder, basename, ext ] = fileparts(prn_file);
