@@ -19,6 +19,9 @@ class GWLobject:
     self.ScanSpeed = 200
     self.Repeat = 1
     self.path_substitutes = []
+    self.writingTimeInSeconds = 0
+    self.writingDistanceInMum = 0
+    self.DwellTime = 200
 
   def getLimits(self):
     Pmin = 4*[0]
@@ -38,6 +41,17 @@ class GWLobject:
                 if Pmax[i] < voxel[i]:
                     Pmax[i] = voxel[i]
     return (Pmin,Pmax)
+
+  def getLastVoxel(self):
+    found = False
+    voxel = [0,0,0,0]
+    for i in range(len(self.GWL_voxels)):
+        write_sequence = self.GWL_voxels[-i]
+        if len(write_sequence)>0:
+            voxel = write_sequence[-1]
+            found = True
+            break
+    return (voxel,found)
 
   def clear(self):
     self.GWL_voxels = []
@@ -263,11 +277,13 @@ class GWLobject:
                   if cmd[1]=='-999' or cmd[1].lower()=='-999.000':
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
                 else:
                   #print('other match')
                   if cmd[0].lower()=='write':
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
                   elif cmd[0].lower()=='include':
                     print('line_stripped = ' + line_stripped)
                     file_to_include = re.split('\s+',line_stripped,1)[1]
@@ -346,6 +362,11 @@ class GWLobject:
                     print 'Setting FindInterfaceAt to '+cmd[1]
                     self.FindInterfaceAt = [0,0,float(cmd[1]),0]
 
+                  elif cmd[0].lower()=='dwelltime':
+                    print 'Setting DwellTime to '+cmd[1]
+                    self.DwellTime = float(cmd[1])
+
+
                   else:
                     print('UNKNOWN COMMAND: '+cmd[0])
                     #sys.exit(-1)
@@ -355,7 +376,23 @@ class GWLobject:
                 for i in range(len(cmd)):
                   voxel.append( float(cmd[i]) + self.voxel_offset[i] + self.stage_position[i] - self.FindInterfaceAt[i] )
                 #voxel = [ float(i) for i in cmd ]
+                (last_voxel,found_last_voxel) = self.getLastVoxel()
                 write_sequence.append(voxel)
+                if len(write_sequence)>=2:
+                    a = write_sequence[-2][0:3]
+                    b = write_sequence[-1][0:3]
+                    newDist = numpy.linalg.norm(numpy.array(b)-numpy.array(a))
+                    newTime = newDist/self.ScanSpeed
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + newTime
+                    self.writingDistanceInMum = self.writingDistanceInMum + newDist
+                elif found_last_voxel:
+                    a = last_voxel
+                    b = write_sequence[-1][0:3]
+                    newDist = numpy.linalg.norm(numpy.array(b)-numpy.array(a))
+                    newTime = newDist/self.ScanSpeed
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + newTime
+                    self.writingDistanceInMum = self.writingDistanceInMum + newDist
+
                 Nvoxels = Nvoxels + 1
 
             # reset repeat
@@ -366,6 +403,10 @@ class GWLobject:
       print 'Failed to open '+filename
 
     print('Nvoxels = '+str(Nvoxels))
+    print('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds))
+    print('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.))
+    print('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.)))
+    print('self.writingDistanceInMum = '+str(self.writingDistanceInMum))
     #return GWL_voxels
 
   def write_GWL(self, filename, writingOffset = [0,0,0,0]):
