@@ -48,7 +48,7 @@ def createSubFiles2(DSTDIR):
 
   #N_list = [(12,17,17),(2*12,2*17,2*17),(12,17,17)]
   #N_list = [(2*12,2*17,2*17)]
-  N_list = [(12,17,17)]
+  N_list = [(12,17,17),(4,17,17),(8,17,17)]
 
   for nVert in [1,2,3,4]:
       for (Nlayers_Z,NRodsPerLayer_X,NRodsPerLayer_Y) in N_list:
