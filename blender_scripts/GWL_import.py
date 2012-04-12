@@ -196,11 +196,11 @@ def importGWL(filename):
     object_new = scene.objects.new(mesh_new,"voxelposition_object")
   
     #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100)
-    cell = BlenderBlock2('voxel',Vector(0,0,0),0.100,0.100,0.200)
-    cell.layers = object_new.layers
+    #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100,0.100,0.200)
+    #cell.layers = object_new.layers
     scene.update()
-    object_new.makeParent([cell])
-    object_new.enableDupVerts = True
+    #object_new.makeParent([cell])
+    #object_new.enableDupVerts = True
 
     
     
