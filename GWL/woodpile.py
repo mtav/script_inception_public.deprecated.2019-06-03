@@ -9,15 +9,15 @@ class Woodpile:
     self.Nlayers_Z = 12
     self.NRodsPerLayer_X = 17
     self.NRodsPerLayer_Y = 17
-    
+
     self.rod_width = 0.100
     self.rod_height = 0.200
-    
+
     self.LineNumber_Vertical = 1
     self.LineDistance_Vertical = 0.100
     self.LineNumber_Horizontal = 1
     self.LineDistance_Horizontal = 0.050
-    
+
     self.rod_type = 'cylinder'
     self.interLayerDistance = 0.212
     self.interRodDistance = 0.600
@@ -36,7 +36,7 @@ class Woodpile:
     self.Xmax = 0.5*(self.NRodsPerLayer_X+1)*self.interRodDistance+0.1
     self.Ymin = -0.5*(self.NRodsPerLayer_Y+1)*self.interRodDistance+0.1
     self.Ymax = 0.5*(self.NRodsPerLayer_Y+1)*self.interRodDistance+0.1
-    
+
   def getGWL(self):
     GWL_obj = GWLobject()
     layer_type_X = self.initialLayerType_X
@@ -72,10 +72,11 @@ class Woodpile:
       # optional: just add another write to easily distinguish layers inside file
       GWL_obj.addWrite()
     return GWL_obj
-  
-  def write_GWL(self,filename):
+
+  def write_GWL(self, filename):
     GWL_obj = self.getGWL()
-    GWL_obj.write_GWL(filename)
+    (Pmin, Pmax) = GWL_obj.getLimits()
+    GWL_obj.write_GWL(filename, writingOffset = [0,0,-Pmin[2],0] )
 
 if __name__ == "__main__":
   woodpile_obj = Woodpile()

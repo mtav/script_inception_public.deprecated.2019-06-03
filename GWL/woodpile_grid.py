@@ -21,7 +21,7 @@ def createSubFiles(DSTDIR):
   for Lambda in Lambda_list:
     for a_over_Lambda in a_over_Lambda_list:
       for (Nlayers_Z,NRodsPerLayer_X,NRodsPerLayer_Y) in N_list:
-      
+
         a = a_over_Lambda*Lambda
         woodpile_obj = Woodpile()
         woodpile_obj.BottomToTop = 0
@@ -37,8 +37,45 @@ def createSubFiles(DSTDIR):
         woodpile_obj.LineDistance_Horizontal = 0.050
 
         woodpile_obj.adaptXYMinMax()
-        subfilename = 'woodpile.Lambda_'+str(Lambda)+'.a_'+str(a)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.gwl'
+        #subfilename = 'woodpile.Lambda_'+str(Lambda)+'.a_'+str(a)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.dVert_'+str(woodpile_obj.LineDistance_Vertical)+'.dHori_'+str(woodpile_obj.LineDistance_Horizontal)+'.gwl'
+        subfilename = 'woodpile.interRodDist_'+str(woodpile_obj.interRodDistance)+'.interLayerDist_'+str(woodpile_obj.interLayerDistance)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.dVert_'+str(woodpile_obj.LineDistance_Vertical)+'.dHori_'+str(woodpile_obj.LineDistance_Horizontal)+'.gwl'
         woodpile_obj.write_GWL(DSTDIR + os.path.sep + subfilename)
+        subfile_list.append(subfilename)
+  return(subfile_list)
+
+def createSubFiles2(DSTDIR):
+  subfile_list = []
+
+  #N_list = [(12,17,17),(2*12,2*17,2*17),(12,17,17)]
+  #N_list = [(2*12,2*17,2*17)]
+  N_list = [(12,17,17)]
+
+  for nVert in [1,2,3,4]:
+      for (Nlayers_Z,NRodsPerLayer_X,NRodsPerLayer_Y) in N_list:
+        woodpile_obj = Woodpile()
+        woodpile_obj.BottomToTop = 0
+        woodpile_obj.Nlayers_Z = Nlayers_Z
+        woodpile_obj.NRodsPerLayer_X = NRodsPerLayer_X
+        woodpile_obj.NRodsPerLayer_Y = NRodsPerLayer_Y
+        woodpile_obj.interRodDistance = 0.6
+        woodpile_obj.interLayerDistance = numpy.sqrt(2.0)*woodpile_obj.interRodDistance/4.0
+
+        woodpile_obj.LineDistance_Horizontal = 0.050
+        #woodpile_obj.LineDistance_Vertical = 0.100
+        #woodpile_obj.LineDistance_Vertical = 0.050
+        woodpile_obj.LineNumber_Vertical = nVert #int(woodpile_obj.interLayerDistance/woodpile_obj.LineDistance_Vertical)
+        woodpile_obj.LineDistance_Vertical = woodpile_obj.interLayerDistance/woodpile_obj.LineNumber_Vertical
+        woodpile_obj.LineNumber_Horizontal = 1
+
+        woodpile_obj.adaptXYMinMax()
+        #subfilename = 'woodpile.Lambda_'+str(Lambda)+'.a_'+str(a)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.dVert_'+str(woodpile_obj.LineDistance_Vertical)+'.dHori_'+str(woodpile_obj.LineDistance_Horizontal)+'.gwl'
+        #subfilename = 'woodpile.interRodDist_'+str(woodpile_obj.interRodDistance)+'.interLayerDist_'+str(woodpile_obj.interLayerDistance)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.dVert_'+str(woodpile_obj.LineDistance_Vertical)+'.dHori_'+str(woodpile_obj.LineDistance_Horizontal)+'.gwl'
+        #subfilename = 'woodpile.interRodDist_'+str(woodpile_obj.interRodDistance)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.dVert_'+str(woodpile_obj.LineDistance_Vertical)+'.dHori_'+str(woodpile_obj.LineDistance_Horizontal)+'.gwl'
+        #subfilename = 'woodpile.interRodDist_'+str(woodpile_obj.interRodDistance)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.dVert_'+str(woodpile_obj.LineDistance_Vertical)+'.gwl'
+        subfilename = 'woodpile.interRodDist_'+str(woodpile_obj.interRodDistance)+'.NX_'+str(NRodsPerLayer_X)+'.NY_'+str(NRodsPerLayer_Y)+'.Nlayers_Z_'+str(Nlayers_Z)+'.nVert_'+str(woodpile_obj.LineNumber_Vertical)+'.gwl'
+
+        woodpile_obj.write_GWL(DSTDIR + os.path.sep + subfilename)
+
         subfile_list.append(subfilename)
   return(subfile_list)
 
@@ -111,10 +148,10 @@ def createMainFile(filename, VoxelFile):
   deltaX = 1000
   deltaY = 1000
   PowerScaling = 1
-  
+
   #LaserPower = [1,25,50]
   #ScanSpeed = [10,30,50]
-  
+
   VP_values = []
   VP_values.append([ (5,i) for i in numpy.arange(5,25.1,5) ])
   VP_values.append([ (10,i) for i in numpy.arange(5,25.1,5) ])
@@ -126,7 +163,7 @@ def createMainFile(filename, VoxelFile):
   VP_values.append([ (100,i) for i in numpy.arange(5,40.1,5) ])
   VP_values.append([ (150,i) for i in numpy.arange(5,40.1,5) ])
   VP_values.append([ (200,i) for i in numpy.arange(5,40.1,5) ])
-  
+
   #VoxelFile = 'toto.gwl'
   Wait = 4
   print('Writing GWL main to '+filename)
@@ -149,7 +186,7 @@ def createMainFile(filename, VoxelFile):
       file.write('%%%%%%% END OF LINE \n')
       file.write('MoveStageY ' + str(deltaY) + '\n')
       file.write('MoveStageX ' + str(-len(linio)*deltaX) + '\n')
-      
+
     # move back to origin
     #file.write('MoveStageY ' + str(-len(VP_values)*deltaY) + '\n')
     print('number of woodpiles in this grid: ' + str(Ntotal))
@@ -179,10 +216,10 @@ def createMainFile2(filename, file_list):
   deltaX = 1000
   deltaY = 1000
   PowerScaling = 1
-  
+
   LaserPower = [15,20,25,30,35]
   ScanSpeed = 200
-    
+
   #VoxelFile = 'toto.gwl'
   Wait = 4
   print('Writing GWL main to '+filename)
@@ -207,7 +244,7 @@ def createMainFile2(filename, file_list):
       file.write('MoveStageX ' + str(-len(LaserPower)*deltaX) + '\n')
     print('number of woodpiles in this grid: ' + str(Ntotal))
 
-    
+
 if __name__ == "__main__":
 
     if len(sys.argv)>1:
@@ -216,7 +253,8 @@ if __name__ == "__main__":
         DSTDIR = os.getcwd()
 
     # Alex woodpiles
-    subfile_list = createSubFiles(DSTDIR)
+    #subfile_list = createSubFiles(DSTDIR)
+    subfile_list = createSubFiles2(DSTDIR)
     #mainfile_list = []
     #for subfile in subfile_list:
       #mainfilename = 'main_'+subfile
@@ -228,7 +266,7 @@ if __name__ == "__main__":
 ##    single_woodpile(DSTDIR, NX, NY, NZ, interRodDistance, LaserPower, ScanSpeed, BottomToTop)
     #single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 0)
     #single_woodpile(DSTDIR, 17, 17, 12, 0.6, 50, 200, 1)
-    
+
     # Alex woodpiles:
     #single_woodpile(DSTDIR, 34, 34, 24, 0.6, 50, 200, 0)
     #single_woodpile(DSTDIR, 34, 34, 24, 0.6, 50, 200, 1)
