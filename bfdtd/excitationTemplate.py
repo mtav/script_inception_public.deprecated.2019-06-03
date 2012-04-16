@@ -7,7 +7,7 @@ from bfdtd.bfdtd_parser import *
 import sys
   
 # gaussian excitation template object which creates a 2D gaussian surface with a central maximum point
-class ExcitationGaussian1:
+class ExcitationGaussian1(object):
   def __init__(self,amplitude = 1, beam_centre_x = 0, beam_centre_y = 0, sigma_x = 1, sigma_y = 1, out_col_name='z', column_titles=['x','y','z'], fileName='template.dat'):
     self.amplitude = amplitude
     self.beam_centre_x = beam_centre_x
@@ -61,7 +61,7 @@ class ExcitationGaussian1:
     return
 
 # gaussian excitation template object which creates a 2D gaussian surface with a circular maximum of radius c
-class ExcitationGaussian2:
+class ExcitationGaussian2(object):
   def __init__(self,amplitude = 1, beam_centre_x = 0, beam_centre_y = 0, c = 1, sigma = 2, out_col_name='z', column_titles=['x','y','z'], fileName='template.dat'):
     self.amplitude = amplitude
     self.beam_centre_x = beam_centre_x
