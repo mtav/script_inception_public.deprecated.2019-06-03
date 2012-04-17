@@ -212,7 +212,7 @@ class ExcitationWithGaussianTemplate(Excitation):
     name = None,
     layer = None,
     group = None,
-    centre = None,  
+    centre = None, 
     sigma_x = None,
     sigma_y = None,
     amplitude = None,
@@ -255,7 +255,8 @@ class ExcitationWithGaussianTemplate(Excitation):
 
     self.current_source = 11
 
-    self.E = excitation_direction
+    self.E = [1,1,1] # for the .inp file
+    self.excitation_direction = excitation_direction # for the template generation
     self.template_source_plane = plane_direction_alpha
     self.template_target_plane = plane_direction_alpha
     self.template_direction = 1
@@ -264,29 +265,27 @@ class ExcitationWithGaussianTemplate(Excitation):
     diagonal = (numpy.array(plane_direction_vector)^numpy.array([1,1,1]))
     sigma = max(sigma_x, sigma_y)
     self.setExtension(centre - sigma*diagonal, centre + sigma*diagonal)
-    
-  def write_entry(self, FILE):
 
-    print('self.E = '+str(self.E))
-    
-    # write the INP entry using the parent class
-    Excitation.write_entry(self, FILE)
-
-    print('self.E = '+str(self.E))
-
+    self.updateTemplate()
+  
+  def getTemplate(self):
+    updateTemplate()
+    return self.template
+  
+  def updateTemplate(self):
     # set up template
     plane_direction_vector, plane_direction_alpha = getVecAlphaDirectionFromVar(self.plane_direction)
 
-    print('self.E = '+str(self.E))
+    #print('self.E = '+str(self.excitation_direction))
 
-    if self.E == [1,0,0]:
+    if self.excitation_direction == [1,0,0]:
       out_col_name = 'Exre'
-    elif self.E == [0,1,0]:
+    elif self.excitation_direction == [0,1,0]:
       out_col_name = 'Eyre'
-    elif self.E == [0,0,1]:
+    elif self.excitation_direction == [0,0,1]:
       out_col_name = 'Ezre'
     else:
-      print('ERROR: No match for self.E = '+str(self.E))
+      print('ERROR: No match for self.excitation_direction = '+str(self.excitation_direction))
       sys.exit(1)
   
     if plane_direction_alpha=='x':
@@ -304,10 +303,21 @@ class ExcitationWithGaussianTemplate(Excitation):
       
     column_titles.extend(['Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim'])
     
-    template = ExcitationGaussian1(amplitude = self.amplitude, beam_centre_x = x, beam_centre_y = y, sigma_x = self.sigma_x, sigma_y = self.sigma_y, fileName = self.template_filename)
+    self.template = ExcitationGaussian1(amplitude = self.amplitude, beam_centre_x = x, beam_centre_y = y, sigma_x = self.sigma_x, sigma_y = self.sigma_y, fileName = self.template_filename)
     #template = ExcitationGaussian2(amplitude = amplitude, beam_centre_x = x, beam_centre_y = y, c = 0, sigma = size, fileName='template.dat')
-    template.out_col_name = out_col_name
-    template.column_titles = column_titles
+    self.template.out_col_name = out_col_name
+    self.template.column_titles = column_titles
+    
+  def write_entry(self, FILE):
+
+    #print('self.excitation_direction = '+str(self.excitation_direction))
+    
+    # write the INP entry using the parent class
+    Excitation.write_entry(self, FILE)
+
+    #print('self.excitation_direction = '+str(self.excitation_direction))
     
     # write the template
-    template.writeDatFile(self.template_filename, self.mesh)
+    self.updateTemplate()
+    #print self.mesh
+    self.template.writeDatFile(self.template_filename, self.mesh)
