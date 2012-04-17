@@ -17,6 +17,13 @@ class MeshObject(object):
     self.ymesh = numpy.array([0,1])
     self.zmesh = numpy.array([0,1])
 
+  def __str__(self):
+    ret  = 'name = '+self.name+'\n'
+    ret += 'xmesh = ' + str(self.xmesh) + '\n' +\
+    'ymesh = ' + str(self.ymesh) + '\n' +\
+    'zmesh = ' + str(self.zmesh)
+    return ret
+    
   def setXmesh(self,xmesh):
     self.xmesh = xmesh
   def setYmesh(self,ymesh):
