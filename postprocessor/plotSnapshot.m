@@ -295,8 +295,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     else
       title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
     end
+  elseif handles.Type == 4 % excitation template
+    title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');  
   else
-    warning('ERROR: Unknown data type');
+    warning(['Unknown data type: handles.Type = ',num2str(handles.Type)]);
     %return;
   end
   
