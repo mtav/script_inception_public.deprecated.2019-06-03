@@ -4,6 +4,7 @@
 from __future__ import division
 from bfdtd.bfdtd_parser import *
 
+'''Creates prism without 45 degree mirrors. Should be superseded by the current SpecialTriangularPrism completely at one point.'''
 class TriangularPrism(Geometry_object):
   def __init__(self,
     name = 'triangularprism',
