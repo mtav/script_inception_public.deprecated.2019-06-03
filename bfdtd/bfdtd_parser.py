@@ -199,21 +199,26 @@ class Box(object):
     FILE.write('}\n')
     FILE.write('\n')
   def getCenter(self):
-    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    return numpy.array([ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ])
 
 # geometry objects
 class Geometry_object(object):
-    def __init__(self):
-        self.name = 'geometry object'
-        self.rotation_list = []
-        self.meshing_parameters = MeshingParameters()
-    def __str__(self):
-        ret = '--->object rotation_list'
-        for i in range(len(self.rotation_list)):
-            ret += '\n'
-            ret += '-->object rotation '+str(i)+':\n'
-            ret += self.rotation_list[i].__str__()
-        return(ret)
+  def __init__(self):
+    self.name = 'geometry object'
+    self.rotation_list = []
+    self.meshing_parameters = MeshingParameters()
+    self.permittivity = 1
+    self.conductivity = 0
+  def __str__(self):
+    ret = '--->object rotation_list'
+    for i in range(len(self.rotation_list)):
+      ret += '\n'
+      ret += '-->object rotation '+str(i)+':\n'
+      ret += self.rotation_list[i].__str__()
+    return(ret)
+  def setRefractiveIndex(self,n):
+    self.permittivity = pow(n,2)
+    self.conductivity = 0
 
 class Sphere(Geometry_object):
   def __init__(self):
@@ -225,7 +230,7 @@ class Sphere(Geometry_object):
     self.centre = [0,0,0]
     self.outer_radius = 0
     self.inner_radius = 0
-    self.permittivity = 0
+    self.permittivity = 1
     self.conductivity = 0
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -1162,18 +1167,27 @@ class BFDTDobject(object):
     return F
 
   def addModeFilteredProbe(self, plane, position):
-    if plane == 1:
+    if not isinstance(position,float) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)      
+    # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
+    # TODO: support multiple types for position argument (int/float or array)
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
       name='X mode filtered probe'
       L = [position, self.box.lower[1], self.box.lower[2]]
       U = [position, self.box.upper[1], self.box.upper[2]]
-    elif plane == 2:
+      plane = 1
+    elif alpha == 'y':
       name='Y mode filtered probe'
       L = [self.box.lower[0], position, self.box.lower[2]]
       U = [self.box.upper[0], position, self.box.upper[2]]
-    elif plane == 3:
+      plane = 2
+    elif alpha == 'z':
       name='Z mode filtered probe'
       L = [self.box.lower[0], self.box.lower[1], position]
       U = [self.box.upper[0], self.box.upper[1], position]
+      plane = 3
     else:
       print(('ERROR: Invalid plane : ',plane))
       sys.exit(1)
@@ -1412,6 +1426,7 @@ class BFDTDobject(object):
     with open(fileName, 'w') as out:
   
       for obj in self.excitation_list:
+        obj.mesh = self.mesh
         obj.write_entry(out)
       #print(self.boundaries)
       self.boundaries.write_entry(out)
