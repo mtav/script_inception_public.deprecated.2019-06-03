@@ -37,6 +37,9 @@ class SpecialTriangularPrism(Geometry_object):
     self.orientation = orientation
     self.COMMENT = 'SpecialTriangularPrism'
     
+    self.mirror1 = True
+    self.mirror2 = True
+    
   '''printer function'''
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
