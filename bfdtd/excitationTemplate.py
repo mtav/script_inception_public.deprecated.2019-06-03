@@ -17,20 +17,26 @@ class ExcitationGaussian1(object):
     self.out_col_name = out_col_name
     self.column_titles = column_titles
     self.fileName = fileName
-
+    self.x_list = [-1,0,1]
+    self.y_list = [-1,0,1]
+  
   def writeDatFile(self,fileName,mesh):
+    print('ERROR: This function is deprecated.')
+    sys.exit(-1)
+    
+  def writeDatFile(self,fileName):
     '''Generate template .dat file for a plane excitation'''
-    x_list = mesh.getXmesh()
-    y_list = mesh.getYmesh()
-    z_list = mesh.getZmesh()
+    #self.x_list = mesh.getXmesh()
+    #self.y_list = mesh.getYmesh()
+    #self.z_list = mesh.getZmesh()
     
     x_col = []
     y_col = []
     out_col = []
     
-    print('Generating template N='+str(len(x_list)*len(y_list)))
-    for x in x_list:
-      for y in y_list:
+    print('Generating template N='+str(len(self.x_list)*len(self.y_list)))
+    for x in self.x_list:
+      for y in self.y_list:
         x_col.append(x)
         y_col.append(y)
         X = x-self.beam_centre_x
@@ -71,20 +77,26 @@ class ExcitationGaussian2(object):
     self.out_col_name = out_col_name
     self.column_titles = column_titles
     self.fileName = fileName
+    self.x_list = [-1,0,1]
+    self.y_list = [-1,0,1]
 
   def writeDatFile(self,fileName,mesh):
+    print('ERROR: This function is deprecated.')
+    sys.exit(-1)
+
+  def writeDatFile(self,fileName):
     '''Generate template .dat file for a plane excitation'''
-    x_list = mesh.getXmesh()
-    y_list = mesh.getYmesh()
-    z_list = mesh.getZmesh()
+    #self.x_list = mesh.getXmesh()
+    #self.y_list = mesh.getYmesh()
+    #self.z_list = mesh.getZmesh()
     
     x_col = []
     y_col = []
     out_col = []
     
-    print('Generating template N='+str(len(x_list)*len(y_list)))
-    for x in x_list:
-      for y in y_list:
+    print('Generating template N='+str(len(self.x_list)*len(self.y_list)))
+    for x in self.x_list:
+      for y in self.y_list:
         x_col.append(x)
         y_col.append(y)
         X = x-self.beam_centre_x
