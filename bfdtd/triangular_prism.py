@@ -91,7 +91,7 @@ class TriangularPrism(Geometry_object):
     voxel_list.append(Block(name=self.COMMENT, lower=LL, upper=UU, permittivity=self.permittivity, conductivity=self.conductivity))
     ####################################
     return voxel_list
-        
+    
   def write_entry(self, FILE):
     voxels = self.getVoxels()
     for v in voxels:

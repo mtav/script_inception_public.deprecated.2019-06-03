@@ -737,7 +737,7 @@ class ModeFilteredProbe(Time_snapshot):
 
     if name is None: name = 'mode_filtered_probe'
     if first is None: first = 1 # crashes if = 0
-    if repetition is None: repetition = 524200,
+    if repetition is None: repetition = 10,
     if plane is None: plane = 1 #1,2,3 for x,y,z
     if P1 is None: P1 = [0,0,0]
     if P2 is None: P2 = [0,1,1]
@@ -1382,7 +1382,7 @@ class BFDTDobject(object):
     FILE.write('\n')
   
   def writeDatFiles(self,directory):
-    ''' Generate .dat files '''
+    '''Generate template .dat file for a plane excitation'''
     for obj in self.excitation_template_list:
       obj.writeDatFile(directory+os.sep+obj.fileName,self.mesh)
     return
@@ -1426,6 +1426,7 @@ class BFDTDobject(object):
     with open(fileName, 'w') as out:
   
       for obj in self.excitation_list:
+        #obj.directory = os.path.dirname(fileName)
         obj.mesh = self.mesh
         obj.write_entry(out)
       #print(self.boundaries)
@@ -1443,15 +1444,7 @@ class BFDTDobject(object):
       #close file
       out.close()
     return
-    
-  #def writeDatFile(self,fileName):
-    #'''Generate template .dat file for a plane excitation'''
-    ## open file
-    #with open(fileName, 'w') as out:
-      #for obj in self.excitation_template_list:
-        #obj.write_entry(out)
-    #return
-    
+        
   def writeFileList(self,fileName,fileList=None):
     ''' Generate .in file '''
     # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object
