@@ -341,6 +341,21 @@ class Block(Geometry_object):
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Distorted(Geometry_object):
+  '''
+  0,1,2,3 = top face numbered clockwise
+  4,5,6,7 = bottom face numbered clockwise
+  3 connected to 4
+  2 connected to 5
+  0 connected to 7
+  1 connected to 6
+  Normal faces viewed from outside:
+    [3,2,1,0]
+    [7,6,5,4]
+    [0,1,6,7]
+    [1,2,5,6]
+    [2,3,4,5]
+    [3,0,7,4]  
+  '''
   def __init__(self,
     name = None,
     layer = None,
@@ -379,13 +394,12 @@ class Distorted(Geometry_object):
     self.permittivity = float(entry.data[8*3])
     self.conductivity = float(entry.data[8*3+1])
   def write_entry(self, FILE):
-    self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('DISTORTED **name='+self.name+'\n')
     FILE.write('{\n')
     for i in range(len(self.vertices)):
-      FILE.write("%E **XV%d\n" % self.vertices[i][0],i)
-      FILE.write("%E **YV%d\n" % self.vertices[i][1],i)
-      FILE.write("%E **ZV%d\n" % self.vertices[i][2],i)
+      FILE.write("%E **XV%d\n" % (self.vertices[i][0],i) )
+      FILE.write("%E **YV%d\n" % (self.vertices[i][1],i) )
+      FILE.write("%E **ZV%d\n" % (self.vertices[i][2],i) )
     FILE.write("%E **relative Permittivity\n" % self.permittivity)
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
