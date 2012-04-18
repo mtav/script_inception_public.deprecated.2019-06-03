@@ -1,4 +1,4 @@
-function GetS21(infilename,outfilename)
+function GetS21(infilename,outfilename,imgbasename,label)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Creates reflection/transmission diagrams based on probe output using tdtreat.
   % Usage:
@@ -43,10 +43,35 @@ function GetS21(infilename,outfilename)
       mkdir(S21folder);
   end
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
   infilename
   outfilename
   S21folder
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % hack to get BLOB in /gfdgfd/gfdgfdg/dfgdfgd/BLOB/
+  ind=strfind(InPathName, filesep);
+  if length(ind)>1
+    start = ind(end-1)+1;
+  else
+    start = 1;
+  end
+  inProjName = InPathName(start:end-1);
+  ind=strfind(OutPathName, filesep);
+  if length(ind)>1
+    start = ind(end-1)+1;
+  else
+    start = 1;
+  end
+  outProjName=OutPathName(start:end-1);
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  InPathName
+  inProjName
+  
+  OutPathName
+  outProjName
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %inSnapFile=[inProjName,filesep,InFileName(1:end-4),'_inc.prn'];
+  %outSnapFile=[outProjName,filesep,OutFileName(1:end-4),'_out.prn'];
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   %commands to run:
   %sed 's/^#//' infilename > infilename.fixed
@@ -115,9 +140,18 @@ function GetS21(infilename,outfilename)
   % plot
   [header,data] = readPrnFile('tdtreat1.dat');
   %figure; plot(data(:,1),data(:,2));%xlim([0.500 0.700])
-  figure; plot((get_c0()*1e-6)./data(:,1),data(:,2));xlim([500 700])
+  figure; plot((get_c0()*1e-6)./data(:,1),data(:,2));xlim([500 700]) % mum?
+  %figure; plot((get_c0()*1e-3)./data(:,1),data(:,2));xlim([500 700]) % nm?
+
+  xlabel(['wavelength lambda (nm?)']);
+  ylabel([label,' (dB)']);
+  title(strrep([infilename,' - ',outfilename],'_','\_'));
 
   % return to original dir
   cd(origdir)
+
+  % save figure
+  saveas(gcf,[imgbasename,'.png'],'png');
+  saveas(gcf,[imgbasename,'.fig']);
 
 end
