@@ -8,6 +8,7 @@ import os
 
 class GWLobject:
   def __init__(self):
+    self.verbosity = 0
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
     self.FindInterfaceAt = [0,0,0,0]
@@ -52,6 +53,9 @@ class GWLobject:
             found = True
             break
     return (voxel,found)
+
+  def getNvoxels():
+    print('ok')
 
   def clear(self):
     self.GWL_voxels = []
@@ -344,7 +348,8 @@ class GWLobject:
                     print 'Setting PowerScaling to '+cmd[1]
                     self.PowerScaling = float(cmd[1])
                   elif cmd[0].lower()=='laserpower':
-                    print 'Setting LaserPower to '+cmd[1]
+                    if self.verbosity > 5:
+                      print 'Setting LaserPower to '+cmd[1]
                     self.LaserPower = float(cmd[1])
                   elif cmd[0].lower()=='scanspeed':
                     print 'Setting ScanSpeed to '+cmd[1]
@@ -352,7 +357,7 @@ class GWLobject:
 
                   elif cmd[0].lower()=='repeat':
                     print 'Repeating next command '+cmd[1]+' times.'
-                    self.Repeat = float(cmd[1])
+                    self.Repeat = int(cmd[1])
                     stopRepeat = False
 
                   #elif cmd[0].lower()=='defocusfactor':
@@ -403,10 +408,11 @@ class GWLobject:
       print 'Failed to open '+filename
 
     print('Nvoxels = '+str(Nvoxels))
-    print('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds))
-    print('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.))
-    print('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.)))
-    print('self.writingDistanceInMum = '+str(self.writingDistanceInMum))
+    if self.verbosity > 5:
+      print('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds))
+      print('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.))
+      print('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.)))
+      print('self.writingDistanceInMum = '+str(self.writingDistanceInMum))
     #return GWL_voxels
 
   def write_GWL(self, filename, writingOffset = [0,0,0,0]):
