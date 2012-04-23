@@ -391,7 +391,7 @@ class GWLobject:
                     self.writingTimeInSeconds = self.writingTimeInSeconds + newTime
                     self.writingDistanceInMum = self.writingDistanceInMum + newDist
                 elif found_last_voxel:
-                    a = last_voxel
+                    a = last_voxel[0:3]
                     b = write_sequence[-1][0:3]
                     newDist = numpy.linalg.norm(numpy.array(b)-numpy.array(a))
                     newTime = newDist/self.ScanSpeed
