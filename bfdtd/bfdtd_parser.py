@@ -11,6 +11,7 @@ from bfdtd.bristolFDTD_generator_functions import *
 from meshing.subGridMultiLayer import *
 from bfdtd.excitation import *
 from bfdtd.meshobject import *
+from constants.constants import *
 #from bfdtd.meshbox import *
 
 #==== CLASSES START ====#
@@ -120,6 +121,13 @@ class Boundaries(object):
   def setBoundaryConditionsZnegToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
     self.Zneg_bc = 10
     self.Zneg_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.setBoundaryConditionsXnegToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsYnegToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsZnegToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsXposToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsYposToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsZposToPML(number_of_layers, grading_index, min_reflection_coeff)
       
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -948,8 +956,8 @@ class Probe(object):
   5-13)E,H,J: Field components to be sampled: E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
   '''
   def __init__(self,
-    name = 'probe',
     position = [0,0,0],
+    name = 'probe',
     step=10,
     E=[1,1,1],
     H=[1,1,1],
