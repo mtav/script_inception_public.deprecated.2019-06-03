@@ -62,6 +62,7 @@ if (2.5*max(R)>HFW):
     sys.exit(-1)
 
 Q1=zeros((320,240));
+#Q1=zeros((3335,3900));
 #print Q1
 
 cy=0.5*Q1.shape[0];
@@ -72,6 +73,7 @@ Npoints=0;
 disp('Creating Q1 matrix')
 for m in range(Q1.shape[0]):
 	print(('m/Q1.shape[0] = ',m/Q1.shape[0]))
+	#print(('m/size(Q1,1) = ',m/Q1.shape[0]))
 	for n in range(Q1.shape[1]):
 		distsq=(m-cy)**2+(n-cx)**2;
 		#distsq=(n-cx)**2;
