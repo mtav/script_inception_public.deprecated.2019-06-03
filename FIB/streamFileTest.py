@@ -39,11 +39,11 @@ c=0.080
 t=0.011667
 w=0.080
 
-A=array([h])
+A=numpy.array([h])
 
-R=array([h+w+c+t,h+w*2+c*2+t*3,h+w*3+c*3+t*6,h+w*4+c*4+t*10,h+w*5+c*5+t*15,h+w*6+c*6+t*21])
+R=numpy.array([h+w+c+t,h+w*2+c*2+t*3,h+w*3+c*3+t*6,h+w*4+c*4+t*10,h+w*5+c*5+t*15,h+w*6+c*6+t*21])
 
-r=array([h+w,h+w*2+c+t,h+w*3+c*2+t*3,h+w*4+c*3+t*6,h+w*5+c*4+t*10,h+w*6+c*5+t*15])
+r=numpy.array([h+w,h+w*2+c+t,h+w*3+c*2+t*3,h+w*4+c*3+t*6,h+w*5+c*4+t*10,h+w*6+c*5+t*15])
 
 spotSize=spotSizes[bC]*1e-3;
 
@@ -61,7 +61,7 @@ if (2.5*max(R)>HFW):
     disp('R is too big to fit to the screen')
     sys.exit(-1)
 
-Q1=zeros((320,240));
+Q1=numpy.zeros((320,240));
 #Q1=zeros((3335,3900));
 #print Q1
 
@@ -70,7 +70,7 @@ cx=0.5*Q1.shape[1];
 
 Npoints=0;
 
-disp('Creating Q1 matrix')
+print('Creating Q1 matrix')
 for m in range(Q1.shape[0]):
 	print(('m/Q1.shape[0] = ',m/Q1.shape[0]))
 	#print(('m/size(Q1,1) = ',m/Q1.shape[0]))
