@@ -1,4 +1,5 @@
-function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent)
+function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
+%function blok = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
 % filename_cellarray = holes_test(fileBaseName,type)
 % type = loncar,DFBrectSpiral,DFBrectRaster,DFBtriangle
 % ex:
@@ -11,8 +12,12 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
 % a=holes_test('../../../DFBrectRaster','DFBrectRaster',30000,3*2400,11);readStrFile(a);
 % a=holes_test('../../../DFBtriangle','DFBtriangle',30000,3*2400,11);readStrFile(a);
 
+%  blok=2
+
+%  type
   switch type
     case 'loncar'
+      disp('BLOOOO')
       % loncar
       holeType_left = 0;
       holeType_center = 0;
@@ -50,6 +55,7 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   
   if exist('mag','var')==0;mag = 34000;end;
   if exist('dwell','var')==0;dwell = 3*2400;end; %unit: 0.1us
+  if exist('radius_mum','var')==0;radius_mum = 1;end; %0.500;%0.450+0.065;
   rep = 2;
   Ntop = 10;%8;
   Nbottom = 20;%18;%40;
@@ -57,9 +63,10 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   size_y_mum = 0.200;
   delta_x_mum = size_x_mum + 2*0.078;
   cavity_x_mum = 2*0.145;
-  radius_mum = 1;%0.500;%0.450+0.065;
   
   height_mum = 9
+
+  % Why sug? What does it mean?
   Nsug = (height_mum - cavity_x_mum )/delta_x_mum
   Ntopsug = 1/3*(height_mum - cavity_x_mum )/delta_x_mum
   Nbottomsug = 2/3*(height_mum - cavity_x_mum )/delta_x_mum
@@ -134,5 +141,9 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
         fileBaseName2 = fileBaseName;
   end
   fileBaseName3 = [fileBaseName2,'.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep)];
+
+%  disp('RUNNING HOLES')
   filename_cellarray = holes(fileBaseName3,mag,dwell,rep,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,separate_files);
+%  filename_cellarray
 end
+
