@@ -1,6 +1,8 @@
 % upper case = pixels
 % lower case = microns
 
+% WARNING: DOES NOT WORK YET. UNFINISHED.
+
 function filename_cellarray = holes2(fileBaseName,mag,dwell,rep_vec,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,beamCurrent,separate_files)
   % rep Repetitions - try 1.
   % mag Magnification - set value from 20 to 200000.
@@ -47,7 +49,7 @@ function filename_cellarray = holes2(fileBaseName,mag,dwell,rep_vec,holes_X,hole
   end
     
   % writing
-  mkdir(folder);
+  mkdir(fileBaseName);
   if separate_files
     dwell=[];
     x=[];

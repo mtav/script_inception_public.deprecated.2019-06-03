@@ -1,6 +1,8 @@
 % upper case = pixels
 % lower case = microns
 
+%fileBaseName='tmp';mag=30000;dwell=123;rep=18;holes_X=[1,2,3];holes_Y=[2,3,4];holes_Size_X=[0.1,0.2,0.3];holes_Size_Y=[0.2,0.3,0.4];holes_Type=[0,1,2];separate_files=true;beamCurrent=11;
+
 function filename_cellarray = holes(fileBaseName,mag,dwell,rep,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,separate_files,beamCurrent)
   % rep Repetitions - try 1.
   % mag Magnification - set value from 20 to 200000.
