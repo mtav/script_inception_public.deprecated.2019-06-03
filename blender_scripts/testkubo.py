@@ -69,10 +69,23 @@ def testkubo2():
 #bpy.ops.object.add_named(linked=False, name="Cube")
 
 def boxtest():
-  FDTDGeometryObjects_obj = FDTDGeometryObjects()
-  FDTDGeometryObjects_obj.GEObox('boxtest', Vector([1,1,1]), Vector([2,3,4]))
-  FDTDGeometryObjects_obj.GEOblock('name', Vector([2,3,4]), Vector([5,5,5]), 1, 1)
-  #FDTDGeometryObjects_obj.GEOblock_matrix('name', Matrix(), 1, 1)
+	FDTDGeometryObjects_obj = FDTDGeometryObjects()
+	FDTDGeometryObjects_obj.GEObox('GEObox', Vector([1,1,1]), Vector([2,3,4]))
+	FDTDGeometryObjects_obj.GEOblock('GEOblock', Vector([2,3,4]), Vector([5,5,5]), 1, 1)
+	# initialise rotation_matrix
+	rotation_matrix = Matrix()
+	rotation_matrix.identity()
+	# scale object
+	Sx = Matrix.Scale(abs(2), 4, Vector((1,0,0)) )
+	Sy = Matrix.Scale(abs(5), 4, Vector((0,1,0)) )
+	Sz = Matrix.Scale(abs(7), 4, Vector((0,0,1)) )
+	rotation_matrix *= Sx*Sy*Sz;
+	# position object
+	T = Matrix.Translation(Vector([-1,-2,-3]))
+	rotation_matrix *= T;
+	# add rotations
+	rotation_matrix *= rotationMatrix(Vector([1,1,1]), Vector([1,2,0]),25);
+	FDTDGeometryObjects_obj.GEOblock_matrix('GEOblock_matrix', rotation_matrix, 3, 2)
 
 def importTest():
   importBristolFDTD(os.getenv("HOME")+'/Development/script_inception_public/geometries/qedc3_3_0525b.geo')

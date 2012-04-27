@@ -160,18 +160,35 @@ class FDTDGeometryObjects:
         #return;
     
     def GEOblock_matrix(self, name, rotation_matrix, permittivity, conductivity):
-        #~ Blender.Window.SetActiveLayer(1<<8);
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(45,45,0))
+      
+      # get added object
+      obj = bpy.context.active_object
+      
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
+        
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+      
+      obj.matrix_world = rotation_matrix
+      
+      return
+
+        ##~ Blender.Window.SetActiveLayer(1<<8);
+        #scene = Blender.Scene.GetCurrent();
+        #mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        obj = scene.objects.new(mesh, name);
-        obj.setMatrix(rotation_matrix);
-        obj.transp = True; obj.wireMode = True;
-        #~ obj.layers = [ 8 ];
-        return;
+        #obj = scene.objects.new(mesh, name);
+        #obj.setMatrix(rotation_matrix);
+        #obj.transp = True; obj.wireMode = True;
+        ##~ obj.layers = [ 8 ];
+        #return;
     
     def GEOcylinder(self, name, center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
         scene = Blender.Scene.GetCurrent();
@@ -584,11 +601,11 @@ def Orthogonal(vec):
 
 def rotationMatrix(axis_point, axis_direction, angle_degrees):
   ''' return a rotation matrix for a rotation around an arbitrary axis '''
-  axis = Blender.Mathutils.Vector(axis_direction[0],axis_direction[1],axis_direction[2])
-  C = Blender.Mathutils.Vector(axis_point[0],axis_point[1],axis_point[2]);
-  T = Blender.Mathutils.TranslationMatrix(C)
-  Tinv = Blender.Mathutils.TranslationMatrix(-C)
-  R = Blender.Mathutils.RotationMatrix(angle_degrees, 4, 'r', axis)
+  axis = Vector([axis_direction[0],axis_direction[1],axis_direction[2]])
+  C = Vector([axis_point[0],axis_point[1],axis_point[2]]);
+  T = Matrix.Translation(C)
+  Tinv = Matrix.Translation(-C)
+  R = Matrix.Rotation(angle_degrees, 4, axis)
   return Tinv*R*T;
 
 ###############################
