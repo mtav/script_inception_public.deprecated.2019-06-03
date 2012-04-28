@@ -1,7 +1,9 @@
 function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
-%function blok = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
-% filename_cellarray = holes_test(fileBaseName,type)
+% Usage:
+% filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
+%
 % type = loncar,DFBrectSpiral,DFBrectRaster,DFBtriangle
+%
 % ex:
 % a=holes_test('loncar.str','loncar');readStrFile(a);
 % a=holes_test('DFBrectSpiral.str','DFBrectSpiral');readStrFile(a);
@@ -12,9 +14,6 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
 % a=holes_test('../../../DFBrectRaster','DFBrectRaster',30000,3*2400,11);readStrFile(a);
 % a=holes_test('../../../DFBtriangle','DFBtriangle',30000,3*2400,11);readStrFile(a);
 
-%  blok=2
-
-%  type
   switch type
     case 'loncar'
       disp('BLOOOO')
@@ -133,17 +132,7 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   
   separate_files = 0;
 
-  % TODO: Finally create a function for this kind of stuff
-  [ folder, basename, ext ] = fileparts(fileBaseName);
-  if strcmp(ext,'.str')
-        fileBaseName2 = fullfile(folder, basename);
-  else
-        fileBaseName2 = fileBaseName;
-  end
-  fileBaseName3 = [fileBaseName2,'.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep)];
+  fileBaseName3 = [basename(fileBaseName,'.str'),'.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep)];
 
-%  disp('RUNNING HOLES')
   filename_cellarray = holes(fileBaseName3,mag,dwell,rep,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,separate_files);
-%  filename_cellarray
 end
-
