@@ -97,22 +97,24 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
 
   end
 
+  % pbaspect temporarily disabled for quick octave (3.2.4) compatibility
+  % (although the function seems to be available on later octave versions)
   if exist('magnitude','var')==1
     subplot(1,2,1);
     xlabel('pixels');
     ylabel('pixels');
     axis([0 4096 0 4096]);
-    pbaspect([1,1,1]);
+    % pbaspect([1,1,1]);
     subplot(1,2,2);
     xlabel('mum');
     ylabel('mum');
     axis([0 res*4096 0 res*4096]);
-    pbaspect([1,1,1]);
+    % pbaspect([1,1,1]);
   else
     xlabel('pixels');
     ylabel('pixels');
     axis([0 4096 0 4096]);
-    pbaspect([1,1,1]);
+    % pbaspect([1,1,1]);
   end
 
 end
