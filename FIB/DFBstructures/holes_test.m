@@ -1,22 +1,21 @@
-function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
+function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep)
 % Usage:
-% filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum)
+%  filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep)
 %
-% type = loncar,DFBrectSpiral,DFBrectRaster,DFBtriangle
+%  type = loncar,DFBrectSpiral,DFBrectRaster,DFBtriangle
 %
 % ex:
-% a=holes_test('loncar.str','loncar');readStrFile(a);
-% a=holes_test('DFBrectSpiral.str','DFBrectSpiral');readStrFile(a);
-% a=holes_test('DFBrectRaster.str','DFBrectRaster');readStrFile(a);
-% a=holes_test('DFBtriangle.str','DFBtriangle');readStrFile(a);
-% a=holes_test('../../../loncar','loncar',30000,3*2400,11);readStrFile(a);
-% a=holes_test('../../../DFBrectSpiral','DFBrectSpiral',30000,3*2400,11);readStrFile(a);
-% a=holes_test('../../../DFBrectRaster','DFBrectRaster',30000,3*2400,11);readStrFile(a);
-% a=holes_test('../../../DFBtriangle','DFBtriangle',30000,3*2400,11);readStrFile(a);
+%  a=holes_test('loncar.str','loncar');readStrFile(a);
+%  a=holes_test('DFBrectSpiral.str','DFBrectSpiral');readStrFile(a);
+%  a=holes_test('DFBrectRaster.str','DFBrectRaster');readStrFile(a);
+%  a=holes_test('DFBtriangle.str','DFBtriangle');readStrFile(a);
+%  a=holes_test('loncar','loncar',30000,3*2400,11);readStrFile(a);
+%  a=holes_test('DFBrectSpiral','DFBrectSpiral',30000,3*2400,11);readStrFile(a);
+%  a=holes_test('DFBrectRaster','DFBrectRaster',30000,3*2400,11);readStrFile(a);
+%  a=holes_test('DFBtriangle','DFBtriangle',30000,3*2400,11);readStrFile(a);
 
   switch type
     case 'loncar'
-      disp('BLOOOO')
       % loncar
       holeType_left = 0;
       holeType_center = 0;
@@ -55,20 +54,20 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   if exist('mag','var')==0;mag = 34000;end;
   if exist('dwell','var')==0;dwell = 3*2400;end; %unit: 0.1us
   if exist('radius_mum','var')==0;radius_mum = 1;end; %0.500;%0.450+0.065;
-  rep = 2;
-  Ntop = 10;%8;
-  Nbottom = 20;%18;%40;
-  size_x_mum = 2*0.066;
-  size_y_mum = 0.200;
+  if exist('Ntop','var')==0; Ntop = 10;end; %8;
+  if exist('Nbottom','var')==0; Nbottom = 20;end; %18;%40;
+  if exist('size_x_mum','var')==0; size_x_mum = 2*0.066; end;
+  if exist('size_y_mum','var')==0; size_y_mum = 0.200; end;
+  if exist('rep','var')==0; rep = 2; end;
+  
   delta_x_mum = size_x_mum + 2*0.078;
   cavity_x_mum = 2*0.145;
   
+  % show Ntop/Nbottom suggestions to fit specified height_mum (use them directly instead of Ntop/Nbottom?)
   height_mum = 9
-
-  % Why sug? What does it mean?
-  Nsug = (height_mum - cavity_x_mum )/delta_x_mum
-  Ntopsug = 1/3*(height_mum - cavity_x_mum )/delta_x_mum
-  Nbottomsug = 2/3*(height_mum - cavity_x_mum )/delta_x_mum
+  N_suggested = (height_mum - cavity_x_mum )/delta_x_mum
+  Ntop_suggested = 1/3*(height_mum - cavity_x_mum )/delta_x_mum
+  Nbottom_suggested = 2/3*(height_mum - cavity_x_mum )/delta_x_mum
   
   height_mum = Nbottom*delta_x_mum + cavity_x_mum + Ntop*delta_x_mum;
   disp(['height_mum = ',num2str(height_mum)]);
@@ -83,56 +82,69 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   end
   
   x_current = -0.5*height_mum;
-  holes_X = [];
-  holes_Y = [];
-  holes_Type = [];
+  holes_X_bottom = [];
+  holes_Y_bottom = [];
+  holes_Type_bottom = [];
   
+  holes_Y_position_factor = 1
   for i = 1:Nbottom
     if left
-      holes_X = [ holes_X, x_current];
-      holes_Y = [ holes_Y, 0.5*radius_mum];
-      holes_Type = [ holes_Type, holeType_left ];
+      holes_X_bottom = [ holes_X_bottom, x_current];
+      holes_Y_bottom = [ holes_Y_bottom, holes_Y_position_factor*radius_mum];
+      holes_Type_bottom = [ holes_Type_bottom, holeType_left ];
     end
     if center
-      holes_X = [ holes_X, x_current];
-      holes_Y = [ holes_Y, 0];
-      holes_Type = [ holes_Type, holeType_center ];
+      holes_X_bottom = [ holes_X_bottom, x_current];
+      holes_Y_bottom = [ holes_Y_bottom, 0];
+      holes_Type_bottom = [ holes_Type_bottom, holeType_center ];
     end
     if right
-      holes_X = [ holes_X, x_current];
-      holes_Y = [ holes_Y, -0.5*radius_mum];
-      holes_Type = [ holes_Type, holeType_right ];
+      holes_X_bottom = [ holes_X_bottom, x_current];
+      holes_Y_bottom = [ holes_Y_bottom, -holes_Y_position_factor*radius_mum];
+      holes_Type_bottom = [ holes_Type_bottom, holeType_right ];
     end
     x_current = x_current + delta_x_mum;
   end
   
   x_current = x_current + cavity_x_mum + size_x_mum;
 
+  holes_X_top = [];
+  holes_Y_top = [];
+  holes_Type_top = [];
   for i = 1:Ntop
     if left
-      holes_X = [ holes_X, x_current];
-      holes_Y = [ holes_Y, 0.5*radius_mum];
-      holes_Type = [ holes_Type, holeType_left ];
+      holes_X_top = [ holes_X_top, x_current];
+      holes_Y_top = [ holes_Y_top, holes_Y_position_factor*radius_mum];
+      holes_Type_top = [ holes_Type_top, holeType_left ];
     end
     if center
-      holes_X = [ holes_X, x_current];
-      holes_Y = [ holes_Y, 0];
-      holes_Type = [ holes_Type, holeType_center ];
+      holes_X_top = [ holes_X_top, x_current];
+      holes_Y_top = [ holes_Y_top, 0];
+      holes_Type_top = [ holes_Type_top, holeType_center ];
     end
     if right
-      holes_X = [ holes_X, x_current];
-      holes_Y = [ holes_Y, -0.5*radius_mum];
-      holes_Type = [ holes_Type, holeType_right ];
+      holes_X_top = [ holes_X_top, x_current];
+      holes_Y_top = [ holes_Y_top, -holes_Y_position_factor*radius_mum];
+      holes_Type_top = [ holes_Type_top, holeType_right ];
     end
     x_current = x_current + delta_x_mum;
   end
   
-  holes_Size_X = size_x_mum*ones(1,length(holes_X));
-  holes_Size_Y = size_y_mum*ones(1,length(holes_X));
+  holes_Size_X_bottom = size_x_mum*ones(1,length(holes_X_bottom));
+  holes_Size_Y_bottom = size_y_mum*ones(1,length(holes_Y_bottom));
+  holes_Size_X_top = size_x_mum*ones(1,length(holes_X_top));
+  holes_Size_Y_top = size_y_mum*ones(1,length(holes_Y_top));
+  
+  holes_X_all = [ holes_X_bottom, holes_X_top ];
+  holes_Y_all = [ holes_Y_bottom, holes_Y_top ];
+  holes_Size_X_all = [ holes_Size_X_bottom, holes_Size_X_top ];
+  holes_Size_Y_all = [ holes_Size_Y_bottom, holes_Size_Y_top ];
+  holes_Type_all = [ holes_Type_bottom, holes_Type_top ];
   
   separate_files = 0;
 
-  fileBaseName3 = [basename(fileBaseName,'.str'),'.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep)];
-
-  filename_cellarray = holes(fileBaseName3,mag,dwell,rep,holes_X,holes_Y,holes_Size_X,holes_Size_Y,holes_Type,separate_files);
+  fileBaseName3 = [basename(fileBaseName,'.str'),'.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep),'.hry_',num2str(size_y_mum)];
+  filename_cellarray_bottom = holes([fileBaseName3,'.bottom'],mag,dwell,rep,holes_X_bottom,holes_Y_bottom,holes_Size_X_bottom,holes_Size_Y_bottom,holes_Type_bottom,separate_files);
+  filename_cellarray_top = holes([fileBaseName3,'.top'],mag,dwell,rep,holes_X_top,holes_Y_top,holes_Size_X_top,holes_Size_Y_top,holes_Type_top,separate_files);
+  filename_cellarray_all = holes([fileBaseName3,'.all'],mag,dwell,rep,holes_X_all,holes_Y_all,holes_Size_X_all,holes_Size_Y_all,holes_Type_all,separate_files);
 end
