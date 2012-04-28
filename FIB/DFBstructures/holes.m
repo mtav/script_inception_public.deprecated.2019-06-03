@@ -8,7 +8,8 @@ function filename_cellarray = holes(fileBaseName,mag,dwell,rep,holes_X,holes_Y,h
   % mag Magnification - set value from 20 to 200000.
   % holes_X : list of X positions of the holes (in mum)
   % holes_Y : list of Y positions of the holes (in mum)
-  % holes_Radius : list of radii of the holes (in mum)
+  % holes_Size_X = list of radii of the holes (in mum), X direction
+  % holes_Size_Y = list of radii of the holes (in mum), Y direction
   % (x=0,y=0) = center of the screen
   % x = horizontal axis, from left to right
   % y = vertical axis, from bottom to top
