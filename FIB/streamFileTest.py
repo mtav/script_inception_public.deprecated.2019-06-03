@@ -25,7 +25,7 @@ spotSizes={1:8,\
 6600: 270,\
 11500: 500}
 
-scanType='s';  #  CAnbe 'v' or 'h' or 's'
+scanType='s';  #  Can be 'v' or 'h' or 's'
 
 #sr=0.42; #The sputter rate µm3/nC 
 mag=36000;
