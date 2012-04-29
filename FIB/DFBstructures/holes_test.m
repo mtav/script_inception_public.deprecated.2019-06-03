@@ -1,4 +1,4 @@
-function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,customconfig)
+function filename_cellarray_all = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,customconfig)
 % Usage:
 %  filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,customconfig)
 %
@@ -51,12 +51,12 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
       if exist('customconfig','var')==0
         error('Unexpected type. No streamfile created.');
       else
-        holeType_left = customconfig[1];
-        holeType_center = customconfig[2];
-        holeType_right = customconfig[3];
-        left = customconfig[4];
-        center = customconfig[5];
-        right = customconfig[6];
+        holeType_left = customconfig(1);
+        holeType_center = customconfig(2);
+        holeType_right = customconfig(3);
+        left = customconfig(4);
+        center = customconfig(5);
+        right = customconfig(6);
       end
   end
   
@@ -152,7 +152,7 @@ function filename_cellarray = holes_test(fileBaseName,type,mag,dwell,beamCurrent
   
   separate_files = 0;
 
-  fileBaseName3 = basename(fileBaseName,'.str');
+  fileBaseName3 = [dirname(fileBaseName), filesep, basename(fileBaseName,'.str')];
   infoString = ['.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep),'.hry_',num2str(size_y_mum)];
   filename_cellarray_bottom = holes([fileBaseName3,'.bottom',infoString],mag,dwell,rep,holes_X_bottom,holes_Y_bottom,holes_Size_X_bottom,holes_Size_Y_bottom,holes_Type_bottom,separate_files);
   filename_cellarray_top = holes([fileBaseName3,'.top',infoString],mag,dwell,rep,holes_X_top,holes_Y_top,holes_Size_X_top,holes_Size_Y_top,holes_Type_top,separate_files);
