@@ -104,17 +104,23 @@ function [x,y,dwell,rep,numPoints] = readStrFile(filename_cellarray, magnitude)
     xlabel('pixels');
     ylabel('pixels');
     axis([0 4096 0 4096]);
-    % pbaspect([1,1,1]);
+    if ~inoctave()
+      pbaspect([1,1,1]);
+    end
     subplot(1,2,2);
     xlabel('mum');
     ylabel('mum');
     axis([0 res*4096 0 res*4096]);
-    % pbaspect([1,1,1]);
+    if ~inoctave()
+      pbaspect([1,1,1]);
+    end
   else
     xlabel('pixels');
     ylabel('pixels');
     axis([0 4096 0 4096]);
-    % pbaspect([1,1,1]);
+    if ~inoctave()
+      pbaspect([1,1,1]);
+    end
   end
 
 end
