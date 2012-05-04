@@ -344,7 +344,7 @@ class GWLobject:
                     print 'Setting PowerScaling to '+cmd[1]
                     self.PowerScaling = float(cmd[1])
                   elif cmd[0].lower()=='laserpower':
-                    print 'Setting LaserPower to '+cmd[1]
+                    # print 'Setting LaserPower to '+cmd[1]
                     self.LaserPower = float(cmd[1])
                   elif cmd[0].lower()=='scanspeed':
                     print 'Setting ScanSpeed to '+cmd[1]
@@ -386,7 +386,7 @@ class GWLobject:
                     self.writingTimeInSeconds = self.writingTimeInSeconds + newTime
                     self.writingDistanceInMum = self.writingDistanceInMum + newDist
                 elif found_last_voxel:
-                    a = last_voxel
+                    a = last_voxel[0:3]
                     b = write_sequence[-1][0:3]
                     newDist = numpy.linalg.norm(numpy.array(b)-numpy.array(a))
                     newTime = newDist/self.ScanSpeed
