@@ -1363,9 +1363,9 @@ class BFDTDobject(object):
           subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()))
           print 'subfile: ', subfile
           if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
-              subfile = getname(subfile,'inp')
+              subfile = addExtension(subfile,'inp')
           else:
-              subfile = getname(subfile,'geo')
+              subfile = addExtension(subfile,'geo')
           [ xmesh_read_loc, box_read_loc ] = self.read_input_file(subfile)
           if xmesh_read_loc:
               xmesh_read = True

@@ -99,7 +99,7 @@ def is_number(s):
     except ValueError:
         return False
 
-def getname(filename, default_extension):
+def addExtension(filename, default_extension):
     ''' add default_extension if the file does not end in .geo or .inp '''
     
     extension = getExtension(filename)
