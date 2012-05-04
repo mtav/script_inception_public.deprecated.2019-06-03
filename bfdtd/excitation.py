@@ -119,11 +119,16 @@ class Excitation(object):
     self.time_constant = float(entry.data[idx]); idx = idx+1
     self.amplitude = float(entry.data[idx]); idx = idx+1
     self.time_offset = float(entry.data[idx]); idx = idx+1
-    self.frequency = float(entry.data[idx]); idx = idx+1
-    self.param1 = float(entry.data[idx]); idx = idx+1
-    self.param2 = float(entry.data[idx]); idx = idx+1
-    self.template_filename = entry.data[idx]; idx = idx+1
-    self.template_source_plane = entry.data[idx]; idx = idx+1
+    if idx<len(entry.data):
+      self.frequency = float(entry.data[idx]); idx = idx+1
+    if idx<len(entry.data):
+      self.param1 = float(entry.data[idx]); idx = idx+1
+    if idx<len(entry.data):
+      self.param2 = float(entry.data[idx]); idx = idx+1
+    if idx<len(entry.data):
+      self.template_filename = entry.data[idx]; idx = idx+1
+    if idx<len(entry.data):
+      self.template_source_plane = entry.data[idx]; idx = idx+1
     if idx<len(entry.data):
       self.template_target_plane = entry.data[idx]; idx = idx+1
     if idx<len(entry.data):

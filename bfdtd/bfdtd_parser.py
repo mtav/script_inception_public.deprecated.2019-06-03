@@ -142,12 +142,23 @@ class Boundaries(object):
     if entry.name:
       self.name = entry.name
     i = 0
-    self.Xpos_bc = int(entry.data[4*i]); self.Xpos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
-    self.Ypos_bc = int(entry.data[4*i]); self.Ypos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
-    self.Zpos_bc = int(entry.data[4*i]); self.Zpos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
-    self.Xneg_bc = int(entry.data[4*i]); self.Xneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
-    self.Yneg_bc = int(entry.data[4*i]); self.Yneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
-    self.Zneg_bc = int(entry.data[4*i]); self.Zneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    if len(entry.data) == 6:
+      self.Xpos_bc = int(entry.data[i]); self.Xpos_param = float_array([1,1,0]); i+=1
+      self.Ypos_bc = int(entry.data[i]); self.Ypos_param = float_array([1,1,0]); i+=1
+      self.Zpos_bc = int(entry.data[i]); self.Zpos_param = float_array([1,1,0]); i+=1
+      self.Xneg_bc = int(entry.data[i]); self.Xneg_param = float_array([1,1,0]); i+=1
+      self.Yneg_bc = int(entry.data[i]); self.Yneg_param = float_array([1,1,0]); i+=1
+      self.Zneg_bc = int(entry.data[i]); self.Zneg_param = float_array([1,1,0]); i+=1
+    elif len(entry.data) == 24:
+      self.Xpos_bc = int(entry.data[4*i]); self.Xpos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+      self.Ypos_bc = int(entry.data[4*i]); self.Ypos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+      self.Zpos_bc = int(entry.data[4*i]); self.Zpos_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+      self.Xneg_bc = int(entry.data[4*i]); self.Xneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+      self.Yneg_bc = int(entry.data[4*i]); self.Yneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+      self.Zneg_bc = int(entry.data[4*i]); self.Zneg_param = float_array(entry.data[1+4*i:4+4*i]); i+=1
+    else:
+      print('ERROR: incorrect number of elements in boundary object')
+      sys.exit(-1)
     return(0)
   def write_entry(self, FILE):
     FILE.write('BOUNDARY  **name='+self.name+'\n')
@@ -1356,21 +1367,25 @@ class BFDTDobject(object):
       
       f = open(filename, 'r')
       for line in f:
-          print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
-          print 'line.strip()=', line.strip() # remove any \n or similar
-          self.fileList.append(line.strip())
-          # this is done so that you don't have to be in the directory containing the .geo/.inp files
-          subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()))
-          print 'subfile: ', subfile
-          if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
-              subfile = addExtension(subfile,'inp')
-          else:
-              subfile = addExtension(subfile,'geo')
-          [ xmesh_read_loc, box_read_loc ] = self.read_input_file(subfile)
-          if xmesh_read_loc:
-              xmesh_read = True
-          if box_read_loc:
-              box_read = True
+          if line.strip(): # only process line if it is not empty
+            print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
+            print 'line.strip()=', line.strip() # remove any \n or similar
+            self.fileList.append(line.strip())
+            # this is done so that you don't have to be in the directory containing the .geo/.inp files
+            #subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip())) # converts absolute paths to relative
+            subfile = os.path.join(os.path.dirname(filename),line.strip()) # uses absolute paths if given
+            print 'subfile: ', subfile
+            if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
+                subfile_ext = addExtension(subfile,'inp')
+            else:
+                subfile_ext = addExtension(subfile,'geo')
+                if not os.path.isfile(subfile_ext):
+                  subfile_ext = addExtension(subfile,'inp')
+            [ xmesh_read_loc, box_read_loc ] = self.read_input_file(subfile_ext)
+            if xmesh_read_loc:
+                xmesh_read = True
+            if box_read_loc:
+                box_read = True
       f.close()
       if (not xmesh_read):
           print 'WARNING: mesh not found'
