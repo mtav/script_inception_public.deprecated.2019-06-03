@@ -170,6 +170,13 @@ def importGWL(filename):
     GWL_obj = GWLobject()
     GWL_obj.readSubstitutes(substitutes_file)
     GWL_obj.readGWL(filename)
+    
+    #print('Nvoxels = '+str(Nvoxels))
+    print('GWL_obj.writingTimeInSeconds = '+str(GWL_obj.writingTimeInSeconds))
+    print('GWL_obj.writingTimeInMinutes = '+str(GWL_obj.writingTimeInSeconds/60.))
+    print('GWL_obj.writingTimeInHours = '+str(GWL_obj.writingTimeInSeconds/(60.*60.)))
+    print('GWL_obj.writingDistanceInMum = '+str(GWL_obj.writingDistanceInMum))
+    
     Nvoxel = 0
     verts = []
     for write_sequence in GWL_obj.GWL_voxels:

@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import division
 from bfdtd.meshingparameters import *
 from utilities.common import *
+from bfdtd.meshobject import *
+from bfdtd.excitationTemplate import *
+from constants.constants import *
 
 # excitation objects
 class Excitation(object):
@@ -150,7 +154,7 @@ class Excitation(object):
       FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
       FILE.write("%E **AMPLITUDE\n" % self.amplitude)
       FILE.write("%E **TIME OFFSET\n" % self.time_offset)
-      FILE.write("%E **FREQ (HZ)\n" % self.frequency)
+      FILE.write("%E **FREQ (MHz if dimensions in mum)\n" % self.frequency)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
       FILE.write('"'+str(self.template_filename)+'" ** TEMPLATE FILENAME\n')
@@ -180,7 +184,7 @@ class Excitation(object):
       FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
       FILE.write("%E **AMPLITUDE\n" % self.amplitude)
       FILE.write("%E **TIME OFFSET\n" % self.time_offset)
-      FILE.write("%E **FREQ (HZ)\n" % self.frequency)
+      FILE.write("%E **FREQ (MHz if dimensions in mum)\n" % self.frequency)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
       # template specific
@@ -206,46 +210,234 @@ class Excitation(object):
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class ExcitationWithGaussianTemplate(Excitation):
-  def __init__(self,name=None):
+  def __init__(self,
+    name = None,
+    layer = None,
+    group = None,
+    centre = None, 
+    sigma_x = None,
+    sigma_y = None,
+    amplitude = None,
+    plane_direction = None,
+    excitation_direction = None,
+    frequency = None,
+    template_filename = None,
+    mesh = None):
 
-  #centre=P, size=template_radius, plane_direction=propagation_direction, type='2D', excitation_direction=E1, frequency=freq
+    if name is None: name = 'excitation_with_gaussian_template'
+    if layer is None: layer = 'excitation_with_gaussian_template'
+    if group is None: group = 'excitation_with_gaussian_template'
+    if centre is None: centre = [0,0,0]
+    if sigma_x is None: sigma_x = 1
+    if sigma_y is None: sigma_y = 1
+    if amplitude is None: amplitude = 1
+    if plane_direction is None: plane_direction = [0,0,1]
+    if excitation_direction is None: excitation_direction = ['Exre']
+    if frequency is None: frequency = 1
+    if template_filename is None: template_filename = 'template.dat'
+    if mesh is None: mesh = MeshObject()
 
-                #name = None,
-                #current_source = None,
-                #P1 = None,
-                #P2 = None,
-                #E = None,
-                #H = None,
-                #Type = None,
-                #time_constant = None,
-                #amplitude = None,
-                #time_offset = None,
-                #frequency = None,
-                #param1 = None,
-                #param2 = None,
-                #template_filename = None,
-                #template_source_plane = None,
-                #template_target_plane = None,
-                #template_direction = None,
-                #template_rotation = None,
-                #layer = None,
-                #group = None):
-
-  
-
-    #if name is None: name = 'mode_filtered_probe'
-    #if first is None: first = 1 # crashes if = 0
-    #if repetition is None: repetition = 524200,
-    #if plane is None: plane = 1 #1,2,3 for x,y,z
-    #if P1 is None: P1 = [0,0,0]
-    #if P2 is None: P2 = [0,1,1]
-    #if layer is None: layer = 'mode_filtered_probe'
-    #if group is None: group = 'mode_filtered_probe'
+    Excitation.__init__(self)
+    self.name = name
+    self.layer = layer
+    self.group = group
     
-    #Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
-    #self.E = [0,0,0]
-    #self.H = [0,0,0]
-    #self.J = [0,0,0]
-    #self.power = 0
-    #self.eps = 0
-    Excitation.__init__(self,name=name)
+    self.centre = centre
+    self.sigma_x = sigma_x
+    self.sigma_y = sigma_y
+    self.amplitude = amplitude
+    
+    # the mesh is essential for template excitations
+    self.mesh = mesh
+    
+    self.plane_direction = plane_direction
+    self.excitation_direction = excitation_direction # for the template generation
+    self.frequency = frequency
+    self.template_filename = template_filename
+
+    self.current_source = 11
+    self.E = [1,1,1] # for the .inp file
+
+    # set extension
+    plane_direction_vector, plane_direction_alpha = getVecAlphaDirectionFromVar(self.plane_direction)
+    diagonal = (numpy.array(plane_direction_vector)^numpy.array([1,1,1]))
+    sigma = max(sigma_x, sigma_y)
+    self.setExtension(centre - sigma*diagonal, centre + sigma*diagonal)
+
+    self.updateTemplate()
+  
+  def getTemplate(self):
+    updateTemplate()
+    return self.template
+  
+  def updateTemplate(self):
+    # set up template
+    plane_direction_vector, plane_direction_alpha = getVecAlphaDirectionFromVar(self.plane_direction)
+
+    self.template_source_plane = plane_direction_alpha
+    self.template_target_plane = plane_direction_alpha
+    self.template_direction = 1
+    self.template_rotation = 1
+
+    out_col_name = self.excitation_direction
+  
+    if plane_direction_alpha=='x':
+      column_titles = ['y','z']
+      x = self.centre[1]
+      y = self.centre[2]
+      x_list = self.mesh.getYmesh()
+      y_list = self.mesh.getZmesh()
+      P1 = [self.centre[0],min(x_list),min(y_list)]
+      P2 = [self.centre[0],max(x_list),max(y_list)]
+    if plane_direction_alpha=='y':
+      column_titles = ['x','z']
+      x = self.centre[0]
+      y = self.centre[2]
+      x_list = self.mesh.getXmesh()
+      y_list = self.mesh.getZmesh()
+      P1 = [min(x_list),self.centre[1],min(y_list)]
+      P2 = [max(x_list),self.centre[1],max(y_list)]
+    if plane_direction_alpha=='z':
+      column_titles = ['x','y']
+      x = self.centre[0]
+      y = self.centre[1]
+      x_list = self.mesh.getXmesh()
+      y_list = self.mesh.getYmesh()
+      P1 = [min(x_list),min(y_list),self.centre[2]]
+      P2 = [max(x_list),max(y_list),self.centre[2]]
+      
+    column_titles.extend(['Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim'])
+
+    # set extension
+    self.setExtension(P1, P2)
+    
+    self.template = ExcitationGaussian1(amplitude = self.amplitude, beam_centre_x = x, beam_centre_y = y, sigma_x = self.sigma_x, sigma_y = self.sigma_y, fileName = self.template_filename)
+    #template = ExcitationGaussian2(amplitude = amplitude, beam_centre_x = x, beam_centre_y = y, c = 0, sigma = size, fileName='template.dat')
+    self.template.x_list = x_list
+    self.template.y_list = y_list
+    self.template.out_col_name = out_col_name
+    self.template.column_titles = column_titles
+    
+  def write_entry(self, FILE):
+
+    self.updateTemplate()
+    
+    # write the INP entry using the parent class
+    Excitation.write_entry(self, FILE)
+    
+    # write the template
+    #print self.mesh
+    self.template.writeDatFile( os.path.dirname(FILE.name) + os.path.sep + self.template_filename)
+
+class ExcitationWithUniformTemplate(Excitation):
+  def __init__(self,
+    name = None,
+    layer = None,
+    group = None,
+    centre = None, 
+    amplitude = None,
+    plane_direction = None,
+    excitation_direction = None,
+    frequency = None,
+    template_filename = None,
+    mesh = None):
+
+    if name is None: name = 'excitation_with_uniform_template'
+    if layer is None: layer = 'excitation_with_uniform_template'
+    if group is None: group = 'excitation_with_uniform_template'
+    if centre is None: centre = [0,0,0]
+    if amplitude is None: amplitude = 1
+    if plane_direction is None: plane_direction = [0,0,1]
+    if excitation_direction is None: excitation_direction = ['Exre']
+    if frequency is None: frequency = 1
+    if template_filename is None: template_filename = 'template.dat'
+    if mesh is None: mesh = MeshObject()
+
+    Excitation.__init__(self)
+    self.name = name
+    self.layer = layer
+    self.group = group
+    
+    self.centre = centre
+    self.amplitude = amplitude
+    
+    # the mesh is essential for template excitations
+    self.mesh = mesh
+    
+    self.plane_direction = plane_direction
+    self.excitation_direction = excitation_direction # for the template generation
+    self.frequency = frequency
+    self.template_filename = template_filename
+
+    self.current_source = 11
+    self.E = [1,1,1] # for the .inp file
+
+    # set extension
+    plane_direction_vector, plane_direction_alpha = getVecAlphaDirectionFromVar(self.plane_direction)
+    diagonal = (numpy.array(plane_direction_vector)^numpy.array([1,1,1]))
+    self.setExtension(centre - diagonal, centre + diagonal)
+
+    self.updateTemplate()
+  
+  def getTemplate(self):
+    updateTemplate()
+    return self.template
+  
+  def updateTemplate(self):
+    # set up template
+    plane_direction_vector, plane_direction_alpha = getVecAlphaDirectionFromVar(self.plane_direction)
+
+    self.template_source_plane = plane_direction_alpha
+    self.template_target_plane = plane_direction_alpha
+    self.template_direction = 1
+    self.template_rotation = 1
+
+    out_col_name = self.excitation_direction
+  
+    if plane_direction_alpha=='x':
+      column_titles = ['y','z']
+      x = self.centre[1]
+      y = self.centre[2]
+      x_list = self.mesh.getYmesh()
+      y_list = self.mesh.getZmesh()
+      P1 = [self.centre[0],min(x_list),min(y_list)]
+      P2 = [self.centre[0],max(x_list),max(y_list)]
+    if plane_direction_alpha=='y':
+      column_titles = ['x','z']
+      x = self.centre[0]
+      y = self.centre[2]
+      x_list = self.mesh.getXmesh()
+      y_list = self.mesh.getZmesh()
+      P1 = [min(x_list),self.centre[1],min(y_list)]
+      P2 = [max(x_list),self.centre[1],max(y_list)]
+    if plane_direction_alpha=='z':
+      column_titles = ['x','y']
+      x = self.centre[0]
+      y = self.centre[1]
+      x_list = self.mesh.getXmesh()
+      y_list = self.mesh.getYmesh()
+      P1 = [min(x_list),min(y_list),self.centre[2]]
+      P2 = [max(x_list),max(y_list),self.centre[2]]
+      
+    column_titles.extend(['Exre','Exim','Eyre','Eyim','Ezre','Ezim','Hxre','Hxim','Hyre','Hyim','Hzre','Hzim'])
+
+    # set extension
+    self.setExtension(P1, P2)
+    
+    self.template = ExcitationUniform( amplitude = self.amplitude, fileName = self.template_filename )
+    #template = ExcitationGaussian2(amplitude = amplitude, beam_centre_x = x, beam_centre_y = y, c = 0, sigma = size, fileName='template.dat')
+    self.template.x_list = x_list
+    self.template.y_list = y_list
+    self.template.out_col_name = out_col_name
+    self.template.column_titles = column_titles
+    
+  def write_entry(self, FILE):
+
+    self.updateTemplate()
+    
+    # write the INP entry using the parent class
+    Excitation.write_entry(self, FILE)
+    
+    # write the template
+    #print self.mesh
+    self.template.writeDatFile( os.path.dirname(FILE.name) + os.path.sep + self.template_filename)

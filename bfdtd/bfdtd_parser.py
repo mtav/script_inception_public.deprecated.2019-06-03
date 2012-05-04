@@ -11,6 +11,7 @@ from bfdtd.bristolFDTD_generator_functions import *
 from meshing.subGridMultiLayer import *
 from bfdtd.excitation import *
 from bfdtd.meshobject import *
+from constants.constants import *
 #from bfdtd.meshbox import *
 
 #==== CLASSES START ====#
@@ -120,6 +121,13 @@ class Boundaries(object):
   def setBoundaryConditionsZnegToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
     self.Zneg_bc = 10
     self.Zneg_param = [ number_of_layers, grading_index, min_reflection_coeff ]
+  def setBoundaryConditionsToPML(self, number_of_layers=8, grading_index=2, min_reflection_coeff=1e-3):
+    self.setBoundaryConditionsXnegToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsYnegToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsZnegToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsXposToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsYposToPML(number_of_layers, grading_index, min_reflection_coeff)
+    self.setBoundaryConditionsZposToPML(number_of_layers, grading_index, min_reflection_coeff)
       
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -199,21 +207,26 @@ class Box(object):
     FILE.write('}\n')
     FILE.write('\n')
   def getCenter(self):
-    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
+    return numpy.array([ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ])
 
 # geometry objects
 class Geometry_object(object):
-    def __init__(self):
-        self.name = 'geometry object'
-        self.rotation_list = []
-        self.meshing_parameters = MeshingParameters()
-    def __str__(self):
-        ret = '--->object rotation_list'
-        for i in range(len(self.rotation_list)):
-            ret += '\n'
-            ret += '-->object rotation '+str(i)+':\n'
-            ret += self.rotation_list[i].__str__()
-        return(ret)
+  def __init__(self):
+    self.name = 'geometry object'
+    self.rotation_list = []
+    self.meshing_parameters = MeshingParameters()
+    self.permittivity = 1
+    self.conductivity = 0
+  def __str__(self):
+    ret = '--->object rotation_list'
+    for i in range(len(self.rotation_list)):
+      ret += '\n'
+      ret += '-->object rotation '+str(i)+':\n'
+      ret += self.rotation_list[i].__str__()
+    return(ret)
+  def setRefractiveIndex(self,n):
+    self.permittivity = pow(n,2)
+    self.conductivity = 0
 
 class Sphere(Geometry_object):
   def __init__(self):
@@ -225,7 +238,7 @@ class Sphere(Geometry_object):
     self.centre = [0,0,0]
     self.outer_radius = 0
     self.inner_radius = 0
-    self.permittivity = 0
+    self.permittivity = 1
     self.conductivity = 0
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -336,6 +349,21 @@ class Block(Geometry_object):
     return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Distorted(Geometry_object):
+  '''
+  0,1,2,3 = top face numbered clockwise
+  4,5,6,7 = bottom face numbered clockwise
+  3 connected to 4
+  2 connected to 5
+  0 connected to 7
+  1 connected to 6
+  Normal faces viewed from outside:
+    [3,2,1,0]
+    [7,6,5,4]
+    [0,1,6,7]
+    [1,2,5,6]
+    [2,3,4,5]
+    [3,0,7,4]  
+  '''
   def __init__(self,
     name = None,
     layer = None,
@@ -374,13 +402,12 @@ class Distorted(Geometry_object):
     self.permittivity = float(entry.data[8*3])
     self.conductivity = float(entry.data[8*3+1])
   def write_entry(self, FILE):
-    self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('DISTORTED **name='+self.name+'\n')
     FILE.write('{\n')
     for i in range(len(self.vertices)):
-      FILE.write("%E **XV%d\n" % self.vertices[i][0],i)
-      FILE.write("%E **YV%d\n" % self.vertices[i][1],i)
-      FILE.write("%E **ZV%d\n" % self.vertices[i][2],i)
+      FILE.write("%E **XV%d\n" % (self.vertices[i][0],i) )
+      FILE.write("%E **YV%d\n" % (self.vertices[i][1],i) )
+      FILE.write("%E **ZV%d\n" % (self.vertices[i][2],i) )
     FILE.write("%E **relative Permittivity\n" % self.permittivity)
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
@@ -732,7 +759,7 @@ class ModeFilteredProbe(Time_snapshot):
 
     if name is None: name = 'mode_filtered_probe'
     if first is None: first = 1 # crashes if = 0
-    if repetition is None: repetition = 524200,
+    if repetition is None: repetition = 10,
     if plane is None: plane = 1 #1,2,3 for x,y,z
     if P1 is None: P1 = [0,0,0]
     if P2 is None: P2 = [0,1,1]
@@ -929,8 +956,8 @@ class Probe(object):
   5-13)E,H,J: Field components to be sampled: E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
   '''
   def __init__(self,
-    name = 'probe',
     position = [0,0,0],
+    name = 'probe',
     step=10,
     E=[1,1,1],
     H=[1,1,1],
@@ -1162,18 +1189,27 @@ class BFDTDobject(object):
     return F
 
   def addModeFilteredProbe(self, plane, position):
-    if plane == 1:
+    if not isinstance(position,float) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)      
+    # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
+    # TODO: support multiple types for position argument (int/float or array)
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
       name='X mode filtered probe'
       L = [position, self.box.lower[1], self.box.lower[2]]
       U = [position, self.box.upper[1], self.box.upper[2]]
-    elif plane == 2:
+      plane = 1
+    elif alpha == 'y':
       name='Y mode filtered probe'
       L = [self.box.lower[0], position, self.box.lower[2]]
       U = [self.box.upper[0], position, self.box.upper[2]]
-    elif plane == 3:
+      plane = 2
+    elif alpha == 'z':
       name='Z mode filtered probe'
       L = [self.box.lower[0], self.box.lower[1], position]
       U = [self.box.upper[0], self.box.upper[1], position]
+      plane = 3
     else:
       print(('ERROR: Invalid plane : ',plane))
       sys.exit(1)
@@ -1368,7 +1404,7 @@ class BFDTDobject(object):
     FILE.write('\n')
   
   def writeDatFiles(self,directory):
-    ''' Generate .dat files '''
+    '''Generate template .dat file for a plane excitation'''
     for obj in self.excitation_template_list:
       obj.writeDatFile(directory+os.sep+obj.fileName,self.mesh)
     return
@@ -1412,6 +1448,8 @@ class BFDTDobject(object):
     with open(fileName, 'w') as out:
   
       for obj in self.excitation_list:
+        #obj.directory = os.path.dirname(fileName)
+        obj.mesh = self.mesh
         obj.write_entry(out)
       #print(self.boundaries)
       self.boundaries.write_entry(out)
@@ -1428,15 +1466,7 @@ class BFDTDobject(object):
       #close file
       out.close()
     return
-    
-  #def writeDatFile(self,fileName):
-    #'''Generate template .dat file for a plane excitation'''
-    ## open file
-    #with open(fileName, 'w') as out:
-      #for obj in self.excitation_template_list:
-        #obj.write_entry(out)
-    #return
-    
+        
   def writeFileList(self,fileName,fileList=None):
     ''' Generate .in file '''
     # leaving it external at the moment since it might be practical to use it without having to create a Bfdtd object

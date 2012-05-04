@@ -6,7 +6,10 @@ import numpy
 from bfdtd.bfdtd_parser import *
 
 #TODO: non 45 degree faces, i.e. generic version which would also allow creation of parallel-sided prism
+'''Creates prism with 45 degree mirrors. Should have support for arbitrarily angled mirrors at some point.'''
 class SpecialTriangularPrism(Geometry_object):
+  
+  '''Constructor'''
   def __init__(self,
     name = 'SpecialTriangularPrism',
     layer = 'SpecialTriangularPrism',
@@ -34,6 +37,10 @@ class SpecialTriangularPrism(Geometry_object):
     self.orientation = orientation
     self.COMMENT = 'SpecialTriangularPrism'
     
+    self.mirror1 = True
+    self.mirror2 = True
+    
+  '''printer function'''
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
@@ -55,6 +62,7 @@ class SpecialTriangularPrism(Geometry_object):
     #self.permittivity = float(entry.data[6])
     #self.conductivity = float(entry.data[7])
     
+  '''returns voxels'''
   def getVoxels(self):
     #meshing_parameters = MeshingParameters()
     voxel_list = []
@@ -125,6 +133,7 @@ class SpecialTriangularPrism(Geometry_object):
     #return (voxel_list, meshing_parameters)
     return voxel_list
 
+  '''writes the voxels to the file corresponding to the FILE handle'''
   def write_entry(self, FILE):
     voxels = self.getVoxels()
     for v in voxels:
@@ -142,16 +151,19 @@ class SpecialTriangularPrism(Geometry_object):
       FILE.write('}\n')
       FILE.write('\n')
     
+  '''returns the centre of the bounding box of the prism'''
   def getBoundingBoxCentre(self):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     return(C)
 
+  '''returns the barycentre of the prism'''
   def getGeoCentre(self):
     (A1,B1,C1,A2,B2,C2) = self.getLocalEnvelopPoints()
     G = (A1+B1+C1+A2+B2+C2)/6.0
     GG = [ G[self.orientation[0]],G[self.orientation[1]],G[self.orientation[2]] ]
     return(GG)
 
+  '''returns the envelop points (A1,B1,C1,A2,B2,C2) in global coordinates'''
   def getGlobalEnvelopPoints(self):
     (A1_local,B1_local,C1_local,A2_local,B2_local,C2_local) = self.getLocalEnvelopPoints()
     A1_global = self.local2global(A1_local)
@@ -162,6 +174,7 @@ class SpecialTriangularPrism(Geometry_object):
     C2_global = self.local2global(C2_local)
     return(A1_global,B1_global,C1_global,A2_global,B2_global,C2_global)
   
+  '''returns the envelop points (A1,B1,C1,A2,B2,C2) in local coordinates'''
   def getLocalEnvelopPoints(self):
     ####################################
     # X = triangle size
@@ -206,14 +219,17 @@ class SpecialTriangularPrism(Geometry_object):
 
     return(A1,B1,C1,A2,B2,C2)
   
+  '''convert from global to local coordinates'''
   def global2local(self, P_global):
     P_local = numpy.array([ P_global[self.orientation.index(0)], P_global[self.orientation.index(1)], P_global[self.orientation.index(2)] ])
     return P_local
-
+    
+  '''convert from local to global coordinates'''
   def local2global(self, P_local):
     P_global = numpy.array([ P_local[self.orientation[0]],P_local[self.orientation[1]],P_local[self.orientation[2]] ])
     return P_global
     
+  '''returns the radius (i.e. sidelength/2) of a square inscribed inside the prism cross-section'''
   def getInscribedSquarePlaneRadius(self, G_global):
     G_local = self.global2local(G_global)
     G = numpy.matrix([ [G_local[0]], [G_local[1]] ])
@@ -234,6 +250,7 @@ class SpecialTriangularPrism(Geometry_object):
     radius = abs(k)
     return(radius)
 
+  '''returns the meshing parameters for the prism'''
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     #meshing_parameters = MeshingParameters()
     voxel_list = self.getVoxels()
@@ -246,6 +263,7 @@ class SpecialTriangularPrism(Geometry_object):
     epsz = numpy.vstack([epsz,self.meshing_parameters.maxPermittivityVector_Z])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
+  '''returns the dimension of a single voxel in global coordinates as [dX,dY,dZ]'''
   def getVoxelDimensions(self):
     #dX = self.meshing_parameters.limits_X[1]-self.meshing_parameters.limits_X[0]
     #dY = self.meshing_parameters.limits_Y[1]-self.meshing_parameters.limits_Y[0]
@@ -284,6 +302,7 @@ class SpecialTriangularPrism(Geometry_object):
     voxeldim_global = self.local2global(voxeldim_local)
     return voxeldim_global
     
+  '''moves the prism so that its barycentre is at position P'''
   def setGeoCentre(self,P):
     current = self.getGeoCentre()
     print('self.getGeoCentre() = ',current)
