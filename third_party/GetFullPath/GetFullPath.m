@@ -118,7 +118,7 @@ if ischar(File) == 0  % Non-empty inputs must be strings
 end
 
 if isWIN  % Windows: --------------------------------------------------------
-   FSep = '\';
+   FSep = filesep;
    File = strrep(File, '/', FSep);
    
    isUNC   = strncmp(File, '\\', 2);
@@ -128,7 +128,7 @@ if isWIN  % Windows: --------------------------------------------------------
       ThePath = cd;
       if File(1) == FSep
          if strncmp(ThePath, '\\', 2)   % Current directory is a UNC path
-            sepInd  = strfind(ThePath, '\');
+            sepInd  = strfind(ThePath, FSep);
             ThePath = ThePath(1:sepInd(4));
          else
             ThePath = ThePath(1:3);     % Drive letter only
@@ -163,7 +163,7 @@ if isWIN  % Windows: --------------------------------------------------------
    end
    
 else         % Linux, MacOS: ---------------------------------------------------
-   FSep = '/';
+   FSep = filesep;
    File = strrep(File, '\', FSep);
    
    if strcmp(File, '~') || strncmp(File, '~/', 2)  % Home directory:
@@ -210,14 +210,18 @@ if ~isempty(strfind(File, [FSep, '.']))
       File(length(File)) = [];
    end
    
-   if hasDataRead
+   if hasDataRead && ~inoctave()
       if isWIN  % Need "\\" as separator:
          C = dataread('string', File, '%s', 'delimiter', '\\');  %#ok<REMFF1>
       else
          C = dataread('string', File, '%s', 'delimiter', FSep);  %#ok<REMFF1>
       end
    else  % Use the slower REGEXP in Matlab > 2011b:
+    if ~inoctave()
       C = regexp(File, FSep, 'split');
+    else
+      C = strsplit(File, FSep); % Octave command to split delimited string
+    end
    end
    
    % Remove '\.\' directly without side effects:
