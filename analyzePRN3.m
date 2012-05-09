@@ -21,7 +21,7 @@ function analyzePRN3(prn_file, logfile, logfile_summary, probe_col)
   %probe_col = 3; % mike diamond
   %probe_col = 2; % daniel latest 0/1/2
 
-  fid = fopen([WORKDIR, filesep, 'time.txt'], 'r'); A = textscan(fid,'%s %s %d:%d:%d',1); B = textscan(fid,'%d %s %d:%d:%d'); fclose(fid); iterations = B{1}(end);
+  iterations = parseBFDTDTime([WORKDIR, filesep, 'time.txt']);
 
   [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(prn_file, probe_col, 1, '', true);
 
