@@ -1,4 +1,4 @@
-function GetS21(infilename,outfilename,imgbasename,label)
+function tdtreat(infilename,outfilename,imgbasename,label)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Creates reflection/transmission diagrams based on probe output using tdtreat.
   % Usage:

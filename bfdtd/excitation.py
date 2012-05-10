@@ -8,6 +8,8 @@ from bfdtd.meshobject import *
 from bfdtd.excitationTemplate import *
 from constants.constants import *
 
+# TODO: check coherence between excitation_direction (templates) and E,H (excitation) attributes. Are both necessary? Leads to confusion.
+
 # excitation objects
 class Excitation(object):
   def __init__(self,
