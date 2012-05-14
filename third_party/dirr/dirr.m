@@ -1,4 +1,4 @@
-function [list,sumbytes,varargout] = DIRR(chemin,varargin)
+function [list,sumbytes,varargout] = dirr(chemin,varargin)
 
 %
 %       

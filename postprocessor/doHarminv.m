@@ -47,9 +47,9 @@ function [ status, lambda, Q, outFile, err, minErrInd, frequency, decay_constant
     % read contents of file into "C"
     fid = fopen(outFile,'r');
     tline = fgetl(fid);
-    numCol=length(strfind(tline,','));
-    str=repmat('%f, ',1,numCol);
-    str=[str,'%f'];
+    numCol = length(strfind(tline,','));
+    str = repmat('%f, ',1,numCol);
+    str = [str,'%f'];
     C = textscan(fid, str);
     fclose(fid);
 
@@ -63,7 +63,7 @@ function [ status, lambda, Q, outFile, err, minErrInd, frequency, decay_constant
     lambda = get_c0()./C{1};
     
     % sort everything by lambda
-    [lambda,k]=sort(lambda);
+    [lambda,k] = sort(lambda);
 
     frequency = frequency(k);
     decay_constant = decay_constant(k);
@@ -73,7 +73,7 @@ function [ status, lambda, Q, outFile, err, minErrInd, frequency, decay_constant
     err = err(k);
 
     
-    minErrInd=find(err==min(err));
+    minErrInd = find(err==min(err));
   else
     lambda = -1;
     Q = -1;
