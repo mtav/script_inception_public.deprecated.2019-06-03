@@ -2,7 +2,8 @@ mag = 30000
 %dwell = 5000;
 dwell = 30000;%1.5*12*2400
 %radius_mum = 0.5*1e-3*860.9;
-radius_mum = 0.5*1e-3*1662.5;
+%radius_mum = 0.5*1e-3*1662.5;
+radius_mum = 0.5*1e-3*1286.5;
 Ntop = 10
 Nbottom = 20
 size_x_mum = 2*0.066
@@ -10,7 +11,7 @@ size_x_mum = 2*0.066
 size_y_mum = 0.5
 rep = 2
 
-DSTDIR='~/FIBstreamfiles/'
+DSTDIR='~/FIBstreamfiles/1286.5_separatefiles'
 
 % Note: beamCurrent argument still unused
 

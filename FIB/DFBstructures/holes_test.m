@@ -150,7 +150,7 @@ function filename_cellarray_all = holes_test(fileBaseName,type,mag,dwell,beamCur
   holes_Size_Y_all = [ holes_Size_Y_bottom, holes_Size_Y_top ];
   holes_Type_all = [ holes_Type_bottom, holes_Type_top ];
   
-  separate_files = 0;
+  separate_files = 1;
 
   fileBaseName3 = [dirname(fileBaseName), filesep, basename(fileBaseName,'.str')];
   infoString = ['.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep),'.hry_',num2str(size_y_mum)];
