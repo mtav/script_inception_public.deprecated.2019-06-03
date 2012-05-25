@@ -116,8 +116,8 @@ def importBristolFDTD(filename):
           rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
           
         # create object
-        #FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
-        FDTDGeometryObjects_obj.GEOblock_matrix(sphere.name, rotation_matrix, sphere.permittivity, sphere.conductivity);
+        FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        #FDTDGeometryObjects_obj.GEOblock_matrix(sphere.name, rotation_matrix, sphere.permittivity, sphere.conductivity);
         
     # Block
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
