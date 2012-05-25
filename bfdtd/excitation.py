@@ -37,8 +37,8 @@ class Excitation(object):
     if name is None: name = 'excitation'
     if current_source is None: current_source = 7
     if P1 is None: P1 = [0,0,0]
-    if P2 is None: P2 = [0,0,0]
-    if E is None: E = [0,0,0]
+    if P2 is None: P2 = [1,0,0]
+    if E is None: E = [1,0,0]
     if H is None: H = [0,0,0]
     if Type is None: Type = 10
     if time_constant is None: time_constant = 4.000000E-09 #mus

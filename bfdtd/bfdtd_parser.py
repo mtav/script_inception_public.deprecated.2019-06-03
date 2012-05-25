@@ -361,8 +361,8 @@ class Block(Geometry_object):
 
 class Distorted(Geometry_object):
   '''
-  0,1,2,3 = top face numbered clockwise
-  4,5,6,7 = bottom face numbered clockwise
+  0,1,2,3 = top face numbered clockwise viewed from outside
+  4,5,6,7 = bottom face numbered clockwise viewed from outside
   3 connected to 4
   2 connected to 5
   0 connected to 7
@@ -373,7 +373,7 @@ class Distorted(Geometry_object):
     [0,1,6,7]
     [1,2,5,6]
     [2,3,4,5]
-    [3,0,7,4]  
+    [3,0,7,4]
   '''
   def __init__(self,
     name = None,
@@ -386,7 +386,8 @@ class Distorted(Geometry_object):
     if name is None: name = 'distorted'
     if layer is None: layer = 'distorted',
     if group is None: group = 'distorted',
-    if vertices is None: vertices = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+    if vertices is None: vertices = [[1,0,1],[0,0,1],[0,1,1],[1,1,1],[1,1,0],[0,1,0],[0,0,0],[1,0,0]]
+                                   #0        1       2       3       4       5        6      7
     if permittivity is None: permittivity = 1 # vacuum by default
     if conductivity is None: conductivity = 0
     
@@ -405,6 +406,7 @@ class Distorted(Geometry_object):
     ret += 'conductivity = '+str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -412,6 +414,7 @@ class Distorted(Geometry_object):
       self.vertices[i] = float_array(entry.data[3*i:3*i+3])
     self.permittivity = float(entry.data[8*3])
     self.conductivity = float(entry.data[8*3+1])
+    
   def write_entry(self, FILE):
     FILE.write('DISTORTED **name='+self.name+'\n')
     FILE.write('{\n')
@@ -423,25 +426,45 @@ class Distorted(Geometry_object):
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
-  #def getCenter(self):
-    #S = [0,0,0]
-    #for i in range(len(self.vertices)):
-      #S = S + self.vertices[i][0]+self.upper[0])
-      
-    #return [ 1./8.*(, 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
-  #def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    #objx = numpy.sort([self.lower[0],self.upper[0]])
-    #objy = numpy.sort([self.lower[1],self.upper[1]])
-    #objz = numpy.sort([self.lower[2],self.upper[2]])
-    #eps = self.permittivity
-    #xvec = numpy.vstack([xvec,objx])
-    #yvec = numpy.vstack([yvec,objy])
-    #zvec = numpy.vstack([zvec,objz])
-    #epsx = numpy.vstack([epsx,eps])
-    #epsy = numpy.vstack([epsy,eps])
-    #epsz = numpy.vstack([epsz,eps])
-    #return xvec,yvec,zvec,epsx,epsy,epsz
+  def translate(self, vec3):
+    for i in range(len(self.vertices)):
+      self.vertices[i] = numpy.array(self.vertices[i]) + numpy.array(vec3)
+  
+  def getCenter(self):
+    S = numpy.array([0,0,0])
+    for v in self.vertices:
+      #print('S='+str(S)+' + v='+str(v))
+      S = S + numpy.array(v)
+      #print('= S='+str(S))
+    return 1./len(self.vertices)*S
+    
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    # TODO: improve meshing system + add support for rotations
+    
+    # determine lower and upper points of distorted object
+    vertex_min = numpy.array(self.vertices[0])
+    vertex_max = numpy.array(self.vertices[0])
+    for vertex in self.vertices:
+      #print('vertex = '+str(vertex))
+      for i in range(3):
+        if vertex[i]<vertex_min[i]: vertex_min[i] = vertex[i]
+        if vertex[i]>vertex_max[i]: vertex_max[i] = vertex[i]
+    
+    #print('vertex_min = '+str(vertex_min))
+    #print('vertex_max = '+str(vertex_max))
+    
+    objx = numpy.sort([vertex_min[0],vertex_max[0]])
+    objy = numpy.sort([vertex_min[1],vertex_max[1]])
+    objz = numpy.sort([vertex_min[2],vertex_max[2]])
+    eps = self.permittivity
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Cylinder(Geometry_object):
   def __init__(self,
@@ -684,6 +707,7 @@ class Time_snapshot(object):
     'power = ' + str(self.power) + '\n' +\
     'eps = ' + str(self.eps)
     return ret
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -701,6 +725,7 @@ class Time_snapshot(object):
     self.power = float(entry.data[idx]); idx = idx+1
     if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1
     return(0)
+    
   def write_entry(self, FILE):
     self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
   
@@ -744,6 +769,7 @@ class Time_snapshot(object):
       snapshot(2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
+      
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = numpy.sort([self.P1[0],self.P2[0]])
     objy = numpy.sort([self.P1[1],self.P2[1]])
@@ -756,7 +782,7 @@ class Time_snapshot(object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
-
+  
 class ModeFilteredProbe(Time_snapshot):
   def __init__(self,
       name = None,
@@ -783,6 +809,33 @@ class ModeFilteredProbe(Time_snapshot):
     self.J = [0,0,0]
     self.power = 0
     self.eps = 0
+
+class EpsilonSnapshot(Time_snapshot):
+  def __init__(self,
+      name = None,
+      first = None,
+      repetition = None,
+      plane = None,
+      P1 = None,
+      P2 = None,
+      layer = None,
+      group = None):
+
+    if name is None: name = 'epsilon_snapshot'
+    if first is None: first = 1 # crashes if = 0
+    if repetition is None: repetition = 1,
+    if plane is None: plane = 1 #1,2,3 for x,y,z
+    if P1 is None: P1 = [0,0,0]
+    if P2 is None: P2 = [0,1,1]
+    if layer is None: layer = 'epsilon_snapshot'
+    if group is None: group = 'epsilon_snapshot'
+    
+    Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
+    self.E = [0,0,0]
+    self.H = [0,0,0]
+    self.J = [0,0,0]
+    self.power = 0
+    self.eps = 1
   
 class Frequency_snapshot(object):
   '''
@@ -1083,6 +1136,8 @@ class BFDTDobject(object):
     # special
     self.fileList = []
     
+    self.verboseMeshing = False
+    
   def __str__(self):
       ret = '--->snapshot_list\n'
       for i in range(len(self.snapshot_list)):
@@ -1225,6 +1280,35 @@ class BFDTDobject(object):
       print(('ERROR: Invalid plane : ',plane))
       sys.exit(1)
     F = ModeFilteredProbe(name=name, plane=plane, P1=L, P2=U)
+    self.snapshot_list.append(F)
+    return F
+
+  def addEpsilonSnapshot(self, plane, position):
+    if not isinstance(position,float) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)      
+    # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
+    # TODO: support multiple types for position argument (int/float or array)
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
+      name='X epsilon snapshot'
+      L = [position, self.box.lower[1], self.box.lower[2]]
+      U = [position, self.box.upper[1], self.box.upper[2]]
+      plane = 1
+    elif alpha == 'y':
+      name='Y epsilon snapshot'
+      L = [self.box.lower[0], position, self.box.lower[2]]
+      U = [self.box.upper[0], position, self.box.upper[2]]
+      plane = 2
+    elif alpha == 'z':
+      name='Z epsilon snapshot'
+      L = [self.box.lower[0], self.box.lower[1], position]
+      U = [self.box.upper[0], self.box.upper[1], position]
+      plane = 3
+    else:
+      print(('ERROR: Invalid plane : ',plane))
+      sys.exit(1)
+    F = EpsilonSnapshot(name=name, plane=plane, P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
 
@@ -1553,6 +1637,11 @@ class BFDTDobject(object):
     #self.writeCondorScript(cmdFileName)
     #self.writeShellScript(shFileName)
   
+  def fitBox(self, vec6):
+    ''' Changes the limits of the box to fit the geometry. Moves all other things as necessary to have box min be [0,0,0] (necessary?). 
+    TODO: finish this function '''
+    print('fitBox not working yet')
+  
   def calculateMeshingParameters(self, minimum_mesh_delta_vector3):
     ''' returns parameters that can be used for meshing:
     -Section_MaXDeltaVector_X
@@ -1585,8 +1674,12 @@ class BFDTDobject(object):
 
     # geometry object meshes
     for obj in self.geometry_object_list:
-      #print(obj.name)
+      if self.verboseMeshing:
+        print(obj.name)
+        print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+      if self.verboseMeshing:
+        print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
 
     # mesh object meshes
     for obj in self.mesh_object_list:
@@ -1688,7 +1781,7 @@ class BFDTDobject(object):
     
   def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-3,1e-3,1e-3]):
     meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
-    #print(meshing_parameters)
+    if self.verboseMeshing: print(meshing_parameters)
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
