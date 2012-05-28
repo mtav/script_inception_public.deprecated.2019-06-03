@@ -16,6 +16,8 @@ from constants.constants import *
 
 #==== CLASSES START ====#
 
+# TODO: Add function to easily change basename
+
 # mandatory objects
 class Flag(object):
   def __init__(self):
@@ -1311,6 +1313,10 @@ class BFDTDobject(object):
     F = EpsilonSnapshot(name=name, plane=plane, P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
+
+  def clearTimeSnapshots(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Time_snapshot) ]
+    self.time_snapshot_list[:] = []
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
