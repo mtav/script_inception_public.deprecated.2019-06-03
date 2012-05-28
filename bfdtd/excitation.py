@@ -164,8 +164,8 @@ class Excitation(object):
       FILE.write("%E **FREQ (MHz if dimensions in mum)\n" % self.frequency)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
-      FILE.write('"'+str(self.template_filename)+'" ** TEMPLATE FILENAME\n')
-      FILE.write('"'+str(self.template_source_plane)+'" ** TEMPLATE SOURCE PLANE\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_filename)+' ** TEMPLATE FILENAME\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_source_plane)+' ** TEMPLATE SOURCE PLANE\n')
       FILE.write('}\n')
       FILE.write('\n')
     else:
@@ -195,9 +195,9 @@ class Excitation(object):
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
       # template specific
-      FILE.write('"'+self.template_filename+'" ** TEMPLATE FILENAME\n')
-      FILE.write('"'+self.template_source_plane+'" ** TEMPLATE SOURCE PLANE\n')
-      FILE.write('"'+self.template_target_plane+'" ** TEMPLATE TARGET PLANE\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_filename)+' ** TEMPLATE FILENAME\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_source_plane)+' ** TEMPLATE SOURCE PLANE\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_target_plane)+' ** TEMPLATE TARGET PLANE\n')
       FILE.write("%d ** DIRECTION 0=-ve 1=+ve\n" % self.template_direction)
       FILE.write("%d ** ROTATE 0=no, 1=yes\n" % self.template_rotation)
       FILE.write('}\n')
