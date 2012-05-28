@@ -3,11 +3,11 @@ function [ status, lambda, Q, outFile, err, minErrInd, frequency, decay_constant
 
   if ( exist('dataFile','var')==0 ) | ( exist(dataFile, 'file')==0 )
     warning('No file specified or found.');
-    [file,path] = uigetfile();
-    dataFile = [path,file];
+    [fileBasenameWithExtension,path] = uigetfile();
+    dataFile = [path,fileBasenameWithExtension];
   else
-    [path,file,ext] = fileparts(dataFile);
-    file = [file,ext];
+    [path,fileBasenameWithoutExtension,ext] = fileparts(dataFile);
+    fileBasenameWithExtension = [fileBasenameWithoutExtension,ext];
   end
 
   if exist('dt','var')==0; dt=0.01; end
@@ -21,23 +21,28 @@ function [ status, lambda, Q, outFile, err, minErrInd, frequency, decay_constant
   %mkdir(ftp1,remoteFolder);
   
   %cd(ftp1,remoteFolder);
-  %mput(ftp1,dataFile,file);
+  %mput(ftp1,dataFile,fileBasenameWithExtension);
   
-  %remoteFile=[remoteFolder,file];
-  outfileName=[file(1:max(strfind(file,'.'))-1),'_harminv.out'];
+  %remoteFile=[remoteFolder,fileBasenameWithExtension];
+  %outfileName = [fileBasenameWithExtension(1:max(strfind(fileBasenameWithExtension,'.'))-1),'_harminv.out'];
+  outfileName = [fileBasenameWithoutExtension,'.out'];
   %remoteOutFile=[remoteFolder,outfileName];
   
-  outFile=[path,filesep,outfileName];
+  outFile = [path,filesep,outfileName];
 
-  hcommand=['harminv -t ',num2str(dt,'%2.8e'),' ',num2str(get_c0()/lambdaHigh,'%2.8e'),'-',num2str(get_c0()/lambdaLow,'%2.8e'),' < ',dataFile,' > ',outFile];
-  
+  hcommand = ['harminv -t ',num2str(dt,'%2.8e'),' ',num2str(get_c0()/lambdaHigh,'%2.8e'),'-',num2str(get_c0()/lambdaLow,'%2.8e'),' < ',dataFile,' > ',outFile];
+
+  fid = fopen([path,filesep,fileBasenameWithoutExtension,'.command'],'w');
+  fprintf(fid,[hcommand,'\r\n']);
+  fclose(fid);
+ 
   [status,result] = system(hcommand);
   if (status == 0)
     %rund(ftp1,hcommand)
     %rund(hcommand)
     
     %mget(ftp1,remoteOutFile,path);
-    %rm(ftp1, file)
+    %rm(ftp1, fileBasenameWithExtension)
     %rm(ftp1, remoteOutFile)
       
     if ~(exist(outFile,'file'))

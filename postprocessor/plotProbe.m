@@ -7,18 +7,20 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   %if exist('imageSaveName','var')==0; imageSaveName = false; end;
   if exist('hide_figures','var')==0; hide_figures = false; end;
 
-%name|autosave|save|name|result
-%0   |0       |0   |0   |no save
-%0   |1       |1   |0   |save with default name
-%1   |0       |1   |1   |save with name
-%1   |1       |1   |1   |save with name
+  %name|autosave|save|name|result
+  %0   |0       |0   |0   |no save
+  %0   |1       |1   |0   |save with default name
+  %1   |0       |1   |1   |save with name
+  %1   |1       |1   |1   |save with name
 
-%if ~imageSaveName
+  %if ~imageSaveName
 
-%end
+  %end
 
   DoAnalysis = true;
   plotLorentzFit = false;
+  computeHarminvLocal = false
+  computeHarminvGlobal = true;
 
   [ folder, basename, ext ] = fileparts(filename);
   [ geoname_folder, geoname_basename ] = fileparts(folder);
@@ -49,8 +51,8 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   % calculate the FFT
   % (with NFFT = double the number of points you want in the output = 2^19)
   % (probe_col = whatever column you want from the time probe file, i.e. Ex,Ey,etc)
-  [calcFFT_output_oldstyle, lambda_vec_mum_oldstyle, freq_vec_Mhz_oldstyle] = calcFFT(data_time_domain,dt_mus, 2^19);
-  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(data_time_domain,dt_mus, 2^19);
+  [calcFFT_output_oldstyle, lambda_vec_mum_oldstyle, freq_vec_Mhz_oldstyle] = calcFFT(data_time_domain,dt_mus, 2^22);
+  [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(data_time_domain,dt_mus);
 
   % convert lambda to nm
   lambda_vec_nm = 1e3*lambda_vec_mum;
@@ -185,11 +187,10 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     
     harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
     outfileName =               [ harminv_basepath, '_harminv.out' ];
-    harminvDataFile =           [ harminv_basepath, '_harminv.txt' ];
-    parametersFile =            [ harminv_basepath, '_parameters.txt' ];
+  harminvDataFile =           [ harminv_basepath, '_harminv.in' ];
+  parametersFile =            [ harminv_basepath, '_harminv.selection' ];
 
-    computeHarminv = 1;
-    if computeHarminv
+  if computeHarminvGlobal
       lambdaLow_mum = xmin_global*1e-3;
       lambdaHigh_mum = xmax_global*1e-3;
 
@@ -198,12 +199,12 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
       fprintf(fid,'%2.8e\r\n',data(:,probe_col));
       fclose(fid);
       
-      disp('===> Computing harminv:');
+      disp('===> Computing global harminv:');
       [ status, lambdaH_mum, Q, outFile, err, minErrInd, frequency, decay_constant, amplitude, phase ] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
           
       if ( status == 0 )
         if ( length(Q) ~= 0 )
-        
+
           % calculate time-domain fit based on harminv output
           harminv_time = zeros(size(time_mus));
           %harminv_fig = figure(); hold on;
@@ -240,7 +241,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
       else
         warning('harminv command failed.');
       end
-    end % end of if computeHarminv
+  end % end of if computeHarminvGlobal
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     disp('===> Looping through peaks:');
@@ -274,6 +275,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
       end
       %%%%%%%%%%%%
       
+    if computeHarminvLocal
       disp('=================')
       disp('Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)')
       x
@@ -283,6 +285,9 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
       xmax
       disp('=================')
       Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)
+    else
+      Qfactor_harminv = -1
+    end
       
       if size(Qfactor_harminv,1)>0
         Q_harminv_local(n) = Qfactor_harminv;
