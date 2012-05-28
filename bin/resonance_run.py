@@ -24,6 +24,7 @@ def resonance_run(src, dst, freqListFile):
     obj.frequency_vector = freq_snapshots
   
   FDTDobj.writeAll(dst,fileBaseName)
+  FDTDobj.writeShellScript(dst+os.path.sep+fileBaseName+'.sh')
 
 def main(argv=None):
   # main function
