@@ -1,5 +1,8 @@
 function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
 
+  computeHarminvLocal = false
+  computeHarminvGlobal = true;
+
   if exist('hide_figures','var')==0
     hide_figures = false;
   end
@@ -149,11 +152,10 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   
   harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
   outfileName =               [ harminv_basepath, '_harminv.out' ];
-  harminvDataFile =           [ harminv_basepath, '_harminv.txt' ];
-  parametersFile =            [ harminv_basepath, '_parameters.txt' ];
+  harminvDataFile =           [ harminv_basepath, '_harminv.in' ];
+  parametersFile =            [ harminv_basepath, '_harminv.selection' ];
 
-  computeHarminv = 1;
-  if computeHarminv
+  if computeHarminvGlobal
     lambdaLow_mum = xmin_global*1e-3;
     lambdaHigh_mum = xmax_global*1e-3;
 
@@ -162,7 +164,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     fprintf(fid,'%2.8e\r\n',data(:,probe_col));
     fclose(fid);
     
-    disp('===> Computing harminv:');
+    disp('===> Computing global harminv:');
     [ status, lambdaH_mum, Q, outFile, err, minErrInd, frequency, decay_constant, amplitude, phase ] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
         
     if ( status == 0 )
@@ -204,7 +206,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     else
       warning('harminv command failed.');
     end
-  end % end of if computeHarminv
+  end % end of if computeHarminvGlobal
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   disp('===> Looping through peaks:');
@@ -231,16 +233,20 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     wavelength_nm(n) = peakWaveLength;
     Q_lorentz(n) = Q;
     plot(linspace(xmin,xmax,100),lorentz(vEnd,linspace(xmin,xmax,100)),'r.');
-    
-    disp('=================')
-    disp('Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)')
-    x
-    harminvDataFile
-    dt_mus
-    xmin
-    xmax
-    disp('=================')
-    Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)
+
+    if computeHarminvLocal
+      disp('=================')
+      disp('Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)')
+      x
+      harminvDataFile
+      dt_mus
+      xmin
+      xmax
+      disp('=================')
+      Qfactor_harminv = getQfactor_harminv(x, harminvDataFile, dt_mus, xmin, xmax)
+    else
+      Qfactor_harminv = -1
+    end
     
     if size(Qfactor_harminv,1)>0
       Q_harminv_local(n) = Qfactor_harminv;
