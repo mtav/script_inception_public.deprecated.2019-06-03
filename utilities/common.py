@@ -5,6 +5,7 @@ import sys
 import getopt
 import numpy
 import math
+import re
 
 class Usage(Exception):
   def __init__(self, msg):
@@ -134,3 +135,31 @@ def planeNumberName(var):
   else:
     print('unknown plane: '+str(var))
     sys.exit(-1)
+
+# based on functions from http://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array
+def findNearest(a, a0):
+    ''' Element in nd array `a` closest to the scalar value `a0` 
+    returns (idx, a.flat[idx]) = (index of closest value, closest value)'''
+    idx = numpy.abs(a - a0).argmin()
+    return (idx, a.flat[idx])
+
+def addDoubleQuotesIfMissing(orig):
+  
+  # simple solution
+  orig_quoted = '"'+str(orig).strip('"').strip('\'')+'"'
+
+  ## Complex solution as seen on: http://stackoverflow.com/questions/3584005/how-to-properly-add-quotes-to-a-string-using-python
+  #Q = '"'
+  #re_quoted_items = re.compile(r'" \s* [^"\s] [^"]* \"', re.VERBOSE)
+
+  ## The orig string w/o the internally quoted items.
+  #woqi = re_quoted_items.sub('', orig)
+
+  #if len(orig) == 0:
+    #orig_quoted = Q + orig + Q
+  #elif len(woqi) > 0 and not (woqi[0] == Q and woqi[-1] == Q):
+    #orig_quoted = Q + orig + Q    
+  #else:
+    #orig_quoted = orig
+
+  return orig_quoted
