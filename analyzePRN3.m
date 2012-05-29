@@ -12,10 +12,7 @@ function analyzePRN3(prn_file, logfile, logfile_summary, probe_col)
   [ folder, basename, ext ] = fileparts(prn_file);
   WORKDIR = dirname(prn_file);
 
-  wavelength_nm = 900;
-  iterations = 1231321;
-  Qfactor_harminv = 1212.35656;
-  Qfactor_fitting = 545.3235;
+  autosave = false;
 
   %logfile = '~/tmpQ.txt';
   %probe_col = 3; % mike diamond
@@ -23,7 +20,7 @@ function analyzePRN3(prn_file, logfile, logfile_summary, probe_col)
 
   iterations = parseBFDTDTime([WORKDIR, filesep, 'time.txt']);
 
-  [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(prn_file, probe_col, 1, '', true);
+  [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(prn_file, probe_col, autosave, '', true);
 
   fid = fopen(logfile, 'at');
   fprintf(fid,'\n');
@@ -48,5 +45,3 @@ function analyzePRN3(prn_file, logfile, logfile_summary, probe_col)
   fclose(fid);
 
 end
-
-%plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
