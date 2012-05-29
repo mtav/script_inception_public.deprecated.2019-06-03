@@ -23,16 +23,24 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
   for script_idx = 1:length(Names)
     script_filename = char(Names(script_idx));
     [ script_folder, script_basename, script_ext ] = fileparts(script_filename);
+    disp(['Processing script_folder = ', script_folder]);
 
-    geofile = [ script_folder, filesep, script_basename, '.geo' ];
-    inpfile = [ script_folder, filesep, script_basename, '.inp' ];
+    % store workdir
+    workdir = pwd(); % TODO: Should probably be outside the loop, no? No time to take risks now.
+
+    % loop through .prn files
+    cd(script_folder);
+
+    %geofile = [ script_folder, filesep, script_basename, '.geo' ];
+    %inpfile = [ script_folder, filesep, script_basename, '.inp' ];
+    geofile = [ script_basename, '.geo' ];
+    inpfile = [ script_basename, '.inp' ];
     
     %disp(geofile)
     %inpfile
     %continue
     %which GEO_INP_reader
     
-    disp(['Processing script_folder = ', script_folder]);
     [entries,FDTDobj] = GEO_INP_reader({geofile,inpfile});
     excitation = FDTDobj.excitations(1);
     excitation_direction = excitation.E;
@@ -49,7 +57,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
       measurement_direction = 'z';
     elseif excitation_direction == [1,1,1]
       excitation.template_filename
-      [header,data]=readPrnFile([script_folder, filesep, excitation.template_filename]);
+      %[header,data] = readPrnFile([script_folder, filesep, excitation.template_filename]);
+      [header,data] = readPrnFile([excitation.template_filename]);
       for j=3:length(header);
         val = max(data(:,j));
         if ( val~=0 );
@@ -88,11 +97,6 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
     %measurement_direction
     %return
 
-    % store workdir
-    workdir = pwd();
-
-    % loop through .prn files
-    cd(script_folder);
     prnFiles = dir('*.prn');
     for prn_idx = 1:length(prnFiles)
     
@@ -116,7 +120,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           disp('plotting TimeSnapshot');
           
           % loading
-          handles.snapfile = fullfile(script_folder,prn_filename);
+          %handles.snapfile = fullfile(script_folder,prn_filename);
+          handles.snapfile = fullfile(prn_filename);
           [handles.header, handles.data] = hdrload(handles.snapfile);
           handles.dataSize = size(handles.data);
           columns = strread(handles.header,'%s');
@@ -154,7 +159,8 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           disp('plotting FrequencySnapshot');
           
           % loading
-          handles.snapfile = fullfile(script_folder,prn_filename);
+          %handles.snapfile = fullfile(script_folder,prn_filename)
+          handles.snapfile = fullfile(prn_filename)
           [handles.header, handles.data] = hdrload(handles.snapfile);
           handles.dataSize = size(handles.data);
           columns = strread(handles.header,'%s');
@@ -187,7 +193,7 @@ function plotAll(directory, maxplotvalue, Probe_patternCellArray, TimeSnapshot_p
           imageSaveName = '%BASENAME.%FIELD.max_%MAX.lambda(nm)_%LAMBDA_SNAP_NM.freq(Mhz)_%FREQ_SNAP_MHZ.pos(mum)_%POS_MUM.png';
   
           % finally plotting
-          plotSnapshot(handles.snapfile, col, maxplotvalue, handles, rotate90, true, imageSaveName);
+          plotSnapshot(handles.snapfile, col, [0, maxplotvalue], handles, rotate90, true, imageSaveName);
         end
       elseif strcmp(type_name, 'Reference')
         disp('skipping Reference');
