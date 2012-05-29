@@ -345,6 +345,7 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   if get(handles.radiobutton_Snapshot,'Value');
     handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
   end
+  handles.minplotvalue = NaN;
   handles.maxplotvalue = str2double(get(handles.edit_maxplotvalue,'String'));
   
   handles.interpolate = get(handles.checkbox_interpolate,'Value');
