@@ -228,13 +228,13 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     harminv_basepath = [ harminv_dir, filesep, probefile_basename,'_',header{probe_col} ];
     harminv_basepath_local = [ harminv_dir_local, filesep, probefile_basename,'_',header{probe_col} ];
     
-    outfileName = [ harminv_basepath, '_harminv.out' ];
-    harminvDataFile = [ harminv_basepath, '_harminv.in' ];
-    parametersFile = [ harminv_basepath, '_harminv.selection' ];
+    outfileName = [ harminv_basepath, '_harminv.out.txt' ];
+    harminvDataFile = [ harminv_basepath, '_harminv.in.txt' ];
+    parametersFile = [ harminv_basepath, '_harminv.selection.txt' ];
 
-    outfileName_local = [ harminv_basepath_local, '_harminv.out' ];
-    harminvDataFile_local = [ harminv_basepath_local, '_harminv.in' ];
-    parametersFile_local = [ harminv_basepath_local, '_harminv.selection' ];
+    outfileName_local = [ harminv_basepath_local, '_harminv.out.txt' ];
+    harminvDataFile_local = [ harminv_basepath_local, '_harminv.in.txt' ];
+    parametersFile_local = [ harminv_basepath_local, '_harminv.selection.txt' ];
 
     if computeHarminvGlobal
       lambdaLow_mum = xmin_global*1e-3;
