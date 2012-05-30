@@ -917,7 +917,10 @@ class Frequency_snapshot(object):
     self.E = E
     self.H = H
     self.J = J
-    
+  
+  def getLambda(self):
+    return get_c0()/numpy.array(self.frequency_vector)
+  
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'first = ' + str(self.first) + '\n' +\
