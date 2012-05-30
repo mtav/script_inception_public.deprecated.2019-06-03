@@ -163,3 +163,32 @@ def addDoubleQuotesIfMissing(orig):
     #orig_quoted = orig
 
   return orig_quoted
+
+# FIB distance estimation functions. Might be used in FIB picture postprocessing program eventually. Or in Gimp through a plugin...
+# TODO: At the moment those formulas are only for distances in the Y (vertical) direction of the picture. Need to add support for any sort of line on the picture.
+# Functions could be tested against FIB measurement tool. Method: Project (X,Y) points along Z axis onto arbitrary plane and corresponding normal.
+
+def FIBdistanceHorizontal(tilt_deg, magnification, distance_on_picture_pxl, angle_to_horizontal_deg = 90, horizontal_width_of_picture_pxl = 1024, HFW_mum = 304000):
+  '''
+  Returns the horizontal distance in mum based on the visible distance in pixels on the picture.
+  Warning: formula for angled segments hasn't been fully verified yet.
+  '''
+  W_mum = HFW_mum/float(magnification); # Width of the horizontal scan (mum). (HFW = Horizontal Field Width)
+  resolution = W_mum/horizontal_width_of_picture_pxl; # size of each pixel (mum/pxl).
+  lx_visible_pxl = distance_on_picture_pxl*numpy.cos(numpy.deg2rad(angle_to_horizontal_deg))
+  ly_visible_pxl = distance_on_picture_pxl*numpy.sin(numpy.deg2rad(angle_to_horizontal_deg))
+  Lx_sample_pxl = lx_visible_pxl
+  Ly_sample_pxl = ly_visible_pxl/numpy.cos(numpy.deg2rad(tilt_deg))
+  L_sample_pxl = numpy.sqrt(pow(Lx_sample_pxl,2)+pow(Ly_sample_pxl,2))
+  L_sample_mum = L_sample_pxl*resolution
+  return L_sample_mum
+
+def FIBdistanceVertical(tilt_deg, magnification, distance_on_picture_pxl, horizontal_width_of_picture_pxl = 1024, HFW_mum = 304000):
+  '''
+  Returns the vertical distance in mum based on the visible distance in pixels on the picture. 
+  Warning: Always assumes a vertical pixel distance measurement (because it's the only thing making sense assuming an orthographic projection)
+  '''
+  W_mum = HFW_mum/float(magnification); # Width of the horizontal scan (mum). (HFW = Horizontal Field Width)
+  resolution = W_mum/horizontal_width_of_picture_pxl; # size of each pixel (mum/pxl).
+  L_sample_mum = (distance_on_picture_pxl*resolution)/numpy.sin(numpy.deg2rad(tilt_deg))
+  return L_sample_mum
