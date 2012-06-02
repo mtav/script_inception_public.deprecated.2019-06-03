@@ -28,9 +28,16 @@ import os
 ###############################
 # INITIALIZATIONS
 ###############################
-#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
+#cfgfile = os.path.expanduser('~')+'/BlenderImportGWL.txt'
 # official script data location :)
-cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
+print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
+if Blender.Get("datadir"):
+  print('datadir defined')
+  cfgfile = Blender.Get("datadir")+'/BlenderImportGWL.txt'
+  substitutes_file = Blender.Get("datadir")+'/BlenderImportGWL_Substitutes.txt'
+else:
+  print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
+  sys.exit(0)
 
 # Like pressing Alt+D
 def linkedCopy(ob, position, scn=None): # Just like Alt+D
@@ -161,7 +168,15 @@ def importGWL(filename):
     
     # parse file
     GWL_obj = GWLobject()
+    GWL_obj.readSubstitutes(substitutes_file)
     GWL_obj.readGWL(filename)
+    
+    #print('Nvoxels = '+str(Nvoxels))
+    print('GWL_obj.writingTimeInSeconds = '+str(GWL_obj.writingTimeInSeconds))
+    print('GWL_obj.writingTimeInMinutes = '+str(GWL_obj.writingTimeInSeconds/60.))
+    print('GWL_obj.writingTimeInHours = '+str(GWL_obj.writingTimeInSeconds/(60.*60.)))
+    print('GWL_obj.writingDistanceInMum = '+str(GWL_obj.writingDistanceInMum))
+    
     Nvoxel = 0
     verts = []
     for write_sequence in GWL_obj.GWL_voxels:
@@ -188,11 +203,11 @@ def importGWL(filename):
     object_new = scene.objects.new(mesh_new,"voxelposition_object")
   
     #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100)
-    cell = BlenderBlock2('voxel',Vector(0,0,0),0.100,0.100,0.200)
-    cell.layers = object_new.layers
+    #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100,0.100,0.200)
+    #cell.layers = object_new.layers
     scene.update()
-    object_new.makeParent([cell])
-    object_new.enableDupVerts = True
+    #object_new.makeParent([cell])
+    #object_new.enableDupVerts = True
 
     
     

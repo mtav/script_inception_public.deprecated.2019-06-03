@@ -9,7 +9,7 @@ function startup()
     PUBLIC_REPO_DIR = [HOME,filesep,'MATLAB'];
     %PUBLIC_REPO_DIR = 'C:\script_inception_public';
 
-    addpath([PUBLIC_REPO_DIR,filesep,'addpath_recurse']);
+    addpath([PUBLIC_REPO_DIR,filesep,'third_party',filesep,'addpath_recurse']);
     addpath([PUBLIC_REPO_DIR,filesep,'utilities']);
     addpath_recurse(PUBLIC_REPO_DIR,{'.git'},'begin',false,DEBUG);
     if exist(PRIVATE_REPO_DIR,'dir')

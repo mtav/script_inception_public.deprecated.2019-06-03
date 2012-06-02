@@ -199,8 +199,8 @@ if rexdown > 0
     uelim = min(VrexInd,length(ue))
     lelim = min(VrexInd,length(le))
     
-    Vuefit=V(ue(1:uelim)); Vlefit=V(le(1:lelim));
-    tuefit=t(ue(1:uelim)); tlefit=t(le(1:lelim));
+    Vuefit = V(ue(1:uelim)); Vlefit=V(le(1:lelim));
+    tuefit = t(ue(1:uelim)); tlefit=t(le(1:lelim));
     if verbose >=2, fprintf(1,'ringdown: Data after t=%g ignored (signal < %.1f)\n',t(ue(VrexInd)),rexdown); end
 end
 
@@ -208,7 +208,7 @@ end
 if plots >= 1
     figure(datafig);
     hold on;
-    h_select=plot(tfit,Vfit,'.-b'); % plot selected data
+    h_select = plot(tfit,Vfit,'.-b'); % plot selected data
     plot(xlim,[rexdown rexdown],'--b')
     plot(xlim,[-rexdown -rexdown],'--b')
     plot(xlim,[0 0], '-k'); % plot zero line

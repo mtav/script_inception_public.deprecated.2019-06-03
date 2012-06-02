@@ -22,10 +22,10 @@ STARTUPSCRIPT=[getuserdir(),filesep,'MATLAB',filesep,'startup.m']
 disp(['Running ',STARTUPSCRIPT,' ...']);
 run(STARTUPSCRIPT);
 
-if version == '3.4.0'
+if version() == '3.4.0' || version() == '3.6.1'
   disp('running startup()')
   % This does not work on GNU Octave, version 3.2.4
-  % but works on GNU Octave, version 3.4.0...
+  % but works on GNU Octave, version 3.4.0 and later...
   startup()
 end
 

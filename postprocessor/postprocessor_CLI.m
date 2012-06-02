@@ -29,6 +29,7 @@ function postprocessor_CLI()
   end
   
   handles.col = 3;
+  handles.minplotvalue = NaN;
   handles.maxplotvalue = NaN;
 
   handles.interpolate = 0;

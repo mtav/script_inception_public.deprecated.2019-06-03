@@ -8,19 +8,59 @@ import os
 
 class GWLobject:
   def __init__(self):
+    self.verbosity = 0
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
+    self.FindInterfaceAt = [0,0,0,0]
     self.stage_position = [0,0,0,0]
     self.LineNumber = 1
     self.LineDistance = 0
     self.PowerScaling = 1
     self.LaserPower = 100
     self.ScanSpeed = 200
-    
+    self.Repeat = 1
+    self.path_substitutes = []
+    self.writingTimeInSeconds = 0
+    self.writingDistanceInMum = 0
+    self.DwellTime = 200
+
+  def getLimits(self):
+    Pmin = 4*[0]
+    Pmax = 4*[0]
+    first = True
+    for write_sequence in self.GWL_voxels:
+      for voxel in write_sequence:
+        if first:
+            for i in range(len(voxel)):
+                Pmin[i] = voxel[i]
+                Pmax[i] = voxel[i]
+            first = False
+        else:
+            for i in range(len(voxel)):
+                if voxel[i] < Pmin[i]:
+                    Pmin[i] = voxel[i]
+                if Pmax[i] < voxel[i]:
+                    Pmax[i] = voxel[i]
+    return (Pmin,Pmax)
+
+  def getLastVoxel(self):
+    found = False
+    voxel = [0,0,0,0]
+    for i in range(len(self.GWL_voxels)):
+        write_sequence = self.GWL_voxels[-i]
+        if len(write_sequence)>0:
+            voxel = write_sequence[-1]
+            found = True
+            break
+    return (voxel,found)
+
+  def getNvoxels():
+    print('ok')
+
   def clear(self):
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
-  
+
   def addLine(self,P1,P2):
     write_sequence = [P1,P2]
     self.GWL_voxels.append(write_sequence)
@@ -29,9 +69,9 @@ class GWLobject:
     u = numpy.array(P2)-numpy.array(P1)
     u = u*1.0/numpy.sqrt(pow(u[0],2)+pow(u[1],2)+pow(u[2],2))
     v = numpy.array([-u[1],u[0],0])
-    L = (LineNumber-1)*LineDistance    
+    L = (LineNumber-1)*LineDistance
     P1_min = P1 - 0.5*L*v
-    
+
     plist = []
     for k in range(LineNumber):
         A = P1_min + k*LineDistance*v
@@ -45,7 +85,7 @@ class GWLobject:
       else:
         self.GWL_voxels.append([B,A])
       counter = counter + 1
-    
+
   def addZGrating(self, P1, P2, LineNumber, LineDistance, BottomToTop = False):
     Zcenter = 0.5*(P1[2] + P2[2])
     zlist = []
@@ -78,7 +118,7 @@ class GWLobject:
     ylist = []
     L = (LineNumber_Horizontal-1)*LineDistance_Horizontal
     ylist = numpy.linspace(Ycenter-0.5*L, Ycenter+0.5*L, LineNumber_Horizontal)
-    
+
     zlist = []
     L = (LineNumber_Vertical-1)*LineDistance_Vertical
     if BottomToTop:
@@ -105,7 +145,7 @@ class GWLobject:
     xlist = []
     L = (LineNumber_Horizontal-1)*LineDistance_Horizontal
     xlist = numpy.linspace(Xcenter-0.5*L, Xcenter+0.5*L, LineNumber_Horizontal)
-    
+
     zlist = []
     L = (LineNumber_Vertical-1)*LineDistance_Vertical
     if BottomToTop:
@@ -168,10 +208,10 @@ class GWLobject:
         #print(('i = ',i,' N = ',N))
         z = radius*numpy.cos(i*0.5*numpy.pi/float(N))
         zlist.append(z)
-        
+
       # symetrify list
       zlist = zlist + [ -i for i in zlist[len(zlist)-2::-1] ]
-        
+
       for z in zlist:
         local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
         #print(('local_radius 1 = ',local_radius))
@@ -196,7 +236,27 @@ class GWLobject:
     write_sequence = []
     self.GWL_voxels.append(write_sequence)
 
-  def readGWL(self,filename):
+  def readSubstitutes(self, subsFile):
+    print('Reading substitution pairs from '+subsFile)
+    self.path_substitutes = []
+    try:
+      with open(subsFile, 'r') as file:
+        for line in file:
+          t = line.strip().split('->')
+          if len(t)==2:
+            old = t[0].strip()
+            new = t[1].strip()
+            old = old.replace('\\',os.path.sep).replace('/',os.path.sep)
+            new = new.replace('\\',os.path.sep).replace('/',os.path.sep)
+            print(old+' -> '+new)
+            self.path_substitutes.append((old,new))
+    except IOError as (errno, strerror):
+      print "I/O error({0}): {1}".format(errno, strerror)
+      print 'Failed to open '+subsFile
+
+    return self.path_substitutes
+
+  def readGWL(self, filename):
     Nvoxels = 0
     write_sequence = []
     try:
@@ -206,105 +266,169 @@ class GWLobject:
           line_stripped = line.strip()
           # TODO: handle comments and other commands
           if len(line_stripped)>0 and line_stripped[0]!='%':
-            cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
+            #print 'pre-split: ', line_stripped
+            #cmd = re.split('[^a-zA-Z0-9_+-.]+',line_stripped)
+            #cmd = re.split('[^a-zA-Z0-9_+-.:\\/]+',line_stripped)
+            #cmd = re.split('[ \t]',line_stripped)
+            cmd = re.split('\s+',line_stripped)
             #cmd = [ i.lower() for i in cmd ]
-            #print cmd
-            if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999':
-              #print '=>COMMAND'
-              if cmd[0].lower()=='-999':
-                if cmd[1]=='-999':
-                  #print 'write'
-                  self.GWL_voxels.append(write_sequence)
-                  write_sequence = []
-              else:
-                if cmd[0].lower()=='write':
-                  #print 'write'
-                  self.GWL_voxels.append(write_sequence)
-                  write_sequence = []
-                elif cmd[0].lower()=='include':
-                  print 'including cmd[1] = '+cmd[1]
-                  file_to_include = os.path.dirname(filename)+os.path.sep+cmd[1]
-                  print(file_to_include)
-                  self.readGWL(file_to_include)
-                  
-                elif cmd[0].lower()=='movestagex':
-                  print 'Moving X by '+cmd[1]
-                  self.stage_position[0] = self.stage_position[0] + float(cmd[1])
-                elif cmd[0].lower()=='movestagey':
-                  print 'Moving Y by '+cmd[1]
-                  self.stage_position[1] = self.stage_position[1] + float(cmd[1])
-                  
-                elif cmd[0].lower()=='addxoffset':
-                  print 'Adding X offset of '+cmd[1]
-                  self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
-                elif cmd[0].lower()=='addyoffset':
-                  print 'Adding Y offset of '+cmd[1]
-                  self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
-                elif cmd[0].lower()=='addzoffset':
-                  print 'Adding Z offset of '+cmd[1]
-                  self.voxel_offset[2] = self.voxel_offset[2] + float(cmd[1])
-                  
-                elif cmd[0].lower()=='xoffset':
-                  print 'Setting X offset to '+cmd[1]
-                  self.voxel_offset[0] = float(cmd[1])
-                elif cmd[0].lower()=='yoffset':
-                  print 'Setting Y offset to '+cmd[1]
-                  self.voxel_offset[1] = float(cmd[1])
-                elif cmd[0].lower()=='zoffset':
-                  print 'Setting Z offset to '+cmd[1]
-                  self.voxel_offset[2] = float(cmd[1])
-
-                elif cmd[0].lower()=='linenumber':
-                  print 'Setting LineNumber to '+cmd[1]
-                  self.LineNumber = float(cmd[1])
-                elif cmd[0].lower()=='linedistance':
-                  print 'Setting LineDistance to '+cmd[1]
-                  self.LineDistance = float(cmd[1])
-                elif cmd[0].lower()=='powerscaling':
-                  print 'Setting PowerScaling to '+cmd[1]
-                  self.PowerScaling = float(cmd[1])
-                elif cmd[0].lower()=='laserpower':
-                  print 'Setting LaserPower to '+cmd[1]
-                  self.LaserPower = float(cmd[1])
-                elif cmd[0].lower()=='scanspeed':
-                  print 'Setting ScanSpeed to '+cmd[1]
-                  self.ScanSpeed = float(cmd[1])
-                
-                #elif cmd[0].lower()=='defocusfactor':
-                  #print 'defocusfactor'
+            #print 'post-split: ', cmd
+            stopRepeat = True
+            for i in range(self.Repeat):
+              if re.match(r"[a-zA-Z]",cmd[0][0]) or cmd[0]=='-999' or cmd[0].lower()=='-999.000':
+                if cmd[0].lower()=='-999' or cmd[0].lower()=='-999.000':
+                  #print('match 999')
+                  if cmd[1]=='-999' or cmd[1].lower()=='-999.000':
+                    self.GWL_voxels.append(write_sequence)
+                    write_sequence = []
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
                 else:
-                  print('UNKNOWN COMMAND: '+cmd[0])
-                  #sys.exit(-1)
-            else:
-              #print '=>VOXEL'
-              voxel = []
-              for i in range(len(cmd)):
-                voxel.append(float(cmd[i])+self.voxel_offset[i]+self.stage_position[i])
-              #voxel = [ float(i) for i in cmd ]
-              write_sequence.append(voxel)
-              Nvoxels = Nvoxels + 1
-    
+                  #print('other match')
+                  if cmd[0].lower()=='write':
+                    self.GWL_voxels.append(write_sequence)
+                    write_sequence = []
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
+                  elif cmd[0].lower()=='include':
+                    print('line_stripped = ' + line_stripped)
+                    file_to_include = re.split('\s+',line_stripped,1)[1]
+                    print('including file_to_include = ' + file_to_include)
+                    print('Fixing file separators')
+                    file_to_include = file_to_include.replace('\\',os.path.sep).replace('/',os.path.sep)
+                    print('including file_to_include = ' + file_to_include)
+                    file_to_include_fullpath = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_include)))
+                    print(file_to_include_fullpath)
+                    if not os.path.isfile(file_to_include_fullpath):
+                      print('WARNING: File not found. Attempting path substitutions')
+                      for (old,new) in self.path_substitutes:
+                        file_to_try = file_to_include.replace(old,new)
+                        #print('file_to_try = ',file_to_try)
+                        #print('filename = ',filename)
+                        #print('os.path.dirname(filename) = ',os.path.dirname(filename))
+                        file_to_try = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_try)))
+                        print('Trying file_to_try = ' + file_to_try)
+                        if os.path.isfile(file_to_try):
+                          file_to_include_fullpath = file_to_try
+                          break
+                    self.readGWL(file_to_include_fullpath)
+
+                  elif cmd[0].lower()=='movestagex':
+                    print('Moving X by '+cmd[1])
+                    self.stage_position[0] = self.stage_position[0] + float(cmd[1])
+                  elif cmd[0].lower()=='movestagey':
+                    print('Moving Y by '+cmd[1])
+                    self.stage_position[1] = self.stage_position[1] + float(cmd[1])
+
+                  elif cmd[0].lower()=='addxoffset':
+                    print 'Adding X offset of '+cmd[1]
+                    self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
+                  elif cmd[0].lower()=='addyoffset':
+                    print 'Adding Y offset of '+cmd[1]
+                    self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
+                  elif cmd[0].lower()=='addzoffset':
+                    print 'Adding Z offset of '+cmd[1]
+                    self.voxel_offset[2] = self.voxel_offset[2] + float(cmd[1])
+
+                  elif cmd[0].lower()=='xoffset':
+                    print 'Setting X offset to '+cmd[1]
+                    self.voxel_offset[0] = float(cmd[1])
+                  elif cmd[0].lower()=='yoffset':
+                    print 'Setting Y offset to '+cmd[1]
+                    self.voxel_offset[1] = float(cmd[1])
+                  elif cmd[0].lower()=='zoffset':
+                    print 'Setting Z offset to '+cmd[1]
+                    self.voxel_offset[2] = float(cmd[1])
+
+                  elif cmd[0].lower()=='linenumber':
+                    print 'Setting LineNumber to '+cmd[1]
+                    self.LineNumber = float(cmd[1])
+                  elif cmd[0].lower()=='linedistance':
+                    print 'Setting LineDistance to '+cmd[1]
+                    self.LineDistance = float(cmd[1])
+                  elif cmd[0].lower()=='powerscaling':
+                    print 'Setting PowerScaling to '+cmd[1]
+                    self.PowerScaling = float(cmd[1])
+                  elif cmd[0].lower()=='laserpower':
+                    if self.verbosity > 5:
+                      print 'Setting LaserPower to '+cmd[1]
+                    self.LaserPower = float(cmd[1])
+                  elif cmd[0].lower()=='scanspeed':
+                    print 'Setting ScanSpeed to '+cmd[1]
+                    self.ScanSpeed = float(cmd[1])
+
+                  elif cmd[0].lower()=='repeat':
+                    print 'Repeating next command '+cmd[1]+' times.'
+                    self.Repeat = int(cmd[1])
+                    stopRepeat = False
+
+                  #elif cmd[0].lower()=='defocusfactor':
+                    #print 'defocusfactor'
+
+                  elif cmd[0].lower()=='findinterfaceat':
+                    print 'Setting FindInterfaceAt to '+cmd[1]
+                    self.FindInterfaceAt = [0,0,float(cmd[1]),0]
+
+                  elif cmd[0].lower()=='dwelltime':
+                    print 'Setting DwellTime to '+cmd[1]
+                    self.DwellTime = float(cmd[1])
+
+
+                  else:
+                    print('UNKNOWN COMMAND: '+cmd[0])
+                    #sys.exit(-1)
+              else:
+                #print '=>VOXEL'
+                voxel = []
+                for i in range(len(cmd)):
+                  voxel.append( float(cmd[i]) + self.voxel_offset[i] + self.stage_position[i] - self.FindInterfaceAt[i] )
+                #voxel = [ float(i) for i in cmd ]
+                (last_voxel,found_last_voxel) = self.getLastVoxel()
+                write_sequence.append(voxel)
+                if len(write_sequence)>=2:
+                    a = write_sequence[-2][0:3]
+                    b = write_sequence[-1][0:3]
+                    newDist = numpy.linalg.norm(numpy.array(b)-numpy.array(a))
+                    newTime = newDist/self.ScanSpeed
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + newTime
+                    self.writingDistanceInMum = self.writingDistanceInMum + newDist
+                elif found_last_voxel:
+                    a = last_voxel[0:3]
+                    b = write_sequence[-1][0:3]
+                    newDist = numpy.linalg.norm(numpy.array(b)-numpy.array(a))
+                    newTime = newDist/self.ScanSpeed
+                    self.writingTimeInSeconds = self.writingTimeInSeconds + newTime
+                    self.writingDistanceInMum = self.writingDistanceInMum + newDist
+
+                Nvoxels = Nvoxels + 1
+
+            # reset repeat
+            if stopRepeat:
+                self.Repeat = 1
     except IOError as (errno, strerror):
       print "I/O error({0}): {1}".format(errno, strerror)
       print 'Failed to open '+filename
-            
+
     print('Nvoxels = '+str(Nvoxels))
+    if self.verbosity > 5:
+      print('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds))
+      print('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.))
+      print('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.)))
+      print('self.writingDistanceInMum = '+str(self.writingDistanceInMum))
     #return GWL_voxels
-  
-  def write_GWL(self,filename):
+
+  def write_GWL(self, filename, writingOffset = [0,0,0,0]):
     print('Writing GWL to '+filename)
     with open(filename, 'w') as file:
       for write_sequence in self.GWL_voxels:
         for voxel in write_sequence:
           for i in range(len(voxel)):
-            file.write(str(voxel[i]))
+            file.write( str( voxel[i] + writingOffset[i] ) )
             if i<len(voxel)-1:
               file.write('\t')
             else:
               file.write('\n')
         #file.write('-999\t-999\t-999\n')
         file.write('Write\n')
-        
+
 if __name__ == "__main__":
   #GWL_obj = GWLobject()
   #GWL_obj.readGWL(sys.argv[1])
@@ -318,12 +442,12 @@ if __name__ == "__main__":
   z = 7.1038825; GWL_obj.addXblock([0,0,z],[1,0,z],2,0.050,3,0.100)
 
   power = 75
-  
+
   center = [0,0,3]
   HorizontalPointDistance = 0.050
   VerticalPointDistance = 0.100
   radius = 1
-  
+
   #print 'addHorizontalCircle'
   GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
   #print 'addHorizontalDisk'

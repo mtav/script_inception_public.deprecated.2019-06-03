@@ -21,12 +21,12 @@ import cPickle
 ###############################
 # INITIALIZATIONS
 ###############################
-#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
+#cfgfile = os.path.expanduser('~')+'/BlenderImportBFDTD.txt'
 # official script data location :)
 print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
 if Blender.Get("datadir"):
   print('datadir defined')
-  cfgfile = Blender.Get("datadir")+'/BlenderImport.txt'
+  cfgfile = Blender.Get("datadir")+'/BlenderImportBFDTD.txt'
 else:
   print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
   sys.exit(0)
@@ -101,6 +101,12 @@ def importBristolFDTD(filename):
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
+        # scale object
+        Sx=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(1,0,0))
+        Sy=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,1,0))
+        Sz=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,0,1))
+        rotation_matrix *= Sx*Sy*Sz;
+
         # position object
         T = Blender.Mathutils.TranslationMatrix(centre)
         rotation_matrix *= T;
@@ -111,6 +117,7 @@ def importBristolFDTD(filename):
           
         # create object
         FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        #FDTDGeometryObjects_obj.GEOblock_matrix(sphere.name, rotation_matrix, sphere.permittivity, sphere.conductivity);
         
     # Block
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
@@ -140,7 +147,13 @@ def importBristolFDTD(filename):
 
         # create object
         FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
-    
+
+    # Distorted
+    for distorted in structured_entries.distorted_list:
+        # create object
+        #print(distorted)
+        FDTDGeometryObjects_obj.GEOdistorted(distorted.name, distorted.vertices, distorted.permittivity, distorted.conductivity);
+        
     # Cylinder
     Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
     for cylinder in structured_entries.cylinder_list:

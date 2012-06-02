@@ -1,6 +1,6 @@
-function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide_figures, imageSaveName)
+function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide_figures, imageSaveName)
+  % function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software
@@ -75,8 +75,17 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     error('TODO: add column selector');
   end
 
-  if exist('maxval','var')==0
+  if exist('zlimits','var')==0
+    minval = NaN;
     maxval = NaN;
+  else
+    if length(zlimits)==2
+    minval = zlimits(1);
+    maxval = zlimits(2);
+    else
+      disp(size(zlimits))
+      error('Incorrect zlimits size.')
+    end
   end
   
   % frequency snapshot specific
@@ -134,8 +143,15 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     return;
   end
   
+  if isnan(minval)
+    minval = min(data);
+    disp(['min(data) = ',num2str(max(data))])
+    disp(['max(data) = ',num2str(max(data))])
+    disp(['mean(data) = ',num2str(mean(data))])
+  end
   if isnan(maxval)
     %maxval = max(data);
+    disp(['min(data) = ',num2str(max(data))])
     disp(['max(data) = ',num2str(max(data))])
     disp(['mean(data) = ',num2str(mean(data))])
     maxval = 8./9.*max(data)+1./9.*mean(data);
@@ -191,9 +207,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   
   %colave = max(fin1(:,column));
   colfig = handles.AllHeaders{column};
-  disp(['maxval=',num2str(maxval)]);
+  disp(['minval = ',num2str(minval)]);
+  disp(['maxval = ',num2str(maxval)]);
   if (modu == 1) || (handles.modulus == 1)
-    caxis([0 maxval]);
+    caxis([minval maxval]);
   else
     caxis([-maxval maxval]);
   end
@@ -210,11 +227,6 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   if(not(inoctave))
     lighting phong;
   end
-  
-  %zmin = 0;
-  %zmax = maxval;
-  %cmin = 0;
-  %cmax = maxval;
   
   % TODO: handle NaNs
   switch handles.plane
@@ -295,8 +307,10 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     else
       title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
     end
+  elseif handles.Type == 4 % excitation template
+    title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');  
   else
-    warning('ERROR: Unknown data type');
+    warning(['Unknown data type: handles.Type = ',num2str(handles.Type)]);
     %return;
   end
   
@@ -490,9 +504,9 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
   if handles.autosave == 1
     dim = length(snapshot_filename);
     if grey == 1
-      figout = [snapshot_filename(1:(dim-4)) '_' colfig '_' num2str(maxval) '_grey.png'];
+      figout = [snapshot_filename(1:(dim-4)), '_', colfig, '_', num2str(minval), '-', num2str(maxval), '_grey.png'];
     else
-      figout = [snapshot_filename(1:(dim-4)) '_' colfig '_' num2str(maxval) '.png'];
+      figout = [snapshot_filename(1:(dim-4)), '_', colfig, '_', num2str(minval), '-', num2str(maxval), '.png'];
     end
     disp(['Saving figure as ',figout]);
     %print(fig,'-dpng','-r300',figout);
@@ -508,6 +522,7 @@ function plotSnapshot(snapshot_filename, column, maxval, handles, rotate90, hide
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%DATE', datestr(now,'yyyymmdd_HHMMSS'));
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%BASENAME', basename);
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%FIELD', num2str(colfig));
+    imageSaveNameFinal = strrep(imageSaveNameFinal, '%MIN', num2str(minval));
     imageSaveNameFinal = strrep(imageSaveNameFinal, '%MAX', num2str(maxval));
     % additional stuff for frequency snapshots
     if handles.Type == 3 % frequency snapshot

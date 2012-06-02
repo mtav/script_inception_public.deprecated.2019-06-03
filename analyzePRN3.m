@@ -1,21 +1,27 @@
 % this is getting out of hand... Oh well, things need to get done. Code can be cleaned up later...
-function analyzePRN3(prn_file, logfile)
+
+    %if excitation_direction == 'x'
+      %probe_col = 2;
+    %elseif excitation_direction == 'y'
+      %probe_col = 3;
+    %elseif excitation_direction == 'z'
+      %probe_col = 4;
+
+function analyzePRN3(prn_file, logfile, logfile_summary, probe_col)
 
   [ folder, basename, ext ] = fileparts(prn_file);
   WORKDIR = dirname(prn_file);
 
-  wavelength_nm = 900;
-  iterations = 1231321;
-  Qfactor_harminv = 1212.35656;
-  Qfactor_fitting = 545.3235;
+  autosave = false;
+  plotNothing = true;
 
   %logfile = '~/tmpQ.txt';
   %probe_col = 3; % mike diamond
-  probe_col = 2; % daniel latest 0/1/2
+  %probe_col = 2; % daniel latest 0/1/2
 
-  fid = fopen([WORKDIR, filesep, 'time.txt'], 'r'); A = textscan(fid,'%s %s %d:%d:%d',1); B = textscan(fid,'%d %s %d:%d:%d'); fclose(fid); iterations = B{1}(end);
+  iterations = parseBFDTDTime([WORKDIR, filesep, 'time.txt']);
 
-  [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(prn_file, probe_col, 1, '', true);
+  [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(prn_file, probe_col, autosave, '', true, plotNothing);
 
   fid = fopen(logfile, 'at');
   fprintf(fid,'\n');
@@ -30,6 +36,13 @@ function analyzePRN3(prn_file, logfile)
   fprintf(fid,'\n');
   fclose(fid);
 
-end
+  fid = fopen(logfile_summary, 'at');
+  for i=1:length(wavelength_nm)
+    if Q_lorentz(i)>0 & Q_harminv_local(i)>0 & Q_harminv_global(i)>0
+      fprintf(fid, '%s\t%d\t%0.0f\t%0.0f\t%0.0f\t%0.0f\n', folder, iterations, wavelength_nm(i), Q_lorentz(i), Q_harminv_local(i), Q_harminv_global(i));
+      break;
+    end
+  end
+  fclose(fid);
 
-%plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
+end
