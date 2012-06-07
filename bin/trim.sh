@@ -4,16 +4,22 @@ set -eux
 
 trimit()
 {
-  OLD=$1
-  NEW=$(dirname $OLD)/$(basename $OLD .eps).png
+  OLDFULL=$1
+  localdir=$(dirname $OLDFULL)
+  cd $localdir
+  OLD=$(basename $OLDFULL)
+  NEW=$(basename $OLD .eps).png
   gs -r300 -dEPSCrop -dTextAlphaBits=4 -sDEVICE=png16m -sOutputFile=$NEW -dBATCH -dNOPAUSE $OLD
   convert $NEW -trim $NEW
+  cd -
 }
 
 #trimit $1
 #find . -name "*.eps" | xargs -n1 -I{} trimit() {}
 
-find . -name "*.eps"  | while read FILENAME;
+DIR=$(readlink -f $1)
+
+find $DIR -name "*.eps"  | while read FILENAME;
 do
   trimit $FILENAME
 done

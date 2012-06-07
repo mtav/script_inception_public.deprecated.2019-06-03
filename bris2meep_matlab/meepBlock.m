@@ -1,11 +1,11 @@
-function B=meepBlock(center,size,epsilon)
+function B = meepBlock(center,size,epsilon)
 
     sizeStr='size ';
-    for m=1:length(size)
+    for m = 1:length(size)
         if size(m)==Inf
-            sizeStr=[sizeStr,'infinity '];
+            sizeStr = [sizeStr,'infinity '];
         else
-            sizeStr=[sizeStr,num2str(size(m),'%4.9g'),' '];
+            sizeStr = [sizeStr,num2str(size(m),'%4.9g'),' '];
         end
     end
 
@@ -16,7 +16,7 @@ function B=meepBlock(center,size,epsilon)
 
     B = ['\t\t(make block\n'];
     B = [B, '\t\t\t(center ',num2str(center,'%4.9g '),')\n'];
-    B = [B, '\t\t\t(size ',sizeStr,')\n'];
+    B = [B, '\t\t\t(',sizeStr,')\n'];
     B = [B, '\t\t\t(material (make dielectric (epsilon ',num2str(epsilon),'))))\n'];
 
     % Center=struct('type',{'center'},'properties',{{center}});

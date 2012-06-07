@@ -11,17 +11,23 @@ function [ handles, ok ] = PP_generate_plot(handles)
   end
   
   col = handles.col;
-  handles.dataname = handles.AllHeaders(col);
-  maxplotvalue = handles.maxplotvalue;
+  handles.dataname = handles.AllHeaders(col);  
+  zlimits = [ handles.minplotvalue, handles.maxplotvalue ];
   
   if handles.Type == 1
     plotProbe(handles.ProbeFile, handles.col, handles.autosave);
   elseif handles.Type == 2
     handles.snapfile = handles.TimeSnapshotFile;
-    plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
+    plotSnapshot(handles.snapfile, col, zlimits, handles);
   elseif handles.Type == 3
     handles.snapfile = handles.FrequencySnapshotFile;
-    plotSnapshot(handles.snapfile, col, maxplotvalue, handles);
+    plotSnapshot(handles.snapfile, col, zlimits, handles);
+  elseif handles.Type == 4
+    handles.snapfile = handles.ExcitationTemplateFile;
+    plotSnapshot(handles.snapfile, col, zlimits, handles);
+  elseif handles.Type == 5
+    handles.snapfile = handles.SnapshotFile;
+    plotSnapshot(handles.snapfile, col, zlimits, handles);
   else
     error('Unknown data type');
     ok = 0;

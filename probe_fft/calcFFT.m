@@ -12,9 +12,10 @@ function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
   if exist('NFFT','var')==0
     disp('NFFT not given');
     NFFT = 2^nextpow2(Lin); % Next power of 2 from length of datain
+    fft_out = fft(datain);
+  else
+    fft_out = fft(datain,NFFT);
   end
-
-  fft_out = fft(datain,NFFT);
 
   Lout = length(fft_out); % = NFFT
   fft_out = fft_out(1:Lout/2);

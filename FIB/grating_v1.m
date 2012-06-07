@@ -34,14 +34,11 @@ H=0.04;   %Y grating length
 
 spotSize=spotSizes(find(spotSizes==bC),2)*1e-3;
 
-HFW=304000/mag; % Width of the horizontal scan (um).
+[res, HFW] = getResolution(mag);
 xRealMax=HFW
 yRealMax=262350/mag
-res=HFW/4096 % size of each pixel (um).
-
 
 BeamStep=max(round((spotSize-spotSize*overlap)/res),1);
-
 
 wShaded=round(WShaded*1e-3/res);
 trenchWidth=round(TrenchWidth*1e-3/res);

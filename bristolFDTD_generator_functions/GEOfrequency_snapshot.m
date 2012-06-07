@@ -55,7 +55,7 @@ function snapshot(other_args,plane,P1,P2, frequency)
   fprintf(other_args.FILE,'%E **X2\n', P2(1));
   fprintf(other_args.FILE,'%E **Y2\n', P2(2));
   fprintf(other_args.FILE,'%E **Z2\n', P2(3));
-  fprintf(other_args.FILE,'%E **FREQUENCY (HZ)\n', frequency);
+  fprintf(other_args.FILE,'%E **FREQUENCY (MHz)\n', frequency);
   fprintf(other_args.FILE,'%d **STARTING SAMPLE\n', other_args.starting_sample);
   fprintf(other_args.FILE,'%d **EX\n', other_args.E(1));
   fprintf(other_args.FILE,'%d **EY\n', other_args.E(2));

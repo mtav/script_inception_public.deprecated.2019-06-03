@@ -7,6 +7,9 @@ function BFDTDtoMEEP(file_list)
   % Only one field in the excitation component defined in INP should be one.
   % That is either Ex or Ey ... Hx...etc;  Otherwise the first nonzero
   % component will be translated to ctl.
+  %
+  % ex:
+  % BFDTDtoMEEP({'qedc3_2_05.geo','qedc3_2_05.inp'})
   %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % if exist('geofile','var') == 0
@@ -221,7 +224,28 @@ function BFDTDtoMEEP(file_list)
   end
 
   %%%%%%%%%%%%%%%%%%%%%%
+  % frequency snapshots
+  str = '\n';
+  if (length(FDTDobj.frequency_snapshots)>0)
+    str = [str, '(set! snapshots\n'];
+    str = [str, '  (list\n'];
+    for idx = 1:length(FDTDobj.frequency_snapshots)
+      snapshot = FDTDobj.frequency_snapshots(idx);
+      name = ['snapshot-',num2str(idx)]; % should be replaced by snapshot.name once the matlab parser is also able to get the name from the comment field
+      center_vec3 = 0.5*(snapshot.P1 + snapshot.P2);
+      size_vec3 = abs(snapshot.P2 - snapshot.P1);
+      wavelength_mum = get_c0()/snapshot.frequency;
+      E_vec3 = snapshot.E;
+      H_vec3 = snapshot.H;
+      J_vec3 = snapshot.J;
+      str = [str, meepFrequencySnapshot(name,center_vec3,size_vec3,wavelength_mum,E_vec3,H_vec3,J_vec3,resolution)];
+    end
+    str = [str, '  )\n'];
+    str = [str, ')\n'];
+  end
+  fprintf(FILE,str);
   
+  %%%%%%%%%%%%%%%%%%%%%%
   % Run Command
   fprintf(FILE,'\r\n');
   % fprintf(FILE,'(init-fields)\r\n');

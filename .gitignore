@@ -32,3 +32,8 @@ tmp.bat
 tmp.in
 tmp.sh
 *.o[0-9]*
+tmp.dat
+*.gwl
+*.dat
+*.zip
+*.in

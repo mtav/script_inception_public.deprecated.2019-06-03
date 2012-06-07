@@ -25,15 +25,16 @@ function [header, data] = hdrload(file)
   % check number and type of arguments
   if nargin < 1
     error('Function requires one input argument');
-  elseif ~isstr(file)
+  %elseif ~isstr(file)
+  elseif ~ischar(file)
     error('Input must be a string representing a filename');
   end
   
   % Open the file.  If this returns a -1, we did not open the file 
   % successfully.
-  disp(['Opening file=',file]);
+  disp(['Opening file = ',file]);
   fid = fopen(file);
-  if fid==-1
+  if fid == -1
     error('File not found or permission denied');
   end
   
@@ -54,13 +55,15 @@ function [header, data] = hdrload(file)
   
   % Start processing.
   line = fgetl(fid);
-  if ~isstr(line)
+  %if ~isstr(line)
+  if ~ischar(line)
     disp('Warning: file contains no header and no data')
   end;
   % TODO: octave compatibility
   %sscanf(line, "%E","C");
   %[data, ncols, errmsg, nxtindex] = sscanf(line, "%E","C");
-  [data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
+  %[data, ncols, errmsg, nxtindex] = sscanf(line, '%E');
+  [data, ncols, errmsg, nxtindex] = sscanf(line, '%f');
   
   % One slight problem, pointed out by Peter vanderWal: If the 
   % first character of the line is 'e', then this will scan as 
@@ -73,14 +76,15 @@ function [header, data] = hdrload(file)
   % header information. This part of the program takes most of the 
   % processing time, because fgetl is relatively slow (compared to 
   % fscanf, which we will use later).
-  while isempty(data)|(nxtindex==1)
+  while isempty(data) || (nxtindex==1)
     no_lines = no_lines+1;
     max_line = max([max_line, length(line)]);
     % Create unique variable to hold this line of text information.
     % Store the last-read line in this variable.
     eval(['line', num2str(no_lines), '=line;']);
     line = fgetl(fid);
-    if ~isstr(line)
+    %if ~isstr(line)
+    if ~ischar(line)
       disp('Warning: file contains no data')
       break
     end;
@@ -90,7 +94,8 @@ function [header, data] = hdrload(file)
   % Now that we have read in the first line of data, we can skip 
   % the processing that stores header information, and just read 
   % in the rest of the data. 
-  data = [data; fscanf(fid, '%E')];
+  %data = [data; fscanf(fid, '%E')];
+  data = [data; fscanf(fid, '%f')];
   fclose(fid);
   
   % Create header output from line information. The number of lines
@@ -100,7 +105,8 @@ function [header, data] = hdrload(file)
   % headers were 10 lines or less, we could use the STR2MAT 
   % function and save some work. First, initialize the header to an
   % array of spaces.
-  header = setstr(' '*ones(no_lines, max_line));
+  %header = setstr(' '*ones(no_lines, max_line));
+  header = char(' '*ones(no_lines, max_line));
   for i = 1:no_lines
     varname = ['line' num2str(i)];
     % Note that we only assign this line variable to a subset of 
@@ -120,4 +126,8 @@ function [header, data] = hdrload(file)
   eval('data = reshape(data, ncols, length(data)/ncols)'';', '');
   
   % And we're done!
+  
+  clear all;
+  clearvars -global;
+
 end

@@ -107,7 +107,7 @@ function getResonanceFrequencies2(filename, probe_col, parametersFile)
     fprintf(fid,'%2.8e\r\n',data(:,probe_col));
     fclose(fid);
     
-    [lambdaH_mum,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
+    [status, lambdaH_mum,Q,outFile,err,minErrInd] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
     lambdaH_nm = lambdaH_mum*1e3;
     
     rel=1./err; rel=rel/max(rel)*max(Q);

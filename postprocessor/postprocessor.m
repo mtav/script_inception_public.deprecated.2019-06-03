@@ -32,7 +32,7 @@ function varargout = postprocessor(varargin)
   
   % Edit the above text to modify the response to help postprocessor
   
-  % Last Modified by GUIDE v2.5 14-Apr-2011 14:53:22
+  % Last Modified by GUIDE v2.5 29-May-2012 12:20:06
   
   % Begin initialization code - DO NOT EDIT
   gui_Singleton = 1;
@@ -184,10 +184,18 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   if get(handles.radiobutton_FrequencySnapshot,'Value');
     handles.Type = 3;
   end
+  if get(handles.radiobutton_ExcitationTemplate,'Value');
+    handles.Type = 4;
+  end
+  if get(handles.radiobutton_Snapshot,'Value');
+    handles.Type = 5;
+  end
   
   handles.ProbeID = get(handles.popupmenu_Probe,'Value');
   handles.TimeSnapshotID = get(handles.popupmenu_TimeSnapshot,'Value');
   handles.FrequencySnapshotID = get(handles.popupmenu_FrequencySnapshot,'Value');
+  handles.ExcitationTemplateID = get(handles.popupmenu_ExcitationTemplate,'Value');
+  handles.SnapshotID = get(handles.popupmenu_Snapshot,'Value');
   handles.geometryfile = get(handles.popupmenu_geometryfile,'Value');
   handles.inputfile = get(handles.popupmenu_inputfile,'Value');
   
@@ -266,30 +274,6 @@ function popupmenu_plotcolumn_CreateFcn(hObject, eventdata, handles)
   end
 end
 
-function edit_maxplotvalue_Callback(hObject, eventdata, handles)
-  disp('function edit_maxplotvalue_Callback(hObject, eventdata, handles)')
-  % hObject    handle to edit_maxplotvalue (see GCBO)
-  % eventdata  reserved - to be defined in a future version of MATLAB
-  % handles    structure with handles and user data (see GUIDATA)
-  
-  % Hints: get(hObject,'String') returns contents of edit_maxplotvalue as text
-  %        str2double(get(hObject,'String')) returns contents of edit_maxplotvalue as a double
-end
-
-function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)
-  disp('function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)')
-  % --- Executes during object creation, after setting all properties.
-  % hObject    handle to edit_maxplotvalue (see GCBO)
-  % eventdata  reserved - to be defined in a future version of MATLAB
-  % handles    empty - handles not created until after all CreateFcns called
-  
-  % Hint: edit controls usually have a white background on Windows.
-  %       See ISPC and COMPUTER.
-  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-      set(hObject,'BackgroundColor','white');
-  end
-end
-
 function radiobutton7_Callback(hObject, eventdata, handles)
   disp('function radiobutton7_Callback(hObject, eventdata, handles)')
   % --- Executes on button press in radiobutton7.
@@ -331,6 +315,14 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
   if get(handles.radiobutton_FrequencySnapshot,'Value');
     handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
   end
+  if get(handles.radiobutton_ExcitationTemplate,'Value');
+    handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
+  end
+  if get(handles.radiobutton_Snapshot,'Value');
+    handles.col = get(handles.popupmenu_plotcolumn,'Value')+2;
+  end
+  
+  handles.minplotvalue = str2double(get(handles.edit_minplotvalue,'String'));
   handles.maxplotvalue = str2double(get(handles.edit_maxplotvalue,'String'));
   
   handles.interpolate = get(handles.checkbox_interpolate,'Value');
@@ -378,6 +370,18 @@ function [handles] = setupListsGUI(handles)
       set(handles.popupmenu_FrequencySnapshot,'String',handles.FrequencySnapshotList);
     else
       set(handles.popupmenu_FrequencySnapshot,'String',{''});
+    end
+
+    if length(handles.ExcitationTemplateList)>0
+      set(handles.popupmenu_ExcitationTemplate,'String',handles.ExcitationTemplateList);
+    else
+      set(handles.popupmenu_ExcitationTemplate,'String',{''});
+    end
+
+    if length(handles.SnapshotList)>0
+      set(handles.popupmenu_Snapshot,'String',handles.SnapshotList);
+    else
+      set(handles.popupmenu_Snapshot,'String',{''});
     end
     
     if length(handles.geolist)>0
@@ -563,4 +567,97 @@ function radiobutton_FrequencySnapshot_Callback(hObject, eventdata, handles)
   % eventdata  reserved - to be defined in a future version of MATLAB
   % handles    structure with handles and user data (see GUIDATA)
   % Hint: get(hObject,'Value') returns toggle state of radiobutton_FrequencySnapshot
+end
+
+
+function popupmenu_ExcitationTemplate_Callback(hObject, eventdata, handles)
+  % --- Executes on selection change in popupmenu_ExcitationTemplate.
+  % hObject    handle to popupmenu_ExcitationTemplate (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hints: contents = get(hObject,'String') returns popupmenu_ExcitationTemplate contents as cell array
+  %        contents{get(hObject,'Value')} returns selected item from popupmenu_ExcitationTemplate
+end
+
+function popupmenu_ExcitationTemplate_CreateFcn(hObject, eventdata, handles)
+  % --- Executes during object creation, after setting all properties.
+  % hObject    handle to popupmenu_ExcitationTemplate (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+  
+  % Hint: popupmenu controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
+end
+
+function popupmenu_Snapshot_Callback(hObject, eventdata, handles)
+  % --- Executes on selection change in popupmenu_Snapshot.
+  % hObject    handle to popupmenu_Snapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hints: contents = get(hObject,'String') returns popupmenu_Snapshot contents as cell array
+  %        contents{get(hObject,'Value')} returns selected item from popupmenu_Snapshot
+end
+
+function popupmenu_Snapshot_CreateFcn(hObject, eventdata, handles)
+  % --- Executes during object creation, after setting all properties.
+  % hObject    handle to popupmenu_Snapshot (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+  
+  % Hint: popupmenu controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
+end
+
+function edit_minplotvalue_Callback(hObject, eventdata, handles)
+  % hObject    handle to edit_minplotvalue (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+
+  % Hints: get(hObject,'String') returns contents of edit_minplotvalue as text
+  %        str2double(get(hObject,'String')) returns contents of edit_minplotvalue as a double
+end
+
+function edit_minplotvalue_CreateFcn(hObject, eventdata, handles)
+  % --- Executes during object creation, after setting all properties.
+  % hObject    handle to edit_minplotvalue (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+
+  % Hint: edit controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
+end
+
+function edit_maxplotvalue_Callback(hObject, eventdata, handles)
+  disp('function edit_maxplotvalue_Callback(hObject, eventdata, handles)')
+  % hObject    handle to edit_maxplotvalue (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+  
+  % Hints: get(hObject,'String') returns contents of edit_maxplotvalue as text
+  %        str2double(get(hObject,'String')) returns contents of edit_maxplotvalue as a double
+end
+
+function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)
+  disp('function edit_maxplotvalue_CreateFcn(hObject, eventdata, handles)')
+  % --- Executes during object creation, after setting all properties.
+  % hObject    handle to edit_maxplotvalue (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    empty - handles not created until after all CreateFcns called
+  
+  % Hint: edit controls usually have a white background on Windows.
+  %       See ISPC and COMPUTER.
+  if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+      set(hObject,'BackgroundColor','white');
+  end
 end

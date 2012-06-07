@@ -5,7 +5,7 @@
 #~ from bpy import *
 import math
 import bpy
-#import BPyAddMesh;
+#import BPyAddMesh
 import os
 import sys
 import re
@@ -179,6 +179,9 @@ class FDTDGeometryObjects:
 
         ##~ Blender.Window.SetActiveLayer(1<<8);
         #scene = Blender.Scene.GetCurrent();
+
+        #~ Blender.Window.SetActiveLayer(1<<8);
+        #scene = Blender.Scene.GetCurrent();
         #mesh = Blender.Mesh.Primitives.Cube(1.0);
         #mesh.materials = self.materials(permittivity, conductivity);
         #for f in mesh.faces:
@@ -189,6 +192,89 @@ class FDTDGeometryObjects:
         #obj.transp = True; obj.wireMode = True;
         ##~ obj.layers = [ 8 ];
         #return;
+
+    def GEOdistorted(self, name, vertices, permittivity, conductivity):
+        scene = Blender.Scene.GetCurrent();
+        
+        #mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
+    
+        #obj = scene.objects.new(mesh, name);
+
+        #obj.setMatrix(rotation_matrix);
+        #obj.transp = True; obj.wireMode = True;
+        ##~ obj.layers = [ 8 ];
+        #return;
+
+        #pos = 0.5*(lower+upper);
+        #diag = upper-lower;
+        #obj.SizeX = abs(diag[0]);
+        #obj.SizeY = abs(diag[1]);
+        #obj.SizeZ = abs(diag[2]);
+        #obj.setLocation(pos[0], pos[1], pos[2]);
+        #obj.transp = True; obj.wireMode = True;
+
+######################################################################################
+
+        # variables
+        #for i in range(8):
+          #vertices[i] = Vector(distorted.vertices[i])
+    
+        #offset = 0
+        #for i_object in range(0, Nobjects):
+          #line = in_file.readline()
+          #words = line.split()
+          #Nverts = int(words[0])
+          #Nfaces = int(words[1])
+          #print "Nverts=",Nverts
+          #print "Nfaces=",Nfaces
+          
+        local_verts = []
+        for i_vert in range(len(vertices)):
+          local_verts.append( Vector(vertices[i_vert]) )
+          
+        #print(local_verts)
+        faces = []
+        faces.append([3,2,1,0])
+        faces.append([7,6,5,4])
+        faces.append([0,1,6,7])
+        faces.append([1,2,5,6])
+        faces.append([2,3,4,5])
+        faces.append([3,0,7,4])
+
+          #for i_face in range(0, Nfaces):
+                #line = in_file.readline()
+                #words = line.split()
+                #if len(words) < 3:
+                  #Blender.Draw.PupMenu('Error%t|File format error 4')
+                  #return
+                #Nverts_in_face = int(words[0])
+                #if len(words) != 1 + Nverts_in_face:
+                  #Blender.Draw.PupMenu('Error%t|File format error 5')
+                  #return
+                #face_verts = []
+                #for i_face_vert in range(0, Nverts_in_face):
+                  #idx = int(words[i_face_vert + 1]) - offset
+                  #face_verts.append(idx)
+                ##print "face_verts=",face_verts
+                #faces.append(face_verts)
+          
+        #print "Adding object ",object_names[i_object]
+        BPyAddMesh.add_mesh_simple(name, local_verts, [], faces)
+
+        obj = Blender.Object.GetSelected()[0];
+        obj.transp = True; obj.wireMode = True;
+        objmesh = obj.getData(mesh=True)
+        objmesh.materials = self.materials(permittivity, conductivity)
+        for f in objmesh.faces:
+          f.mat = 0
+
+######################################################################################
+
+
+        return;
     
     def GEOcylinder(self, name, center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
         scene = Blender.Scene.GetCurrent();
@@ -244,7 +330,7 @@ class FDTDGeometryObjects:
     def GEObox(self, name, lower, upper):
       # add cube
       bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
-      
+    
       # get added object
       obj = bpy.context.active_object
       #print(obj)
@@ -322,7 +408,11 @@ class FDTDGeometryObjects:
         ymax = sum(delta_Y_vector);
         zmax = sum(delta_Z_vector);
         
-        delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
+        self.mesh_min = min(min(delta_X_vector), min(delta_Y_vector), min(delta_Z_vector))
+        self.mesh_max = max(max(delta_X_vector), max(delta_Y_vector), max(delta_Z_vector))
+        print( ('X: min = ', min(delta_X_vector), ' average = ', float(sum(delta_X_vector)) / len(delta_X_vector)) )
+        print( ('Y: min = ', min(delta_Y_vector), ' average = ', float(sum(delta_Y_vector)) / len(delta_Y_vector)) )
+        print( ('Z: min = ', min(delta_Z_vector), ' average = ', float(sum(delta_Z_vector)) / len(delta_Z_vector)) )
         
         # print("len(delta_X_vector) = ", len(delta_X_vector))
         # print("len(delta_Y_vector) = ", len(delta_Y_vector))
@@ -330,10 +420,11 @@ class FDTDGeometryObjects:
         # print("len(delta_vector) = ", len(delta_vector))
         #~ global mesh_min;
         #~ global mesh_max;
-        self.mesh_min = min(delta_vector);
-        self.mesh_max = max(delta_vector);
-        # print("mesh_min = ", mesh_min)
-        # print("mesh_max = ", mesh_max)
+        #delta_vector = delta_X_vector + delta_Y_vector + delta_Z_vector;
+        #self.mesh_min = min(delta_vector);
+        #self.mesh_max = max(delta_vector);
+        print("self.mesh_min = ", self.mesh_min)
+        print("self.mesh_max = ", self.mesh_max)
         
         # verts = array.array('d',range());
         # verts = range(Nx*Ny*Nz);
@@ -457,7 +548,19 @@ class FDTDGeometryObjects:
     
         return
         
-    def GEOexcitation(self, name, P1, P2):
+    #def GEOexcitation(self, name, P1, P2):
+    def GEOexcitation(self, excitation):
+        name = excitation.name
+        P1 = Vector(excitation.P1)
+        P2 = Vector(excitation.P2)
+        
+        if excitation.current_source != 11:
+          print('template excitation')
+        else:
+          print('normal excitation')
+      
+        scene = Blender.Scene.GetCurrent();
+
         # arrow dimensions:
         arrow_length = (P2-P1).length;
         cone_length = arrow_length/5.0;
@@ -475,8 +578,8 @@ class FDTDGeometryObjects:
         axisZ.normalize();
         rotmat = Matrix(axisX,axisY,axisZ);
         
-        scene = Blender.Scene.GetCurrent();
-        
+        #scene = Blender.Scene.GetCurrent()
+                
         mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
         mesh.materials = [ self.excitation_material ];
         for f in mesh.faces:
@@ -566,7 +669,15 @@ class FDTDGeometryObjects:
         scene = Blender.Scene.GetCurrent();
         
         #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
-        probe_size = self.probe_scalefactor_mesh*self.mesh_min;
+        probe_size = self.probe_scalefactor_mesh*self.mesh_min
+        if probe_size<=0:
+          probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
+        if probe_size<=0:
+          probe_size = 1
+        print('self.probe_scalefactor_mesh = ' + str(self.probe_scalefactor_mesh))
+        print('self.mesh_min = ' + str(self.mesh_min))
+        print('probe_size = ' + str(probe_size))
+        # TODO: define probe_size relative to smallest part of geometry + add way to change it in blender eventually
         # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
         
         mesh = Blender.Mesh.Primitives.Cube(probe_size);
@@ -617,21 +728,21 @@ def TestObjects():
     GEOmesh(False, [1, 1], [1, 2, 3], [4, 3, 2, 1]);
     
     Blender.Window.SetActiveLayer(1<<1);
-    GEOexcitation(Vector(0,0,0), Vector(1,0,0));
-    GEOexcitation(Vector(0,0,0), Vector(0,1,0));
-    GEOexcitation(Vector(0,0,0), Vector(0,0,1));
+    #GEOexcitation(Vector(0,0,0), Vector(1,0,0));
+    #GEOexcitation(Vector(0,0,0), Vector(0,1,0));
+    #GEOexcitation(Vector(0,0,0), Vector(0,0,1));
 
-    GEOexcitation(Vector(1,0,0), Vector(2,0,0));
-    GEOexcitation(Vector(0,1,0), Vector(0,2,0));
-    GEOexcitation(Vector(0,0,1), Vector(0,0,2));
+    #GEOexcitation(Vector(1,0,0), Vector(2,0,0));
+    #GEOexcitation(Vector(0,1,0), Vector(0,2,0));
+    #GEOexcitation(Vector(0,0,1), Vector(0,0,2));
 
-    GEOexcitation(Vector(0,0,0), Vector(1,1,1));
-    GEOexcitation(Vector(1,1,1), Vector(2,2,2));
-    GEOexcitation(Vector(2,2,2), Vector(3,3,3));
+    #GEOexcitation(Vector(0,0,0), Vector(1,1,1));
+    #GEOexcitation(Vector(1,1,1), Vector(2,2,2));
+    #GEOexcitation(Vector(2,2,2), Vector(3,3,3));
 
-    GEOexcitation(Vector(1,1,1), Vector(2,1,2));
-    GEOexcitation(Vector(2,1,2), Vector(2,2,3));
-    GEOexcitation(Vector(2,2,3), Vector(1,2,4));
+    #GEOexcitation(Vector(1,1,1), Vector(2,1,2));
+    #GEOexcitation(Vector(2,1,2), Vector(2,2,3));
+    #GEOexcitation(Vector(2,2,3), Vector(1,2,4));
 
     # The death spiral!
     # x1=0;y1=0;z1=0;

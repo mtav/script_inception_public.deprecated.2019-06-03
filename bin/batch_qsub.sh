@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu
 
 # Check if all parameters are present
 # If no, exit

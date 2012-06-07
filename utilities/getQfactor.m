@@ -1,6 +1,6 @@
 function [Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax)
   % limit the data to an [xmin,xmax] fitting range based on the previous plot
-  [Xzoom,Yzoom]=zoomPlot(X,Y,xmin,xmax);
+  [Xzoom,Yzoom] = zoomPlot(X,Y,xmin,xmax);
   
   % calculate some fit start values from the peak
   [x0, y0, A, FWHM] = getLorentzStartValues(Xzoom, Yzoom, 0);

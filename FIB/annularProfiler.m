@@ -9,7 +9,7 @@
 % profile_type : 'dome', 'sawtooth', 'dome + ring', 'dome + angular ring', anything else => user-defined profile
 % profile : user-defined profile, vector holding dwell times.
 
-% hang you PC with:
+% hang your PC with:
 % annularProfiler(getenv('TESTDIR'),1,40000,2,4,'_prefix_',0,'dome + angular ring',[],1)
 
 function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction,profile_type,profile,interRingDistancePxl)
@@ -23,12 +23,11 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
   %%%%%%%%PARAMETERS%%%%%%%%%%%%%%%%%%%%%%%%%%% 
   %interRingDistancePxl = 1;  % The distance in pixels between each spiral ring.
 
-  HFW = 304000/mag; % Width of the horizontal scan (um).
+  [res, HFW] = getResolution(mag);
   if (r_outer_mum/1e3>HFW/2)
     error('Feature is too big for this magnification level..');
   end
-  res = HFW/4096; % size of each pixel (mum/pxl).
-  disp(['Resolution = (304000/4096)/mag = ',num2str(res),' mum/pxl'])
+  disp(['Resolution = ',num2str(res),' mum/pxl'])
   R_outer_pxl = round(r_outer_mum/res); % Radius in pixels.
   R_inner_pxl = round(r_inner_mum/res); % Radius in pixels.
 
@@ -78,7 +77,7 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
   set(gca,'YDir','reverse')
   %~ pause(.3)
   prefix = pf;
-
+  
   dwell = round(profile);
   figure;
   plot(rvec_new*res*interRingDistancePxl,dwell)
@@ -89,8 +88,10 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
   size(Rad_pxl)
   pxPerRing
   Rad_pxl
-  if pxPerRing*Rad_pxl>1e6
-    disp('WARNING: NOT ENOUGH MEMORY');
+  nnz(profile)
+  pxPerRing*nnz(profile)
+  if pxPerRing*nnz(profile)>1e6
+    disp('WARNING: NOT ENOUGH MEMORY. Exiting');
     return
   end
   theta = repmat(linspace(0,2*pi,pxPerRing),1,Rad_pxl);
@@ -115,7 +116,7 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
     y = v(2,:);
   else
     %% METHOD 2 IF NOT ENOUGH MEMORY USE THIS METHOD
-    disp('WARNING: NOT ENOUGH MEMORY');
+    disp('WARNING: Using low memory method');
     disp('Dauxrigante...')
     stackSize = 1e5;
     cc = ceil(length(x)/stackSize);
@@ -181,6 +182,7 @@ function annularProfiler(folder,rep,mag,r_inner_mum,r_outer_mum,prefix,direction
     %~ domeMaxDwell
     %~ domeMinDwell
 
+    disp(['length(x) = ',num2str(length(x))])
     disp(['Writing to ',filename])
     fid = fopen(filename,'w');
     fprintf(fid,'s\r\n%i\r\n%i\r\n',rep,length(x));

@@ -56,6 +56,24 @@ function [ handles ] = PP_load_data(handles)
     name = handles.FrequencySnapshotList{val};
     handles.FrequencySnapshotFile = [handles.workdir, filesep, name];
     handles.snapfile = handles.FrequencySnapshotFile;
+  elseif handles.Type == 4
+    val = handles.ExcitationTemplateID;
+    if (val<1) | (length(handles.ExcitationTemplateList)<val)
+      handles.isLoaded = 0;
+      return
+    end
+    name = handles.ExcitationTemplateList{val};
+    handles.ExcitationTemplateFile = [handles.workdir, filesep, name];
+    handles.snapfile = handles.ExcitationTemplateFile;
+  elseif handles.Type == 5
+    val = handles.SnapshotID;
+    if (val<1) | (length(handles.SnapshotList)<val)
+      handles.isLoaded = 0;
+      return
+    end
+    name = handles.SnapshotList{val};
+    handles.SnapshotFile = [handles.workdir, filesep, name];
+    handles.snapfile = handles.SnapshotFile;
   else
     error('Unknown data type')
     return
@@ -89,6 +107,10 @@ function [ handles ] = PP_load_data(handles)
   elseif handles.Type == 2
     handles.HeadersForPopupList = char(columns(3:length(columns))); % all headers except the one/two first ones
   elseif handles.Type == 3
+    handles.HeadersForPopupList = char(columns(3:length(columns))); % all headers except the one/two first ones
+  elseif handles.Type == 4
+    handles.HeadersForPopupList = char(columns(3:length(columns))); % all headers except the one/two first ones
+  elseif handles.Type == 5
     handles.HeadersForPopupList = char(columns(3:length(columns))); % all headers except the one/two first ones
   else
     error('Unknown data type')

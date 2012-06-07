@@ -16,6 +16,7 @@ from bfdtd.bristolFDTD_generator_functions import *
 from mathutils import *
 import os
 import pickle
+#import cPickle
 
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
@@ -23,12 +24,19 @@ import pickle
 ###############################
 # INITIALIZATIONS
 ###############################
-#cfgfile = os.path.expanduser('~')+'/BlenderImport.txt'
+#cfgfile = os.path.expanduser('~')+'/BlenderImportBFDTD.txt'
 # official script data location :)
-if os.getenv('BLENDERDATADIR'):
-  cfgfile = os.getenv('BLENDERDATADIR')+os.sep+'BlenderImport.txt'
+#if os.getenv('BLENDERDATADIR'):
+#  cfgfile = os.getenv('BLENDERDATADIR')+os.sep+'BlenderImport.txt'
+#else:
+#  cfgfile = getuserdir()+os.sep+'BlenderImport.txt'
+print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
+if Blender.Get("datadir"):
+  print('datadir defined')
+  cfgfile = Blender.Get("datadir")+'/BlenderImportBFDTD.txt'
 else:
-  cfgfile = getuserdir()+os.sep+'BlenderImport.txt'
+  print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
+  sys.exit(0)
 
 ###############################
 # IMPORT FUNCTION
@@ -47,7 +55,7 @@ def importBristolFDTD(filename):
     with open(cfgfile, 'wb') as f:
       # Pickle the 'data' dictionary using the highest protocol available.
       pickle.dump(filename, f, pickle.HIGHEST_PROTOCOL)
-
+    
     # create structured_entries
     structured_entries = readBristolFDTD(filename);
     
@@ -63,7 +71,9 @@ def importBristolFDTD(filename):
     
     # mesh
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
-    FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
+    #FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
+    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
+    FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.mesh.getXmeshDelta(),structured_entries.mesh.getYmeshDelta(),structured_entries.mesh.getZmeshDelta());
     
     # Time_snapshot (time or EPS)
     for time_snapshot in structured_entries.time_snapshot_list:
@@ -81,7 +91,11 @@ def importBristolFDTD(filename):
     # Excitation
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
-        FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
+        Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
+        print(Blender.Window.GetActiveLayer())
+        print(excitation)
+        FDTDGeometryObjects_obj.GEOexcitation(excitation);
+        #FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
     # Probe
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
     Nprobes = 0
@@ -96,14 +110,20 @@ def importBristolFDTD(filename):
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
     for sphere in structured_entries.sphere_list:
         # variables
-        center = Vector(sphere.center)
+        centre = Vector(sphere.centre)
 
         # initialise rotation_matrix
         rotation_matrix = Blender.Mathutils.Matrix()
         rotation_matrix.identity();
 
+        # scale object
+        Sx=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(1,0,0))
+        Sy=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,1,0))
+        Sz=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,0,1))
+        rotation_matrix *= Sx*Sy*Sz;
+
         # position object
-        T = Blender.Mathutils.TranslationMatrix(center)
+        T = Blender.Mathutils.TranslationMatrix(centre)
         rotation_matrix *= T;
         
         # add rotations
@@ -112,6 +132,7 @@ def importBristolFDTD(filename):
           
         # create object
         FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        #FDTDGeometryObjects_obj.GEOblock_matrix(sphere.name, rotation_matrix, sphere.permittivity, sphere.conductivity);
         
     # Block
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'));
@@ -141,7 +162,13 @@ def importBristolFDTD(filename):
 
         # create object
         FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
-    
+
+    # Distorted
+    for distorted in structured_entries.distorted_list:
+        # create object
+        #print(distorted)
+        FDTDGeometryObjects_obj.GEOdistorted(distorted.name, distorted.vertices, distorted.permittivity, distorted.conductivity);
+        
     # Cylinder
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
     for cylinder in structured_entries.cylinder_list:
@@ -154,7 +181,7 @@ def importBristolFDTD(filename):
         rotation_matrix *= rotationMatrix(Blender.Mathutils.Vector(0,0,0), Blender.Mathutils.Vector(1,0,0), -90)
         
         # position object
-        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.center[0],cylinder.center[1],cylinder.center[2]))
+        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.centre[0],cylinder.centre[1],cylinder.centre[2]))
         rotation_matrix *= T;
         
         # add rotations

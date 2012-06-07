@@ -15,96 +15,133 @@ end % end of function
 
 function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entries, structured_entries)
   % creates entries + structured_entries from filename
+  
+  %=====================================================================
+  % define structures (TODO: switch to octave+matlab compatible classes)
+  %=====================================================================
+  time_snapshots = struct('name',{},'first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+  frequency_snapshots = struct('name',{},'first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+
+  time_snapshots_X = struct('name',{},'first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+  time_snapshots_Y = struct('name',{},'first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+  time_snapshots_Z = struct('name',{},'first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
+  frequency_snapshots_X = struct('name',{},'first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+  frequency_snapshots_Y = struct('name',{},'first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
+  frequency_snapshots_Z = struct('name',{},'first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
     
+  all_snapshots = struct('name',{},'first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
+
+  excitations = struct(...
+    'name', {}, ...
+    'current_source', {},...
+    'P1', {},...
+    'P2', {},...
+    'E', {},...
+    'H', {},...
+    'type', {},...
+    'time_constant', {},...
+    'amplitude', {},...
+    'time_offset', {},...
+    'frequency', {},...
+    'param1', {},...
+    'param2', {},...
+    'template_filename', {},...
+    'template_source_plane', {},...
+    'template_target_plane', {},...
+    'template_direction', {},...
+    'template_rotation', {});
+
+  boundaries = struct('name',{},'type',{},'position',{});
+  box = struct('name',{},'lower',{},'upper',{});
+  sphere_list = struct('name',{},'center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
+  block_list = struct('name',{},'lower',{},'upper',{},'permittivity',{},'conductivity',{});
+  cylinder_list = struct('name',{},'center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
+  rotation_list = struct('name',{},'axis_point',{},'axis_direction',{},'angle_degrees',{});
+  probe_list = struct('name',{},'position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
+
+  % xmesh = [];
+  % ymesh = [];
+  % zmesh = [];
+  % flag = [];
+  % boundaries = [];
+  %=====================================================================
+
   % ask for input file if not given
   if exist('filename','var') == 0
     disp('filename not given');
     [file,path] = uigetfile({'*.geo *.inp'},'Select a GEO or INP file');
     filename = [path,file];
   end
-    
+  
   % read the whole file as one string
   fulltext = fileread(filename);
 
   % remove comments
-  pattern_stripcomments = '\*\*.*$';
+  pattern_stripcomments = '\*\*(?!name=).*\n';
   cleantext =  regexprep(fulltext, pattern_stripcomments, '\n', 'lineanchors', 'dotexceptnewline', 'warnings');
 
   % extract blocks
-  pattern_blocks = '^(?<type>\w+).*?\{(?<data>[^\{\}]*?)\}';
-  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_blocks, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
-
-  time_snapshots = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
-  frequency_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-
-  time_snapshots_X = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
-  time_snapshots_Y = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
-  time_snapshots_Z = struct('first',{},'repetition',{},'plane',{},'P1',{},'P2',{},'E',{},'H',{},'J',{},'power',{},'eps',{});
-  frequency_snapshots_X = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-  frequency_snapshots_Y = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-  frequency_snapshots_Z = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{});
-    
-  all_snapshots = struct('first',{},'repetition',{},'interpolate',{},'real_dft',{},'mod_only',{},'mod_all',{},'plane',{},'P1',{},'P2',{},'frequency',{},'starting_sample',{},'E',{},'H',{},'J',{},'power',{});
-  excitations = struct('current_source',{},'P1',{},'P2',{},'E',{},'H',{},'type',{},'time_constant',{},'amplitude',{},'time_offset',{},'frequency',{},'param1',{},'param2',{},'param3',{},'param4',{});
-  boundaries = struct('type',{},'position',{});
-  box = struct('lower',{},'upper',{});
-  sphere_list = struct('center',{},'outer_radius',{},'inner_radius',{},'permittivity',{},'conductivity',{});
-  block_list = struct('lower',{},'upper',{},'permittivity',{},'conductivity',{});
-  cylinder_list = struct('center',{},'inner_radius',{},'outer_radius',{},'height',{},'permittivity',{},'conductivity',{},'angle',{});
-  rotation_list = struct('axis_point',{},'axis_direction',{},'angle_degrees',{});
-  probe_list = struct('position',{},'step',{},'E',{},'H',{},'J',{},'pow',{});
-    
-  % xmesh = [];
-  % ymesh = [];
-  % zmesh = [];
-    % flag = [];
-    % boundaries = [];
+  pattern_objects = '^(?<type>\w+)\s*(?<nameblob>[^\{\}]+)?\{(?<data>[^\{\}]*?)\}';
+  [tokens_blocks match_blocks names_blocks] =  regexp(cleantext, pattern_objects, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
 
   % process blocks
+  %disp(['length(names_blocks) = ', num2str(length(names_blocks))]);
   for i = 1:length(names_blocks)
 
     type = names_blocks(:,i).type;
+    nameblob = names_blocks(:,i).nameblob;
+    
+    name = '';
+    if strcmpi(nameblob,'') == 0
+      pattern_nameblob = '\*\*name=(?<name>.*)';
+      [tokens_nameblob match_nameblob names_nameblob] =  regexp(nameblob, pattern_nameblob, 'tokens', 'match', 'names', 'lineanchors', 'warnings');
+      if length(names_nameblob.name) > 0
+        name = strtrim(names_nameblob.name);
+      end
+    end
+    
     data = names_blocks(:,i).data;
     % disp(['===>type = ',type]);
 
     dataV = [];
     % remove empty lines
-    lines = strread(data,'%s','delimiter','\r');
-    cellFlag = 0;
+    lines = strread(data,'%s','delimiter','\n');
+    cellFlag = 1;
     for L = 1:length(lines)
       if ~length(lines{L})
         continue;
       end
 
       num_val = str2num(lines{L});
+      %L
+      %num_val
             
-            str_val = strtrim(lines{L}); % trim string
-            str_val = str_val(str_val ~= '"');% remove double quotes
+      str_val = strtrim(lines{L}); % trim string
+      str_val = str_val(str_val ~= '"');% remove double quotes
 
-            % TODO: Check if this can't be simplified, or if it's even necessary.
+      % TODO: Check if this can't be simplified, or if it's even necessary.
       if cellFlag
-        if length(num_val)  %% num_val is num
+        if length(num_val) %% num_val is num
           dataV{length(dataV)+1} = num_val;
-        else           %% num_val is not num
+        else %% num_val is not num
           dataV{length(dataV)+1} = str_val;
         end
       else
-         if length(num_val)  %% num_val is num
+         if length(num_val) %% num_val is num
           dataV = [dataV,num_val];
-        else           %% num_val is not num
+        else %% num_val is not num
           cellFlag = 1;
           dataV = num2cell(dataV);
           dataV{length(dataV)+1} = str_val;
         end
       end
     end % end of loop through lines
-
+    
+    entry.name = name;
     entry.type = type;
     entry.data = dataV';
     entries{length(entries)+1} = entry;
 
-    % entry.type
-    % entry.data(1)
     switch upper(entry.type)
       case {'FREQUENCY_SNAPSHOT','SNAPSHOT'}
         % disp('Adding snapshot...');
@@ -135,7 +172,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
         end
       case {'EXCITATION'}
         current_excitation = add_excitation(entry);
-        excitations = [ excitations current_excitation ];
+        excitations = [ excitations, current_excitation ];
       case {'XMESH'}
         structured_entries.xmesh = entry.data;
       case {'YMESH'}
@@ -192,6 +229,7 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
 end
 
 function flag = add_flag(entry)
+  flag.name = entry.name;
   flag.iMethod = entry.data{1};
   flag.propCons = entry.data{2};
   flag.flagOne = entry.data{3};
@@ -202,7 +240,13 @@ function flag = add_flag(entry)
 end
 
 function boundaries = add_boundary(entry)
-  M = reshape(entry.data,4,length(entry.data)/4)';
+  boundaries.name = entry.name;
+  %entry.data
+  d = cell2mat(entry.data);
+  %length(entry.data)
+  % overly complex, but it works for cell and non-cell data...
+  M = reshape(d',4,size(d,1)*size(d,2)/4)';
+  %M = reshape(entry.data,4,length(entry.data)/4)';
   for i = 1:6
     boundaries(i).type = M(i,1);
     boundaries(i).position = M(i,2:4);
@@ -210,11 +254,15 @@ function boundaries = add_boundary(entry)
 end
 
 function box = add_box(entry)
+  box.name = entry.name;
+  entry.data = cell2mat(entry.data);
   box.lower = entry.data(1:3);
   box.upper = entry.data(4:6);
 end
 
 function sphere = add_sphere(entry)
+  sphere.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   sphere.center = entry.data(idx:idx+2); idx = idx+3;
   sphere.outer_radius = entry.data(idx); idx = idx+1;
@@ -224,6 +272,8 @@ function sphere = add_sphere(entry)
 end
 
 function block = add_block(entry)
+  block.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   block.lower = entry.data(idx:idx+2); idx = idx+3;
   block.upper = entry.data(idx:idx+2); idx = idx+3;
@@ -232,6 +282,8 @@ function block = add_block(entry)
 end
 
 function cylinder = add_cylinder(entry)
+  cylinder.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   cylinder.center = entry.data(idx:idx+2); idx = idx+3;
   cylinder.inner_radius = entry.data(idx); idx = idx+1;
@@ -243,6 +295,8 @@ function cylinder = add_cylinder(entry)
 end
 
 function rotation = add_rotation(entry)
+  rotation.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   rotation.axis_point = entry.data(idx:idx+2); idx = idx+3;
   rotation.axis_direction = entry.data(idx:idx+2); idx = idx+3;
@@ -250,6 +304,8 @@ function rotation = add_rotation(entry)
 end
 
 function probe = add_probe(entry)
+  probe.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   probe.position = entry.data(idx:idx+2); idx = idx+3;
   probe.step = entry.data(idx); idx = idx+1;
@@ -259,7 +315,10 @@ function probe = add_probe(entry)
   probe.pow = entry.data(idx); idx = idx+1;
 end
 
+% TODO: check necessity of those multiple snapshot adding functions.
 function snapshot = add_frequency_snapshot(entry)
+  snapshot.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   snapshot.first = entry.data(idx); idx = idx+1;
   snapshot.repetition = entry.data(idx); idx = idx+1;
@@ -278,6 +337,8 @@ function snapshot = add_frequency_snapshot(entry)
 end
 
 function snapshot = add_time_snapshot(entry)
+  snapshot.name = entry.name;
+  entry.data = cell2mat(entry.data);
   idx = 1;
   snapshot.first = entry.data(idx); idx = idx+1;
   snapshot.repetition = entry.data(idx); idx = idx+1;
@@ -292,6 +353,7 @@ function snapshot = add_time_snapshot(entry)
 end
 
 function snapshot = add_snapshot(entry)
+  snapshot.name = entry.name;
   if strcmpi(entry.type,'FREQUENCY_SNAPSHOT')
     idx = 1;
     snapshot.first = entry.data(idx); idx = idx+1;
@@ -332,12 +394,20 @@ function snapshot = add_snapshot(entry)
 end
 
 function current_excitation = add_excitation(entry)
+  current_excitation.name = entry.name;
   idx = 1;
   current_excitation.current_source = entry.data(idx); idx = idx+1;
-  current_excitation.P1 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-  current_excitation.P2 = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-  current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
-  current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+  current_excitation.P1 = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  current_excitation.P2 = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %idx
+  %entry.data
+  %[entry.data(idx), entry.data(idx+1), entry.data(idx+2)]
+  current_excitation.E = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %current_excitation.E = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
+  %current_excitation.E
+  %class(current_excitation.E)
+  current_excitation.H = cell2mat([entry.data(idx), entry.data(idx+1), entry.data(idx+2)]); idx = idx+3;
+  %current_excitation.H = [entry.data(idx), entry.data(idx+1), entry.data(idx+2)]; idx = idx+3;
   current_excitation.type = entry.data(idx); idx = idx+1;
   current_excitation.time_constant = entry.data(idx); idx = idx+1;
   current_excitation.amplitude = entry.data(idx); idx = idx+1;
@@ -345,6 +415,31 @@ function current_excitation = add_excitation(entry)
   current_excitation.frequency = entry.data(idx); idx = idx+1;
   current_excitation.param1 = entry.data(idx); idx = idx+1;
   current_excitation.param2 = entry.data(idx); idx = idx+1;
-  current_excitation.param3 = entry.data(idx); idx = idx+1;
-  current_excitation.param4 = entry.data(idx); idx = idx+1;
+
+  if cell2mat(entry.data(idx))==0
+    current_excitation.template_filename = 'template_filename'; idx = idx+1;
+  else
+    current_excitation.template_filename = char(entry.data(idx)); idx = idx+1;
+  end
+
+  current_excitation.template_source_plane = entry.data(idx); idx = idx+1;
+
+  if idx<=length(entry.data)
+    current_excitation.template_target_plane = entry.data(idx); idx = idx+1;
+  else
+    current_excitation.template_target_plane = 'x'; idx = idx+1;
+  end
+
+  if idx<=length(entry.data)
+    current_excitation.template_direction = entry.data(idx); idx = idx+1;
+  else
+    current_excitation.template_direction = 0; idx = idx+1;
+  end
+
+  if idx<=length(entry.data)
+    current_excitation.template_rotation = entry.data(idx); idx = idx+1;
+  else
+    current_excitation.template_rotation = 0; idx = idx+1;
+  end
+
 end
