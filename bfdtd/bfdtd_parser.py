@@ -1463,13 +1463,13 @@ class BFDTDobject(object):
       f = open(filename, 'r')
       for line in f:
           if line.strip(): # only process line if it is not empty
-            print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
-            print 'line.strip()=', line.strip() # remove any \n or similar
+            print(('os.path.dirname(filename): ', os.path.dirname(filename))) # directory of .in file
+            print(('line.strip()=', line.strip())) # remove any \n or similar
             self.fileList.append(line.strip())
             # this is done so that you don't have to be in the directory containing the .geo/.inp files
             #subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip())) # converts absolute paths to relative
             subfile = os.path.join(os.path.dirname(filename),line.strip()) # uses absolute paths if given
-            print 'subfile: ', subfile
+            print(('subfile: ', subfile))
             if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
                 subfile_ext = addExtension(subfile,'inp')
             else:
