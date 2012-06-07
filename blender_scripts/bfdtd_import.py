@@ -25,18 +25,22 @@ import pickle
 # INITIALIZATIONS
 ###############################
 #cfgfile = os.path.expanduser('~')+'/BlenderImportBFDTD.txt'
+
 # official script data location :)
-#if os.getenv('BLENDERDATADIR'):
-#  cfgfile = os.getenv('BLENDERDATADIR')+os.sep+'BlenderImport.txt'
-#else:
-#  cfgfile = getuserdir()+os.sep+'BlenderImport.txt'
-print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
-if Blender.Get("datadir"):
-  print('datadir defined')
-  cfgfile = Blender.Get("datadir")+'/BlenderImportBFDTD.txt'
+# Blender >=2.5
+if os.getenv('BLENDERDATADIR'):
+  cfgfile = os.getenv('BLENDERDATADIR')+os.sep+'BlenderImportBFDTD.txt'
 else:
-  print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
-  sys.exit(0)
+  cfgfile = getuserdir()+os.sep+'BlenderImportBFDTD.txt'
+
+# Blender <2.49b
+#print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
+#if Blender.Get("datadir"):
+  #print('datadir defined')
+  #cfgfile = Blender.Get("datadir")+'/BlenderImportBFDTD.txt'
+#else:
+  #print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
+  #sys.exit(0)
 
 ###############################
 # IMPORT FUNCTION
