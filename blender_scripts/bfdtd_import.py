@@ -76,7 +76,7 @@ def importBristolFDTD(filename):
     # mesh
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
     #FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
-    Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
+    #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
     FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.mesh.getXmeshDelta(),structured_entries.mesh.getYmeshDelta(),structured_entries.mesh.getZmeshDelta());
     
     # Time_snapshot (time or EPS)
@@ -95,8 +95,8 @@ def importBristolFDTD(filename):
     # Excitation
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
-        Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
-        print(Blender.Window.GetActiveLayer())
+        #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
+        #print(Blender.Window.GetActiveLayer())
         print(excitation)
         FDTDGeometryObjects_obj.GEOexcitation(excitation);
         #FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
@@ -165,7 +165,8 @@ def importBristolFDTD(filename):
           rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
 
         # create object
-        FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
+        #FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity);
+        FDTDGeometryObjects_obj.GEOblock(block.name, block.lower, block.upper, block.permittivity, block.conductivity);
 
     # Distorted
     for distorted in structured_entries.distorted_list:
@@ -213,7 +214,7 @@ def importBristolFDTD(filename):
     #print layersOn
     #Blender.Scene.GetCurrent().setLayers(layersOn)
     
-    scene.update(0);
+    #scene.update(0);
     #Blender.Window.RedrawAll();
     #Blender.Window.WaitCursor(0);
     #Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);

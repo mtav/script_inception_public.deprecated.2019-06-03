@@ -10,6 +10,7 @@ import os
 import sys
 import re
 import array
+import numpy
 # define Vector+Matrix
 #~ from bpy.Mathutils import Vector;
 #~ from bpy.Mathutils import Matrix;
@@ -94,6 +95,9 @@ class FDTDGeometryObjects:
     ###############################
     def GEOblock(self, name, lower, upper, permittivity, conductivity):
 
+      lower = numpy.array(lower)
+      upper = numpy.array(upper)
+
       # add cube
       bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
       
@@ -106,7 +110,7 @@ class FDTDGeometryObjects:
         
       #bpy.data.objects[-1].name = 'testkubo2'
       obj.name = name
-
+      
       pos = 0.5*(lower+upper);
       diag = upper-lower;
       obj.scale = 0.5*diag;
@@ -161,7 +165,8 @@ class FDTDGeometryObjects:
     
     def GEOblock_matrix(self, name, rotation_matrix, permittivity, conductivity):
       # add cube
-      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(45,45,0))
+      #bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(45,45,0))
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
       
       # get added object
       obj = bpy.context.active_object
@@ -172,7 +177,40 @@ class FDTDGeometryObjects:
         
       #bpy.data.objects[-1].name = 'testkubo2'
       obj.name = name
+
+      pos = 0.5*(lower+upper);
+      diag = upper-lower;
+      obj.scale = 0.5*diag;
+      obj.location = pos;
       
+      # deleting faces fails when in object mode, so change.
+      #bpy.ops.object.mode_set(mode = 'EDIT') 
+      #bpy.ops.mesh.delete(type='ONLY_FACE')
+      #bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+
+      ######################################
+      #Assign first material on all the mesh
+      ######################################
+      #Add a material slot
+      bpy.ops.object.material_slot_add()
+       
+      #Assign a material to the last slot
+      obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+       
+      #Go to Edit mode
+      bpy.ops.object.mode_set(mode='EDIT')
+       
+      #Select all the vertices
+      bpy.ops.mesh.select_all(action='SELECT') 
+       
+      #Assign the material on all the vertices
+      bpy.ops.object.material_slot_assign() 
+       
+      #Return to Object Mode
+      bpy.ops.object.mode_set(mode='OBJECT')
+
       obj.matrix_world = rotation_matrix
       
       return
@@ -497,10 +535,10 @@ class FDTDGeometryObjects:
             for i in range(Nx):
                 if i>0:
                     x+=delta_X_vector[i-1];
-                A = vert_idx; verts[vert_idx] = Vector(x, 0,    0   ); vert_idx+=1;
-                B = vert_idx; verts[vert_idx] = Vector(x, ymax, 0   ); vert_idx+=1;
-                C = vert_idx; verts[vert_idx] = Vector(x, ymax, zmax); vert_idx+=1;
-                D = vert_idx; verts[vert_idx] = Vector(x, 0,    zmax); vert_idx+=1;
+                A = vert_idx; verts[vert_idx] = Vector([x, 0,    0   ]); vert_idx+=1;
+                B = vert_idx; verts[vert_idx] = Vector([x, ymax, 0   ]); vert_idx+=1;
+                C = vert_idx; verts[vert_idx] = Vector([x, ymax, zmax]); vert_idx+=1;
+                D = vert_idx; verts[vert_idx] = Vector([x, 0,    zmax]); vert_idx+=1;
                 edges[edge_idx] = [A, B]; edge_idx+=1;
                 edges[edge_idx] = [B, C]; edge_idx+=1;
                 edges[edge_idx] = [C, D]; edge_idx+=1;
@@ -511,10 +549,10 @@ class FDTDGeometryObjects:
             for j in range(Ny):
                 if j>0:
                     y+=delta_Y_vector[j-1];
-                A = vert_idx; verts[vert_idx] = Vector(0,    y, 0   ); vert_idx+=1;
-                B = vert_idx; verts[vert_idx] = Vector(xmax, y, 0   ); vert_idx+=1;
-                C = vert_idx; verts[vert_idx] = Vector(xmax, y, zmax); vert_idx+=1;
-                D = vert_idx; verts[vert_idx] = Vector(0,    y, zmax); vert_idx+=1;
+                A = vert_idx; verts[vert_idx] = Vector([0,    y, 0   ]); vert_idx+=1;
+                B = vert_idx; verts[vert_idx] = Vector([xmax, y, 0   ]); vert_idx+=1;
+                C = vert_idx; verts[vert_idx] = Vector([xmax, y, zmax]); vert_idx+=1;
+                D = vert_idx; verts[vert_idx] = Vector([0,    y, zmax]); vert_idx+=1;
                 edges[edge_idx] = [A, B]; edge_idx+=1;
                 edges[edge_idx] = [B, C]; edge_idx+=1;
                 edges[edge_idx] = [C, D]; edge_idx+=1;
@@ -525,20 +563,20 @@ class FDTDGeometryObjects:
             for k in range(Nz):
                 if k>0:
                     z+=delta_Z_vector[k-1];
-                A = vert_idx; verts[vert_idx] = Vector(0,    0,    z); vert_idx+=1;
-                B = vert_idx; verts[vert_idx] = Vector(xmax, 0,    z); vert_idx+=1;
-                C = vert_idx; verts[vert_idx] = Vector(xmax, ymax, z); vert_idx+=1;
-                D = vert_idx; verts[vert_idx] = Vector(0,    ymax, z); vert_idx+=1;
+                A = vert_idx; verts[vert_idx] = Vector([0,    0,    z]); vert_idx+=1;
+                B = vert_idx; verts[vert_idx] = Vector([xmax, 0,    z]); vert_idx+=1;
+                C = vert_idx; verts[vert_idx] = Vector([xmax, ymax, z]); vert_idx+=1;
+                D = vert_idx; verts[vert_idx] = Vector([0,    ymax, z]); vert_idx+=1;
                 edges[edge_idx] = [A, B]; edge_idx+=1;
                 edges[edge_idx] = [B, C]; edge_idx+=1;
                 edges[edge_idx] = [C, D]; edge_idx+=1;
                 edges[edge_idx] = [D, A]; edge_idx+=1;
                 
         # print(verts)
-        BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
+        #BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
         #~ bpy.data.meshes.new("Torus")
         
-        obj = Blender.Object.GetSelected()[0];
+        #obj = Blender.Object.GetSelected()[0];
         # obj.layers = [ 2 ];
         # print('Nverts=', len(verts))
         # print('Nverts=', Nx*Ny*Nz)
@@ -559,7 +597,7 @@ class FDTDGeometryObjects:
         else:
           print('normal excitation')
       
-        scene = Blender.Scene.GetCurrent();
+        #scene = Blender.Scene.GetCurrent();
 
         # arrow dimensions:
         arrow_length = (P2-P1).length;
@@ -576,34 +614,34 @@ class FDTDGeometryObjects:
         axisX.normalize();
         axisY.normalize();
         axisZ.normalize();
-        rotmat = Matrix(axisX,axisY,axisZ);
+        #rotmat = Matrix(axisX,axisY,axisZ);
         
         #scene = Blender.Scene.GetCurrent()
                 
-        mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
-        mesh.materials = [ self.excitation_material ];
-        for f in mesh.faces:
-            f.mat = 0;
+        #mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
+        #mesh.materials = [ self.excitation_material ];
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        arrow_cylinder_obj = scene.objects.new(mesh, name)
-        arrow_cylinder_obj.setMatrix(rotmat);
-        arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
+        #arrow_cylinder_obj = scene.objects.new(mesh, name)
+        #arrow_cylinder_obj.setMatrix(rotmat);
+        #arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
     
-        mesh = Blender.Mesh.Primitives.Cone(32, 2*cone_radius, cone_length);
-        mesh.materials = [ self.excitation_material ];
-        for f in mesh.faces:
-            f.mat = 0;
+        #mesh = Blender.Mesh.Primitives.Cone(32, 2*cone_radius, cone_length);
+        #mesh.materials = [ self.excitation_material ];
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        arrow_cone_obj = scene.objects.new(mesh, name)
-        arrow_cone_obj.setMatrix(rotmat);
+        #arrow_cone_obj = scene.objects.new(mesh, name)
+        #arrow_cone_obj.setMatrix(rotmat);
     
-        arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
+        #arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
     
-        arrow_cylinder_obj.join([arrow_cone_obj]);
+        #arrow_cylinder_obj.join([arrow_cone_obj]);
         # arrow_cylinder_obj.layers = [ 5 ];
-        arrow_cylinder_obj.transp = True; arrow_cylinder_obj.wireMode = True;
+        #arrow_cylinder_obj.transp = True; arrow_cylinder_obj.wireMode = True;
     
-        scene.objects.unlink(arrow_cone_obj);
+        #scene.objects.unlink(arrow_cone_obj);
         
         return
     
@@ -701,14 +739,14 @@ def Orthogonal(vec):
     zz = abs(vec.z);
     if (xx < yy):
         if xx < zz:
-            return Vector(0,vec.z,-vec.y);
+            return Vector([0,vec.z,-vec.y]);
         else:
-            return Vector(vec.y,-vec.x,0);
+            return Vector([vec.y,-vec.x,0]);
     else:
         if yy < zz:
-            return Vector(-vec.z,0,vec.x)
+            return Vector([-vec.z,0,vec.x])
         else:
-            return Vector(vec.y,-vec.x,0);
+            return Vector([vec.y,-vec.x,0]);
 
 def rotationMatrix(axis_point, axis_direction, angle_degrees):
   ''' return a rotation matrix for a rotation around an arbitrary axis '''
