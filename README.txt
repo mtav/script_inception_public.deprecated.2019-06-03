@@ -86,6 +86,29 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 To show dimensions, etc, you can use the blender caliper script. +
 To use it, in the "scripts window" (On the right if you copied .B.blend from the repository as your default workspace), click on *Scripts->Wizards->Blender caliper*.
 
+Notes on the python 3 port:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Ubuntu 10.04 and maybe other old distributions, it may be necessary to install python, numpy and blender from source.
+Useful links:
+http://blenderartists.org/forum/showthread.php?233753-adding-3rd-party-modules
+http://www.blender.org/download/source-code/
+http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Ubuntu/CMake
+
+Quick guide:
+^^^^^^^^^^^^
+
+. Install python 3.2 from source with $HOME/opt as prefix for example (*./configure --prefix=$PREFIX*)
+. Configure the environment with:
++
+----
+export PYTHONPATH=$PYTHONPATH:$HOME/opt/lib/python3.2/site-packages/
+export PYTHONPATH=$PYTHONPATH:$HOME/Development/script_inception_public
+export LD_LIBRARY_PATH=$HOME/opt/lib:$LD_LIBRARY_PATH
+----
++
+. Install blender from source: configure the PYTHON variables in cmake correctly so they point to your python installation
+. Install numpy from source with the same prefix as before: *python setup.py install --prefix=$PREFIX*
+
 Matlab/Octave scripts:
 ----------------------
 To effectively use the Matlab/Octave scripts from this repository, you should add the paths to your Matlab/Octave path. +
@@ -118,3 +141,4 @@ Under GNU/Linux:
 ----
 ln -s $PATH_TO_REPO/.octaverc ~/.octaverc 
 ----
+
