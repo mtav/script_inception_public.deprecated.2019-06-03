@@ -555,7 +555,7 @@ footnotes: function () {
 <div id="content">
 <h2 id="_what_this_is">What this is:</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Useful scripts for MEEP and Bristol FDTD and maybe other stuff :)</p></div>
+<div class="paragraph"><p>Useful scripts for MEEP and Bristol FDTD and maybe other stuff. :)</p></div>
 <div class="paragraph"><p>The idea is to centralize scripts used by almost everyone to reduce code duplication and therefore errors and time wasting, as well as improve the overall quality of code over time.</p></div>
 </div>
 <h2 id="_license">License:</h2>
@@ -676,6 +676,55 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 <h4 id="_2_blender_caliper">2) Blender caliper:</h4>
 <div class="paragraph"><p>To show dimensions, etc, you can use the blender caliper script.<br />
 To use it, in the "scripts window" (On the right if you copied .B.blend from the repository as your default workspace), click on <strong>Scripts&#8594;Wizards&#8594;Blender caliper</strong>.</p></div>
+<h3 id="_notes_on_the_python_3_port">Notes on the python 3 port:</h3><div style="clear:left"></div>
+<div class="paragraph"><p>On Ubuntu 10.04 and maybe other old distributions, it may be necessary to install python, numpy and blender from source.</p></div>
+<h4 id="_useful_links">Useful links:</h4>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://blenderartists.org/forum/showthread.php?233753-adding-3rd-party-modules">http://blenderartists.org/forum/showthread.php?233753-adding-3rd-party-modules</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://www.blender.org/download/source-code/">http://www.blender.org/download/source-code/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Ubuntu/CMake">http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Ubuntu/CMake</a>
+</p>
+</li>
+</ul></div>
+<h4 id="_quick_guide">Quick guide:</h4>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Install python 3.2 from source with $HOME/opt as prefix for example (<strong>./configure --prefix=$PREFIX</strong>)
+</p>
+</li>
+<li>
+<p>
+Configure the environment with:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>export PYTHONPATH=$PYTHONPATH:$HOME/opt/lib/python3.2/site-packages/
+export PYTHONPATH=$PYTHONPATH:$HOME/Development/script_inception_public
+export LD_LIBRARY_PATH=$HOME/opt/lib:$LD_LIBRARY_PATH</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install blender from source: configure the PYTHON variables in cmake correctly so they point to your python installation
+</p>
+</li>
+<li>
+<p>
+Install numpy from source with the same prefix as before: <strong>python setup.py install --prefix=$PREFIX</strong>
+</p>
+</li>
+</ol></div>
 </div>
 <h2 id="_matlab_octave_scripts">Matlab/Octave scripts:</h2>
 <div class="sectionbody">
@@ -734,7 +783,7 @@ Edit your own <strong>startup.m</strong> appropriately.
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2011-09-13 15:56:21 BST
+Last updated 2012-06-11 22:46:53 BST
 </div>
 </div>
 </body>

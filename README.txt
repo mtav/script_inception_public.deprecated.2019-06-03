@@ -89,8 +89,10 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 Notes on the python 3 port:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 On Ubuntu 10.04 and maybe other old distributions, it may be necessary to install python, numpy and blender from source.
+
 Useful links:
 ^^^^^^^^^^^^^
+
 * http://blenderartists.org/forum/showthread.php?233753-adding-3rd-party-modules
 * http://www.blender.org/download/source-code/
 * http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Ubuntu/CMake
