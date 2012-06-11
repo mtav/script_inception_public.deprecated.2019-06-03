@@ -86,8 +86,8 @@ To use it, in the "scripts window" (On the right if you copied .B.blend from the
 To show dimensions, etc, you can use the blender caliper script. +
 To use it, in the "scripts window" (On the right if you copied .B.blend from the repository as your default workspace), click on *Scripts->Wizards->Blender caliper*.
 
-Notes on the python 3 port:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Notes on the python 3 port (WIP):
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 On Ubuntu 10.04 and maybe other old distributions, it may be necessary to install python, numpy and blender from source.
 
 Useful links:
@@ -111,6 +111,9 @@ export LD_LIBRARY_PATH=$HOME/opt/lib:$LD_LIBRARY_PATH
 +
 . Install blender from source: configure the PYTHON variables in cmake correctly so they point to your python installation
 . Install numpy from source with the same prefix as before: *python setup.py install --prefix=$PREFIX*
+. Run setup_linux.sh
+. Start Blender and go to *File->User preferences->Addons*, search for the BFDTD import script and enable it.
+. Now you should be able to import BFDTD files through *File->Import->Import BFDTD*
 
 Matlab/Octave scripts:
 ----------------------
