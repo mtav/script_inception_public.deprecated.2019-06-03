@@ -18,6 +18,21 @@
 
 # <pep8 compliant>
 
+bl_info = {
+    'name': 'Import Bristol FDTD format (.geo,.inp,.in)',
+    'author': 'Mike Taverne',
+    'version': (0, 0, 1),
+    "blender": (2, 5, 7),
+    "api": 36079,
+    'location': 'File > Import > Import Bristol FDTD (.geo,.inp,.in)',
+    'description': 'Import files in the Bristol FDTD format (.geo,.inp,.in)',
+    'warning': 'only a part of Bristol FDTD specification is supported: Work in Progress',
+    'wiki_url': '',
+    'tracker_url': '',
+    'support': 'UNOFFICIAL',
+    'category': 'Import-Export',
+    }
+
 import re
 import struct
 
@@ -385,5 +400,108 @@ def main():
       Blender.Window.FileSelector(importBristolFDTD, "Import Bristol FDTD file...", default_path);
       # TestObjects();
 
+class IMPORT_OT_autocad_dxf(bpy.types.Operator):
+    '''Import from BFDTD file format (.geo,.inp,.in)'''
+    bl_idname = "import_scene.BFDTD"
+    bl_description = 'Import from BFDTD file format (.geo,.inp,.in)'
+    bl_label = "Import BFDTD" +' v.'+ __version__
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+
+    filepath = StringProperty(name="File Path", description="Filepath used for importing the BFDTD file", maxlen= 1024, default= "", subtype='FILE_PATH')
+
+    new_scene = BoolProperty(name="Replace scene", description="Replace scene", default=toggle&T_NewScene)
+    #new_scene = BoolProperty(name="New scene", description="Create new scene", default=toggle&T_NewScene)
+    curves = BoolProperty(name="Draw curves", description="Draw entities as curves", default=toggle&T_Curves)
+    thic_on = BoolProperty(name="Thic ON", description="Support THICKNESS", default=toggle&T_ThicON)
+
+    merge = BoolProperty(name="Remove doubles", description="Merge coincident vertices", default=toggle&T_Merge)
+    mergeLimit = FloatProperty(name="Limit", description="Merge limit", default = theMergeLimit*1e4,min=1.0, soft_min=1.0, max=100.0, soft_max=100.0)
+
+    draw_one = BoolProperty(name="Merge all", description="Draw all into one mesh-object", default=toggle&T_DrawOne)
+    circleResolution = IntProperty(name="Circle resolution", description="Circle/Arc are aproximated will this factor", default = theCircleRes,
+                min=4, soft_min=4, max=360, soft_max=360)
+    codecs = tripleList(['iso-8859-15', 'utf-8', 'ascii'])
+    codec = EnumProperty(name="Codec", description="Codec",  items=codecs, default = 'ascii')
+
+    debug = BoolProperty(name="Debug", description="Unknown DXF-codes generate errors", default=toggle&T_Debug)
+    verbose = BoolProperty(name="Verbose", description="Print debug info", default=toggle&T_Verbose)
+
+    ##### DRAW #####
+    def draw(self, context):
+        layout0 = self.layout
+        #layout0.enabled = False
+
+        #col = layout0.column_flow(2,align=True)
+        layout = layout0.box()
+        col = layout.column()
+        #col.prop(self, 'KnotType') waits for more knottypes
+        #col.label(text="import Parameters")
+        #col.prop(self, 'replace')
+        col.prop(self, 'new_scene')
+        
+        row = layout.row(align=True)
+        row.prop(self, 'curves')
+        row.prop(self, 'circleResolution')
+
+        row = layout.row(align=True)
+        row.prop(self, 'merge')
+        if self.merge:
+            row.prop(self, 'mergeLimit')
+ 
+        row = layout.row(align=True)
+        #row.label('na')
+        row.prop(self, 'draw_one')
+        row.prop(self, 'thic_on')
+
+        col = layout.column()
+        col.prop(self, 'codec')
+ 
+        row = layout.row(align=True)
+        row.prop(self, 'debug')
+        if self.debug:
+            row.prop(self, 'verbose')
+         
+    def execute(self, context):
+        global toggle, theMergeLimit, theCodec, theCircleRes
+        O_Merge = T_Merge if self.merge else 0
+        #O_Replace = T_Replace if self.replace else 0
+        O_NewScene = T_NewScene if self.new_scene else 0
+        O_Curves = T_Curves if self.curves else 0
+        O_ThicON = T_ThicON if self.thic_on else 0
+        O_DrawOne = T_DrawOne if self.draw_one else 0
+        O_Debug = T_Debug if self.debug else 0
+        O_Verbose = T_Verbose if self.verbose else 0
+
+        toggle =  O_Merge | O_DrawOne | O_NewScene | O_Curves | O_ThicON | O_Debug | O_Verbose
+        theMergeLimit = self.mergeLimit*1e-4
+        theCircleRes = self.circleResolution
+        theCodec = self.codec
+
+        readAndBuildDxfFile(self.filepath)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+
+def menu_func(self, context):
+    self.layout.operator(IMPORT_OT_autocad_dxf.bl_idname, text="MOMOMOMOMO (.dxf)")
+
+
+def register():
+    bpy.utils.register_module(__name__)
+
+    bpy.types.INFO_MT_file_import.append(menu_func)
+
+ 
+def unregister():
+    bpy.utils.unregister_module(__name__)
+
+    bpy.types.INFO_MT_file_import.remove(menu_func)
+
+
 if __name__ == "__main__":
-  main()
+    register()
