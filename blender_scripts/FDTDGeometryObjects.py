@@ -342,29 +342,43 @@ class FDTDGeometryObjects:
         return
     
     def GEOsphere(self, name, center, outer_radius, inner_radius, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
-    
-        obj = scene.objects.new(mesh, name)
-        obj.setLocation(center[0], center[1], center[2]);
-        obj.transp = True; obj.wireMode = True;
-        return
+        bpy.ops.mesh.primitive_ico_sphere_add()
+        obj = bpy.context.active_object
+        obj.name = name
+        obj.scale = Vector(3*[outer_radius]);
+        obj.location = Vector(center)
+        
+        # deleting faces fails when in object mode, so change.
+        #bpy.ops.object.mode_set(mode = 'EDIT') 
+        #bpy.ops.mesh.delete(type='ONLY_FACE')
+        #bpy.ops.object.mode_set(mode = 'OBJECT')
+  
+        obj.show_transparent = True; obj.show_wire = True;
+  
+        ######################################
+        #Assign first material on all the mesh
+        ######################################
+        #Add a material slot
+        bpy.ops.object.material_slot_add()
+         
+        #Assign a material to the last slot
+        obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+        
+        #Go to Edit mode
+        bpy.ops.object.mode_set(mode='EDIT')
+        
+        #Select all the vertices
+        bpy.ops.mesh.select_all(action='SELECT') 
+        
+        #Assign the material on all the vertices
+        bpy.ops.object.material_slot_assign() 
+        
+        #Return to Object Mode
+        bpy.ops.object.mode_set(mode='OBJECT')
     
     def GEOsphere_matrix(self, name, rotation_matrix, outer_radius, inner_radius, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
-    
-        obj = scene.objects.new(mesh, name)
-        obj.setMatrix(rotation_matrix);
-        obj.transp = True; obj.wireMode = True;
-        return
-        
+      return
+          
     def GEObox(self, name, lower, upper):
       # add cube
       bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))

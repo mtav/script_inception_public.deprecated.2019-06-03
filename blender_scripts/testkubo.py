@@ -6,6 +6,11 @@ import os
 from blender_scripts.FDTDGeometryObjects import *
 from blender_scripts.bfdtd_import import *
 
+#bpy.ops.mesh.primitive_ico_sphere_add()
+#bpy.ops.mesh.primitive_uv_sphere_add()
+#bpy.ops.surface.primitive_nurbs_surface_cylinder_add()
+#bpy.ops.mesh.primitive_cylinder_add()
+
 def testkubo():
   verts = [(1.0, 1.0, -1.0),
            (1.0, -1.0, -1.0),

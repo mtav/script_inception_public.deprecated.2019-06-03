@@ -118,25 +118,26 @@ def importBristolFDTD(filename):
         centre = Vector(sphere.centre)
 
         # initialise rotation_matrix
-        rotation_matrix = Blender.Mathutils.Matrix()
+        rotation_matrix = Matrix()
         rotation_matrix.identity();
 
         # scale object
-        Sx=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(1,0,0))
-        Sy=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,1,0))
-        Sz=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,0,1))
-        rotation_matrix *= Sx*Sy*Sz;
+        #Sx=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(1,0,0))
+        #Sy=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,1,0))
+        #Sz=Blender.Mathutils.ScaleMatrix(abs(2*sphere.outer_radius),4,Blender.Mathutils.Vector(0,0,1))
+        #rotation_matrix *= Sx*Sy*Sz;
 
         # position object
-        T = Blender.Mathutils.TranslationMatrix(centre)
-        rotation_matrix *= T;
+        #T = Blender.Mathutils.TranslationMatrix(centre)
+        #rotation_matrix *= T;
         
         # add rotations
-        for r in sphere.rotation_list:
-          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
+        #for r in sphere.rotation_list:
+          #rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
           
         # create object
-        FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
+        FDTDGeometryObjects_obj.GEOsphere(sphere.name, sphere.centre, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity)
+        #FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
         #FDTDGeometryObjects_obj.GEOblock_matrix(sphere.name, rotation_matrix, sphere.permittivity, sphere.conductivity);
         
     # Block

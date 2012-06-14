@@ -72,6 +72,39 @@ BLOCK **name=block
 0.000000E+00 **Conductivity
 }
 
+SPHERE  **name=sphere
+{
+1.500000E+00 **XC
+1.500000E+00 **YC
+3.500000E+00 **ZC
+0.500000E+00 **outer_radius
+0.000000E+00 **inner_radius
+1.000000E+00 **permittivity
+0.000000E+00 **conductivity
+}
+
+SPHERE  **name=sphere
+{
+1.500000E+00 **XC
+1.500000E+00 **YC
+5.000000E+00 **ZC
+1.000000E+00 **outer_radius
+0.000000E+00 **inner_radius
+2.000000E+00 **permittivity
+0.000000E+00 **conductivity
+}
+
+SPHERE  **name=sphere
+{
+1.500000E+00 **XC
+1.500000E+00 **YC
+7.500000E+00 **ZC
+1.500000E+00 **outer_radius
+0.000000E+00 **inner_radius
+3.000000E+00 **permittivity
+0.000000E+00 **conductivity
+}
+
 BOX  **name=box
 {
 0.000000E+00 **XL
@@ -79,7 +112,7 @@ BOX  **name=box
 0.000000E+00 **ZL
 3.000000E+00 **XU
 3.000000E+00 **YU
-3.000000E+00 **ZU
+9.000000E+00 **ZU
 }
 
 end
