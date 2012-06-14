@@ -314,20 +314,54 @@ class FDTDGeometryObjects:
 
         return;
     
-    def GEOcylinder(self, name, center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
+    def GEOcylinder(self, name, center, inner_radius, outer_radius, height, permittivity, conductivity, angle_X, angle_Y, angle_Z):
+        bpy.ops.mesh.primitive_cylinder_add(location = Vector(center), radius=outer_radius, depth=height, rotation=(angle_X, angle_Y, angle_Z))
+        obj = bpy.context.active_object
+        obj.name = name
+        #obj.scale = Vector([outer_radius]);
+        #obj.location = Vector(center)
+        
+        # deleting faces fails when in object mode, so change.
+        #bpy.ops.object.mode_set(mode = 'EDIT') 
+        #bpy.ops.mesh.delete(type='ONLY_FACE')
+        #bpy.ops.object.mode_set(mode = 'OBJECT')
+  
+        obj.show_transparent = True; obj.show_wire = True;
+  
+        ######################################
+        #Assign first material on all the mesh
+        ######################################
+        #Add a material slot
+        bpy.ops.object.material_slot_add()
+        
+        #Assign a material to the last slot
+        obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+        
+        #Go to Edit mode
+        bpy.ops.object.mode_set(mode='EDIT')
+        
+        #Select all the vertices
+        bpy.ops.mesh.select_all(action='SELECT') 
+        
+        #Assign the material on all the vertices
+        bpy.ops.object.material_slot_assign() 
+        
+        #Return to Object Mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        #scene = Blender.Scene.GetCurrent();
+        #mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        obj = scene.objects.new(mesh, name);
-        obj.setLocation(center[0], center[1], center[2]);
-        obj.RotX = angle_X;
-        obj.RotY = angle_Y;
-        obj.RotZ = angle_Z;
-        obj.transp = True; obj.wireMode = True;
-        return
+        #obj = scene.objects.new(mesh, name);
+        #obj.setLocation(center[0], center[1], center[2]);
+        #obj.RotX = angle_X;
+        #obj.RotY = angle_Y;
+        #obj.RotZ = angle_Z;
+        #obj.transp = True; obj.wireMode = True;
+        #return
     
     def GEOcylinder_matrix(self, name, rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
         scene = Blender.Scene.GetCurrent();
@@ -360,7 +394,7 @@ class FDTDGeometryObjects:
         ######################################
         #Add a material slot
         bpy.ops.object.material_slot_add()
-         
+        
         #Assign a material to the last slot
         obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
         

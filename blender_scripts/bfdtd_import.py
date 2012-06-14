@@ -181,22 +181,28 @@ def importBristolFDTD(filename):
     for cylinder in structured_entries.cylinder_list:
       
         # initialise rotation_matrix
-        rotation_matrix = Blender.Mathutils.Matrix()
-        rotation_matrix.identity();
+        #rotation_matrix = Blender.Mathutils.Matrix()
+        #rotation_matrix.identity();
 
         # because FDTD cylinders are aligned with the Y axis by default
-        rotation_matrix *= rotationMatrix(Blender.Mathutils.Vector(0,0,0), Blender.Mathutils.Vector(1,0,0), -90)
+        #rotation_matrix *= rotationMatrix(Blender.Mathutils.Vector(0,0,0), Blender.Mathutils.Vector(1,0,0), -90)
         
         # position object
-        T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.centre[0],cylinder.centre[1],cylinder.centre[2]))
-        rotation_matrix *= T;
+        #T = Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(cylinder.centre[0],cylinder.centre[1],cylinder.centre[2]))
+        #rotation_matrix *= T;
         
         # add rotations
-        for r in cylinder.rotation_list:
-          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
+        #for r in cylinder.rotation_list:
+          #rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
         
         # create object
-        FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
+        #FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity);
+        
+        #angle_X = numpy.deg2rad(-90)
+        angle_X = -0.5*numpy.pi
+        angle_Y = 0
+        angle_Z = 0
+        FDTDGeometryObjects_obj.GEOcylinder(cylinder.name, cylinder.centre, cylinder.inner_radius, cylinder.outer_radius, cylinder.height, cylinder.permittivity, cylinder.conductivity, angle_X, angle_Y, angle_Z)
 
     #########################
     # Not yet implemented:

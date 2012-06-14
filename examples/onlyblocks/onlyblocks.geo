@@ -105,12 +105,51 @@ SPHERE  **name=sphere
 0.000000E+00 **conductivity
 }
 
+CYLINDER **name=cylinder
+{
+4.5 **X CENTRE
+1.5 **Y CENTRE
+0.5 **Z CENTRE
+0.000000E+00 **inner_radius
+0.5 **outer_radius
+1 **HEIGHT
+0.000000E+00 **Permittivity
+0.000000E+00 **Conductivity
+0.000000E+00 **Angle of rotation in degrees around -Z=(0,0,-1)
+}
+
+CYLINDER **name=cylinder
+{
+7.5 **X CENTRE
+1.5 **Y CENTRE
+1 **Z CENTRE
+0.000000E+00 **inner_radius
+1 **outer_radius
+2 **HEIGHT
+0.000000E+00 **Permittivity
+0.000000E+00 **Conductivity
+0.000000E+00 **Angle of rotation in degrees around -Z=(0,0,-1)
+}
+
+CYLINDER **name=cylinder
+{
+10.5 **X CENTRE
+1.5 **Y CENTRE
+1.5 **Z CENTRE
+0.000000E+00 **inner_radius
+1.5 **outer_radius
+3 **HEIGHT
+0.000000E+00 **Permittivity
+0.000000E+00 **Conductivity
+0.000000E+00 **Angle of rotation in degrees around -Z=(0,0,-1)
+}
+
 BOX  **name=box
 {
 0.000000E+00 **XL
 0.000000E+00 **YL
 0.000000E+00 **ZL
-3.000000E+00 **XU
+12 **XU
 3.000000E+00 **YU
 9.000000E+00 **ZU
 }
