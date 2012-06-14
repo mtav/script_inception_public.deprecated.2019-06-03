@@ -250,9 +250,11 @@ class GWLobject:
             new = new.replace('\\',os.path.sep).replace('/',os.path.sep)
             print(old+' -> '+new)
             self.path_substitutes.append((old,new))
-    except IOError as (errno, strerror):
-      print "I/O error({0}): {1}".format(errno, strerror)
-      print 'Failed to open '+subsFile
+    #TODO: reimplement nice exception system
+    #except IOError as (errno, strerror):
+    except:
+      #print "I/O error({0}): {1}".format(errno, strerror)
+      print('Failed to open '+subsFile)
 
     return self.path_substitutes
 
