@@ -10,10 +10,16 @@ Tooltip: 'Import from GWL file'
 # IMPORTS
 ###############################
 from GWL.GWL_parser import *
-import Blender
-from Blender.Mathutils import Vector
-import cPickle
+#import Blender
+#from Blender.Mathutils import Vector
+import pickle
+#import cPickle
 import os
+import utilities.getuserdir
+import mathutils
+import bpy
+from bpy_extras import object_utils
+from add_utils import AddObjectHelper, add_object_data
 #from FDTDGeometryObjects import *
 #from layer_manager import *
 #from bfdtd.bristolFDTD_generator_functions import *
@@ -28,16 +34,29 @@ import os
 ###############################
 # INITIALIZATIONS
 ###############################
-#cfgfile = os.path.expanduser('~')+'/BlenderImportGWL.txt'
-# official script data location :)
-print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
-if Blender.Get("datadir"):
-  print('datadir defined')
-  cfgfile = Blender.Get("datadir")+'/BlenderImportGWL.txt'
-  substitutes_file = Blender.Get("datadir")+'/BlenderImportGWL_Substitutes.txt'
+
+# Note: We could probably use something like sys.path[0].rstrip('scripts/addons') to get ~/.blender/2.58.
+# But then we loose the config on Blender upgrade...
+
+# Blender >=2.5
+if os.getenv('BLENDERDATADIR'):
+  blenderdatadir = os.getenv('BLENDERDATADIR')
 else:
-  print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
-  sys.exit(0)
+  blenderdatadir = utilities.getuserdir.getuserdir()
+
+cfgfile = blenderdatadir+os.sep+'BlenderImportGWL.txt'
+substitutes_file = blenderdatadir+os.sep+'/BlenderImportGWL_Substitutes.txt'
+
+##cfgfile = os.path.expanduser('~')+'/BlenderImportGWL.txt'
+## official script data location :)
+#print('Blender.Get("datadir") = '+str(Blender.Get("datadir")))
+#if Blender.Get("datadir"):
+  #print('datadir defined')
+  #cfgfile = Blender.Get("datadir")+'/BlenderImportGWL.txt'
+  #substitutes_file = Blender.Get("datadir")+'/BlenderImportGWL_Substitutes.txt'
+#else:
+  #print('datadir not defined or somehow broken. Make sure the directory $HOME/.blender/scripts/bpydata is present and accessible.')
+  #sys.exit(0)
 
 # Like pressing Alt+D
 def linkedCopy(ob, position, scn=None): # Just like Alt+D
@@ -155,16 +174,16 @@ def BlenderBlock2(name, center, SizeX, SizeY, SizeZ):
 def importGWL(filename):
     ''' import GWL geometry from .gwl file and create corresponding structure in Blender '''
     print('----->Importing GWL geometry: '+filename)
-    Blender.Window.WaitCursor(1);
+    #Blender.Window.WaitCursor(1);
 
     # save import path
     # Blender.Set('tempdir',os.path.dirname(filename));
-    FILE = open(cfgfile, 'w');
-    cPickle.dump(filename, FILE);
-    FILE.close();
-    
-    scene = Blender.Scene.GetCurrent()
-    mesh = Blender.Mesh.Primitives.Cube(1.0)
+    with open(cfgfile, 'wb') as f:
+      # Pickle the 'data' dictionary using the highest protocol available.
+      pickle.dump(filename, f, pickle.HIGHEST_PROTOCOL)
+
+    #scene = Blender.Scene.GetCurrent()
+    #mesh = Blender.Mesh.Primitives.Cube(1.0)
     
     # parse file
     GWL_obj = GWLobject()
@@ -179,12 +198,14 @@ def importGWL(filename):
     
     Nvoxel = 0
     verts = []
+    edges = []
+    faces = []
     for write_sequence in GWL_obj.GWL_voxels:
       for voxel in write_sequence:
         #print voxel
         #BlenderSphere('voxel', Vector(voxel), 0.100)
         #BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
-        verts.append( Vector(voxel[0:3]) )
+        verts.append( mathutils.Vector(voxel[0:3]) )
 
         #if Nvoxel == 0:
           #first_voxel = BlenderBlock('voxel', Vector(voxel), 0.100)
@@ -196,25 +217,42 @@ def importGWL(filename):
           #linkedCopy(first_voxel,voxel,scene)
         Nvoxel = Nvoxel + 1
       
-    mesh_new = Blender.Mesh.New("voxelposition_mesh")
-    mesh_new.verts = None
-    mesh_new.verts.extend(verts)
-    scene = Blender.Scene.GetCurrent()
-    object_new = scene.objects.new(mesh_new,"voxelposition_object")
+    mesh_new = bpy.data.meshes.new(name='voxelposition_mesh')
+    mesh_new.from_pydata(verts, edges, faces)
+    #object_utils.object_data_add(bpy.context, mesh_new)
+    add_object_data(bpy.context, mesh_new)
+    # useful for development when the mesh may be invalid.
+    # mesh.validate(verbose=True)
+    #add_object_data(context, mesh_data, operator=self)
+
+    #mesh_new.verts = None
+    #mesh_new.verts.extend(verts)
+    #scene = Blender.Scene.GetCurrent()
+    #object_new = scene.objects.new(mesh_new,"voxelposition_object")
+
+    ################
+    # The following methods both work to add a new mesh.
+    # Only object_data_add is documented in the current API, so seems better to use that one.
+    # But it gives an error which add_object_data does not: AttributeError: 'NoneType' object has no attribute 'type'
+
+    #from add_utils import AddObjectHelper, add_object_data
+    #add_object_data(context, mesh_data, operator=self)
+    
+    #from bpy_extras import object_utils
+    #object_utils.object_data_add(context, mesh, operator=self)
+    ################
   
     #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100)
     #cell = BlenderBlock2('voxel',Vector(0,0,0),0.100,0.100,0.200)
     #cell.layers = object_new.layers
-    scene.update()
+    #scene.update()
     #object_new.makeParent([cell])
     #object_new.enableDupVerts = True
-
-    
     
     print('Nvoxel = '+str(Nvoxel))
-    Blender.Scene.GetCurrent().update(0)
-    Blender.Window.RedrawAll()
-    Blender.Window.WaitCursor(0)
+    #Blender.Scene.GetCurrent().update(0)
+    #Blender.Window.RedrawAll()
+    #Blender.Window.WaitCursor(0)
     #Blender.Scene.GetCurrent().setLayers([1,3,4,5,6,7,8,9,10]);
     print('...done')
 
