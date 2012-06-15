@@ -411,7 +411,7 @@ class GWLobject:
       print('Failed to open '+filename)
 
     print(('Nvoxels = '+str(Nvoxels)))
-    if self.verbosity > 5:
+    if self.verbosity >= 0:
       print(('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds)))
       print(('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.)))
       print(('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.))))
