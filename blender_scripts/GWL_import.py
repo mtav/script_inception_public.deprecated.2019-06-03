@@ -1,4 +1,5 @@
 #!BPY
+# -*- coding: utf-8 -*-
 
 """
 Name: 'GWL (*.gwl)'
