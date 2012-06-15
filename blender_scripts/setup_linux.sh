@@ -16,7 +16,9 @@ BLENDERPATH=$1
 #BLENDERPATH=$HOME/.blender/2.58
 #BLENDERPATH=$HOME/.blender/2.63
 
-SCRIPTSDIR=$HOME/.blender/scripts/
+#SCRIPTSDIR=$HOME/.blender/scripts/
+SCRIPTSDIR=$BLENDERPATH/scripts/addons/
+mkdir -p "$SCRIPTSDIR"
 
 safe_link_dir()
 {
@@ -72,7 +74,8 @@ do
   #ln -s $(readlink -f "$f") $HOME/bin/blender-2.56a-beta-linux-glibc27-x86_64/2.56/scripts
 done
 
-mkdir -p "$BLENDERPATH/scripts/addons/"
-safe_link_dir $(readlink -f "io_mesh_BristolFDTD") "$BLENDERPATH/scripts/addons/"
-safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_bfdtd.py") "$BLENDERPATH/scripts/addons/"
-safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_gwl.py") "$BLENDERPATH/scripts/addons/"
+#mkdir -p "$BLENDERPATH/scripts/addons/"
+
+safe_link_dir $(readlink -f "io_mesh_BristolFDTD") "$SCRIPTSDIR"
+safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_bfdtd.py") "$SCRIPTSDIR"
+safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_gwl.py") "$SCRIPTSDIR"
