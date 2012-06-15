@@ -20,13 +20,13 @@ bl_info = {
     'name': 'Import GWL Format (.gwl)',
     'author': 'mtav',
     'version': (0, 0, 1),
-    'blender': (2, 5, 8),
+    'blender': (2, 63, 0),
     'location': 'File > Import > GWL (.gwl)',
     'description': 'Import files in the GWL format (.gwl)',
     'warning': 'Under construction! Visit github for details.',
     'wiki_url': '',
     'tracker_url': '',
-    'support': 'UNOFFICIAL',
+    'support': 'OFFICIAL',
     'category': 'Import-Export',
     }
 
@@ -36,45 +36,68 @@ import math
 from math import sin, cos, radians
 import bpy
 from mathutils import Vector, Matrix
-
 from blender_scripts.GWL_import import *
 
-class IMPORT_GWL(bpy.types.Operator):
-    '''Import from GWL file format (.gwl)'''
-    bl_idname = "import_scene.gwl"
-    bl_description = 'Import from GWL file format (.gwl)'
-    bl_label = "Import GWL"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
-    bl_options = {'UNDO'}
+# ImportHelper is a helper class, defines filename and
+# invoke() function which calls the file selector.
+from bpy_extras.io_utils import ImportHelper
+from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.types import Operator
 
-    filepath = StringProperty(subtype='FILE_PATH')
-         
+def read_gwl(context, filepath, use_some_setting):
+    print("running read_gwl...")
+    f = open(filepath, 'r', encoding='utf-8')
+    data = f.read()
+    f.close()
+
+    # would normally load the data here
+    print(data)
+
+    return {'FINISHED'}
+
+class ImportGWL(Operator, ImportHelper):
+    '''This appears in the tooltip of the operator and in the generated docs'''
+    bl_idname = "import_gwl.gwl"  # important since its how bpy.ops.import_gwl.gwl is constructed
+    bl_label = "Import GWL"
+
+    # ImportHelper mixin class uses this
+    filename_ext = ".gwl"
+    filter_glob = StringProperty(default="*.gwl", options={'HIDDEN'})
+
+    # List of operator properties, the attributes will be assigned
+    # to the class instance from the operator settings before calling.
+    use_setting = BoolProperty(
+            name="Example Boolean",
+            description="Example Tooltip",
+            default=True,
+            )
+
+    type = EnumProperty(
+            name="Example Enum",
+            description="Choose between two items",
+            items=(('OPT_A', "First Option", "Description one"),
+                   ('OPT_B', "Second Option", "Description two")),
+            default='OPT_A',
+            )
+
     def execute(self, context):
-        print('Importing: ' + self.filepath)
+        #return read_gwl(context, self.filepath, self.use_setting)
         importGWL(self.filepath)
         return {'FINISHED'}
 
-    def invoke(self, context, event):
-        wm = context.window_manager
-        wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
-
-def menu_func(self, context):
-    self.layout.operator(IMPORT_GWL.bl_idname, text="GWL (.gwl)")
+# Only needed if you want to add into a dynamic menu
+def menu_func_import(self, context):
+    self.layout.operator(ImportGWL.bl_idname, text="GWL Import Operator")
 
 def register():
-    print('registering '+str(__name__))
-    bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.utils.register_class(ImportGWL)
+    bpy.types.INFO_MT_file_import.append(menu_func_import)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func)
-
+    bpy.utils.unregister_class(ImportGWL)
+    bpy.types.INFO_MT_file_import.remove(menu_func_import)
 
 if __name__ == "__main__":
     register()
-
-
+    # test call
+    bpy.ops.import_gwl.gwl('INVOKE_DEFAULT')

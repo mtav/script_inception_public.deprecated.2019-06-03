@@ -18,8 +18,10 @@ import os
 import utilities.getuserdir
 import mathutils
 import bpy
-from bpy_extras import object_utils
-from add_utils import AddObjectHelper, add_object_data
+
+from bpy_extras import object_utils #Blender 2.63
+#from add_utils import AddObjectHelper, add_object_data # Blender 2.58
+
 #from FDTDGeometryObjects import *
 #from layer_manager import *
 #from bfdtd.bristolFDTD_generator_functions import *
@@ -219,8 +221,8 @@ def importGWL(filename):
       
     mesh_new = bpy.data.meshes.new(name='voxelposition_mesh')
     mesh_new.from_pydata(verts, edges, faces)
-    #object_utils.object_data_add(bpy.context, mesh_new)
-    add_object_data(bpy.context, mesh_new)
+    object_utils.object_data_add(bpy.context, mesh_new)
+    #add_object_data(bpy.context, mesh_new)
     # useful for development when the mesh may be invalid.
     # mesh.validate(verbose=True)
     #add_object_data(context, mesh_data, operator=self)

@@ -1,11 +1,20 @@
 #!/bin/bash
 set -ux
 
+if [ $# -ne 1 ]
+then
+        echo "usage :"
+        echo "`basename $0` BLENDERPATH"
+        exit -1
+fi
+
+BLENDERPATH=$1
+
 # BLENDERPATH=$HOME/bin/blender-2.56a-beta-linux-glibc27-x86_64/2.56
 #BLENDERPATH=$HOME/bin/blender-2.58a-linux-glibc27-x86_64/2.58
 #BLENDERPATH=$HOME/bin/blender-2.62-linux-glibc27-i686/2.62
 #BLENDERPATH=$HOME/.blender/2.58
-BLENDERPATH=$HOME/.blender/2.63
+#BLENDERPATH=$HOME/.blender/2.63
 
 SCRIPTSDIR=$HOME/.blender/scripts/
 
@@ -66,3 +75,4 @@ done
 mkdir -p "$BLENDERPATH/scripts/addons/"
 safe_link_dir $(readlink -f "io_mesh_BristolFDTD") "$BLENDERPATH/scripts/addons/"
 safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_bfdtd.py") "$BLENDERPATH/scripts/addons/"
+safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_gwl.py") "$BLENDERPATH/scripts/addons/"
