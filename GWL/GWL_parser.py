@@ -23,6 +23,14 @@ class GWLobject:
     self.writingTimeInSeconds = 0
     self.writingDistanceInMum = 0
     self.DwellTime = 200 # in ms = 1e-3 seconds
+    self.minDistanceBetweenLines = 1000 # shortest distance from end of one line to start of next one
+    self.maxDistanceBetweenLines = 0 # maximum acceptable distance from end of one line to start of next one
+    self.LastVoxel = [0,0,0,0]
+    self.LastVoxelSet = False
+
+  # TODO
+  def getMinDistanceBetweenVoxels():
+    return(0)
 
   def getLimits(self):
     Pmin = 4*[0]
@@ -284,12 +292,14 @@ class GWLobject:
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                     self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
+                    self.maxDistanceBetweenLines = self.ScanSpeed*1e-3*self.DwellTime
                 else:
                   #print('other match')
                   if cmd[0].lower()=='write':
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                     self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
+                    self.maxDistanceBetweenLines = self.ScanSpeed*1e-3*self.DwellTime
                   elif cmd[0].lower()=='include':
                     print(('line_stripped = ' + line_stripped))
                     file_to_include = re.split('\s+',line_stripped,1)[1]
