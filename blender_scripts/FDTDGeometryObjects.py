@@ -18,6 +18,7 @@ import numpy
 #from Blender.Mathutils import Matrix;
 #from mathutils import Color
 from mathutils import *
+from bpy_extras import object_utils #Blender 2.63
 
 class FDTDGeometryObjects:
     def __init__(self):
@@ -621,6 +622,10 @@ class FDTDGeometryObjects:
                 edges[edge_idx] = [D, A]; edge_idx+=1;
                 
         # print(verts)
+        mesh_new = bpy.data.meshes.new(name=name)
+        mesh_new.from_pydata(verts, edges, faces)
+        object_utils.object_data_add(bpy.context, mesh_new)
+
         #BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
         #~ bpy.data.meshes.new("Torus")
         
