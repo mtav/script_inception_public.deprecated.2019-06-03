@@ -1,5 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 from bfdtd.bfdtd_parser import *
 from constants.constants import *
 sim = BFDTDobject()

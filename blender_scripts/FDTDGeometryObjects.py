@@ -233,7 +233,7 @@ class FDTDGeometryObjects:
         #return;
 
     def GEOdistorted(self, name, vertices, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
+        #scene = Blender.Scene.GetCurrent();
         
         #mesh = Blender.Mesh.Primitives.Cube(1.0);
         #mesh.materials = self.materials(permittivity, conductivity);
@@ -301,14 +301,27 @@ class FDTDGeometryObjects:
                 #faces.append(face_verts)
           
         #print "Adding object ",object_names[i_object]
-        BPyAddMesh.add_mesh_simple(name, local_verts, [], faces)
+        
+        edges = []
+        
+        mesh_data = bpy.data.meshes.new(name)
+        mesh_data.from_pydata(local_verts, edges, faces)
+        mesh_data.update() # (calc_edges=True) not needed here
+        
+        cube_object = bpy.data.objects.new(name, mesh_data)
+        
+        #scene = bpy.context.scene
+        #scene.objects.link(cube_object)  
+        #cube_object.select = True
+        
+        #BPyAddMesh.add_mesh_simple(name, , [], faces)
 
-        obj = Blender.Object.GetSelected()[0];
-        obj.transp = True; obj.wireMode = True;
-        objmesh = obj.getData(mesh=True)
-        objmesh.materials = self.materials(permittivity, conductivity)
-        for f in objmesh.faces:
-          f.mat = 0
+        #obj = Blender.Object.GetSelected()[0];
+        #obj.transp = True; obj.wireMode = True;
+        #objmesh = obj.getData(mesh=True)
+        #objmesh.materials = self.materials(permittivity, conductivity)
+        #for f in objmesh.faces:
+          #f.mat = 0
 
 ######################################################################################
 
@@ -670,7 +683,7 @@ class FDTDGeometryObjects:
         #rotmat = Matrix(axisX,axisY,axisZ);
         
         #scene = Blender.Scene.GetCurrent()
-                
+        
         #mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
         #mesh.materials = [ self.excitation_material ];
         #for f in mesh.faces:
@@ -703,24 +716,24 @@ class FDTDGeometryObjects:
         verts = [];
         if plane == 1:
             #X
-            A = Vector(0.5*(P1[0]+P2[0]), P1[1], P1[2]);
-            B = Vector(0.5*(P1[0]+P2[0]), P2[1], P1[2]);
-            C = Vector(0.5*(P1[0]+P2[0]), P2[1], P2[2]);
-            D = Vector(0.5*(P1[0]+P2[0]), P1[1], P2[2]);
+            A = Vector([0.5*(P1[0]+P2[0]), P1[1], P1[2]]);
+            B = Vector([0.5*(P1[0]+P2[0]), P2[1], P1[2]]);
+            C = Vector([0.5*(P1[0]+P2[0]), P2[1], P2[2]]);
+            D = Vector([0.5*(P1[0]+P2[0]), P1[1], P2[2]]);
             verts = [ A, B, C, D ];
         elif plane == 2:
             #Y        
-            A = Vector(P1[0], 0.5*(P1[1]+P2[1]), P1[2]);
-            B = Vector(P1[0], 0.5*(P1[1]+P2[1]), P2[2]);
-            C = Vector(P2[0], 0.5*(P1[1]+P2[1]), P2[2]);
-            D = Vector(P2[0], 0.5*(P1[1]+P2[1]), P1[2]);
+            A = Vector([P1[0], 0.5*(P1[1]+P2[1]), P1[2]]);
+            B = Vector([P1[0], 0.5*(P1[1]+P2[1]), P2[2]]);
+            C = Vector([P2[0], 0.5*(P1[1]+P2[1]), P2[2]]);
+            D = Vector([P2[0], 0.5*(P1[1]+P2[1]), P1[2]]);
             verts = [ A, B, C, D ];
         else:
             #Z
-            A = Vector(P1[0], P1[1], 0.5*(P1[2]+P2[2]));
-            B = Vector(P2[0], P1[1], 0.5*(P1[2]+P2[2]));
-            C = Vector(P2[0], P2[1], 0.5*(P1[2]+P2[2]));
-            D = Vector(P1[0], P2[1], 0.5*(P1[2]+P2[2]));
+            A = Vector([P1[0], P1[1], 0.5*(P1[2]+P2[2])]);
+            B = Vector([P2[0], P1[1], 0.5*(P1[2]+P2[2])]);
+            C = Vector([P2[0], P2[1], 0.5*(P1[2]+P2[2])]);
+            D = Vector([P1[0], P2[1], 0.5*(P1[2]+P2[2])]);
             verts = [ A, B, C, D ];
         
         edges = [];
@@ -734,15 +747,20 @@ class FDTDGeometryObjects:
             #name = 'eps_snapshot';
         
         # print("Adding plane at ", A, B, C, D)
-        BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
-        obj = Blender.Object.GetSelected()[0];
-        # obj.layers = [ 3 ];
-        obj.transp = True; obj.wireMode = True;
+
+        mesh_new = bpy.data.meshes.new(name=name)
+        mesh_new.from_pydata(verts, edges, faces)
+        object_utils.object_data_add(bpy.context, mesh_new)
+
+        #BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
+        #obj = Blender.Object.GetSelected()[0];
+        ## obj.layers = [ 3 ];
+        #obj.transp = True; obj.wireMode = True;
         
-        mesh = Blender.Mesh.Get( obj.data.name );
-        mesh.materials = self.snapshot_materials;
-        for f in mesh.faces:
-            f.mat = snapshot_type;
+        #mesh = Blender.Mesh.Get( obj.data.name );
+        #mesh.materials = self.snapshot_materials;
+        #for f in mesh.faces:
+            #f.mat = snapshot_type;
     
     def GEOfrequency_snapshot(self, name, plane, P1, P2):
         self.snapshot(name, plane, P1, P2, 0);

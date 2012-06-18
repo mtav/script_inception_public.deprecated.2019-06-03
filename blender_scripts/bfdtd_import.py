@@ -79,19 +79,20 @@ def importBristolFDTD(filename):
     #FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
     FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.mesh.getXmeshDelta(),structured_entries.mesh.getYmeshDelta(),structured_entries.mesh.getZmeshDelta());
-    
-    # Time_snapshot (time or EPS)
-    for time_snapshot in structured_entries.time_snapshot_list:
-        if time_snapshot.eps == 0:
-            Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-            FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-        else:
-            Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-            FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-    # Frequency_snapshot
-    for frequency_snapshot in structured_entries.frequency_snapshot_list:
-        Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
-        FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+
+    # TODO: finish porting snapshots
+    ## Time_snapshot (time or EPS)
+    #for time_snapshot in structured_entries.time_snapshot_list:
+        #if time_snapshot.eps == 0:
+            ##Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
+            #FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+        #else:
+            ##Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
+            #FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+    ## Frequency_snapshot
+    #for frequency_snapshot in structured_entries.frequency_snapshot_list:
+        ##Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
+        #FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
 
     # Excitation
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
