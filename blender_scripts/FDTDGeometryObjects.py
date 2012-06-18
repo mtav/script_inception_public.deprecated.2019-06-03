@@ -304,14 +304,15 @@ class FDTDGeometryObjects:
         
         edges = []
         
+        #print('=========> adding mesh with name = '+str(name))
         mesh_data = bpy.data.meshes.new(name)
         mesh_data.from_pydata(local_verts, edges, faces)
         mesh_data.update() # (calc_edges=True) not needed here
         
-        cube_object = bpy.data.objects.new(name, mesh_data)
+        new_object = bpy.data.objects.new(name, mesh_data)
         
-        #scene = bpy.context.scene
-        #scene.objects.link(cube_object)  
+        scene = bpy.context.scene
+        scene.objects.link(new_object)
         #cube_object.select = True
         
         #BPyAddMesh.add_mesh_simple(name, , [], faces)

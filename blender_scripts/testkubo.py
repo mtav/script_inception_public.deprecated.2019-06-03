@@ -50,7 +50,7 @@ def testkubo():
   cube_object = bpy.data.objects.new("superBox", mesh_data)
   
   scene = bpy.context.scene  
-  scene.objects.link(cube_object)  
+  scene.objects.link(cube_object)
   cube_object.select = True
 
 def testkubo2():
@@ -97,7 +97,7 @@ def importTest():
   importBristolFDTD(os.getenv("HOME")+'/Development/script_inception_public/geometries/qedc3_3_0525b.geo')
   
 if __name__ == "__main__":
-  #testkubo()
-  boxtest()
+  testkubo()
+  #boxtest()
   #testkubo2()
   #importTest()
