@@ -681,6 +681,25 @@ class FDTDGeometryObjects:
         axisX.normalize();
         axisY.normalize();
         axisZ.normalize();
+        
+        
+        angle_X = angle_Y = angle_Z = 0
+        bpy.ops.mesh.primitive_cylinder_add(location = Vector(cylinder_center), radius=cylinder_radius, depth=cylinder_length, rotation=(angle_X, angle_Y, angle_Z))
+        arrow_cylinder_obj = bpy.context.active_object
+        arrow_cylinder_obj.name = name
+
+        bpy.ops.mesh.primitive_cone_add(radius1=cone_radius, depth=cone_length, location=Vector(cone_center), rotation=(0.0, 0.0, 0.0))
+        arrow_cone_obj = bpy.context.active_object
+        arrow_cone_obj.name = name
+
+        bpy.ops.object.select_all(action = 'DESELECT')
+        scene = bpy.context.scene
+        scene.objects.active = arrow_cylinder_obj
+        
+        arrow_cylinder_obj.select = True
+        arrow_cone_obj.select = True
+        bpy.ops.object.join()
+
         #rotmat = Matrix(axisX,axisY,axisZ);
         
         #scene = Blender.Scene.GetCurrent()
