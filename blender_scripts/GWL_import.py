@@ -204,11 +204,15 @@ def importGWL(filename):
     edges = []
     faces = []
     for write_sequence in GWL_obj.GWL_voxels:
+      local_Nverts = 0
       for voxel in write_sequence:
         #print voxel
         #BlenderSphere('voxel', Vector(voxel), 0.100)
         #BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
         verts.append( mathutils.Vector(voxel[0:3]) )
+        local_Nverts += 1
+        if len(verts)>=2 and local_Nverts>=2:
+          edges.append([len(verts)-2,len(verts)-1])
 
         #if Nvoxel == 0:
           #first_voxel = BlenderBlock('voxel', Vector(voxel), 0.100)
