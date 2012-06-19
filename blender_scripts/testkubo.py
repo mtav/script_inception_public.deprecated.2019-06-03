@@ -95,9 +95,19 @@ def boxtest():
 
 def importTest():
   importBristolFDTD(os.getenv("HOME")+'/Development/script_inception_public/geometries/qedc3_3_0525b.geo')
+
+def snapshotTest():
+  FDTDGeometryObjects_obj = FDTDGeometryObjects()
+  name = 'snapshot'
+  plane = 3 #1,2,3
+  P1 = [0,0,0]
+  P2 = [1,1,0]
+  snapshot_type = 0 #0,1,2
+  FDTDGeometryObjects_obj.snapshot(name, plane, P1, P2, snapshot_type)
   
 if __name__ == "__main__":
-  testkubo()
+  #testkubo()
+  snapshotTest()
   #boxtest()
   #testkubo2()
   #importTest()

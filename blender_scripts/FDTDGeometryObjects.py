@@ -738,7 +738,7 @@ class FDTDGeometryObjects:
             verts = [ A, B, C, D ];
         
         edges = [];
-        faces = [ 0, 1, 2, 3 ];
+        faces = [( 0, 1, 2, 3 )];
         #name = 'snapshot';
         #if snapshot_type == 0:
             #name = 'freq_snapshot';
@@ -750,6 +750,9 @@ class FDTDGeometryObjects:
         # print("Adding plane at ", A, B, C, D)
 
         mesh_new = bpy.data.meshes.new(name=name)
+        print(verts)
+        print(edges)
+        print(faces)
         mesh_new.from_pydata(verts, edges, faces)
         object_utils.object_data_add(bpy.context, mesh_new)
 
