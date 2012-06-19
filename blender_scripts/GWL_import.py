@@ -211,6 +211,8 @@ def importGWL(filename):
         #BlenderBlock('voxel_'+str(Nvoxel), Vector(voxel), 0.100, scene, mesh)
         verts.append( mathutils.Vector(voxel[0:3]) )
         local_Nverts += 1
+        
+        # to enable/disable lines
         if len(verts)>=2 and local_Nverts>=2:
           edges.append([len(verts)-2,len(verts)-1])
 

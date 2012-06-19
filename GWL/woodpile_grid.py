@@ -87,11 +87,14 @@ def createSubFiles3(DSTDIR):
   n_logs = 30 # number of logs in each layer
   w = 0.2*d # width of the logs
   h = 0.25*d # heigth of logs (should be 1/4 for fcc to not overlap)
+  print(w)
+  print(h)
+  
   L = (n_logs-1)*a+w+a # Length of logs (should > (n_logs-1)*a+w)
   n_layers = 4*7 # Number of layers of logs required
 
-  wall_thickness = 1
-  XL = 0 # Lower edge of the simulation domain in x direction.
+  wall_thickness = 5
+  XL = 0.5*wall_thickness # Lower edge of the simulation domain in x direction.
   YL = 0.5*wall_thickness # Lower edge of the simulation domain in y direction.
   ZL = 0 # Lower edge of the simulation domain in z direction.
 
@@ -105,79 +108,122 @@ def createSubFiles3(DSTDIR):
   NRodsPerLayer_Y = n_logs
 
   substrate_height = 0.515
-  hole_height = 1
+  hole_height = 5
   woodpile_Zoffset = substrate_height + 0.5*h + hole_height
   wall_height = n_layers*h
   
-  leg_width = 2
+  leg_width = 5
 
   box = GWLobject()
   #addXblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, )
 
   BottomToTop = False
   
+  LineDistance_Box = 0.200
+  #LineDistance_Box = 0.100
+  
   # substrate
-  P1 = [XL,0.5*(YL+YU),0.5*substrate_height]
-  P2 = [XU,0.5*(YL+YU),0.5*substrate_height]
-  LineNumber_Horizontal = (YU-YL+wall_thickness)/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = substrate_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XL-0.5*wall_thickness,0.5*(YL+YU),0.5*substrate_height]
+  P2 = [XU+0.5*wall_thickness,0.5*(YL+YU),0.5*substrate_height]
+  LineNumber_Horizontal = int((YU-YL+wall_thickness)/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(substrate_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
+  print('LineNumber_Horizontal = '+str(LineNumber_Horizontal))
+  print('LineNumber_Vertical = '+str(LineNumber_Vertical))
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
   # sidewalls X direction
-  P1 = [XL,YL,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
-  P2 = [XU,YL,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
-  LineNumber_Horizontal = wall_thickness/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = wall_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XL-0.5*wall_thickness,YL,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  P2 = [XU+0.5*wall_thickness,YL,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(wall_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
   #print('Adding XBlock P1 = '+str(P1)+' P2 = '+str(P2)+' LineNumber_Horizontal = '+str(LineNumber_Horizontal))
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
-  P1 = [XL,YU,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
-  P2 = [XU,YU,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
-  LineNumber_Horizontal = wall_thickness/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = wall_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XL-0.5*wall_thickness,YU,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  P2 = [XU+0.5*wall_thickness,YU,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(wall_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
   # sidewalls X direction for X- legs
-  P1 = [XL,YL,substrate_height]
-  P2 = [XL+leg_width,YL,substrate_height+hole_height]
-  LineNumber_Horizontal = wall_thickness/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = hole_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XL-0.5*wall_thickness,YL,substrate_height]
+  P2 = [XL-0.5*wall_thickness+leg_width,YL,substrate_height+hole_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(hole_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
   #print('Adding XBlock P1 = '+str(P1)+' P2 = '+str(P2)+' LineNumber_Horizontal = '+str(LineNumber_Horizontal))
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
-  P1 = [XL,YU,substrate_height]
-  P2 = [XL+leg_width,YU,substrate_height+hole_height]
-  LineNumber_Horizontal = wall_thickness/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = hole_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XL-0.5*wall_thickness,YU,substrate_height]
+  P2 = [XL-0.5*wall_thickness+leg_width,YU,substrate_height+hole_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(hole_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
   # sidewalls X direction for X+ legs
-  P1 = [XU-leg_width,YL,substrate_height]
-  P2 = [XU,YL,substrate_height+hole_height]
-  LineNumber_Horizontal = wall_thickness/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = hole_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XU+0.5*wall_thickness-leg_width,YL,substrate_height]
+  P2 = [XU+0.5*wall_thickness,YL,substrate_height+hole_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(hole_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
   #print('Adding XBlock P1 = '+str(P1)+' P2 = '+str(P2)+' LineNumber_Horizontal = '+str(LineNumber_Horizontal))
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
-  P1 = [XU-leg_width,YU,substrate_height]
-  P2 = [XU,YU,substrate_height+hole_height]
-  LineNumber_Horizontal = wall_thickness/0.100
-  LineDistance_Horizontal = 0.100
-  LineNumber_Vertical = hole_height/0.100
-  LineDistance_Vertical = 0.100
+  P1 = [XU+0.5*wall_thickness-leg_width,YU,substrate_height]
+  P2 = [XU+0.5*wall_thickness,YU,substrate_height+hole_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(hole_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
   box.addXblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+
+  # sidewalls Y direction
+  P1 = [XL,YL+0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  P2 = [XL,YU-0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(wall_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
+  #print('Adding XBlock P1 = '+str(P1)+' P2 = '+str(P2)+' LineNumber_Horizontal = '+str(LineNumber_Horizontal))
+  box.addYblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+
+  P1 = [XU,YL+0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  P2 = [XU,YU-0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  LineDistance_Horizontal = LineDistance_Box
+  LineNumber_Vertical = int(wall_height/LineDistance_Box)+1
+  LineDistance_Vertical = LineDistance_Box
+  box.addYblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+
+  # sidewalls Y direction for Y- legs
+  #P1 = [XL,YL+0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  #P2 = [XL,YL+0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  #LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  #LineDistance_Horizontal = LineDistance_Box
+  #LineNumber_Vertical = int(wall_height/LineDistance_Box)+1
+  #LineDistance_Vertical = LineDistance_Box
+  ##print('Adding XBlock P1 = '+str(P1)+' P2 = '+str(P2)+' LineNumber_Horizontal = '+str(LineNumber_Horizontal))
+  #box.addYblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+
+  #P1 = [XU,YL+0.5*wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  #P2 = [XU,YL+0.5*wall_thickness+leg_width-wall_thickness,(woodpile_Zoffset-0.5*h)+0.5*wall_height]
+  #LineNumber_Horizontal = int(wall_thickness/LineDistance_Box)+1
+  #LineDistance_Horizontal = LineDistance_Box
+  #LineNumber_Vertical = int(wall_height/LineDistance_Box)+1
+  #LineDistance_Vertical = LineDistance_Box
+  #box.addYblock(P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+
+  # sidewalls Y direction for Y+ legs
 
   #(Pmin, Pmax) = GWL_obj.getLimits()
   box.write_GWL(DSTDIR + os.path.sep + 'box.gwl', writingOffset = [0,0,0,0] )
