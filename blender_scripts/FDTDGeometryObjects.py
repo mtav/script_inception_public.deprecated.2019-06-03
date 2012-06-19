@@ -776,28 +776,42 @@ class FDTDGeometryObjects:
         return
     
     def GEOprobe(self, name, position):
-        scene = Blender.Scene.GetCurrent();
+      #scene = Blender.Scene.GetCurrent();
+
+      #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
+      probe_size = self.probe_scalefactor_mesh*self.mesh_min
+      if probe_size<=0:
+        probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
+      if probe_size<=0:
+        probe_size = 1
+      print('self.probe_scalefactor_mesh = ' + str(self.probe_scalefactor_mesh))
+      print('self.mesh_min = ' + str(self.mesh_min))
+      print('probe_size = ' + str(probe_size))
+      # TODO: define probe_size relative to smallest part of geometry + add way to change it in blender eventually
+      # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
+
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=Vector(position),rotation=(0,0,0))
+
+      # get added object
+      obj = bpy.context.active_object
+
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
         
-        #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
-        probe_size = self.probe_scalefactor_mesh*self.mesh_min
-        if probe_size<=0:
-          probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
-        if probe_size<=0:
-          probe_size = 1
-        print('self.probe_scalefactor_mesh = ' + str(self.probe_scalefactor_mesh))
-        print('self.mesh_min = ' + str(self.mesh_min))
-        print('probe_size = ' + str(probe_size))
-        # TODO: define probe_size relative to smallest part of geometry + add way to change it in blender eventually
-        # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
-        
-        mesh = Blender.Mesh.Primitives.Cube(probe_size);
-    
-        obj = scene.objects.new(mesh, name)
-        # obj = Blender.Object.GetSelected()[0];
-        obj.setLocation(position[0], position[1], position[2]);
-        # obj.layers = [ 4 ];
-        obj.transp = True; obj.wireMode = True;
-        return
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+
+      obj.dimensions = 3*[probe_size]
+
+      # deleting faces fails when in object mode, so change.
+      #bpy.ops.object.mode_set(mode = 'EDIT') 
+      #bpy.ops.mesh.delete(type='ONLY_FACE')
+      #bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+      return
 
 ###############################
 # UTILITY FUNCTIONS
