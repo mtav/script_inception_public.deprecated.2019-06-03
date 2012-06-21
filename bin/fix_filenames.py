@@ -8,7 +8,7 @@ import os
 import string
 from optparse import OptionParser
 
-
+# TODO: add support for the full range of char IDs (;,<, etc)
 def main(argv=None):
   usagestr = "usage: %prog [ -v ] [ -n ] [ -f ] [ directory ]"
         #[-v, --verbose]
