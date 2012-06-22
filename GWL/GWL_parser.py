@@ -392,8 +392,8 @@ class GWLobject:
                 voxel = []
                 for i in range(len(cmd)):
                   piezo_position = float(cmd[i]) + self.voxel_offset[i]
-                  #if piezo_position<0 or piezo_position>300:
-                    #print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position), file=sys.stderr)
+                  if piezo_position<0 or piezo_position>300:
+                    print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position), file=sys.stderr)
                     #sys.exit(-1)
                   voxel.append( piezo_position + self.stage_position[i] - self.FindInterfaceAt[i] )
                 #voxel = [ float(i) for i in cmd ]
@@ -438,7 +438,7 @@ class GWLobject:
       for write_sequence in self.GWL_voxels:
         for voxel in write_sequence:
           for i in range(len(voxel)):
-            file.write( str( voxel[i] + writingOffset[i] ) )
+            file.write( str( "%.3f" % (voxel[i] + writingOffset[i]) ) )
             if i<len(voxel)-1:
               file.write('\t')
             else:
