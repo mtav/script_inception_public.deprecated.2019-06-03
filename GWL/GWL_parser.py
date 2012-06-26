@@ -27,6 +27,7 @@ class GWLobject:
     self.maxDistanceBetweenLines = 0 # maximum acceptable distance from end of one line to start of next one
     self.LastVoxel = [0,0,0,0]
     self.LastVoxelSet = False
+    self.out_of_range = False
 
   # TODO
   def getMinDistanceBetweenVoxels():
@@ -172,6 +173,16 @@ class GWLobject:
           self.GWL_voxels.append([B,A])
         counter = counter + 1
 
+  def addTube(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, PointDistance_z):
+    print('=== addTube ===')
+    #print((numpy.linspace(inner_radius, outer_radius, float((outer_radius - inner_radius)/PointDistance_r))))
+    for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
+      for z in numpy.linspace(centro[2]+0.5*height, centro[2]-0.5*height, float(1+height/PointDistance_z)):
+        print((radius,z))
+      #for i_theta in numpy.linspace(0, 2*numpy.pi, (outer_radius - inner_radius)/PointDistance_r):
+        self.addHorizontalCircle([centro[0],centro[1],z], radius, power, PointDistance_theta)
+    return
+
   def addHorizontalCircle(self, center, radius, power, PointDistance):
     #print radius
     write_sequence = []
@@ -220,7 +231,7 @@ class GWLobject:
       # symetrify list
       zlist = zlist + [ -i for i in zlist[len(zlist)-2::-1] ]
 
-      for z in zlist:
+      for z in sorted(zlist, reverse=True):
         local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
         #print(('local_radius 1 = ',local_radius))
         #local_radius = radius*numpy.sin(i*numpy.pi/float(N))
@@ -393,7 +404,9 @@ class GWLobject:
                 for i in range(len(cmd)):
                   piezo_position = float(cmd[i]) + self.voxel_offset[i]
                   if piezo_position<0 or piezo_position>300:
-                    print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position), file=sys.stderr)
+                    if not self.out_of_range:
+                      print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position), file=sys.stderr)
+                      self.out_of_range = True
                     #sys.exit(-1)
                   voxel.append( piezo_position + self.stage_position[i] - self.FindInterfaceAt[i] )
                 #voxel = [ float(i) for i in cmd ]
