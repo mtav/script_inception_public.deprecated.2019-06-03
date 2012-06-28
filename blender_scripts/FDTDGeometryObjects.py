@@ -719,6 +719,9 @@ class FDTDGeometryObjects:
         
         #mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
         #mesh.materials = [ self.excitation_material ];
+        #arrow_cylinder_obj.data.materials = [self.excitation_material]
+        #obj.active_material=bpy.data.materials['Red']
+        arrow_cylinder_obj.active_material = self.excitation_material
         #for f in mesh.faces:
             #f.mat = 0;
     
