@@ -675,22 +675,36 @@ class FDTDGeometryObjects:
         cylinder_center = P1+2./5.*(P2-P1);
         cone_center = P1+4.5/5.*(P2-P1);
             
-        axisZ = -(P2-P1); # because the default primitive cone is oriented along -Z, unlike the one imported from Blender UI...
+        axisZ = (P2-P1); # because the default primitive cone is oriented along -Z, unlike the one imported from Blender UI...
         axisX = Orthogonal(axisZ);
         axisY = axisZ.cross(axisX);
         axisX.normalize();
         axisY.normalize();
         axisZ.normalize();
         
+        axisX.resize_4d();axisX[3]=0
+        axisY.resize_4d();axisX[3]=0
+        axisZ.resize_4d();axisX[3]=0
+        axisW=Vector((0,0,0,1))
+        rotmat = Matrix((axisX,axisY,axisZ,axisW))
+        rotmat.transpose()
         
         angle_X = angle_Y = angle_Z = 0
         bpy.ops.mesh.primitive_cylinder_add(location = Vector(cylinder_center), radius=cylinder_radius, depth=cylinder_length, rotation=(angle_X, angle_Y, angle_Z))
         arrow_cylinder_obj = bpy.context.active_object
         arrow_cylinder_obj.name = name
 
+        arrow_cylinder_obj.matrix_world = rotmat
+        #arrow_cylinder_obj.dimensions = (2*cylinder_radius,2*cylinder_radius,cylinder_length)
+        arrow_cylinder_obj.location = cylinder_center
+
         bpy.ops.mesh.primitive_cone_add(radius1=cone_radius, depth=cone_length, location=Vector(cone_center), rotation=(0.0, 0.0, 0.0))
         arrow_cone_obj = bpy.context.active_object
         arrow_cone_obj.name = name
+
+        arrow_cone_obj.matrix_world = rotmat
+        #arrow_cylinder_obj.dimensions = (2*cylinder_radius,2*cylinder_radius,cylinder_length)
+        arrow_cone_obj.location = cone_center
 
         bpy.ops.object.select_all(action = 'DESELECT')
         scene = bpy.context.scene
@@ -700,7 +714,6 @@ class FDTDGeometryObjects:
         arrow_cone_obj.select = True
         bpy.ops.object.join()
 
-        #rotmat = Matrix(axisX,axisY,axisZ);
         
         #scene = Blender.Scene.GetCurrent()
         
