@@ -1220,6 +1220,9 @@ class BFDTDobject(object):
     return F
   
   def addFrequencySnapshot(self, plane, position):
+    if not isinstance(position,int) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)      
     if plane == 1:
       name='X frequency snapshot'
       L = [position, self.box.lower[1], self.box.lower[2]]
@@ -1240,6 +1243,9 @@ class BFDTDobject(object):
     return F
   
   def addTimeSnapshot(self, plane, position):
+    if not isinstance(position,int) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)      
     if plane == 1:
       name='X Time snapshot'
       L = [position, self.box.lower[1], self.box.lower[2]]
@@ -1260,7 +1266,7 @@ class BFDTDobject(object):
     return F
 
   def addModeFilteredProbe(self, plane, position):
-    if not isinstance(position,float) and not isinstance(position,float):
+    if not isinstance(position,int) and not isinstance(position,float):
       print('ERROR: position argument is not int or float, but is '+str(type(position)))
       sys.exit(1)      
     # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
@@ -1289,9 +1295,18 @@ class BFDTDobject(object):
     return F
 
   def addEpsilonSnapshot(self, plane, position):
-    if not isinstance(position,float) and not isinstance(position,float):
+    if not isinstance(position,int) and not isinstance(position,float):
       print('ERROR: position argument is not int or float, but is '+str(type(position)))
-      sys.exit(1)      
+      sys.exit(1)
+    if isinstance(plane,int) or isinstance(plane,float):
+      if plane == 1:
+        plane = 'x'
+      elif plane == 2:
+        plane = 'y'
+      elif plane == 3:
+        plane = 'z'
+      print('WARNING: Interpreting plane as being '+str(plane))
+      
     # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
     # TODO: support multiple types for position argument (int/float or array)
     vec, alpha = getVecAlphaDirectionFromVar(plane)

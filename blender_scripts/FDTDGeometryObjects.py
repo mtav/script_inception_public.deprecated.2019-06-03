@@ -20,41 +20,61 @@ import numpy
 from mathutils import *
 from bpy_extras import object_utils #Blender 2.63
 
-class FDTDGeometryObjects:
+class FDTDGeometryObjects(object):
     def __init__(self):
       # prepare base materials
       self.material_dict={};
-      
-      bpy.ops.material.new()
-      self.frequency_snapshot_material = bpy.data.materials[-1]
-      self.frequency_snapshot_material.name = 'frequency_snapshot'
-      self.frequency_snapshot_material.diffuse_color = Color((0.5, 0, 0))
-      self.frequency_snapshot_material.alpha = 0.5
-      
+
       #titi.transparency_method='MASK'
       #titi.transparency_method='RAYTRACE'
       #titi.transparency_method='Z_TRANSPARENCY'
+
+      print(bpy.data.materials)
       
-      bpy.ops.material.new()
-      self.time_snapshot_material = bpy.data.materials[-1]
-      self.time_snapshot_material.name = 'time_snapshot'
+      self.frequency_snapshot_material = bpy.data.materials.new('frequency_snapshot')
+      self.frequency_snapshot_material.diffuse_color = Color((0.5, 0, 0))
+      self.frequency_snapshot_material.alpha = 0.5
+      print(bpy.data.materials)
+      print(self.frequency_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
+            
+      self.time_snapshot_material = bpy.data.materials.new('time_snapshot')
       self.time_snapshot_material.diffuse_color = Color((0.5, 1, 0))
       self.time_snapshot_material.alpha = 0.5
+      print(bpy.data.materials)
+      print(self.frequency_snapshot_material)
+      print(self.time_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
       
-      bpy.ops.material.new()
-      self.eps_snapshot_material = bpy.data.materials[-1]
-      self.eps_snapshot_material.name = 'eps_snapshot'
+      self.eps_snapshot_material = bpy.data.materials.new('eps_snapshot')
       self.eps_snapshot_material.diffuse_color = Color((0.5, 0, 1))
       self.eps_snapshot_material.alpha = 0.5
+      print(bpy.data.materials)
+      print(self.frequency_snapshot_material)
+      print(self.time_snapshot_material)
+      print(self.eps_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
       
-      bpy.ops.material.new()
-      self.excitation_material = bpy.data.materials[-1]
-      self.excitation_material.name = 'excitation'
+      self.snapshot_materials = [ self.frequency_snapshot_material, self.time_snapshot_material, self.eps_snapshot_material ]
+      print(self.snapshot_materials)
+      print(self.frequency_snapshot_material)
+      print(self.time_snapshot_material)
+      print(self.eps_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
+
+      self.excitation_material = bpy.data.materials.new('excitation')
       self.excitation_material.diffuse_color = Color((1, 0, 0))
       self.excitation_material.alpha = 0.5
+      print(bpy.data.materials)
       
-      self.snapshot_materials = [ self.frequency_snapshot_material, self.time_snapshot_material, self.eps_snapshot_material ];
-      
+      for mat in bpy.data.materials:
+        print(mat.name)
+
+            
       self.probe_scalefactor_box = 0.0218;
       self.probe_scalefactor_mesh = 0.5;
       self.mesh_min = 0;
@@ -62,6 +82,7 @@ class FDTDGeometryObjects:
       self.box_SizeX = 0;
       self.box_SizeY = 0;
       self.box_SizeZ = 0;
+      
     def materials(self,permittivity, conductivity):
         if permittivity not in self.material_dict:
             n = math.sqrt(permittivity)
@@ -784,9 +805,25 @@ class FDTDGeometryObjects:
         
         # print("Adding plane at ", A, B, C, D)
 
-        mesh_new = bpy.data.meshes.new(name=name)
-        mesh_new.from_pydata(verts, edges, faces)
-        object_utils.object_data_add(bpy.context, mesh_new)
+        #mesh_new = bpy.data.meshes.new(name=name)
+        #mesh_new.from_pydata(verts, edges, faces)
+        #object_utils.object_data_add(bpy.context, mesh_new)
+
+        mesh_data = bpy.data.meshes.new(name=name)
+        mesh_data.from_pydata(verts, edges, faces)
+        mesh_data.update() # (calc_edges=True) not needed here
+        
+        new_object = bpy.data.objects.new(name, mesh_data)
+        
+        scene = bpy.context.scene
+        scene.objects.link(new_object)
+        
+        print('==> snapshot_type = '+str(snapshot_type))
+        print(self.snapshot_materials)
+        new_object.active_material = self.snapshot_materials[snapshot_type]
+
+        new_object.show_wire = True
+        new_object.show_transparent = True
 
         #BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
         #obj = Blender.Object.GetSelected()[0];
