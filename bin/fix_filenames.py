@@ -7,8 +7,9 @@ import fnmatch
 import os
 import string
 from optparse import OptionParser
+from utilities.brisFDTD_ID_info import numID_to_alphaID, alphaID_to_numID
 
-
+# TODO: add support for the full range of char IDs (;,<, etc)
 def main(argv=None):
   usagestr = "usage: %prog [ -v ] [ -n ] [ -f ] [ directory ]"
         #[-v, --verbose]

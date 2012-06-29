@@ -77,6 +77,8 @@ class Excitation(object):
     self.template_rotation = template_rotation
 
     self.meshing_parameters = MeshingParameters()
+    
+    self.fixLowerUpperAtWrite = True
 
   def setLambda(self, lambda_mum):
     self.frequency = get_c0()/lambda_mum
@@ -141,7 +143,8 @@ class Excitation(object):
     
   def write_entry(self, FILE):
     if self.current_source != 11:
-      self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
+      if self.fixLowerUpperAtWrite:
+        self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
       FILE.write('EXCITATION **name='+self.name+'\n')
       FILE.write('{\n')
       FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)

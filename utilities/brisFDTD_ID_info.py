@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Converts between numID (01,02,67) and alphaID (df,jk,{l,etc)
 """
@@ -71,7 +71,7 @@ def alphaID_to_numID(alphaID, probe_ident):
   alphaID_pattern = '([a-z\{\|\}~][a-z\{]|[a-z])'
   
   if length(alphaID)==1 | length(alphaID)==2:
-    [tokens match] =  regexp(alphaID, alphaID_pattern, 'tokens', 'match', 'warnings')
+    [tokens, match] =  regexp(alphaID, alphaID_pattern, 'tokens', 'match', 'warnings')
     if length(match)==1:
       snap_plane = 'x'
       just_alphaID = alphaID
@@ -79,7 +79,7 @@ def alphaID_to_numID(alphaID, probe_ident):
     else:
       error('Match error. Invalid alphaID.')
   elif length(alphaID)>2:
-    [tokens match] =  regexp(alphaID, ['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn'], 'tokens', 'match', 'warnings')
+    [tokens, match] =  regexp(alphaID, ['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn'], 'tokens', 'match', 'warnings')
     
     if length(match)==1:
       snap_plane = tokens{:}(1)
@@ -100,7 +100,8 @@ def alphaID_to_numID(alphaID, probe_ident):
       snap_plane = 'a'
       snap_time_number = -1
   else:
-    error('Me thinks you made a little mistake in your alphaID...')
+    print('Me thinks you made a little mistake in your alphaID...', file=sys.stderr)
+    sys.exit(-1)
     
   return numID, snap_plane, snap_time_number
   

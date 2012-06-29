@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os
+
+#print('\1 = '+str(os.getenv('\1')))
+
+print('BLENDERDATADIR = '+str(os.getenv('BLENDERDATADIR')))
+
+print('BLENDER_USER_SCRIPTS = '+str(os.getenv('BLENDER_USER_SCRIPTS')))
+  #BLENDER_USER_SCRIPTS
+  #BLENDER_USER_CONFIG
+  #BLENDER_USER_SCRIPTS
+  #BLENDER_SYSTEM_SCRIPTS
+  #BLENDER_USER_DATAFILES
+  #BLENDER_SYSTEM_DATAFILES
+  #BLENDER_SYSTEM_PYTHON
+  #TMP
+  #TMPDIR
+  #SDL_AUDIODRIVER
+  #PYTHONHOME

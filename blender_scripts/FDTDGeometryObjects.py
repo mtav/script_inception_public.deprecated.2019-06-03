@@ -1,43 +1,80 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Blender
+#import Blender
 #~ from bpy import *
 import math
-import bpy;
-import BPyAddMesh;
-import os;
-import sys;
-import re;
-import array;
+import bpy
+#import BPyAddMesh
+import os
+import sys
+import re
+import array
+import numpy
 # define Vector+Matrix
 #~ from bpy.Mathutils import Vector;
 #~ from bpy.Mathutils import Matrix;
-from Blender.Mathutils import Vector;
-from Blender.Mathutils import Matrix;
+#from Blender.Mathutils import Vector;
+#from Blender.Mathutils import Matrix;
+#from mathutils import Color
+from mathutils import *
+from bpy_extras import object_utils #Blender 2.63
 
-class FDTDGeometryObjects:
+class FDTDGeometryObjects(object):
     def __init__(self):
       # prepare base materials
       self.material_dict={};
-      self.frequency_snapshot_material = Blender.Material.New('frequency_snapshot');
-      self.frequency_snapshot_material.rgbCol = 0.5, 0, 0;
-      self.frequency_snapshot_material.setAlpha(0.5);
+
+      #titi.transparency_method='MASK'
+      #titi.transparency_method='RAYTRACE'
+      #titi.transparency_method='Z_TRANSPARENCY'
+
+      print(bpy.data.materials)
       
-      self.time_snapshot_material = Blender.Material.New('time_snapshot');
-      self.time_snapshot_material.rgbCol = 0.5, 1, 0;
-      self.time_snapshot_material.setAlpha(0.5);
+      self.frequency_snapshot_material = bpy.data.materials.new('frequency_snapshot')
+      self.frequency_snapshot_material.diffuse_color = Color((0.5, 0, 0))
+      self.frequency_snapshot_material.alpha = 0.5
+      print(bpy.data.materials)
+      print(self.frequency_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
+            
+      self.time_snapshot_material = bpy.data.materials.new('time_snapshot')
+      self.time_snapshot_material.diffuse_color = Color((0.5, 1, 0))
+      self.time_snapshot_material.alpha = 0.5
+      print(bpy.data.materials)
+      print(self.frequency_snapshot_material)
+      print(self.time_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
       
-      self.eps_snapshot_material = Blender.Material.New('eps_snapshot');
-      self.eps_snapshot_material.rgbCol = 0.5, 0, 1;
-      self.eps_snapshot_material.setAlpha(0.5);
+      self.eps_snapshot_material = bpy.data.materials.new('eps_snapshot')
+      self.eps_snapshot_material.diffuse_color = Color((0.5, 0, 1))
+      self.eps_snapshot_material.alpha = 0.5
+      print(bpy.data.materials)
+      print(self.frequency_snapshot_material)
+      print(self.time_snapshot_material)
+      print(self.eps_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
       
-      self.excitation_material = Blender.Material.New('excitation');
-      self.excitation_material.rgbCol = 1, 0, 0;
-      self.excitation_material.setAlpha(0.5);
+      self.snapshot_materials = [ self.frequency_snapshot_material, self.time_snapshot_material, self.eps_snapshot_material ]
+      print(self.snapshot_materials)
+      print(self.frequency_snapshot_material)
+      print(self.time_snapshot_material)
+      print(self.eps_snapshot_material)
+      for mat in bpy.data.materials:
+        print(mat.name)
+
+      self.excitation_material = bpy.data.materials.new('excitation')
+      self.excitation_material.diffuse_color = Color((1, 0, 0))
+      self.excitation_material.alpha = 0.5
+      print(bpy.data.materials)
       
-      self.snapshot_materials = [ self.frequency_snapshot_material, self.time_snapshot_material, self.eps_snapshot_material ];
-      
+      for mat in bpy.data.materials:
+        print(mat.name)
+
+            
       self.probe_scalefactor_box = 0.0218;
       self.probe_scalefactor_mesh = 0.5;
       self.mesh_min = 0;
@@ -45,65 +82,179 @@ class FDTDGeometryObjects:
       self.box_SizeX = 0;
       self.box_SizeY = 0;
       self.box_SizeZ = 0;
+      
     def materials(self,permittivity, conductivity):
         if permittivity not in self.material_dict:
             n = math.sqrt(permittivity)
             
             max_permittivity = 25.0;
-            permittivity_material = Blender.Material.New('permittivity');
-            permittivity_material.rgbCol = 0, permittivity/max_permittivity, 1.0-permittivity/max_permittivity;
-            permittivity_material.setAlpha(0.5);
+            mat_name = 'n_'+str("%.2f" % numpy.sqrt(permittivity))
+            print(mat_name)
+            permittivity_material = bpy.data.materials.new(mat_name)
+            permittivity_material.diffuse_color = Color((0, permittivity/max_permittivity, 1.0-permittivity/max_permittivity))
+            permittivity_material.alpha = 0.5
             
-            # conductivity_material = Blender.Material.New('conductivity')
-            # conductivity_material.rgbCol = 0, 1.0-conductivity/100.0, 0;
-            # conductivity_material.setAlpha(0.5);
+            # bpy.ops.material.new()
+            # conductivity_material = bpy.data.materials[-1]
+            # conductivity_material.name = 'conductivity'
+            # conductivity_material.diffuse_color = Color((0, 1.0-conductivity/100.0, 0))
+            # conductivity_material.alpha = 0.5
     
-            # refractive_index_material = Blender.Material.New('refractive_index')
+            # bpy.ops.material.new()
+            # refractive_index_material = bpy.data.materials[-1]
+            # refractive_index_material.name = 'refractive_index'
             # if n!=0:
-                # refractive_index_material.rgbCol = 0, 0, 1.0/n;
+                # refractive_index_material.diffuse_color = Color((0, 0, 1.0/n))
             # else:
-                # refractive_index_material.rgbCol = 0, 0, 1.0;
-            # refractive_index_material.setAlpha(0.5);
+                # refractive_index_material.diffuse_color = Color((0, 0, 1.0))
+            # refractive_index_material.alpha = 0.5
             
             self.material_dict[permittivity] = permittivity_material;
     
-        return [ self.material_dict[permittivity] ];
+        return self.material_dict[permittivity];
     ###############################
     # OBJECT CREATION FUNCTIONS
     ###############################
     def GEOblock(self, name, lower, upper, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
+
+      lower = numpy.array(lower)
+      upper = numpy.array(upper)
+
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+      
+      # get added object
+      obj = bpy.context.active_object
+      
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
+        
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+      
+      pos = 0.5*(lower+upper);
+      diag = upper-lower;
+      obj.scale = 0.5*diag;
+      obj.location = pos;
+      
+      # deleting faces fails when in object mode, so change.
+      #bpy.ops.object.mode_set(mode = 'EDIT') 
+      #bpy.ops.mesh.delete(type='ONLY_FACE')
+      #bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+
+      ######################################
+      #Assign first material on all the mesh
+      ######################################
+      #Add a material slot
+      bpy.ops.object.material_slot_add()
+       
+      #Assign a material to the last slot
+      obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+       
+      #Go to Edit mode
+      bpy.ops.object.mode_set(mode='EDIT')
+       
+      #Select all the vertices
+      bpy.ops.mesh.select_all(action='SELECT') 
+       
+      #Assign the material on all the vertices
+      bpy.ops.object.material_slot_assign() 
+       
+      #Return to Object Mode
+      bpy.ops.object.mode_set(mode='OBJECT')
+
+      return
+
+
+        #scene = Blender.Scene.GetCurrent();
+        #mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        obj = scene.objects.new(mesh, name);
-        pos = 0.5*(lower+upper);
-        diag = upper-lower;
-        obj.SizeX = abs(diag[0]);
-        obj.SizeY = abs(diag[1]);
-        obj.SizeZ = abs(diag[2]);
-        obj.setLocation(pos[0], pos[1], pos[2]);
-        obj.transp = True; obj.wireMode = True;
-        return;
+        #obj = scene.objects.new(mesh, name);
+        #pos = 0.5*(lower+upper);
+        #diag = upper-lower;
+        #obj.SizeX = abs(diag[0]);
+        #obj.SizeY = abs(diag[1]);
+        #obj.SizeZ = abs(diag[2]);
+        #obj.setLocation(pos[0], pos[1], pos[2]);
+        #obj.transp = True; obj.wireMode = True;
+        #return;
     
     def GEOblock_matrix(self, name, rotation_matrix, permittivity, conductivity):
+      # add cube
+      #bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(45,45,0))
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+      
+      # get added object
+      obj = bpy.context.active_object
+      
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
+        
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+
+      pos = 0.5*(lower+upper);
+      diag = upper-lower;
+      obj.scale = 0.5*diag;
+      obj.location = pos;
+      
+      # deleting faces fails when in object mode, so change.
+      #bpy.ops.object.mode_set(mode = 'EDIT') 
+      #bpy.ops.mesh.delete(type='ONLY_FACE')
+      #bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+
+      ######################################
+      #Assign first material on all the mesh
+      ######################################
+      #Add a material slot
+      bpy.ops.object.material_slot_add()
+       
+      #Assign a material to the last slot
+      obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+       
+      #Go to Edit mode
+      bpy.ops.object.mode_set(mode='EDIT')
+       
+      #Select all the vertices
+      bpy.ops.mesh.select_all(action='SELECT') 
+       
+      #Assign the material on all the vertices
+      bpy.ops.object.material_slot_assign() 
+       
+      #Return to Object Mode
+      bpy.ops.object.mode_set(mode='OBJECT')
+
+      obj.matrix_world = rotation_matrix
+      
+      return
+
+        ##~ Blender.Window.SetActiveLayer(1<<8);
+        #scene = Blender.Scene.GetCurrent();
+
         #~ Blender.Window.SetActiveLayer(1<<8);
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
+        #scene = Blender.Scene.GetCurrent();
+        #mesh = Blender.Mesh.Primitives.Cube(1.0);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        obj = scene.objects.new(mesh, name);
-        obj.setMatrix(rotation_matrix);
-        obj.transp = True; obj.wireMode = True;
-        #~ obj.layers = [ 8 ];
-        return;
+        #obj = scene.objects.new(mesh, name);
+        #obj.setMatrix(rotation_matrix);
+        #obj.transp = True; obj.wireMode = True;
+        ##~ obj.layers = [ 8 ];
+        #return;
 
     def GEOdistorted(self, name, vertices, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
+        #scene = Blender.Scene.GetCurrent();
         
         #mesh = Blender.Mesh.Primitives.Cube(1.0);
         #mesh.materials = self.materials(permittivity, conductivity);
@@ -111,6 +262,12 @@ class FDTDGeometryObjects:
             #f.mat = 0;
     
         #obj = scene.objects.new(mesh, name);
+
+        #obj.setMatrix(rotation_matrix);
+        #obj.transp = True; obj.wireMode = True;
+        ##~ obj.layers = [ 8 ];
+        #return;
+
         #pos = 0.5*(lower+upper);
         #diag = upper-lower;
         #obj.SizeX = abs(diag[0]);
@@ -165,34 +322,87 @@ class FDTDGeometryObjects:
                 #faces.append(face_verts)
           
         #print "Adding object ",object_names[i_object]
-        BPyAddMesh.add_mesh_simple(name, local_verts, [], faces)
+        
+        edges = []
+        
+        #print('=========> adding mesh with name = '+str(name))
+        mesh_data = bpy.data.meshes.new(name)
+        mesh_data.from_pydata(local_verts, edges, faces)
 
-        obj = Blender.Object.GetSelected()[0];
-        obj.transp = True; obj.wireMode = True;
-        objmesh = obj.getData(mesh=True)
-        objmesh.materials = self.materials(permittivity, conductivity)
-        for f in objmesh.faces:
-          f.mat = 0
+        mesh_data.materials.append(self.materials(permittivity, conductivity))
+
+        mesh_data.update() # (calc_edges=True) not needed here
+        
+        new_object = bpy.data.objects.new(name, mesh_data)
+        new_object.show_transparent = True; new_object.show_wire = True;
+        
+        scene = bpy.context.scene
+        scene.objects.link(new_object)
+        
+        #cube_object.select = True
+        
+        #BPyAddMesh.add_mesh_simple(name, , [], faces)
+
+        #obj = Blender.Object.GetSelected()[0];
+        #obj.transp = True; obj.wireMode = True;
+        #objmesh = obj.getData(mesh=True)
+        #objmesh.materials = self.materials(permittivity, conductivity)
+        #for f in objmesh.faces:
+          #f.mat = 0
 
 ######################################################################################
 
 
         return;
     
-    def GEOcylinder(self, name, center, inner_radius, outer_radius, H, permittivity, conductivity, angle_X, angle_Y, angle_Z):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
+    def GEOcylinder(self, name, center, inner_radius, outer_radius, height, permittivity, conductivity, angle_X, angle_Y, angle_Z):
+        bpy.ops.mesh.primitive_cylinder_add(location = Vector(center), radius=outer_radius, depth=height, rotation=(angle_X, angle_Y, angle_Z))
+        obj = bpy.context.active_object
+        obj.name = name
+        #obj.scale = Vector([outer_radius]);
+        #obj.location = Vector(center)
+        
+        # deleting faces fails when in object mode, so change.
+        #bpy.ops.object.mode_set(mode = 'EDIT') 
+        #bpy.ops.mesh.delete(type='ONLY_FACE')
+        #bpy.ops.object.mode_set(mode = 'OBJECT')
+  
+        obj.show_transparent = True; obj.show_wire = True;
+  
+        ######################################
+        #Assign first material on all the mesh
+        ######################################
+        #Add a material slot
+        bpy.ops.object.material_slot_add()
+        
+        #Assign a material to the last slot
+        obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+        
+        #Go to Edit mode
+        bpy.ops.object.mode_set(mode='EDIT')
+        
+        #Select all the vertices
+        bpy.ops.mesh.select_all(action='SELECT') 
+        
+        #Assign the material on all the vertices
+        bpy.ops.object.material_slot_assign() 
+        
+        #Return to Object Mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        #scene = Blender.Scene.GetCurrent();
+        #mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H);
+        #mesh.materials = self.materials(permittivity, conductivity);
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        obj = scene.objects.new(mesh, name);
-        obj.setLocation(center[0], center[1], center[2]);
-        obj.RotX = angle_X;
-        obj.RotY = angle_Y;
-        obj.RotZ = angle_Z;
-        obj.transp = True; obj.wireMode = True;
-        return
+        #obj = scene.objects.new(mesh, name);
+        #obj.setLocation(center[0], center[1], center[2]);
+        #obj.RotX = angle_X;
+        #obj.RotY = angle_Y;
+        #obj.RotZ = angle_Z;
+        #obj.transp = True; obj.wireMode = True;
+        #return
     
     def GEOcylinder_matrix(self, name, rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
         scene = Blender.Scene.GetCurrent();
@@ -207,56 +417,112 @@ class FDTDGeometryObjects:
         return
     
     def GEOsphere(self, name, center, outer_radius, inner_radius, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
-    
-        obj = scene.objects.new(mesh, name)
-        obj.setLocation(center[0], center[1], center[2]);
-        obj.transp = True; obj.wireMode = True;
-        return
+        bpy.ops.mesh.primitive_ico_sphere_add()
+        obj = bpy.context.active_object
+        obj.name = name
+        obj.scale = Vector(3*[outer_radius]);
+        obj.location = Vector(center)
+        
+        # deleting faces fails when in object mode, so change.
+        #bpy.ops.object.mode_set(mode = 'EDIT') 
+        #bpy.ops.mesh.delete(type='ONLY_FACE')
+        #bpy.ops.object.mode_set(mode = 'OBJECT')
+  
+        obj.show_transparent = True; obj.show_wire = True;
+  
+        ######################################
+        #Assign first material on all the mesh
+        ######################################
+        #Add a material slot
+        bpy.ops.object.material_slot_add()
+        
+        #Assign a material to the last slot
+        obj.material_slots[obj.material_slots.__len__() - 1].material = self.materials(permittivity, conductivity);
+        
+        #Go to Edit mode
+        bpy.ops.object.mode_set(mode='EDIT')
+        
+        #Select all the vertices
+        bpy.ops.mesh.select_all(action='SELECT') 
+        
+        #Assign the material on all the vertices
+        bpy.ops.object.material_slot_assign() 
+        
+        #Return to Object Mode
+        bpy.ops.object.mode_set(mode='OBJECT')
     
     def GEOsphere_matrix(self, name, rotation_matrix, outer_radius, inner_radius, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Icosphere(2, 2*outer_radius);
-        mesh.materials = self.materials(permittivity, conductivity);
-        for f in mesh.faces:
-            f.mat = 0;
-    
-        obj = scene.objects.new(mesh, name)
-        obj.setMatrix(rotation_matrix);
-        obj.transp = True; obj.wireMode = True;
-        return
-        
+      return
+          
     def GEObox(self, name, lower, upper):
-        scene = Blender.Scene.GetCurrent();
-        mesh = Blender.Mesh.Primitives.Cube(1.0);
-        mesh.faces.delete(0, range(len(mesh.faces)));
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
     
-        obj = scene.objects.new(mesh, name)
-        pos = 0.5*(lower+upper);
-        diag = upper-lower;
+      # get added object
+      obj = bpy.context.active_object
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
+        
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+
+      pos = 0.5*(lower+upper);
+      diag = upper-lower;
+      obj.scale = 0.5*diag;
+      obj.location = pos;
+      
+      # deleting faces fails when in object mode, so change.
+      bpy.ops.object.mode_set(mode = 'EDIT') 
+      bpy.ops.mesh.delete(type='ONLY_FACE')
+      bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+  
+      return
+
+        #scene = bpy.context.scene; Blender.Scene.GetCurrent();
+        #bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
+        #mesh = 
+        #bpy.data
+        #bpy.context
+        #obj = bpy.context.active_object
+        #obj.name = name
+        #mesh = bpy.data.meshes[obj.name]
+
+        #obj.location = 0.5 * (max_co + min_co) + Vector((0.0, 0.0, 1.0))
+        #obj.scale = 0.5 * (max_co - min_co) + Vector((1.0, 1.0, 2.0))
+
+        #mesh = Blender.Mesh.Primitives.Cube(1.0)
+        #mesh.faces.delete(0, list(range(len(mesh.faces))))
+        #bpy.ops.mesh.delete(type='ONLY_FACE')
+    
+        #toto = bpy.data.meshes["Cube.004"].faces[0]
+    
+        #obj.data.faces
+    
+        #obj = scene.objects.new(mesh, name)
+        #pos = 0.5*(lower+upper);
+        #diag = upper-lower;
         
         #~ global box_SizeX;
         #~ global box_SizeY;
         #~ global box_SizeZ;
-        self.box_SizeX = abs(diag[0]);
-        self.box_SizeY = abs(diag[1]);
-        self.box_SizeZ = abs(diag[2]);
-        print("box_SizeX = ", self.box_SizeX)
-        print("box_SizeY = ", self.box_SizeY)
-        print("box_SizeZ = ", self.box_SizeZ)
+        #self.box_SizeX = abs(diag[0]);
+        #self.box_SizeY = abs(diag[1]);
+        #self.box_SizeZ = abs(diag[2]);
+        #print(("box_SizeX = ", self.box_SizeX))
+        #print(("box_SizeY = ", self.box_SizeY))
+        #print(("box_SizeZ = ", self.box_SizeZ))
         
-        obj.SizeX = self.box_SizeX;
-        obj.SizeY = self.box_SizeY;
-        obj.SizeZ = self.box_SizeZ;
+        #obj.SizeX = self.box_SizeX;
+        #obj.SizeY = self.box_SizeY;
+        #obj.SizeZ = self.box_SizeZ;
         
-        obj.setLocation(pos[0], pos[1], pos[2]);
-        obj.transp = True; obj.wireMode = True;
+        #obj.setLocation(pos[0], pos[1], pos[2]);
+        #obj.transp = True; obj.wireMode = True;
     
-        return
+        #return
     
     def GEOmesh(self, name, full_mesh, delta_X_vector, delta_Y_vector, delta_Z_vector):
         if len(delta_X_vector)<=0 or len(delta_Y_vector)<=0 or len(delta_Z_vector)<=0:
@@ -294,8 +560,8 @@ class FDTDGeometryObjects:
         faces = [];
     
         if full_mesh:
-            verts = range(2*(Nx*Ny + Ny*Nz + Nz*Nx));
-            edges = range(Nx*Ny + Ny*Nz + Nz*Nx);
+            verts = list(range(2*(Nx*Ny + Ny*Nz + Nz*Nx)));
+            edges = list(range(Nx*Ny + Ny*Nz + Nz*Nx));
             faces = [];
             
             vert_idx = 0;
@@ -346,8 +612,8 @@ class FDTDGeometryObjects:
                     edges[edge_idx] = [A, B]; edge_idx+=1;
         
         else:
-            verts = range(4*(Nx + Ny + Nz));
-            edges = range(4*(Nx + Ny + Nz));
+            verts = list(range(4*(Nx + Ny + Nz)));
+            edges = list(range(4*(Nx + Ny + Nz)));
             faces = [];
             
             vert_idx = 0;
@@ -358,10 +624,10 @@ class FDTDGeometryObjects:
             for i in range(Nx):
                 if i>0:
                     x+=delta_X_vector[i-1];
-                A = vert_idx; verts[vert_idx] = Vector(x, 0,    0   ); vert_idx+=1;
-                B = vert_idx; verts[vert_idx] = Vector(x, ymax, 0   ); vert_idx+=1;
-                C = vert_idx; verts[vert_idx] = Vector(x, ymax, zmax); vert_idx+=1;
-                D = vert_idx; verts[vert_idx] = Vector(x, 0,    zmax); vert_idx+=1;
+                A = vert_idx; verts[vert_idx] = Vector([x, 0,    0   ]); vert_idx+=1;
+                B = vert_idx; verts[vert_idx] = Vector([x, ymax, 0   ]); vert_idx+=1;
+                C = vert_idx; verts[vert_idx] = Vector([x, ymax, zmax]); vert_idx+=1;
+                D = vert_idx; verts[vert_idx] = Vector([x, 0,    zmax]); vert_idx+=1;
                 edges[edge_idx] = [A, B]; edge_idx+=1;
                 edges[edge_idx] = [B, C]; edge_idx+=1;
                 edges[edge_idx] = [C, D]; edge_idx+=1;
@@ -372,10 +638,10 @@ class FDTDGeometryObjects:
             for j in range(Ny):
                 if j>0:
                     y+=delta_Y_vector[j-1];
-                A = vert_idx; verts[vert_idx] = Vector(0,    y, 0   ); vert_idx+=1;
-                B = vert_idx; verts[vert_idx] = Vector(xmax, y, 0   ); vert_idx+=1;
-                C = vert_idx; verts[vert_idx] = Vector(xmax, y, zmax); vert_idx+=1;
-                D = vert_idx; verts[vert_idx] = Vector(0,    y, zmax); vert_idx+=1;
+                A = vert_idx; verts[vert_idx] = Vector([0,    y, 0   ]); vert_idx+=1;
+                B = vert_idx; verts[vert_idx] = Vector([xmax, y, 0   ]); vert_idx+=1;
+                C = vert_idx; verts[vert_idx] = Vector([xmax, y, zmax]); vert_idx+=1;
+                D = vert_idx; verts[vert_idx] = Vector([0,    y, zmax]); vert_idx+=1;
                 edges[edge_idx] = [A, B]; edge_idx+=1;
                 edges[edge_idx] = [B, C]; edge_idx+=1;
                 edges[edge_idx] = [C, D]; edge_idx+=1;
@@ -386,20 +652,24 @@ class FDTDGeometryObjects:
             for k in range(Nz):
                 if k>0:
                     z+=delta_Z_vector[k-1];
-                A = vert_idx; verts[vert_idx] = Vector(0,    0,    z); vert_idx+=1;
-                B = vert_idx; verts[vert_idx] = Vector(xmax, 0,    z); vert_idx+=1;
-                C = vert_idx; verts[vert_idx] = Vector(xmax, ymax, z); vert_idx+=1;
-                D = vert_idx; verts[vert_idx] = Vector(0,    ymax, z); vert_idx+=1;
+                A = vert_idx; verts[vert_idx] = Vector([0,    0,    z]); vert_idx+=1;
+                B = vert_idx; verts[vert_idx] = Vector([xmax, 0,    z]); vert_idx+=1;
+                C = vert_idx; verts[vert_idx] = Vector([xmax, ymax, z]); vert_idx+=1;
+                D = vert_idx; verts[vert_idx] = Vector([0,    ymax, z]); vert_idx+=1;
                 edges[edge_idx] = [A, B]; edge_idx+=1;
                 edges[edge_idx] = [B, C]; edge_idx+=1;
                 edges[edge_idx] = [C, D]; edge_idx+=1;
                 edges[edge_idx] = [D, A]; edge_idx+=1;
                 
         # print(verts)
-        BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
+        mesh_new = bpy.data.meshes.new(name=name)
+        mesh_new.from_pydata(verts, edges, faces)
+        object_utils.object_data_add(bpy.context, mesh_new)
+
+        #BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
         #~ bpy.data.meshes.new("Torus")
         
-        obj = Blender.Object.GetSelected()[0];
+        #obj = Blender.Object.GetSelected()[0];
         # obj.layers = [ 2 ];
         # print('Nverts=', len(verts))
         # print('Nverts=', Nx*Ny*Nz)
@@ -409,6 +679,7 @@ class FDTDGeometryObjects:
     
         return
         
+    #def GEOexcitation(self, name, P1, P2):
     def GEOexcitation(self, excitation):
         name = excitation.name
         P1 = Vector(excitation.P1)
@@ -419,7 +690,7 @@ class FDTDGeometryObjects:
         else:
           print('normal excitation')
       
-        scene = Blender.Scene.GetCurrent();
+        #scene = Blender.Scene.GetCurrent();
 
         # arrow dimensions:
         arrow_length = (P2-P1).length;
@@ -430,38 +701,75 @@ class FDTDGeometryObjects:
         cylinder_center = P1+2./5.*(P2-P1);
         cone_center = P1+4.5/5.*(P2-P1);
             
-        axisZ = -(P2-P1); # because the default primitive cone is oriented along -Z, unlike the one imported from Blender UI...
+        axisZ = (P2-P1); # because the default primitive cone is oriented along -Z, unlike the one imported from Blender UI...
         axisX = Orthogonal(axisZ);
         axisY = axisZ.cross(axisX);
         axisX.normalize();
         axisY.normalize();
         axisZ.normalize();
-        rotmat = Matrix(axisX,axisY,axisZ);
-                
-        mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
-        mesh.materials = [ self.excitation_material ];
-        for f in mesh.faces:
-            f.mat = 0;
+        
+        axisX.resize_4d();axisX[3]=0
+        axisY.resize_4d();axisX[3]=0
+        axisZ.resize_4d();axisX[3]=0
+        axisW=Vector((0,0,0,1))
+        rotmat = Matrix((axisX,axisY,axisZ,axisW))
+        rotmat.transpose()
+        
+        angle_X = angle_Y = angle_Z = 0
+        bpy.ops.mesh.primitive_cylinder_add(location = Vector(cylinder_center), radius=cylinder_radius, depth=cylinder_length, rotation=(angle_X, angle_Y, angle_Z))
+        arrow_cylinder_obj = bpy.context.active_object
+        arrow_cylinder_obj.name = name
+
+        arrow_cylinder_obj.matrix_world = rotmat
+        #arrow_cylinder_obj.dimensions = (2*cylinder_radius,2*cylinder_radius,cylinder_length)
+        arrow_cylinder_obj.location = cylinder_center
+
+        bpy.ops.mesh.primitive_cone_add(radius1=cone_radius, depth=cone_length, location=Vector(cone_center), rotation=(0.0, 0.0, 0.0))
+        arrow_cone_obj = bpy.context.active_object
+        arrow_cone_obj.name = name
+
+        arrow_cone_obj.matrix_world = rotmat
+        #arrow_cylinder_obj.dimensions = (2*cylinder_radius,2*cylinder_radius,cylinder_length)
+        arrow_cone_obj.location = cone_center
+
+        bpy.ops.object.select_all(action = 'DESELECT')
+        scene = bpy.context.scene
+        scene.objects.active = arrow_cylinder_obj
+        
+        arrow_cylinder_obj.select = True
+        arrow_cone_obj.select = True
+        bpy.ops.object.join()
+
+        
+        #scene = Blender.Scene.GetCurrent()
+        
+        #mesh = Blender.Mesh.Primitives.Cylinder(32, 2*cylinder_radius, cylinder_length);
+        #mesh.materials = [ self.excitation_material ];
+        #arrow_cylinder_obj.data.materials = [self.excitation_material]
+        #obj.active_material=bpy.data.materials['Red']
+        arrow_cylinder_obj.active_material = self.excitation_material
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        arrow_cylinder_obj = scene.objects.new(mesh, name)
-        arrow_cylinder_obj.setMatrix(rotmat);
-        arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
+        #arrow_cylinder_obj = scene.objects.new(mesh, name)
+        #arrow_cylinder_obj.setMatrix(rotmat);
+        #arrow_cylinder_obj.setLocation(cylinder_center[0], cylinder_center[1], cylinder_center[2]);
     
-        mesh = Blender.Mesh.Primitives.Cone(32, 2*cone_radius, cone_length);
-        mesh.materials = [ self.excitation_material ];
-        for f in mesh.faces:
-            f.mat = 0;
+        #mesh = Blender.Mesh.Primitives.Cone(32, 2*cone_radius, cone_length);
+        #mesh.materials = [ self.excitation_material ];
+        #for f in mesh.faces:
+            #f.mat = 0;
     
-        arrow_cone_obj = scene.objects.new(mesh, name)
-        arrow_cone_obj.setMatrix(rotmat);
+        #arrow_cone_obj = scene.objects.new(mesh, name)
+        #arrow_cone_obj.setMatrix(rotmat);
     
-        arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
+        #arrow_cone_obj.setLocation(cone_center[0], cone_center[1], cone_center[2]);
     
-        arrow_cylinder_obj.join([arrow_cone_obj]);
+        #arrow_cylinder_obj.join([arrow_cone_obj]);
         # arrow_cylinder_obj.layers = [ 5 ];
-        arrow_cylinder_obj.transp = True; arrow_cylinder_obj.wireMode = True;
+        #arrow_cylinder_obj.transp = True; arrow_cylinder_obj.wireMode = True;
     
-        scene.objects.unlink(arrow_cone_obj);
+        #scene.objects.unlink(arrow_cone_obj);
         
         return
     
@@ -470,28 +778,28 @@ class FDTDGeometryObjects:
         verts = [];
         if plane == 1:
             #X
-            A = Vector(0.5*(P1[0]+P2[0]), P1[1], P1[2]);
-            B = Vector(0.5*(P1[0]+P2[0]), P2[1], P1[2]);
-            C = Vector(0.5*(P1[0]+P2[0]), P2[1], P2[2]);
-            D = Vector(0.5*(P1[0]+P2[0]), P1[1], P2[2]);
+            A = Vector([0.5*(P1[0]+P2[0]), P1[1], P1[2]]);
+            B = Vector([0.5*(P1[0]+P2[0]), P2[1], P1[2]]);
+            C = Vector([0.5*(P1[0]+P2[0]), P2[1], P2[2]]);
+            D = Vector([0.5*(P1[0]+P2[0]), P1[1], P2[2]]);
             verts = [ A, B, C, D ];
         elif plane == 2:
             #Y        
-            A = Vector(P1[0], 0.5*(P1[1]+P2[1]), P1[2]);
-            B = Vector(P1[0], 0.5*(P1[1]+P2[1]), P2[2]);
-            C = Vector(P2[0], 0.5*(P1[1]+P2[1]), P2[2]);
-            D = Vector(P2[0], 0.5*(P1[1]+P2[1]), P1[2]);
+            A = Vector([P1[0], 0.5*(P1[1]+P2[1]), P1[2]]);
+            B = Vector([P1[0], 0.5*(P1[1]+P2[1]), P2[2]]);
+            C = Vector([P2[0], 0.5*(P1[1]+P2[1]), P2[2]]);
+            D = Vector([P2[0], 0.5*(P1[1]+P2[1]), P1[2]]);
             verts = [ A, B, C, D ];
         else:
             #Z
-            A = Vector(P1[0], P1[1], 0.5*(P1[2]+P2[2]));
-            B = Vector(P2[0], P1[1], 0.5*(P1[2]+P2[2]));
-            C = Vector(P2[0], P2[1], 0.5*(P1[2]+P2[2]));
-            D = Vector(P1[0], P2[1], 0.5*(P1[2]+P2[2]));
+            A = Vector([P1[0], P1[1], 0.5*(P1[2]+P2[2])]);
+            B = Vector([P2[0], P1[1], 0.5*(P1[2]+P2[2])]);
+            C = Vector([P2[0], P2[1], 0.5*(P1[2]+P2[2])]);
+            D = Vector([P1[0], P2[1], 0.5*(P1[2]+P2[2])]);
             verts = [ A, B, C, D ];
         
         edges = [];
-        faces = [ 0, 1, 2, 3 ];
+        faces = [( 0, 1, 2, 3 )];
         #name = 'snapshot';
         #if snapshot_type == 0:
             #name = 'freq_snapshot';
@@ -501,15 +809,36 @@ class FDTDGeometryObjects:
             #name = 'eps_snapshot';
         
         # print("Adding plane at ", A, B, C, D)
-        BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
-        obj = Blender.Object.GetSelected()[0];
-        # obj.layers = [ 3 ];
-        obj.transp = True; obj.wireMode = True;
+
+        #mesh_new = bpy.data.meshes.new(name=name)
+        #mesh_new.from_pydata(verts, edges, faces)
+        #object_utils.object_data_add(bpy.context, mesh_new)
+
+        mesh_data = bpy.data.meshes.new(name=name)
+        mesh_data.from_pydata(verts, edges, faces)
+        mesh_data.update() # (calc_edges=True) not needed here
         
-        mesh = Blender.Mesh.Get( obj.data.name );
-        mesh.materials = self.snapshot_materials;
-        for f in mesh.faces:
-            f.mat = snapshot_type;
+        new_object = bpy.data.objects.new(name, mesh_data)
+        
+        scene = bpy.context.scene
+        scene.objects.link(new_object)
+        
+        print('==> snapshot_type = '+str(snapshot_type))
+        print(self.snapshot_materials)
+        new_object.active_material = self.snapshot_materials[snapshot_type]
+
+        new_object.show_wire = True
+        new_object.show_transparent = True
+
+        #BPyAddMesh.add_mesh_simple(name, verts, edges, faces);
+        #obj = Blender.Object.GetSelected()[0];
+        ## obj.layers = [ 3 ];
+        #obj.transp = True; obj.wireMode = True;
+        
+        #mesh = Blender.Mesh.Get( obj.data.name );
+        #mesh.materials = self.snapshot_materials;
+        #for f in mesh.faces:
+            #f.mat = snapshot_type;
     
     def GEOfrequency_snapshot(self, name, plane, P1, P2):
         self.snapshot(name, plane, P1, P2, 0);
@@ -524,28 +853,42 @@ class FDTDGeometryObjects:
         return
     
     def GEOprobe(self, name, position):
-        scene = Blender.Scene.GetCurrent();
+      #scene = Blender.Scene.GetCurrent();
+
+      #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
+      probe_size = self.probe_scalefactor_mesh*self.mesh_min
+      if probe_size<=0:
+        probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
+      if probe_size<=0:
+        probe_size = 1
+      print('self.probe_scalefactor_mesh = ' + str(self.probe_scalefactor_mesh))
+      print('self.mesh_min = ' + str(self.mesh_min))
+      print('probe_size = ' + str(probe_size))
+      # TODO: define probe_size relative to smallest part of geometry + add way to change it in blender eventually
+      # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
+
+      # add cube
+      bpy.ops.mesh.primitive_cube_add(location=Vector(position),rotation=(0,0,0))
+
+      # get added object
+      obj = bpy.context.active_object
+
+      #print(obj)
+      #for obj in bpy.data.objects:
+        #print(obj.name)
         
-        #~ probe_size = probe_scalefactor_box*max(box_SizeX,box_SizeY,box_SizeZ);
-        probe_size = self.probe_scalefactor_mesh*self.mesh_min
-        if probe_size<=0:
-          probe_size = self.probe_scalefactor_box*max(self.box_SizeX,self.box_SizeY,self.box_SizeZ)
-        if probe_size<=0:
-          probe_size = 1
-        print('self.probe_scalefactor_mesh = ' + str(self.probe_scalefactor_mesh))
-        print('self.mesh_min = ' + str(self.mesh_min))
-        print('probe_size = ' + str(probe_size))
-        # TODO: define probe_size relative to smallest part of geometry + add way to change it in blender eventually
-        # print("probe_size = ", probe_scalefactor_box,"*max(",box_SizeX,",",box_SizeY,",",box_SizeZ,")=", probe_scalefactor_box,"*",max(box_SizeX,box_SizeY,box_SizeZ),"=", probe_size)
-        
-        mesh = Blender.Mesh.Primitives.Cube(probe_size);
-    
-        obj = scene.objects.new(mesh, name)
-        # obj = Blender.Object.GetSelected()[0];
-        obj.setLocation(position[0], position[1], position[2]);
-        # obj.layers = [ 4 ];
-        obj.transp = True; obj.wireMode = True;
-        return
+      #bpy.data.objects[-1].name = 'testkubo2'
+      obj.name = name
+
+      obj.dimensions = 3*[probe_size]
+
+      # deleting faces fails when in object mode, so change.
+      #bpy.ops.object.mode_set(mode = 'EDIT') 
+      #bpy.ops.mesh.delete(type='ONLY_FACE')
+      #bpy.ops.object.mode_set(mode = 'OBJECT')
+
+      obj.show_transparent = True; obj.show_wire = True;
+      return
 
 ###############################
 # UTILITY FUNCTIONS
@@ -559,22 +902,22 @@ def Orthogonal(vec):
     zz = abs(vec.z);
     if (xx < yy):
         if xx < zz:
-            return Vector(0,vec.z,-vec.y);
+            return Vector([0,vec.z,-vec.y]);
         else:
-            return Vector(vec.y,-vec.x,0);
+            return Vector([vec.y,-vec.x,0]);
     else:
         if yy < zz:
-            return Vector(-vec.z,0,vec.x)
+            return Vector([-vec.z,0,vec.x])
         else:
-            return Vector(vec.y,-vec.x,0);
+            return Vector([vec.y,-vec.x,0]);
 
 def rotationMatrix(axis_point, axis_direction, angle_degrees):
   ''' return a rotation matrix for a rotation around an arbitrary axis '''
-  axis = Blender.Mathutils.Vector(axis_direction[0],axis_direction[1],axis_direction[2])
-  C = Blender.Mathutils.Vector(axis_point[0],axis_point[1],axis_point[2]);
-  T = Blender.Mathutils.TranslationMatrix(C)
-  Tinv = Blender.Mathutils.TranslationMatrix(-C)
-  R = Blender.Mathutils.RotationMatrix(angle_degrees, 4, 'r', axis)
+  axis = Vector([axis_direction[0],axis_direction[1],axis_direction[2]])
+  C = Vector([axis_point[0],axis_point[1],axis_point[2]]);
+  T = Matrix.Translation(C)
+  Tinv = Matrix.Translation(-C)
+  R = Matrix.Rotation(angle_degrees, 4, axis)
   return Tinv*R*T;
 
 ###############################
@@ -668,16 +1011,16 @@ def TestMatrix():
   print('============')
   print(M)
   print('============')
-  print(Blender.Mathutils.RotationMatrix(math.radians(0), 2))
-  print(Blender.Mathutils.RotationMatrix(math.radians(45), 2))
-  print(Blender.Mathutils.RotationMatrix(math.radians(90), 2))
-  print(Blender.Mathutils.RotationMatrix(0, 2))
-  print(Blender.Mathutils.RotationMatrix(45, 2))
-  print(Blender.Mathutils.RotationMatrix(90, 2))
+  print((Blender.Mathutils.RotationMatrix(math.radians(0), 2)))
+  print((Blender.Mathutils.RotationMatrix(math.radians(45), 2)))
+  print((Blender.Mathutils.RotationMatrix(math.radians(90), 2)))
+  print((Blender.Mathutils.RotationMatrix(0, 2)))
+  print((Blender.Mathutils.RotationMatrix(45, 2)))
+  print((Blender.Mathutils.RotationMatrix(90, 2)))
   M=Blender.Mathutils.RotationMatrix(45, 3, 'x' )
   print('======QUAT======')
   print(M)
-  print(M.toQuat())
+  print((M.toQuat()))
   print('============')
   Q=Blender.Mathutils.RotationMatrix(45, 4, 'x' )
   print(Q)
@@ -690,9 +1033,9 @@ def TestMatrix():
   Q=Blender.Mathutils.Matrix(u1,u2,u3,u4)
   print(Q)
   print('============')
-  print(Q.translationPart())
-  print(Q.scalePart())
-  print(Q.rotationPart())
+  print((Q.translationPart()))
+  print((Q.scalePart()))
+  print((Q.rotationPart()))
   print('====Q=R*Sx*Sy*Sz*T========')
   R=Blender.Mathutils.RotationMatrix(45, 4, 'r', Blender.Mathutils.Vector(17,18,19))
   T=Blender.Mathutils.TranslationMatrix(Blender.Mathutils.Vector(14,15,16))
@@ -703,7 +1046,7 @@ def TestMatrix():
   print(Sy)
   print(Sz)
   S=Sx*Sy*Sz
-  print(S.scalePart())
+  print((S.scalePart()))
   print(T)
   print(R)
   Q=S*R*T
@@ -711,9 +1054,9 @@ def TestMatrix():
   print('============')
   print(Q)
   print('============')
-  print(Q.translationPart())
-  print(Q.scalePart())
-  print(Q.rotationPart())
+  print((Q.translationPart()))
+  print((Q.scalePart()))
+  print((Q.rotationPart()))
   print('============')
   
   scene = Blender.Scene.GetCurrent();
@@ -747,12 +1090,12 @@ def TestMatrix():
   print(M)
   print(T)
   print(Tinv)
-  print(M*Tinv)
-  print(M*Tinv*R*T)
+  print((M*Tinv))
+  print((M*Tinv*R*T))
   print('############')
   obj.setMatrix(M*Tinv*R*T);
   print('# EULER ###########')
-  print(obj.getMatrix().toEuler())
+  print((obj.getMatrix().toEuler()))
   print('############')
   #~ obj.RotX = 90;
   #~ obj.RotY = 45;

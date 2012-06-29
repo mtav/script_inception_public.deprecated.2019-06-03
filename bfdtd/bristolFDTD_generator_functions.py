@@ -146,7 +146,7 @@ def main(argv=None):
   try:
     try:
       opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    except getopt.error, msg:
+    except getopt.error as msg:
       raise Usage(msg)
     # more code, unchanged
     with open('tmp.txt', 'w') as FILE:
@@ -181,7 +181,7 @@ def main(argv=None):
       GEOin('tmp.in', ['file','list'])
       GEOshellscript('tmp.sh', 'BASENAME', '/usr/bin/superexe', '/work/todo', 999)
       
-  except Usage, err:
+  except Usage as err:
     print >>sys.stderr, err.msg
     print >>sys.stderr, "for help use --help"
     return 2
