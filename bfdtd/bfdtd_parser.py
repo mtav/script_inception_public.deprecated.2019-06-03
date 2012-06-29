@@ -240,19 +240,43 @@ class Geometry_object(object):
   def setRefractiveIndex(self,n):
     self.permittivity = pow(n,2)
     self.conductivity = 0
+    
+  # this function requires the child objects to define a getCentro() and translate() method
+  def setCentro(self, nova_centro):
+    nova_centro = numpy.array(nova_centro)    
+    nuna_centro = self.getCentro()
+    self.translate(nova_centro - nuna_centro)
 
 class Sphere(Geometry_object):
-  def __init__(self):
+  def __init__(self,
+    name = None,
+    layer = None,
+    group = None,
+    centre = None,
+    outer_radius = None,
+    inner_radius = None,
+    permittivity = None,
+    conductivity = None):
+
+    if name is None: name = 'sphere'
+    if layer is None: layer = 'sphere'
+    if group is None: group = 'sphere'
+    if centre is None: centre = [0,0,0]
+    if outer_radius is None: outer_radius = 0.5
+    if inner_radius is None: inner_radius = 0
+    if permittivity is None: permittivity = 1
+    if conductivity is None: conductivity = 0
+
     Geometry_object.__init__(self)
-    self.name = 'sphere'
-    self.layer = 'sphere'
-    self.group = 'sphere'
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.centre = centre
+    self.outer_radius = outer_radius
+    self.inner_radius = inner_radius
+    self.permittivity = permittivity
+    self.conductivity = conductivity
     
-    self.centre = [0,0,0]
-    self.outer_radius = 0
-    self.inner_radius = 0
-    self.permittivity = 1
-    self.conductivity = 0
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'centre = ' + str(self.centre) + '\n' +\
@@ -262,6 +286,7 @@ class Sphere(Geometry_object):
     'conductivity = ' + str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
+
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -271,6 +296,7 @@ class Sphere(Geometry_object):
     self.permittivity = float(entry.data[5])
     self.conductivity = float(entry.data[6])
     return(0)
+    
   def write_entry(self, FILE):
     ''' sphere
     {
@@ -289,6 +315,13 @@ class Sphere(Geometry_object):
     FILE.write("%E **conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
+
+  def getCentro(self):
+    return numpy.array(self.centre)
+    
+  def translate(self, vec3):
+    self.centre = numpy.array(self.centre)
+    self.centre = self.centre + vec3
 
 class Block(Geometry_object):
   def __init__(self,
@@ -316,6 +349,7 @@ class Block(Geometry_object):
     self.upper = upper
     self.permittivity = permittivity
     self.conductivity = conductivity
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
@@ -324,6 +358,7 @@ class Block(Geometry_object):
     ret += 'conductivity = '+str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -331,6 +366,7 @@ class Block(Geometry_object):
     self.upper = float_array(entry.data[3:6])
     self.permittivity = float(entry.data[6])
     self.conductivity = float(entry.data[7])
+    
   def write_entry(self, FILE):
     self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('BLOCK **name='+self.name+'\n')
@@ -345,9 +381,16 @@ class Block(Geometry_object):
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
-  def getCenter(self):
-    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
+  def getCentro(self):
+    return numpy.array([ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ])
+    
+  def translate(self, vec3):
+    self.lower = numpy.array(self.lower)
+    self.upper = numpy.array(self.upper)
+    self.lower = self.lower + vec3
+    self.upper = self.upper + vec3
+  
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = numpy.sort([self.lower[0],self.upper[0]])
     objy = numpy.sort([self.lower[1],self.upper[1]])
@@ -433,7 +476,7 @@ class Distorted(Geometry_object):
     for i in range(len(self.vertices)):
       self.vertices[i] = numpy.array(self.vertices[i]) + numpy.array(vec3)
   
-  def getCenter(self):
+  def getCentro(self):
     S = numpy.array([0,0,0])
     for v in self.vertices:
       #print('S='+str(S)+' + v='+str(v))
@@ -484,8 +527,8 @@ class Cylinder(Geometry_object):
     if name is None: name = 'cylinder'
     if centre is None: centre = [0,0,0]
     if inner_radius is None: inner_radius = 0
-    if outer_radius is None: outer_radius = 0
-    if height is None: height = 0
+    if outer_radius is None: outer_radius = 0.5
+    if height is None: height = 1
     if permittivity is None: permittivity = 0
     if conductivity is None: conductivity = 0
     if angle_deg is None: angle_deg = 0
@@ -506,6 +549,13 @@ class Cylinder(Geometry_object):
     
   def setDiametre(self,diametre):
     self.outer_radius = 0.5*diametre
+
+  def getCentro(self):
+    return numpy.array(self.centre)
+    
+  def translate(self, vec3):
+    self.centre = numpy.array(self.centre)
+    self.centre = self.centre + vec3
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
