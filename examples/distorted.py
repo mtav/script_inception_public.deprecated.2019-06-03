@@ -3,6 +3,7 @@
 
 from bfdtd.bfdtd_parser import *
 from constants.constants import *
+
 sim = BFDTDobject()
 
 disX = Distorted(name='disX')
