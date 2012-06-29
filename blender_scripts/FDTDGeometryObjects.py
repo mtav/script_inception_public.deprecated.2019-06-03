@@ -88,9 +88,9 @@ class FDTDGeometryObjects(object):
             n = math.sqrt(permittivity)
             
             max_permittivity = 25.0;
-            bpy.ops.material.new()
-            permittivity_material = bpy.data.materials[-1]
-            permittivity_material.name = 'permittivity'
+            mat_name = 'n_'+str("%.2f" % numpy.sqrt(permittivity))
+            print(mat_name)
+            permittivity_material = bpy.data.materials.new(mat_name)
             permittivity_material.diffuse_color = Color((0, permittivity/max_permittivity, 1.0-permittivity/max_permittivity))
             permittivity_material.alpha = 0.5
             
