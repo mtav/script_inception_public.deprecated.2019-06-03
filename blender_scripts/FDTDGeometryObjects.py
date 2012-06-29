@@ -328,12 +328,17 @@ class FDTDGeometryObjects(object):
         #print('=========> adding mesh with name = '+str(name))
         mesh_data = bpy.data.meshes.new(name)
         mesh_data.from_pydata(local_verts, edges, faces)
+
+        mesh_data.materials.append(self.materials(permittivity, conductivity))
+
         mesh_data.update() # (calc_edges=True) not needed here
         
         new_object = bpy.data.objects.new(name, mesh_data)
+        new_object.show_transparent = True; new_object.show_wire = True;
         
         scene = bpy.context.scene
         scene.objects.link(new_object)
+        
         #cube_object.select = True
         
         #BPyAddMesh.add_mesh_simple(name, , [], faces)
