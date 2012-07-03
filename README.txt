@@ -100,6 +100,7 @@ Windows install with Blender 2.6+:
   * 'C:\\Users\\User\\AppData\\Roaming\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (user-specific installation)
 . Create custompath.py file in C:\Users\User\AppData\Roaming\Blender Foundation\Blender\2.63\scripts\startup with the following in it (create directories as necessary):
 +
+
 ----
 import sys
 sys.path.append('PREFIX\\script_inception_public')
