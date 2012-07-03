@@ -96,16 +96,15 @@ Windows install with Blender 2.6+:
 . Install python 3 (32bit)
 . Install numpy (32bit)
 . Copy *C:\Python32\Lib\site-packages\numpy* into one of the following directories:
-+
---
-* 'C:\\Program Files\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (system-wide installation)
-* 'C:\\Users\\User\\AppData\\Roaming\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (user-specific installation)
---
+  * 'C:\\Program Files\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (system-wide installation)
+  * 'C:\\Users\\User\\AppData\\Roaming\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (user-specific installation)
 . Create custompath.py file in C:\Users\User\AppData\Roaming\Blender Foundation\Blender\2.63\scripts\startup with the following in it (create directories as necessary):
++
 ----
 import sys
 sys.path.append('PREFIX\\script_inception_public')
 ----
++
 . Copy the contents of 'PREFIX\script_inception_public\blender_scripts' into 'C:\Users\User\AppData\Roaming\Blender Foundation\Blender\2.63\scripts\addons'  (create directories as necessary)
 . Start Blender, go to File->User preferences->Addons and enable the addons.
 
