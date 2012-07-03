@@ -96,8 +96,10 @@ Windows install with Blender 2.6+:
 . Install python 3 (32bit)
 . Install numpy (32bit)
 . Copy *C:\Python32\Lib\site-packages\numpy* into one of the following directories:
++
 * 'C:\\Program Files\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (system-wide installation)
 * 'C:\\Users\\User\\AppData\\Roaming\\Blender Foundation\\Blender\\2.63\\scripts\\modules' (user-specific installation)
++
 . Create custompath.py file in C:\Users\User\AppData\Roaming\Blender Foundation\Blender\2.63\scripts\startup with the following in it (create directories as necessary):
 ----
 import sys
