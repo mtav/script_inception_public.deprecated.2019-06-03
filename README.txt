@@ -90,6 +90,21 @@ Notes on the python 3 port (WIP):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 On Ubuntu 10.04 and maybe other old distributions, it may be necessary to install python, numpy and blender from source.
 
+Windows install with Blender 2.6+:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-Install Blender 2.6+ (32bit)
+-Install python 3 (32bit)
+-Install numpy (32bit)
+-Copy numpy folder into blender folder
+-Create custompath.py file in C:\Users\User\AppData\Roaming\Blender Foundation\Blender\2.63\scripts\startup with the following in it (create directories as necessary):
+----
+import sys
+sys.path.append('PREFIX\\script_inception_public')
+----
+-Copy the contents of 'PREFIX\script_inception_public\blender_scripts' into 'C:\Users\User\AppData\Roaming\Blender Foundation\Blender\2.63\scripts\addons'  (create directories as necessary)
+-Start Blender, go to File->User preferences->Addons and enable the addons.
+You can use 'Help->Toggle system console' for debugging in case of problems.
+
 Useful links:
 ^^^^^^^^^^^^^
 
