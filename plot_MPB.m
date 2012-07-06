@@ -2,7 +2,7 @@
 function plot_MPB(filename,scale_factor)
   [ folder, basename, ext ] = fileparts(filename);
   [header, rawdata] = readPrnFile(filename);
-  close all;
+  %close all;
   figure;
   hold all;
   % scale_factor = 1.0;
@@ -41,6 +41,13 @@ function plot_MPB(filename,scale_factor)
   gap = abs(b-a)
   midgap = 0.5*(a+b)
   hline(midgap,'r',num2str(midgap));
+  
+  %midgap1=0.645561870915862
+  %hline(midgap1,'r',num2str(midgap1));
+  %midgap2=0.673605092161939
+  %hline(midgap2,'r',num2str(midgap2));
+  %midgap3=0.5*(midgap1+midgap2)
+  %hline(midgap3,'r',num2str(midgap3));
 
   %hline(0.585,'b',num2str(0.585));
 
