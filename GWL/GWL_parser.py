@@ -328,6 +328,11 @@ class GWLobject:
                         #print('filename = ',filename)
                         #print('os.path.dirname(filename) = ',os.path.dirname(filename))
                         file_to_try = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_try)))
+                        if self.verbosity > 10:
+                          print(('old = ' + old))
+                          print(('new = ' + new))
+                          print(('file_to_include = ' + file_to_include))
+                          print(('filename = ' + filename))
                         print(('Trying file_to_try = ' + file_to_try))
                         if os.path.isfile(file_to_try):
                           file_to_include_fullpath = file_to_try
