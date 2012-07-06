@@ -84,21 +84,21 @@ def createSubFiles3(DSTDIR):
   d = 1.4/0.95
 
   a = d/numpy.sqrt(2) # Distance between two adjacent logs
-  n_logs = 30 # number of logs in each layer
+  n_logs = 10 # number of logs in each layer
   w = 0.2*d # width of the logs
   h = 0.25*d # heigth of logs (should be 1/4 for fcc to not overlap)
   print(w)
   print(h)
   
   L = (n_logs-1)*a+w+a # Length of logs (should > (n_logs-1)*a+w)
-  n_layers = 4*7 # Number of layers of logs required
+  n_layers = 4*2 # Number of layers of logs required
 
-  wall_thickness = 5
+  wall_thickness = 0
   XL = 0.5*wall_thickness # Lower edge of the simulation domain in x direction.
   YL = 0.5*wall_thickness # Lower edge of the simulation domain in y direction.
   ZL = 0 # Lower edge of the simulation domain in z direction.
 
-  box_size = 33
+  box_size = 11
   XU = XL+box_size # Upper edge of the simulation domain in x direction.
   YU = YL+box_size # Upper edge of the simulation domain in y direction.
   ZU = 4 # Upper edge of the simulation domain in z direction.
@@ -107,8 +107,8 @@ def createSubFiles3(DSTDIR):
   NRodsPerLayer_X = n_logs
   NRodsPerLayer_Y = n_logs
 
-  substrate_height = 0.515
-  hole_height = 5
+  substrate_height = 0
+  hole_height = 0
   woodpile_Zoffset = substrate_height + 0.5*h + hole_height
   wall_height = n_layers*h
   
