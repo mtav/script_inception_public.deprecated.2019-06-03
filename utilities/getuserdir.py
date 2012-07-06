@@ -7,7 +7,13 @@ import getopt
 def getuserdir():
     if 'Windows' in platform.platform():
         # print('Windows detected')
-        return os.environ['MYDOCUMENTS']
+        if 'MYDOCUMENTS' in os.environ:
+            return os.environ['MYDOCUMENTS']
+        elif 'USERPROFILE' in os.environ:
+            return os.environ['USERPROFILE']
+        else:
+            print('WARNING: no suitable user directory found.', file=sys.stderr)
+            return ''
     else:
         # print('non-Windows detected')
         return os.path.expanduser('~')
