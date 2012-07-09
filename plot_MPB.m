@@ -31,7 +31,7 @@ function plot_MPB(filename,scale_factor)
   %hline(b,'r',num2str(b));
   %text(1,0.5*(a+b),num2str(delta));
 
-  i = 5
+  i = 3 % L direction
   a = data(1+(i-1)*10,find(strcmp(header,'band_2')))
   b = data(1+(i-1)*10,find(strcmp(header,'band_3')))
   delta = abs(b-a);
@@ -40,6 +40,7 @@ function plot_MPB(filename,scale_factor)
   %text(1,0.5*(a+b),num2str(delta));
   gap = abs(b-a)
   midgap = 0.5*(a+b)
+  gapsize = gap/midgap
   hline(midgap,'r',num2str(midgap));
   
   %midgap1=0.645561870915862
