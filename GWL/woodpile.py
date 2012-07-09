@@ -3,6 +3,7 @@
 
 import numpy
 from GWL.GWL_parser import *
+from bfdtd.bfdtd_parser import *
 
 class Woodpile:
   def __init__(self):
@@ -96,6 +97,14 @@ class Woodpile:
     GWL_obj = self.getGWL()
     (Pmin, Pmax) = GWL_obj.getLimits()
     GWL_obj.write_GWL(filename, writingOffset = [0,0,-Pmin[2],0] )
+    
+  def write_BFDTD(self, filename):
+    BFDTD_obj = BFDTDobject()
+    BFDTD_obj.geometry_object_list.append(Block())
+    print('Writing GWL to '+filename)
+    BFDTD_obj.writeGeoFile(filename)
+
+
 
 if __name__ == "__main__":
   woodpile_obj = Woodpile()
