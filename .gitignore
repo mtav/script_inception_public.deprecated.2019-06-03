@@ -38,3 +38,16 @@ tmp.dat
 *.zip
 *.in
 *.orig
+*.png
+*.jpg
+*.fig
+*.h5
+*.eps
+*.out
+*.inp
+*.geo
+*.log
+*.gif
+*.tgz
+*.zip
+*.tar.gz
