@@ -77,5 +77,5 @@ done
 #mkdir -p "$BLENDERPATH/scripts/addons/"
 
 safe_link_dir $(readlink -f "io_mesh_BristolFDTD") "$SCRIPTSDIR"
-safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_bfdtd.py") "$SCRIPTSDIR"
-safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_gwl.py") "$SCRIPTSDIR"
+#safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_bfdtd.py") "$SCRIPTSDIR"
+#safe_link_dir $(readlink -f "io_mesh_BristolFDTD/io_import_scene_gwl.py") "$SCRIPTSDIR"
