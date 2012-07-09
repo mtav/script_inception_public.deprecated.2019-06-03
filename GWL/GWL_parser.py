@@ -410,7 +410,11 @@ class GWLobject:
                   piezo_position = float(cmd[i]) + self.voxel_offset[i]
                   if piezo_position<0 or piezo_position>300:
                     if not self.out_of_range:
-                      print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position), file=sys.stderr)
+                      print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position)+' i = '+str(i), file=sys.stderr)
+                      print('piezo_position = float(cmd[i]) + self.voxel_offset[i]', file=sys.stderr)
+                      print(str(piezo_position)+' = '+str(float(cmd[i]))+' + '+str(self.voxel_offset[i]), file=sys.stderr)
+                      print('filename = '+str(filename), file=sys.stderr)
+                      print('cmd = '+str(cmd), file=sys.stderr)
                       self.out_of_range = True
                     #sys.exit(-1)
                   voxel.append( piezo_position + self.stage_position[i] - self.FindInterfaceAt[i] )
