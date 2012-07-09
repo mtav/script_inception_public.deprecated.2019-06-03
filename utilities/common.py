@@ -6,6 +6,7 @@ import getopt
 import numpy
 import math
 import re
+import datetime
 
 class Usage(Exception):
   def __init__(self, msg):
@@ -192,3 +193,35 @@ def FIBdistanceVertical(tilt_deg, magnification, distance_on_picture_pxl, horizo
   resolution = W_mum/horizontal_width_of_picture_pxl; # size of each pixel (mum/pxl).
   L_sample_mum = (distance_on_picture_pxl*resolution)/numpy.sin(numpy.deg2rad(tilt_deg))
   return L_sample_mum
+
+# time utility functions from http://stackoverflow.com/questions/7065761/how-to-substract-two-datetime-time-values-in-django-template-and-how-to-format-a
+def difft(start,end):
+    ''' returns the difference in seconds between two datetime.time objects '''
+    a,b,c,d = start.hour, start.minute, start.second, start.microsecond
+    w,x,y,z = end.hour, end.minute, end.second, end.microsecond
+    delt = (w-a)*60*60 + (x-b)*60 + (y-c) + (z-d)/pow(10,6)
+    return delt + 24*60*60 if delt<0 else delt
+
+def difft_string(start,end):
+    ''' prints the difference between two datetime.time objects in a nice format '''
+    delt = difft(start,end)
+
+    hh,rem = divmod(delt,60*60)
+    hh = int(hh)
+    mm,rem = divmod(rem,60)
+    mm = int(mm)
+    ss = int(rem)
+    ms = (rem - ss)*pow(10,6)
+    ms = int(ms)
+
+    SS = '%sh %smn %ss %sms'
+    return SS % (hh,mm,ss,ms)
+    
+def todatetime(time):
+    ''' converts a datetime.time object to a datetime.datetime object using the current date '''
+    return datetime.datetime.today().replace(hour=time.hour, minute=time.minute, second=time.second, 
+                                             microsecond=time.microsecond, tzinfo=time.tzinfo)
+
+def timestodelta(starttime, endtime):
+    ''' returns the difference in seconds between two datetime.time objects '''
+    return todatetime(endtime) - todatetime(starttime)
