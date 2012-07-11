@@ -45,7 +45,7 @@ function harminv_fit()
   title('direct ringdown FFT'); xlabel('Frequency [Hz]'); ylabel('Power')
   fa=axis; text((fa(2)-fa(1))/2,(fa(4)-fa(3))/2,['f_0: ' num2str(peakf,'%.1f') ' Hz']);
 
-  [Q, vStart, vEnd] = getQfactor(faxis,Y,990,1010)
+  [Q, vStart, vEnd] = fitLorentzian(faxis,Y,990,1010)
 
   disp('=== Running calcFFT fit directly ===')
   [calcFFT_output, lambda_vec_mum, freq_vec_Mhz] = calcFFT(y,dt, 2^22);
@@ -56,7 +56,7 @@ function harminv_fit()
   directFFT = figure(); hold on;
   title('direct FFT');
   plot(X,Y);
-  [Q, vStart, vEnd] = getQfactor(X,Y,2.98e8,3.02e8)
+  [Q, vStart, vEnd] = fitLorentzian(X,Y,2.98e8,3.02e8)
 
   disp('=== Running ringdown ===')
   orig_axis = axis();

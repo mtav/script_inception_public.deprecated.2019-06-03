@@ -319,7 +319,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
       xmin = peaks(n,4);
       xmax = peaks(n,3);
       if computeLorentz
-        [Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax);
+        [Q, vStart, vEnd] = fitLorentzian(X,Y,xmin,xmax);
         if plotLorentzFit
           if ~plotNothing
             plot(linspace(xmin,xmax,100),lorentz(vEnd,linspace(xmin,xmax,100)),'r-');
@@ -382,7 +382,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   %xmin = 770
   %xmax = 790
 
-  %[Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax);
+  %[Q, vStart, vEnd] = fitLorentzian(X,Y,xmin,xmax);
   %vEnd
   
   %wavelength_nm(n) = peakWaveLength;

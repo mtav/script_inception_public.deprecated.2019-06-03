@@ -134,7 +134,7 @@ function getResonanceFrequencies2(filename, probe_col, parametersFile)
     x = peaks(n,1);
     xmin = peaks(n,4);
     xmax = peaks(n,3);
-    [Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax);
+    [Q, vStart, vEnd] = fitLorentzian(X,Y,xmin,xmax);
     
     Q_lorentz(n) = Q;
     
