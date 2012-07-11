@@ -51,3 +51,5 @@ tmp.dat
 *.tgz
 *.zip
 *.tar.gz
+.eric4project
+*.e4p

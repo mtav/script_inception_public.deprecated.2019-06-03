@@ -22,7 +22,8 @@ function harminv_fit()
   tmax = 15*Q0(1)*1/(min(f0));
   
   disp('=== Creating sample function ===');
-  [x,y,fmin,fmax] = expsine(dt, tmin, tmax, f0, Q0, A0);
+  x = tmin:dt:tmax;
+  [y,fmin,fmax] = expsine(x, f0, Q0, A0);
   
   orig = figure(); hold on;
   title('raw data');
@@ -125,27 +126,5 @@ function harminv_fit()
   %fclose(fid);
 
   [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures)
-
-end
-
-function [x,y,fmin,fmax] = expsine(dt, tmin, tmax, f0, Q0, A0)
-  x = tmin:dt:tmax;
-  y = zeros(size(x));
-  
-  fmin_list = zeros(size(f0));
-  fmax_list = zeros(size(f0));
-  
-  for i=1:length(f0)
-    gamma0 = pi*f0(i)/Q0(i);
-    y = y + A0(i)*sin(2*pi*f0(i)*x).*exp(-gamma0*x);
-
-    delta_f0 = f0(i)/Q0(i);
-    fmin_list(i) = f0(i) - 10*delta_f0;
-    fmax_list(i) = f0(i) + 10*delta_f0;
-
-  end
-  
-  fmin = min(fmin_list);
-  fmax = max(fmax_list);
 
 end
