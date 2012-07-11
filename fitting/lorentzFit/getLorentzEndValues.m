@@ -1,5 +1,5 @@
-function [x0, y0, A, w] = mylorentzfit(x,yOrig, vStart, VERBOSE)
-  % function [x0, y0, A, w] = mylorentzfit(x,yOrig, vStart)
+function [x0, y0, A, w] = getLorentzEndValues(x,yOrig, vStart, VERBOSE)
+  % function [x0, y0, A, w] = getLorentzEndValues(x,yOrig, vStart)
   % Fits with a function of the form:
   % y=y0+(2*A/pi).*(w./(4*(x-x0).^2+w.^2));
   % gamma = w/2

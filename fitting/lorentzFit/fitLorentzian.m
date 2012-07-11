@@ -19,7 +19,7 @@ function [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax)
   vStart = [x0, y0, A, FWHM];
   
   % fit the peak with a lorentz function
-  [x0, y0, A, FWHM] = mylorentzfit(Xzoom, Yzoom, vStart, 0);
+  [x0, y0, A, FWHM] = getLorentzEndValues(Xzoom, Yzoom, vStart, 0);
   vEnd = [x0, y0, A, FWHM];
   
   % calculate the Q factor
