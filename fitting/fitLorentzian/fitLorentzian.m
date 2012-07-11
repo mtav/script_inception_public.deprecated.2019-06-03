@@ -13,6 +13,16 @@
 % Q = vEnd(1)/vEnd(4) -> the Q factor
 % 
 % NOTE: Used to be named getQfactor() before.
+%
+% Example usage:
+% >> x=linspace(500,700,200);
+% >> y=lorentz([600,0,10,50],x);
+% >> [Q, vStart, vEnd] = fitLorentzian(x, y, min(x), max(x), 0);
+% >> figure;hold on;plot(x,y,'ro');plot(x,lorentz(vStart,x),'g-');plot(x,lorentz(vEnd,x),'b-');
+% >> y=lorentz([600,0,-10,50],x);
+% >> [Q, vStart, vEnd] = fitLorentzian(x, y, min(x), max(x), 1);
+% >> figure;hold on;plot(x,y,'ro');plot(x,lorentz(vStart,x),'g-');plot(x,lorentz(vEnd,x),'b-');
+
 function [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax, isInverted)
 
   if exist('xmin','var')==0; xmin = min(X); end;
