@@ -61,7 +61,7 @@ function [ peakdata_all, peakdata_loc ] = zoomOnPeak( Xin, Yin, delta )
     
     [x0, y0, A, FWHM] = getLorentzStartValues(Xzoom, Yzoom, 0);
     vStart = [x0, y0, A, FWHM];
-    [x0, y0, A, FWHM] = mylorentzfit(Xzoom, Yzoom, vStart, 0);
+    [x0, y0, A, FWHM] = getLorentzEndValues(Xzoom, Yzoom, vStart, 0);
     vEnd = [x0, y0, A, FWHM];
 
     Q = vEnd(1)/vEnd(4);
