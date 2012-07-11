@@ -1,10 +1,9 @@
 function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_max ] = analyzePRN(fullpath, peak_file, delta_scaling, snapshot_col, probe_col)
-    % fullpath : path to the .prn file
-    % peak_file: output file to which the peak frequencies get written
-    % delta_scaling
-    % snapshot_col: 
-    % probe_col
-    
+  % fullpath : path to the .prn file
+  % peak_file: output file to which the peak frequencies get written
+  % delta_scaling
+  % snapshot_col: 
+  % probe_col
     
   % Analyzes a single PRN file
   % snapshot_col:
@@ -95,26 +94,26 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
   
   %===============================
 
-    filebasename = basename;
-    [header, data] = readPrnFile([filebasename,'.prn']);
+  filebasename = basename;
+  [header, data] = readPrnFile([filebasename,'.prn']);
   % size(header)
   % size(data)
 
   if verbose == 1
-        disp(['processing ',filebasename,'.prn'])
-    end
+      disp(['processing ',filebasename,'.prn'])
+  end
 
-    data_min = min(data(:,probe_col));
-    data_max = max(data(:,probe_col));
+  data_min = min(data(:,probe_col));
+  data_max = max(data(:,probe_col));
 
-    if verbose == 1
-        disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
-        disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
-    end
+  if verbose == 1
+      disp(['min(data(:,',num2str(probe_col),'))=',num2str(data_min)]);
+      disp(['max(data(:,',num2str(probe_col),'))=',num2str(data_max)]);
+  end
 
-    % time in the .prn file is in 10^-12 s if frequency was given in Hz. (10^12*X*Y=1)
-    % Frequency was given in 10^6 Hz, so time is in 10^-18 s.
-    % So multiplying it by 10^-6 changes it to 10^-18 s/10^-6=10^-12 s = ps
+  % time in the .prn file is in 10^-12 s if frequency was given in Hz. (10^12*X*Y=1)
+  % Frequency was given in 10^6 Hz, so time is in 10^-18 s.
+  % So multiplying it by 10^-6 changes it to 10^-18 s/10^-6=10^-12 s = ps
   if time_plot == 1
     disp('	figure 1')
     figure;hold on;
@@ -130,25 +129,25 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
     
   dt = 1e-12*(data(2,1)-data(1,1));  % data(*,1) being in 10^-18 s, dt is in 10^-18 s/1e-12 = 10^-6 s
   
-    if verbose == 1
-        disp('	fourier transform start');
-    end
-    [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
-    
-    % dt being in 10^-6 s, lambda_vec is in 10^-6 m
+  if verbose == 1
+      disp('	fourier transform start');
+  end
+  [calcFFT_output, lambda_vec] = calcFFT(data(:,probe_col),dt, 2^19);
+  
+  % dt being in 10^-6 s, lambda_vec is in 10^-6 m
   lambda_vec = 10^3*lambda_vec; % to get lambda in 10^-6 m/10^3 = 10^-9 m = nm (originally in 10^-6 m)
-    if verbose == 1
-        disp('	fourier transform end');
-    end
+  if verbose == 1
+      disp('	fourier transform end');
+  end
 
-    %calculate magnitude of fft
-    c_y_mag = abs(calcFFT_output);
-    %calculate power of fft
-    c_y_pow = calcFFT_output.* conj(calcFFT_output);
+  %calculate magnitude of fft
+  c_y_mag = abs(calcFFT_output);
+  %calculate power of fft
+  c_y_pow = calcFFT_output.* conj(calcFFT_output);
 
-    % c_Mag=2*abs(calcFFT_output);
-    % c_Mag=c_y_mag;
-    c_Mag=c_y_pow;
+  % c_Mag=2*abs(calcFFT_output);
+  % c_Mag=c_y_mag;
+  c_Mag=c_y_pow;
     
   wavelength_vec = lambda_vec;
 
@@ -168,17 +167,17 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
   fprintf('max(wavelength_vec)=%E\n',max(wavelength_vec));
     
   %===============================
-    Mag_aver = sum(c_Mag)/length(c_Mag);
-    detPeak_delta = delta_scaling * (max(c_Mag)-Mag_aver);
+  Mag_aver = sum(c_Mag)/length(c_Mag);
+  detPeak_delta = delta_scaling * (max(c_Mag)-Mag_aver);
 
   fprintf('min = %E\n',min(c_Mag));
   fprintf('max = %E\n',max(c_Mag));
   fprintf('average = %E\n',Mag_aver);
   fprintf('detPeak_delta = %E\n',detPeak_delta);
-    vStart=0;
-    vEnd=0;
-    fmin=0;
-    fmax=0;
+  vStart=0;
+  vEnd=0;
+  fmin=0;
+  fmax=0;
 
   % [ peakdata_all, peakdata_loc ] = zoomOnPeak(lambda_vec, c_Mag, detPeak_delta);
 
@@ -206,8 +205,8 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
   %===============================
   peak_frequency_vector = [];
     
-    original_working_dir
-    cd(original_working_dir);
+  original_working_dir
+  cd(original_working_dir);
   return;
     
   superfile = fopen(peak_file,'w');
@@ -287,5 +286,5 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
   % fprintf('Qmax = %E\n', lambda0_end);
   % Qmax
     
-    cd(original_working_dir);
+  cd(original_working_dir);
 end
