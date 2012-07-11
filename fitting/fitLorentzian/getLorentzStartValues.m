@@ -10,6 +10,9 @@ function [x0,y0,A,FWHM] = getLorentzStartValues(X,Y,isInverted)
   if isInverted == 0
     index_max = find(Y == max(Y) );
     x0 = X(index_max);
+    if length(x0)>1
+      x0 = 0.5*(min(x0)+max(x0));
+    end
     y0 = min(Y);
     X1 = X(1:index_max);
     X2 = X(index_max:length(X));
@@ -21,16 +24,19 @@ function [x0,y0,A,FWHM] = getLorentzStartValues(X,Y,isInverted)
     index_FWHM_1 = find( Ydiff1 == min(Ydiff1) );
     index_FWHM_2 = find( Ydiff2 == min(Ydiff2) );
     if length(index_FWHM_1)>1
-      index_FWHM_1 = min(index_FWHM_1)
+      index_FWHM_1 = min(index_FWHM_1);
     end
     if length(index_FWHM_2)>1
-      index_FWHM_2 = max(index_FWHM_2)
+      index_FWHM_2 = max(index_FWHM_2);
     end
     FWHM = abs(X2(index_FWHM_2) - X1(index_FWHM_1));
     A = 0.5*FWHM*(pi*(max(Y)-y0));
   else
     index_min = find(Y == min(Y) );
     x0 = X(index_min);
+    if length(x0)>1
+      x0 = 0.5*(min(x0)+max(x0));
+    end
     y0 = max(Y);
     X1 = X(1:index_min);
     X2 = X(index_min:length(X));
@@ -42,10 +48,10 @@ function [x0,y0,A,FWHM] = getLorentzStartValues(X,Y,isInverted)
     index_FWHM_1 = find( Ydiff1 == min(Ydiff1) );
     index_FWHM_2 = find( Ydiff2 == min(Ydiff2) );
     if length(index_FWHM_1)>1
-      index_FWHM_1 = min(index_FWHM_1)
+      index_FWHM_1 = min(index_FWHM_1);
     end
     if length(index_FWHM_2)>1
-      index_FWHM_2 = max(index_FWHM_2)
+      index_FWHM_2 = max(index_FWHM_2);
     end
     FWHM = abs(X2(index_FWHM_2) - X1(index_FWHM_1));
     A = 0.5*FWHM*(pi*(min(Y)-y0));

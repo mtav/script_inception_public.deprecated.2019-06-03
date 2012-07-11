@@ -1,7 +1,11 @@
-% [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax)
+% [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax, isInverted)
 %
 % This function tries to fit Y using the following function:
 %  y = y0 + (2*A/pi).*(w./(4*(x-x0).^2+w.^2))
+%
+% xmin,xmax : range on which to fit
+% isInverted = 0 : standard lorentzian ("positive peak")
+% isInverted = 1 : inverted lorentzian ("negative peak")
 %
 % return values:
 % vStart = [x0, y0, A, FWHM] from a simple look at data properties like min, max, etc
@@ -9,13 +13,17 @@
 % Q = vEnd(1)/vEnd(4) -> the Q factor
 % 
 % NOTE: Used to be named getQfactor() before.
-function [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax)
+function [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax, isInverted)
+
+  if exist('xmin','var')==0; xmin = min(X); end;
+  if exist('xmax','var')==0; xmax = max(X); end;
+  if exist('isInverted','var')==0; isInverted = 0; end;
 
   % limit the data to an [xmin,xmax] fitting range based on the previous plot
   [Xzoom,Yzoom] = zoomPlot(X,Y,xmin,xmax);
   
   % calculate some fit start values from the peak
-  [x0, y0, A, FWHM] = getLorentzStartValues(Xzoom, Yzoom, 0);
+  [x0, y0, A, FWHM] = getLorentzStartValues(Xzoom, Yzoom, isInverted);
   vStart = [x0, y0, A, FWHM];
   
   % fit the peak with a lorentz function
