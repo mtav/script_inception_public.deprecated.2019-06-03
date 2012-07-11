@@ -4,8 +4,8 @@ set -eux
 
 meep no-bend?=true bend-flux.ctl | tee bend0.out
 meep bend-flux.ctl | tee bend.out
-meep sx=32 sy=64 no-bend?=true bend-flux.ctl |tee bend0-big.out
-meep sx=32 sy=64 bend-flux.ctl |tee bend-big.out
+meep sx=32 sy=64 no-bend?=true bend-flux.ctl | tee bend0-big.out
+meep sx=32 sy=64 bend-flux.ctl | tee bend-big.out
 
 grep flux2: bend.out > bend.dat
 grep flux2: bend0.out > bend0.dat
