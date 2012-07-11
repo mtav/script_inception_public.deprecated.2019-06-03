@@ -1,4 +1,16 @@
-function [Q, vStart, vEnd] = getQfactor(X,Y,xmin,xmax)
+% [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax)
+%
+% This function tries to fit Y using the following function:
+%  y = y0 + (2*A/pi).*(w./(4*(x-x0).^2+w.^2))
+%
+% return values:
+% vStart = [x0, y0, A, FWHM] from a simple look at data properties like min, max, etc
+% vEnd = [x0, y0, A, FWHM] from the real fitting function
+% Q = vEnd(1)/vEnd(4) -> the Q factor
+% 
+% NOTE: Used to be named getQfactor() before.
+function [Q, vStart, vEnd] = fitLorentzian(X, Y, xmin, xmax)
+
   % limit the data to an [xmin,xmax] fitting range based on the previous plot
   [Xzoom,Yzoom] = zoomPlot(X,Y,xmin,xmax);
   

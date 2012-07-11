@@ -1,6 +1,6 @@
-function [y] = lorentz(v,x)
+function [y] = lorentz(v, x)
   % Usage:
-  %   [y]=lorentz(v,x)
+  %   [y] = lorentz(v, x)
   %
   % v = [x0, y0, A, FWHM]
   % (x0,y0) = offset

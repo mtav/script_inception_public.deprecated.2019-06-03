@@ -1,28 +1,26 @@
-function [sigma,mu,A] = mygaussfit(x,y,h)
-  % [sigma,mu,A]=mygaussfit(x,y)
-  % [sigma,mu,A]=mygaussfit(x,y,h)
-  %
-  % this function is doing fit to the function
-  % y=A * exp( -(x-mu)^2 / (2*sigma^2) )
-  %
-  % the fitting is been done by a polyfit
-  % the lan of the data.
-  %
-  % h is the threshold which is the fraction
-  % from the maximum y height that the data
-  % is been taken from.
-  % h should be a number between 0-1.
-  % if h have not been taken it is set to be 0.2
-  % as default.
-  %
-
+% [sigma, mu, A] = fitGaussian(x, y, h)
+%
+% This function tries to fit y using the following function:
+%  y = A * exp( -(x-mu)^2 / (2*sigma^2) )
+%
+% the fitting is been done by a polyfit
+% the lan of the data.
+%
+% h is the threshold which is the fraction
+% from the maximum y height that the data
+% is been taken from.
+% h should be a number between 0-1.
+% if h have not been taken it is set to be 0.2
+% as default.
+%
+function [sigma, mu, A] = fitGaussian(x, y, h)
   %% threshold
   if nargin==2, h=0.2; end
 
   %% cutting
-  ymax=max(y);
-  xnew=[];
-  ynew=[];
+  ymax = max(y);
+  xnew = [];
+  ynew = [];
   for n=1:length(x)
     if y(n)>ymax*h;
       xnew=[xnew,x(n)];
