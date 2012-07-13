@@ -74,8 +74,67 @@ class GWLobject:
     write_sequence = [P1,P2]
     self.GWL_voxels.append(write_sequence)
 
-  def addLineCylinder(self, P1, P2, inner_radius, outer_radius, PointDistance_r, PointDistance_theta):
+  def addLineCylinder(self, P1, P2, power, inner_radius, outer_radius, PointDistance_r, PointDistance_theta):
+    # prepare some variables
+    v = numpy.array(P2)-numpy.array(P1) # vector to rotate
+    centro = 0.5*(numpy.array(P2)+numpy.array(P1)) # center of LineCylinder
+    u = numpy.array([0,0,1]) # direction of standard TubeWithVerticalLines
+    theta = Angle(u,v) # angle by which to rotate
+    rotation_axis = numpy.cross(u,v) # axis around which to rotate
+    height = numpy.norm(v)
+    
+    # build a basis from the P1-P2 direction
+    i = v
+    j = Orthogonal(i)
+    k = numpy.cross(i,j)
+    
+    # transformation matrix from (x,y,z) into (i,j,k)
+    P = numpy.transpose(numpy.matrix([i,j,k]))
+
+    # create a vertical tube and rotate it
+    tube = GWLobject()
+    tube.addTubeWithVerticalLines(centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=False)
+    tube.applyTransformationMatrix(P.getI(), centro)
+    self.addGWLobject(tube)
     return
+
+  def addGWLobject(self, obj):
+    self.GWL_voxels += obj.GWL_voxels
+    #for write_sequence in tube.GWL_voxels:
+          #self.GWL_voxels.append(write_sequence)
+
+      #for voxel in write_sequence:
+        #for i in range(len(voxel)):
+          #value = voxel[i] + writingOffset[i]
+          #if i!=3: #coordinates
+            #file.write( str( "%.3f" % (value) ) )
+          #else: #power
+            #if 0<=value and value<=100:
+              #file.write( str( "%.3f" % (value) ) )
+          ## add tab or line ending
+          #if i<len(voxel)-1:
+            #file.write('\t')
+          #else:
+            #file.write('\n')
+
+            
+      #self.addWrite()
+
+    #for write_sequence in obj.GWL_voxels:
+      #for voxel in write_sequence:
+        #self.add
+          
+        #voxel = write_sequence[i]
+        #location = [voxel[0],voxel[1],voxel[2]]
+        #if len(voxel)>3:
+          #power = voxel[3]
+        #else:
+          #power = -1
+        ##point = point - centro
+        #location = P.getI()*numpy.transpose(numpy.matrix(location))
+        #location = centro + location
+        #write_sequence[i] = [location[0],location[1],location[2],power]
+    
 
   def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True):
     for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
@@ -95,6 +154,27 @@ class GWLobject:
             self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
           else:
             self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+    return
+    
+  def rotate(self, rotation_axis, theta):
+    #TODO    
+    #numpy.dot(rotation_matrix(rotation_axis,theta),P)
+    return
+    
+  # TODO: Use better names/transformation system to implement translations
+  def applyTransformationMatrix(P, centro):
+    for write_sequence in self.GWL_voxels:
+      for i in range(len(write_sequence)):
+        voxel = write_sequence[i]
+        location = [voxel[0],voxel[1],voxel[2]]
+        if len(voxel)>3:
+          power = voxel[3]
+        else:
+          power = -1
+        #point = point - centro
+        location = P.getI()*numpy.transpose(numpy.matrix(location))
+        location = centro + location
+        write_sequence[i] = [location[0],location[1],location[2],power]
     return
 
   def addHorizontalGrating(self, P1, P2, LineNumber, LineDistance):
