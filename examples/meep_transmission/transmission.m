@@ -7,8 +7,8 @@ function transmission()
   reference_file = 'bend0.dat';
   geometry_file = 'bend.dat';
   [ frequency, transmission_normalized, reflection_normalized, loss ] = getNormalizedTRLvalues(reference_file, geometry_file);
-%  plot(f_scaling*frequency,transmission_normalized,'bo');
-%  plot(f_scaling*frequency,reflection_normalized,'ro');
+  plot(f_scaling*frequency,transmission_normalized,'bo');
+  plot(f_scaling*frequency,reflection_normalized,'ro');
   plot(frequency,loss,'k-');
 
 %    reference_file = 'bend0-big.dat';
@@ -31,14 +31,14 @@ function transmission()
   [reflectance,transmittance] = FabryPerot(lambda, 1, sqrt(12), w, 0);
 
   hold on;
-%  plot(f_scaling*f,transmittance,'b-');
-%  plot(f_scaling*f,reflectance,'r-');
+  plot(f_scaling*f,transmittance,'b-');
+  plot(f_scaling*f,reflectance,'r-');
 
 %    legend('transmission','reflection','loss', 'transmission big','reflection big','loss big','transmission theoretical','reflection theoretical');
   title(['Transmission and Reflection for a 1D film with thickness=',num2str(w)',' \mum, epsilon=12, normal incidence'])
   xlabel('frequency (Hz)')
   ylabel('Transmission and Reflection (no unit)')  
-%  legend('MEEP transmission','MEEP reflection','MEEP loss','transmission theoretical','reflection theoretical');
+  legend('MEEP transmission','MEEP reflection','MEEP loss','transmission theoretical','reflection theoretical');
 
   if inoctave()
     print -dashed -F:18 -depsc output_octave.eps
