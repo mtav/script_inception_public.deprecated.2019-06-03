@@ -225,3 +225,80 @@ def todatetime(time):
 def timestodelta(starttime, endtime):
     ''' returns the difference in seconds between two datetime.time objects '''
     return todatetime(endtime) - todatetime(starttime)
+
+# TODO: Start splitting up all those utilities into different files?
+def rotation_matrix3(axis,theta):
+  '''
+  Returns a rotation matrix of size 4 to rotate something around vector v by angle theta
+  Usage:
+    v = np.array([3,5,0])
+    axis = np.array([4,4,1])
+    theta = 1.2 
+    print(np.dot(rotation_matrix(axis,theta),v))
+  source: http://stackoverflow.com/questions/6802577/python-rotation-of-3d-vector
+  TODO: Replace with some existing complete geometry module???
+  '''
+  axis = axis/np.sqrt(np.dot(axis,axis))
+  a = np.cos(theta/2)
+  b,c,d = -axis*np.sin(theta/2)
+  return np.array([[a*a+b*b-c*c-d*d, 2*(b*c-a*d), 2*(b*d+a*c)],
+                   [2*(b*c+a*d), a*a+c*c-b*b-d*d, 2*(c*d-a*b)],
+                   [2*(b*d-a*c), 2*(c*d+a*b), a*a+d*d-b*b-c*c]])
+
+def rotation_matrix4(axis,theta):
+  '''
+  Returns a rotation matrix of size 4 to rotate something around vector v by angle theta
+  Usage:
+    v = np.array([3,5,0])
+    axis = np.array([4,4,1])
+    theta = 1.2 
+    print(np.dot(rotation_matrix(axis,theta),v))
+  source: http://stackoverflow.com/questions/6802577/python-rotation-of-3d-vector
+  TODO: Replace with some existing complete geometry module???
+  '''
+  axis = axis/np.sqrt(np.dot(axis,axis))
+  a = np.cos(theta/2)
+  b,c,d = -axis*np.sin(theta/2)
+  return np.array([[a*a+b*b-c*c-d*d, 2*(b*c-a*d), 2*(b*d+a*c), 0],
+                   [2*(b*c+a*d), a*a+c*c-b*b-d*d, 2*(c*d-a*b), 0],
+                   [2*(b*d-a*c), 2*(c*d+a*b), a*a+d*d-b*b-c*c, 0],
+                   [0,0,0,1]])
+
+def Angle(p, q):
+   ''' return the angle w.r.t. another 3-vector '''
+   ptot2 = numpy.dot(p,p)*numpy.dot(q,q)
+   if ptot2 <= 0:
+      return 0.0
+   else:
+      arg = numpy.dot(p,q)/numpy.sqrt(ptot2)
+      if arg >  1.0: arg =  1.0
+      if arg < -1.0: arg = -1.0
+      return numpy.arccos(arg)
+
+def Orthogonal(u):
+  '''
+  get vector v orthogonal to u
+  ex: v = Orthogonal(u)
+  '''
+  if u[0] < 0.0:
+    xx = -u[0]
+  else:
+    xx = u[0]
+  if u[1] < 0.0:
+    yy = -u[1]
+  else:
+    yy = u[1]
+  if u[2] < 0.0:
+    zz = -u[2]
+  else:
+    zz = u[2]
+  if (xx < yy):
+    if xx < zz:
+      return numpy.array([0,u[2],-u[1]])
+    else:
+      return numpy.array([u[1],-u[0],0])
+  else:
+    if yy < zz:
+      return numpy.array([-u[2],0,u[0]])
+    else:
+      return numpy.array([u[1],-u[0],0])
