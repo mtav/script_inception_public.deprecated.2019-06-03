@@ -70,9 +70,32 @@ class GWLobject:
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
 
-  def addLine(self,P1,P2):
+  def addLine(self,P1,P2,power=-1):
     write_sequence = [P1,P2]
     self.GWL_voxels.append(write_sequence)
+
+  def addLineCylinder(self, P1, P2, inner_radius, outer_radius, PointDistance_r, PointDistance_theta):
+    return
+
+  def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True):
+    for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
+      if radius < 0.5*PointDistance_theta:
+        # TODO: power argument could probably be passed through centro?
+        P = numpy.array([centro[0],centro[1],centro[2],power])
+        if downwardWriting:
+          self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
+        else:
+          self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+      else:
+        alphaStep = 2*numpy.arcsin(PointDistance_theta/float(2*radius))
+        N = int(2*numpy.pi/alphaStep)
+        for i in range(N):
+          P = numpy.array([centro[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),centro[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),centro[2],power])
+          if downwardWriting:
+            self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
+          else:
+            self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+    return
 
   def addHorizontalGrating(self, P1, P2, LineNumber, LineDistance):
     u = numpy.array(P2)-numpy.array(P1)
@@ -459,13 +482,34 @@ class GWLobject:
     with open(filename, 'w') as file:
       for write_sequence in self.GWL_voxels:
         for voxel in write_sequence:
+          
+          # TODO: add options to enable/disable warnings for coords/power out of range or invalid voxel sizes
+          
+          ## only for standard voxels (length 3 or 4)
+          #if len(voxel)>4:
+            #print('ERROR: voxel with more than 4 parameters',file=stderr)
+            #sys.exit(-1)
           for i in range(len(voxel)):
-            file.write( str( "%.3f" % (voxel[i] + writingOffset[i]) ) )
+            value = voxel[i] + writingOffset[i]
+            if i!=3: #coordinates
+              file.write( str( "%.3f" % (value) ) )
+            else: #power
+              if 0<=value and value<=100:
+                file.write( str( "%.3f" % (value) ) )
+            # add tab or line ending
             if i<len(voxel)-1:
               file.write('\t')
             else:
               file.write('\n')
-        #file.write('-999\t-999\t-999\n')
+
+          ## general method for voxels of any length
+          #for i in range(len(voxel)):
+            #file.write( str( "%.3f" % (voxel[i] + writingOffset[i]) ) )
+            #if i<len(voxel)-1:
+              #file.write('\t')
+            #else:
+              #file.write('\n')
+              
         file.write('Write\n')
 
 if __name__ == "__main__":
