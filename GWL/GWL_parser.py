@@ -5,8 +5,9 @@ import sys
 import re
 import numpy
 import os
+from utilities.common import *
 
-class GWLobject:
+class GWLobject(object):
   def __init__(self):
     self.verbosity = 0
     self.GWL_voxels = []
@@ -77,25 +78,86 @@ class GWLobject:
   def addLineCylinder(self, P1, P2, power, inner_radius, outer_radius, PointDistance_r, PointDistance_theta):
     # prepare some variables
     v = numpy.array(P2)-numpy.array(P1) # vector to rotate
+    #print(('v=',v))
     centro = 0.5*(numpy.array(P2)+numpy.array(P1)) # center of LineCylinder
+    #print(('centro=',centro))
     u = numpy.array([0,0,1]) # direction of standard TubeWithVerticalLines
+    #print(('u=',u))
+
     theta = Angle(u,v) # angle by which to rotate
+    #print(('theta=',theta))
+
     rotation_axis = numpy.cross(u,v) # axis around which to rotate
-    height = numpy.norm(v)
-    
+    #print(('rotation_axis=',rotation_axis))
+
+    height = numpy.linalg.norm(v)
+    #print(('height=',height))
+
     # build a basis from the P1-P2 direction
-    i = v
-    j = Orthogonal(i)
-    k = numpy.cross(i,j)
-    
+    k = v
+    i = Orthogonal(k)
+    j = numpy.cross(k,i)
+
+    #print(('i=',i))
+    #print(('j=',j))
+    #print(('k=',k))
+
+    i = i/numpy.linalg.norm(i)
+    j = j/numpy.linalg.norm(j)
+    k = k/numpy.linalg.norm(k)
+
+    #print(('i=',i))
+    #print(('j=',j))
+    #print(('k=',k))
+
     # transformation matrix from (x,y,z) into (i,j,k)
     P = numpy.transpose(numpy.matrix([i,j,k]))
+    #print(P)
+    #print(P.T)
+    #print(P*P.T)
 
     # create a vertical tube and rotate it
     tube = GWLobject()
-    tube.addTubeWithVerticalLines(centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=False)
-    tube.applyTransformationMatrix(P.getI(), centro)
+    origin = [0,0,0]
+    tube.addTubeWithVerticalLines(origin, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=False)
+    #print(('tube.GWL_voxels=',tube.GWL_voxels))
+    #tube.write_GWL('test.gwl')
+
+    #print(P)
+    #print(('centro=',centro))
+    tube.applyTransformationMatrix(P, centro)
+    #print(('tube.GWL_voxels=',tube.GWL_voxels))
     self.addGWLobject(tube)
+
+
+    ## prepare some variables
+    #v = numpy.array(P2)-numpy.array(P1) # vector to rotate
+    #centro = 0.5*(numpy.array(P2)+numpy.array(P1)) # center of LineCylinder
+    #u = numpy.array([0,0,1]) # direction of standard TubeWithVerticalLines
+    #theta = Angle(u,v) # angle by which to rotate
+    #rotation_axis = numpy.cross(u,v) # axis around which to rotate
+    #height = numpy.linalg.norm(v)
+    
+    ## build a basis from the P1-P2 direction
+    #i = v
+    #j = Orthogonal(i)
+    #k = numpy.cross(i,j)
+    
+    #i = i/numpy.linalg.norm(i)
+    #j = j/numpy.linalg.norm(j)
+    #k = k/numpy.linalg.norm(k)
+    
+    ## transformation matrix from (x,y,z) into (i,j,k)
+    #P = numpy.transpose(numpy.matrix([i,j,k]))
+    #print(P)
+    #print(P.T)
+    #print(P*P.T)
+
+    ## create a vertical tube and rotate it
+    #tube = GWLobject()
+    #tube.addTubeWithVerticalLines(centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=False)
+    #tube.applyTransformationMatrix(P.getI(), centro)
+    #self.addGWLobject(tube)
     return
 
   def addGWLobject(self, obj):
@@ -137,6 +199,7 @@ class GWLobject:
     
 
   def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True):
+    # TODO: optimize with zigzag writing
     for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
       if radius < 0.5*PointDistance_theta:
         # TODO: power argument could probably be passed through centro?
@@ -162,18 +225,21 @@ class GWLobject:
     return
     
   # TODO: Use better names/transformation system to implement translations
-  def applyTransformationMatrix(P, centro):
+  def applyTransformationMatrix(self, P, centro):
     for write_sequence in self.GWL_voxels:
       for i in range(len(write_sequence)):
         voxel = write_sequence[i]
+        #print(voxel)
         location = [voxel[0],voxel[1],voxel[2]]
         if len(voxel)>3:
           power = voxel[3]
         else:
           power = -1
         #point = point - centro
-        location = P.getI()*numpy.transpose(numpy.matrix(location))
+        location = P*numpy.transpose(numpy.matrix(location))
+        location = numpy.asarray(location).reshape(-1) #numpy.array(numpy.transpose(M))[0]
         location = centro + location
+        #print(('location=',location))
         write_sequence[i] = [location[0],location[1],location[2],power]
     return
 
