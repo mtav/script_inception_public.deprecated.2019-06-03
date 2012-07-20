@@ -226,7 +226,7 @@ def importGWL(filename):
           #linkedCopy(first_voxel,voxel,scene)
         Nvoxel = Nvoxel + 1
       
-    mesh_new = bpy.data.meshes.new(name='voxelposition_mesh')
+    mesh_new = bpy.data.meshes.new(name=os.path.basename(filename))
     mesh_new.from_pydata(verts, edges, faces)
     object_utils.object_data_add(bpy.context, mesh_new)
     #add_object_data(bpy.context, mesh_new)
