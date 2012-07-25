@@ -3,13 +3,14 @@
 
 from bfdtd.bfdtd_parser import *
 
+# TODO: construction of new geometry objects from other geometry objects... (automatic copying of size, position, permittivity, conductivity, etc)
 class Ellipsoid(Block):
   def __init__(self, name=None, layer=None, group=None, block_direction=None, non_elliptical_directions=None):
     if name is None: name = 'ellipsoid'
     if layer is None: layer = 'ellipsoid'
     if group is None: group = 'ellipsoid'
     if block_direction is None: block_direction = 'x'
-    if non_elliptical_directions is None: non_elliptical_directions = [False, False, False]
+    if non_elliptical_directions is None: non_elliptical_directions = [False, True, False]
   
     Block.__init__(self)
     self.name = name
@@ -20,7 +21,7 @@ class Ellipsoid(Block):
     
     # mesh used to discretize the ellipsoid into blocks
     self.mesh = MeshObject()
-    self.mesh.setSizeAndResolution(self.getSize(),[10,10,10])
+    self.mesh.setSizeAndResolution(self.getSize(),[11,11,11])
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -30,8 +31,35 @@ class Ellipsoid(Block):
     ret += 'conductivity = '+str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
-        
-  def write_entry(self, FILE):
+
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    voxels = self.getVoxels()
+    for v in voxels:
+      xvec,yvec,zvec,epsx,epsy,epsz = v.getMeshingParameters(xvec,yvec,zvec,epsx,epsy,epsz)
+    
+    #objx = numpy.sort([self.lower[0],self.upper[0]])
+    #objy = numpy.sort([self.lower[1],self.upper[1]])
+    #objz = numpy.sort([self.lower[2],self.upper[2]])
+    #if block_direction=='x':
+      #objx = numpy.array(self.lower) + self.mesh.getXmesh()
+    #elif block_direction=='x':
+      #objx = numpy.array(self.lower) + self.mesh.getXmesh()
+    #elif block_direction=='x':
+      #objx = numpy.array(self.lower) + self.mesh.getXmesh()
+    #xvec = numpy.vstack([xvec,objx])
+    #yvec = numpy.vstack([yvec,objy])
+    #zvec = numpy.vstack([zvec,objz])
+
+    #eps = self.permittivity
+    #epsx = numpy.vstack([epsx,eps])
+    #epsy = numpy.vstack([epsy,eps])
+    #epsz = numpy.vstack([epsz,eps])
+
+    return xvec,yvec,zvec,epsx,epsy,epsz
+
+  def getVoxels(self):
+    voxel_list = []
+
     C = self.getCentro()
     L = self.lower
     size = self.getSize()
@@ -50,60 +78,78 @@ class Ellipsoid(Block):
         y = -b+centre_y[j]
         dimX = 2*a*numpy.sqrt(1-pow((y/b),2))
         block = Block()
+        block.permittivity = self.permittivity
+        block.conductivity = self.conductivity
         block.name = "%s.Zx.j%d" % (self.name,j)
         block.setCentro([C[0],L[1]+centre_y[j],C[2]])
         block.setSize([dimX, delta_y[j], size[2]])
-        block.write_entry(FILE)
+        voxel_list.append(block)
     elif self.block_direction=='y' and self.non_elliptical_directions==[False, False, True]:
       for i in range(len(centre_x)):
         x = -a+centre_x[i]
         dimY = 2*b*numpy.sqrt(1-pow((x/a),2))
         block = Block()
+        block.permittivity = self.permittivity
+        block.conductivity = self.conductivity
         block.name = "%s.Zy.i%d" % (self.name,i)
         block.setCentro([L[0]+centre_x[i],C[1],C[2]])
         block.setSize([delta_x[i], dimY, size[2]])
-        block.write_entry(FILE)
+        voxel_list.append(block)
     elif self.block_direction=='x' and self.non_elliptical_directions==[False, True, False]:
       for k in range(len(centre_z)):
         z = -c+centre_z[k]
         dimX = 2*a*numpy.sqrt(1-pow((z/c),2))
         block = Block()
+        block.permittivity = self.permittivity
+        block.conductivity = self.conductivity
         block.name = "%s.Yx.k%d" % (self.name,k)
         block.setCentro([C[0],C[1],L[2]+centre_z[k]])
         block.setSize([dimX, size[1], delta_z[k]])
-        block.write_entry(FILE)
+        voxel_list.append(block)
     elif self.block_direction=='z' and self.non_elliptical_directions==[False, True, False]:
       for i in range(len(centre_x)):
         x = -a+centre_x[i]
         dimZ = 2*c*numpy.sqrt(1-pow((x/a),2))
         block = Block()
+        block.permittivity = self.permittivity
+        block.conductivity = self.conductivity
         block.name = "%s.Yz.i%d" % (self.name,i)
         block.setCentro([L[0]+centre_x[i],C[1],C[2]])
         block.setSize([delta_x[i], size[1], dimZ])
-        block.write_entry(FILE)
+        voxel_list.append(block)
     elif self.block_direction=='y' and self.non_elliptical_directions==[True, False, False]:
       for k in range(len(centre_z)):
         z = -c+centre_z[k]
         dimY = 2*b*numpy.sqrt(1-pow((z/c),2))
         block = Block()
+        block.permittivity = self.permittivity
+        block.conductivity = self.conductivity
         block.name = "%s.Xy.k%d" % (self.name,k)
         block.setCentro([C[0],C[1],L[2]+centre_z[k]])
         block.setSize([size[0], dimY, delta_z[k]])
-        block.write_entry(FILE)
+        voxel_list.append(block)
     elif self.block_direction=='z' and self.non_elliptical_directions==[True, False, False]:
       for j in range(len(centre_y)):
         y = -b+centre_y[j]
         dimZ = 2*c*numpy.sqrt(1-pow((y/b),2))
         block = Block()
+        block.permittivity = self.permittivity
+        block.conductivity = self.conductivity
         block.name = "%s.Xz.j%d" % (self.name,j)
         block.setCentro([C[0],L[1]+centre_y[j],C[2]])
         block.setSize([size[0], delta_y[j], dimZ])
-        block.write_entry(FILE)
+        voxel_list.append(block)
     else:
       print('FATAL ERROR: not supported yet', file=sys.stderr)
       sys.exit(-1)
       
-    return
+    return voxel_list
+
+  def write_entry(self, FILE):
+    '''writes the voxels to the file corresponding to the FILE handle'''
+    voxels = self.getVoxels()
+    for v in voxels:
+      v.write_entry(FILE)
 
 # for testing
 if __name__ == "__main__":
@@ -114,11 +160,15 @@ if __name__ == "__main__":
   block.setSize(C)
   block.setCentro(0.5*C)
   sim.geometry_object_list.append(block)
+  
+  sim.box.setCentro(block.getCentro())
+  sim.box.setSize(block.getSize())
 
   ellipsoid = Ellipsoid()
+  ellipsoid.setRefractiveIndex(2.4)
   ellipsoid.setCentro(block.getCentro())
   ellipsoid.setSize(block.getSize())
-  ellipsoid.mesh.setSizeAndResolution(ellipsoid.getSize(),[10,10,10])
+  ellipsoid.mesh.setSizeAndResolution(ellipsoid.getSize(),[11,11,11])
 
   sim.geometry_object_list.append(ellipsoid)
 
@@ -139,3 +189,7 @@ if __name__ == "__main__":
   sim.writeGeoFile('ellipsoid.Zx.geo')
   ellipsoid.block_direction = 'y'
   sim.writeGeoFile('ellipsoid.Zy.geo')
+
+  sim.autoMeshGeometry(10)
+
+  sim.writeInpFile('ellipsoid.Zy.inp')

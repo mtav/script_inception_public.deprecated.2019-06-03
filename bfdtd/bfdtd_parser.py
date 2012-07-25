@@ -219,8 +219,27 @@ class Box(object):
     FILE.write("%E **ZU\n" % self.upper[2])
     FILE.write('}\n')
     FILE.write('\n')
-  def getCenter(self):
+
+  def translate(self, vec3):
+    self.lower = numpy.array(self.lower)
+    self.upper = numpy.array(self.upper)
+    self.lower = self.lower + vec3
+    self.upper = self.upper + vec3
+
+  def getCentro(self):
     return numpy.array([ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ])
+  def setCentro(self, nova_centro):
+    nova_centro = numpy.array(nova_centro)    
+    nuna_centro = self.getCentro()
+    self.translate(nova_centro - nuna_centro)
+    
+  def getSize(self):
+    return numpy.array(self.upper)-numpy.array(self.lower)
+  def setSize(self, size_vec3):
+    C = self.getCentro()
+    self.lower = C - 0.5*numpy.array(size_vec3)
+    self.upper = C + 0.5*numpy.array(size_vec3)
+    return
 
 # geometry objects
 class Geometry_object(object):
@@ -240,6 +259,10 @@ class Geometry_object(object):
   def setRefractiveIndex(self,n):
     self.permittivity = pow(n,2)
     self.conductivity = 0
+
+  def getRefractiveIndex(self,n):
+    # TODO: Use conductivity?
+    return numpy.sqrt(self.permittivity)
     
   # this function requires the child objects to define a getCentro() and translate() method
   def setCentro(self, nova_centro):
@@ -629,6 +652,10 @@ class Cylinder(Geometry_object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
+    
+  def getSize(self):
+    # TODO: Take rotations into account?
+    return numpy.array([2*self.outer_radius, self.height, 2*self.outer_radius])
 
 # TODO: meshing params in case of rotations
 class Rotation(object):

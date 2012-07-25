@@ -93,6 +93,7 @@ class TriangularPrism(Geometry_object):
     ####################################
     return voxel_list
     
+  # TODO: Use Block objects to write blocks?
   def write_entry(self, FILE):
     voxels = self.getVoxels()
     for v in voxels:

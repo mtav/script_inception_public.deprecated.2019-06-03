@@ -133,8 +133,9 @@ class SpecialTriangularPrism(Geometry_object):
     #return (voxel_list, meshing_parameters)
     return voxel_list
 
-  '''writes the voxels to the file corresponding to the FILE handle'''
+  # TODO: Use Block objects to write blocks?
   def write_entry(self, FILE):
+    '''writes the voxels to the file corresponding to the FILE handle'''
     voxels = self.getVoxels()
     for v in voxels:
       v.lower, v.upper = fixLowerUpper(v.lower, v.upper)
@@ -150,7 +151,7 @@ class SpecialTriangularPrism(Geometry_object):
       FILE.write("%E **Conductivity\n" % v.conductivity)
       FILE.write('}\n')
       FILE.write('\n')
-    
+  
   '''returns the centre of the bounding box of the prism'''
   def getBoundingBoxCentre(self):
     C = [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]

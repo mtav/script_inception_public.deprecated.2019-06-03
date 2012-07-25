@@ -86,6 +86,12 @@ class Excitation(object):
   def setFrequency(self, freq_MHz):
     self.frequency = freq_MHz
 
+  def getLambda(self):
+    return get_c0()/self.frequency
+  
+  def getFrequency(self):
+    return self.frequency
+
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'current_source = ' + str(self.current_source) + '\n' +\
