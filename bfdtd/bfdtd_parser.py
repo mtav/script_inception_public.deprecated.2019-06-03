@@ -403,6 +403,15 @@ class Block(Geometry_object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
+    
+  def getSize(self):
+    return numpy.array(self.upper)-numpy.array(self.lower)
+
+  def setSize(self, size_vec3):
+    C = self.getCentro()
+    self.lower = C - 0.5*numpy.array(size_vec3)
+    self.upper = C + 0.5*numpy.array(size_vec3)
+    return
 
 class Distorted(Geometry_object):
   '''
