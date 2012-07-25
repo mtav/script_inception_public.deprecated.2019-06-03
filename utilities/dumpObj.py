@@ -3,6 +3,8 @@
 # source: http://code.activestate.com/recipes/137951-dump-all-the-attributes-of-an-object/
 # license: PSF
 
+#TODO: Upgrade to python3 and check if still needed
+
 def printDict(di, format="%-25s %s"):
     for (key, val) in di.items():
         print format % (str(key)+':', val)
