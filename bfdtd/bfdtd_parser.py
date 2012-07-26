@@ -1313,7 +1313,7 @@ class BFDTDobject(object):
   def addFrequencySnapshot(self, plane, position):
     if not isinstance(position,int) and not isinstance(position,float):
       print('ERROR: position argument is not int or float, but is '+str(type(position)))
-      sys.exit(1)      
+      sys.exit(1)
     vec, alpha = getVecAlphaDirectionFromVar(plane)
     if alpha == 'x':
       name='X frequency snapshot'

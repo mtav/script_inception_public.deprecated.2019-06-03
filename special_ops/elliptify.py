@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bfdtd.ellipsoid import *
+import copy
 
 DSTDIR = sys.argv[1]
 if not os.path.isdir(DSTDIR):
@@ -16,7 +17,7 @@ block_direction = 'x'
 depth_factor = 7
 thickness = 0.200
 
-excitation_direction = 'x'
+excitation_direction = 'z'
 
 #Dx = 3
 #Dz = 3.15
@@ -91,17 +92,30 @@ block_xplus.setCentro([C[0]+(0.5*Dx-0.5*thickness),C[1]-0.5*depth,C[2]])
 
 sim.geometry_object_list.extend([block_xminus, block_xplus])
 
+excitation_orig = sim.excitation_list[0]
+excitation_new = copy.deepcopy(excitation_orig)
+
 sim.box.lower = [0,0,0]
-if excitation_direction == 'x':
-  sim.box.upper[0] = C[0]
-  sim.box.upper[2] = podium_size[2]
-else:
+if excitation_direction == 'z':
   sim.box.upper[0] = podium_size[0]
   sim.box.upper[2] = C[2]
+  excitation_new.P1[0] = excitation_orig.P1[2]
+  excitation_new.P1[2] = excitation_orig.P1[0]
+  excitation_new.P2[0] = excitation_orig.P2[2]
+  excitation_new.P2[2] = excitation_orig.P2[0]
+  sim.clearAllSnapshots()
+  #sim.clearProbes()
+  
+  P1, P2 = fixLowerUpper(excitation_new.P1, excitation_new.P2)
+  sim.addFrequencySnapshot('x',excitation_new.P1[0])
+  sim.addFrequencySnapshot('y',excitation_new.P1[1])
+  sim.addFrequencySnapshot('z',excitation_new.P1[2])
 
 print('podium_size = '+str(podium_size))
 
-Lambda = sim.excitation_list[0].getLambda()
+sim.excitation_list = [excitation_new]
+
+Lambda = excitation_new.getLambda()
 # define mesh
 a = 10
 
