@@ -428,7 +428,7 @@ class Block(Geometry_object):
     return xvec,yvec,zvec,epsx,epsy,epsz
     
   def getSize(self):
-    return numpy.array(self.upper)-numpy.array(self.lower)
+    return abs(numpy.array(self.upper)-numpy.array(self.lower))
 
   def setSize(self, size_vec3):
     C = self.getCentro()

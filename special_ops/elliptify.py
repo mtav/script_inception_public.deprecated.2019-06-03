@@ -7,7 +7,7 @@ DSTDIR = sys.argv[1]
 if not os.path.isdir(DSTDIR):
   os.mkdir(DSTDIR)
 
-N = 11
+N = 5
 
 Dx = 3.15
 Dz = 3
@@ -15,6 +15,8 @@ block_direction = 'x'
 
 depth_factor = 7
 thickness = 0.200
+
+excitation_direction = 'x'
 
 #Dx = 3
 #Dz = 3.15
@@ -32,8 +34,14 @@ mirror_pair_height = 0
 
 Nlayers = 0
 
+podium_size = [0,0,0]
+
 for i in range(len(sim.geometry_object_list)):
   obj = sim.geometry_object_list[i]
+  
+  if isinstance(obj,Block):
+    podium_size = obj.getSize()
+  
   if isinstance(obj,Cylinder):
     
     C_current = obj.getCentro()
@@ -82,16 +90,29 @@ block_xplus.setSize([thickness,depth,Dz])
 block_xplus.setCentro([C[0]+(0.5*Dx-0.5*thickness),C[1]-0.5*depth,C[2]])
 
 sim.geometry_object_list.extend([block_xminus, block_xplus])
-    
+
+sim.box.lower = [0,0,0]
+if excitation_direction == 'x':
+  sim.box.upper[0] = C[0]
+  sim.box.upper[2] = podium_size[2]
+else:
+  sim.box.upper[0] = podium_size[0]
+  sim.box.upper[2] = C[2]
+
+print('podium_size = '+str(podium_size))
+
 Lambda = sim.excitation_list[0].getLambda()
 # define mesh
 a = 10
-sim.autoMeshGeometry(Lambda/a)
-#MAXCELLS=8000000;
-MAXCELLS=1000000;
-while(sim.getNcells()>MAXCELLS and a>1):
-  a = a-1
-  sim.autoMeshGeometry(Lambda/a)
+
+sim.mesh = MeshObject()
+
+#sim.autoMeshGeometry(Lambda/a)
+##MAXCELLS=8000000;
+#MAXCELLS=1000000;
+#while(sim.getNcells()>MAXCELLS and a>1):
+  #a = a-1
+  #sim.autoMeshGeometry(Lambda/a)
 
 #sim.writeGeoFile('ellipsoid.Yx.geo')
 #sim.writeInpFile('ellipsoid.Yx.inp')
