@@ -578,7 +578,12 @@ class Cylinder(Geometry_object):
     self.permittivity = permittivity
     self.conductivity = conductivity
     self.angle_deg = angle_deg
-    
+  
+  def getLower(self):
+    return [self.centre[0]-self.outer_radius,self.centre[1]-0.5*self.height,self.centre[2]-self.outer_radius]
+  def getUpper(self):
+    return [self.centre[0]+self.outer_radius,self.centre[1]+0.5*self.height,self.centre[2]+self.outer_radius]
+  
   def setDiametre(self,diametre):
     self.outer_radius = 0.5*diametre
 
