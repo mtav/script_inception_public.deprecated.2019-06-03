@@ -199,24 +199,29 @@ class GWLobject(object):
     
 
   def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True):
+    # counter value used to determine the writing direction: 0=down->top 1=top->down
+    counter = int(downwardWriting)
+    
     # TODO: optimize with zigzag writing
     for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
       if radius < 0.5*PointDistance_theta:
         # TODO: power argument could probably be passed through centro?
         P = numpy.array([centro[0],centro[1],centro[2],power])
-        if downwardWriting:
+        if counter%2==1:
           self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
         else:
           self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+        counter+=1
       else:
         alphaStep = 2*numpy.arcsin(PointDistance_theta/float(2*radius))
         N = int(2*numpy.pi/alphaStep)
         for i in range(N):
           P = numpy.array([centro[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),centro[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),centro[2],power])
-          if downwardWriting:
+          if counter%2==1:
             self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
           else:
             self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+          counter+=1
     return
     
   def rotate(self, rotation_axis, theta):
