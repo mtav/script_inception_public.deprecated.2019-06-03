@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -198,7 +198,7 @@ class GWLobject(object):
         #write_sequence[i] = [location[0],location[1],location[2],power]
     
 
-  def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True):
+  def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True, zigzag=True):
     # counter value used to determine the writing direction: 0=down->top 1=top->down
     counter = int(downwardWriting)
     
@@ -211,7 +211,7 @@ class GWLobject(object):
           self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
         else:
           self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
-        counter+=1
+        if zigzag: counter+=1
       else:
         alphaStep = 2*numpy.arcsin(PointDistance_theta/float(2*radius))
         N = int(2*numpy.pi/alphaStep)
@@ -221,7 +221,7 @@ class GWLobject(object):
             self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
           else:
             self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
-          counter+=1
+          if zigzag: counter+=1
     return
     
   def rotate(self, rotation_axis, theta):
