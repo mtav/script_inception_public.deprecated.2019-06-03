@@ -1219,7 +1219,7 @@ class BFDTDobject(object):
     self.excitation_list = []
     
     # measurement objects
-    self.measurement_object_list = []
+    self.measurement_object_list = [] # TODO: make sure fully unused + not necessary and remove? use subclasses, etc...
     self.snapshot_list = []
     self.time_snapshot_list = []
     self.frequency_snapshot_list = []
@@ -1314,15 +1314,16 @@ class BFDTDobject(object):
     if not isinstance(position,int) and not isinstance(position,float):
       print('ERROR: position argument is not int or float, but is '+str(type(position)))
       sys.exit(1)      
-    if plane == 1:
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
       name='X frequency snapshot'
       L = [position, self.box.lower[1], self.box.lower[2]]
       U = [position, self.box.upper[1], self.box.upper[2]]
-    elif plane == 2:
+    elif alpha == 'y':
       name='Y frequency snapshot'
       L = [self.box.lower[0], position, self.box.lower[2]]
       U = [self.box.upper[0], position, self.box.upper[2]]
-    elif plane == 3:
+    elif alpha == 'z':
       name='Z frequency snapshot'
       L = [self.box.lower[0], self.box.lower[1], position]
       U = [self.box.upper[0], self.box.upper[1], position]
@@ -1337,15 +1338,16 @@ class BFDTDobject(object):
     if not isinstance(position,int) and not isinstance(position,float):
       print('ERROR: position argument is not int or float, but is '+str(type(position)))
       sys.exit(1)      
-    if plane == 1:
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
       name='X Time snapshot'
       L = [position, self.box.lower[1], self.box.lower[2]]
       U = [position, self.box.upper[1], self.box.upper[2]]
-    elif plane == 2:
+    elif alpha == 'y':
       name='Y Time snapshot'
       L = [self.box.lower[0], position, self.box.lower[2]]
       U = [self.box.upper[0], position, self.box.upper[2]]
-    elif plane == 3:
+    elif alpha == 'z':
       name='Z Time snapshot'
       L = [self.box.lower[0], self.box.lower[1], position]
       U = [self.box.upper[0], self.box.upper[1], position]
@@ -1426,6 +1428,21 @@ class BFDTDobject(object):
   def clearTimeSnapshots(self):
     self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Time_snapshot) ]
     self.time_snapshot_list[:] = []
+
+  def clearFrequencySnapshots(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Frequency_snapshot) ]
+    self.frequency_snapshot_list[:] = []
+
+  def clearAllSnapshots(self):
+    self.snapshot_list[:] = []
+    self.time_snapshot_list[:] = []
+    self.frequency_snapshot_list[:] = []
+
+  def clearProbes(self):
+    self.probe_list[:] = []
+
+  def clearMesh():
+    self.mesh = MeshObject()
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
