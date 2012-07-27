@@ -1232,6 +1232,12 @@ class BFDTDobject(object):
     # special
     self.fileList = []
     
+    
+    # excitation object meshes
+    self.fitMeshToExcitations = False
+    self.fitMeshToProbes = False
+    self.fitMeshToSnapshots = False
+    
     self.verboseMeshing = False
     
   def __str__(self):
@@ -1820,16 +1826,19 @@ class BFDTDobject(object):
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # excitation object meshes
-    for obj in self.excitation_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+    if self.fitMeshToExcitations:
+      for obj in self.excitation_list:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # probe object meshes
-    for obj in self.probe_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+    if self.fitMeshToProbes:
+      for obj in self.probe_list:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # snapshot object meshes
-    for obj in self.snapshot_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+    if self.fitMeshToSnapshots:
+      for obj in self.snapshot_list:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
       
     # postprocess the meshes
     Xvec[Xvec<simMinX] = simMinX
