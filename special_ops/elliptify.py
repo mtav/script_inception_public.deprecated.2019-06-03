@@ -96,8 +96,17 @@ def elliptifyPillar(DSTDIR, elliptify=False,excitation_direction='x',airblocks=F
 
   sim.box.lower = [0,0,0]
   if excitation_direction == 'z':
+    
+    sim.boundaries.Xpos_bc = 2
+    sim.boundaries.Ypos_bc = 2
+    sim.boundaries.Zpos_bc = 1
+    sim.boundaries.Xneg_bc = 2
+    sim.boundaries.Yneg_bc = 2
+    sim.boundaries.Zneg_bc = 2
+    
     sim.box.upper[0] = podium_size[0]
     sim.box.upper[2] = C[2]
+    
     excitation_new.P1[0] = excitation_orig.P1[2]
     excitation_new.P1[2] = excitation_orig.P1[0]
     excitation_new.P2[0] = excitation_orig.P2[2]
