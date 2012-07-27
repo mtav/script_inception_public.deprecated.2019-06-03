@@ -1234,7 +1234,7 @@ class BFDTDobject(object):
     
     
     # excitation object meshes
-    self.fitMeshToExcitations = False
+    self.fitMeshToExcitations = True
     self.fitMeshToProbes = False
     self.fitMeshToSnapshots = False
     
