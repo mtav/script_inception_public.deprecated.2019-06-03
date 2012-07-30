@@ -18,7 +18,7 @@ classdef FDTDobject
     excitations =  [];
     flag = struct('iMethod',{0},'propCons',{0},'flagOne',{0},'flagTwo',{0},'numSteps',{0},'stabFactor',{0},'id',{'_id_'});
     boundaries = struct('type',{0,0,0,0,0,0},'position',{[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]});
-    box = struct('lower',{[0,0,0]},'upper',{[0,0,0]});
+    box = struct('lower',{[0,0,0]},'upper',{[1,1,1]});
 
     % output
     all_snapshots = [];

@@ -46,6 +46,7 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   if exist('handles','var')==0 || isfield(handles,'modulus')==0; handles.modulus = 0; end
   if exist('handles','var')==0 || isfield(handles,'surface')==0; handles.surface = 1; end
 
+
   if exist('handles','var')==0 || ...
      isfield(handles,'header')==0 || ...
      isfield(handles,'data')==0 || ...
@@ -59,6 +60,10 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
     if strcmp(columns(1),'y') && strcmp(columns(2),'z')
       handles.plane = 1;
     elseif strcmp(columns(1),'x') && strcmp(columns(2),'z')
+      handles.plane = 2;
+    elseif strcmp(columns(1),'#y') && strcmp(columns(2),'z')
+      handles.plane = 1;
+    elseif strcmp(columns(1),'#x') && strcmp(columns(2),'z')
       handles.plane = 2;
     else
       handles.plane = 3;
@@ -238,7 +243,9 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
       else
         foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
       end
-      axis(foo);
+      if ( foo(1)<foo(2) && foo(3)<foo(4) )
+        axis(foo);
+      end
     case 2
       xlabel('z');
       ylabel('x');
@@ -247,7 +254,9 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
       else
         foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
       end
-      axis(foo);
+      if ( foo(1)<foo(2) && foo(3)<foo(4) )
+        axis(foo);
+      end
     case 3
       xlabel('x');
       ylabel('y');
@@ -256,7 +265,9 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
       else
         foo = [ j(1,1),j(size(j,1),1), i(1,1),i(1,size(i,2))];%, zmin,zmax,cmin,cmax];
       end
-      axis(foo);
+      if ( foo(1)<foo(2) && foo(3)<foo(4) )
+        axis(foo);
+      end
   end
 
   % for octave, but might make things easier for matlab too

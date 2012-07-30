@@ -94,6 +94,14 @@ function [ handles ] = PP_load_data(handles)
     handles.plane = 2;
     handles.maxx = handles.data(handles.dataSize(1),1);
     handles.maxz = handles.data(handles.dataSize(1),2);
+  elseif strcmp(columns(1),'#y') && strcmp(columns(2),'z')
+    handles.plane = 1;
+    handles.maxy = handles.data(handles.dataSize(1),1);
+    handles.maxz = handles.data(handles.dataSize(1),2);
+  elseif strcmp(columns(1),'#x') && strcmp(columns(2),'z')
+    handles.plane = 2;
+    handles.maxx = handles.data(handles.dataSize(1),1);
+    handles.maxz = handles.data(handles.dataSize(1),2);
   else
     handles.plane = 3;
     handles.maxx = handles.data(handles.dataSize(1),1);

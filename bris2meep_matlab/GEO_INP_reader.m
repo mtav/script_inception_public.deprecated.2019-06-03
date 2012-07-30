@@ -3,7 +3,7 @@ function [ entries, structured_entries ] = GEO_INP_reader(file_list)
   % creates entries + structured_entries from file_list
 
   entries = {};
-  structured_entries = FDTDobject;
+  structured_entries = FDTDobject();
 
   for idx = 1:length(file_list)
     filename = file_list{idx};
