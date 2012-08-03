@@ -200,10 +200,10 @@ class FDTDGeometryObjects(object):
       #bpy.data.objects[-1].name = 'testkubo2'
       obj.name = name
 
-      pos = 0.5*(lower+upper)
-      diag = upper-lower
-      obj.scale = 0.5*diag
-      obj.location = pos
+      #pos = 0.5*(lower+upper)
+      #diag = upper-lower
+      #obj.scale = 0.5*diag
+      #obj.location = pos
       
       # deleting faces fails when in object mode, so change.
       #bpy.ops.object.mode_set(mode = 'EDIT') 
@@ -405,7 +405,7 @@ class FDTDGeometryObjects(object):
         #return
     
     def GEOcylinder_matrix(self, name, rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
-        scene = Blender.Scene.GetCurrent()
+        #scene = Blender.Scene.GetCurrent()
         mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H)
         mesh.materials = self.materials(permittivity, conductivity)
         for f in mesh.faces:
