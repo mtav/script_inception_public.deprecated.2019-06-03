@@ -81,27 +81,27 @@ def alphaID_to_numID(alphaID, probe_ident):
   elif length(alphaID)>2:
     [tokens, match] =  regexp(alphaID, ['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn'], 'tokens', 'match', 'warnings')
     
-    if length(match)==1:
-      snap_plane = tokens{:}(1)
-      just_alphaID = tokens{:}{2}
-      snap_time_number = str2num(tokens{:}{3})
+    #if length(match)==1:
+      #snap_plane = tokens{:}(1)
+      #just_alphaID = tokens{:}{2}
+      #snap_time_number = str2num(tokens{:}{3})
 
-      ilo = mod(snap_time_number,10)
-      ihi = div(snap_time_number,10)
+      #ilo = mod(snap_time_number,10)
+      #ihi = div(snap_time_number,10)
     
-      if length(just_alphaID)==1:
-        numID = double(just_alphaID(1)) - double('a') + 1
-      else:
-        numID = 27*(double(just_alphaID(1)) - double('a') + 1) + (double(just_alphaID(2)) - double('a'))
+      #if length(just_alphaID)==1:
+        #numID = double(just_alphaID(1)) - double('a') + 1
+      #else:
+        #numID = 27*(double(just_alphaID(1)) - double('a') + 1) + (double(just_alphaID(2)) - double('a'))
 
-    else:
-      warning(['Match error. Invalid alphaID:',' alphaID=',alphaID,' probe_ident=',probe_ident])
-      numID = 1
-      snap_plane = 'a'
-      snap_time_number = -1
-  else:
-    print('Me thinks you made a little mistake in your alphaID...', file=sys.stderr)
-    sys.exit(-1)
+    #else:
+      #warning(['Match error. Invalid alphaID:',' alphaID=',alphaID,' probe_ident=',probe_ident])
+      #numID = 1
+      #snap_plane = 'a'
+      #snap_time_number = -1
+  #else:
+    #print('Me thinks you made a little mistake in your alphaID...', file=sys.stderr)
+    #sys.exit(-1)
     
   return numID, snap_plane, snap_time_number
   
