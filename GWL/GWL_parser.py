@@ -348,11 +348,11 @@ class GWLobject(object):
         counter = counter + 1
 
   def addTube(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, PointDistance_z):
-    print('=== addTube ===')
+    #print('=== addTube ===')
     #print((numpy.linspace(inner_radius, outer_radius, float((outer_radius - inner_radius)/PointDistance_r))))
     for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
       for z in numpy.linspace(centro[2]+0.5*height, centro[2]-0.5*height, float(1+height/PointDistance_z)):
-        print((radius,z))
+        #print((radius,z))
       #for i_theta in numpy.linspace(0, 2*numpy.pi, (outer_radius - inner_radius)/PointDistance_r):
         self.addHorizontalCircle([centro[0],centro[1],z], radius, power, PointDistance_theta)
     return
@@ -663,7 +663,7 @@ class GWLobject(object):
               
         file.write('Write\n')
 
-if __name__ == "__main__":
+def main():
   #GWL_obj = GWLobject()
   #GWL_obj.readGWL(sys.argv[1])
   ##print GWL_obj.GWL_voxels
@@ -760,3 +760,6 @@ if __name__ == "__main__":
   GWL_obj.addXblock([0,0,2.75],[10,0,2.75],5,0.050,8,0.100)
   GWL_obj.addYblock([1,0,2.75],[1,20,2.75],5,0.050,8,0.100)
   GWL_obj.write_GWL('xblock2.gwl')
+
+if __name__ == "__main__":
+  main()
