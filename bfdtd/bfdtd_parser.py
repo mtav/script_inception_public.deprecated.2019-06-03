@@ -30,7 +30,7 @@ class Flag(object):
     self.flagTwo = 0
     self.iterations = 25000
     self.timeStep = 0.9; #mus
-    self.id = 'id' #'_id_'
+    self.id = '_id_'
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'iMethod = ' + str(self.iterationMethod) + '\n' +\
