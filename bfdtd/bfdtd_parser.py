@@ -1240,6 +1240,8 @@ class BFDTDobject(object):
     
     self.verboseMeshing = False
     
+    self.verbosity = 1
+    
   def __str__(self):
       ret = '--->snapshot_list\n'
       for i in range(len(self.snapshot_list)):
@@ -1452,7 +1454,7 @@ class BFDTDobject(object):
 
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
-      print('Processing ' + filename)
+      if self.verbosity>0: print('Processing ' + filename)
       box_read = False
       xmesh_read = False
       
@@ -1584,7 +1586,7 @@ class BFDTDobject(object):
 
   def read_inputs(self,filename):
       ''' read .in file '''
-      print('->Processing .in file : ', filename)
+      if self.verbosity>0: print('->Processing .in file : ', filename)
       
       box_read = False
       xmesh_read = False
@@ -1592,13 +1594,13 @@ class BFDTDobject(object):
       f = open(filename, 'r')
       for line in f:
           if line.strip(): # only process line if it is not empty
-            print(('os.path.dirname(filename): ', os.path.dirname(filename))) # directory of .in file
-            print(('line.strip()=', line.strip())) # remove any \n or similar
+            if self.verbosity>0: print(('os.path.dirname(filename): ', os.path.dirname(filename))) # directory of .in file
+            if self.verbosity>0: print(('line.strip()=', line.strip())) # remove any \n or similar
             self.fileList.append(line.strip())
             # this is done so that you don't have to be in the directory containing the .geo/.inp files
             #subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip())) # converts absolute paths to relative
             subfile = os.path.join(os.path.dirname(filename),line.strip()) # uses absolute paths if given
-            print(('subfile: ', subfile))
+            if self.verbosity>0: print(('subfile: ', subfile))
             if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
                 subfile_ext = addExtension(subfile,'inp')
             else:
@@ -1981,26 +1983,27 @@ class MeshBox(Geometry_object):
     
 #==== CLASSES END ====#
 
-def readBristolFDTD(filename):
+def readBristolFDTD(filename, verbosity = 1):
     ''' reads .in (=>.inp+.geo), .geo or .inp '''
-    print('->Processing generic file : '+filename)
+    if verbosity>0: print('->Processing generic file : '+filename)
 
     structured_entries = BFDTDobject()
+    structured_entries.verbosity = verbosity
     
     extension = getExtension(filename)
     if extension == 'in':
-        print('.in file detected')
+        if verbosity>0: print('.in file detected')
         structured_entries.read_inputs(filename)
     elif extension == 'inp':
-        print('.inp file detected')
+        if verbosity>0: print('.inp file detected')
         structured_entries.read_input_file(filename)
     elif extension == 'geo':
-        print('.geo file detected')
+        if verbosity>0: print('.geo file detected')
         structured_entries.read_input_file(filename)
     elif extension == 'prn':
-        print('.prn file detected: Not supported yet')
+        if verbosity>0: print('.prn file detected: Not supported yet')
     else:
-        print('Unknown file format: '+extension)
+        if verbosity>0: print('Unknown file format: '+extension)
         sys.exit(-1)
     
     #~ print '================'
