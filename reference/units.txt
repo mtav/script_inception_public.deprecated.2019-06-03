@@ -24,6 +24,6 @@ MEEP<->reality:
 ---------------
 f(MEEP)*c0/a = f(reality)
 L(MEEP)*a = L(reality)
-t(MEEP)*a/c = t(reality)
+t(MEEP)*a/c0 = t(reality)
 
 with "a meters" in reality being "1" in MEEP

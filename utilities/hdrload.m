@@ -25,7 +25,6 @@ function [header, data] = hdrload(file)
   % check number and type of arguments
   if nargin < 1
     error('Function requires one input argument');
-  %elseif ~isstr(file)
   elseif ~ischar(file)
     error('Input must be a string representing a filename');
   end
@@ -55,7 +54,6 @@ function [header, data] = hdrload(file)
   
   % Start processing.
   line = fgetl(fid);
-  %if ~isstr(line)
   if ~ischar(line)
     disp('Warning: file contains no header and no data')
   end;
@@ -83,7 +81,6 @@ function [header, data] = hdrload(file)
     % Store the last-read line in this variable.
     eval(['line', num2str(no_lines), '=line;']);
     line = fgetl(fid);
-    %if ~isstr(line)
     if ~ischar(line)
       disp('Warning: file contains no data')
       break
@@ -105,7 +102,6 @@ function [header, data] = hdrload(file)
   % headers were 10 lines or less, we could use the STR2MAT 
   % function and save some work. First, initialize the header to an
   % array of spaces.
-  %header = setstr(' '*ones(no_lines, max_line));
   header = char(' '*ones(no_lines, max_line));
   for i = 1:no_lines
     varname = ['line' num2str(i)];
@@ -126,8 +122,9 @@ function [header, data] = hdrload(file)
   eval('data = reshape(data, ncols, length(data)/ncols)'';', '');
   
   % And we're done!
-  
-  clear all;
-  clearvars -global;
+
+  % added to prevent RAM filling (unsuccessfully) when processing multiple files in sequence, but seems to cause problems on some Matlab versions  
+  %clear all;
+  %clearvars -global;
 
 end
