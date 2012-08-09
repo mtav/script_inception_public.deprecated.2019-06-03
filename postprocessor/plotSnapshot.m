@@ -1,6 +1,6 @@
-function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hide_figures, imageSaveName)
+function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hide_figures, imageSaveName)
+  % function plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %Function to display results from frequency snapshots and poynting
   %vector calculations from University of Bristol FDTD software
@@ -13,7 +13,8 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   %Version 4.2
   %
   %For Poynting vector plots in the same format use snap_poy_int.m
-  % TODO: Locate snap_poy_int.m
+  % TODO: Locate snap_poy_int.m (Poynting vector snapshot?)
+  % TODO: Add axis scaling (useful for thin structures)
   % Arguments:
   % column = column ID, 1 being the first column of the snaphot .prn file, i.e. the xy/yz/zx columns are included
   %
@@ -36,7 +37,7 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   if exist('hide_figures','var')==0; hide_figures = false; end
-  if exist('rotate90','var')==0; rotate90 = false; end
+  if exist('azimuth','var')==0; azimuth = 0; end
   
   if exist('handles','var')==0 || isfield(handles,'drawColorBar')==0; handles.drawColorBar = true; end
   if exist('handles','var')==0 || isfield(handles,'autosave')==0; handles.autosave = 0; end
@@ -45,7 +46,9 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   if exist('handles','var')==0 || isfield(handles,'interpolate')==0; handles.interpolate = 0; end
   if exist('handles','var')==0 || isfield(handles,'modulus')==0; handles.modulus = 0; end
   if exist('handles','var')==0 || isfield(handles,'surface')==0; handles.surface = 1; end
-
+  if exist('handles','var')==0 || isfield(handles,'drawTitle')==0; handles.drawTitle = true; end
+  if exist('handles','var')==0 || isfield(handles,'createFigure')==0; handles.createFigure = true; end
+  if exist('handles','var')==0 || isfield(handles,'colorbarPosition')==0; handles.colorbarPosition = 'East'; end
 
   if exist('handles','var')==0 || ...
      isfield(handles,'header')==0 || ...
@@ -75,7 +78,7 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   if exist('column','var')==0
     disp('ERROR: no column specified. Please choose from the following:');
     for i=1:length(handles.AllHeaders)
-      disp([num2str(i), ':' ,handles.AllHeaders{i}])
+      disp([num2str(i), ':' ,handles.AllHeaders{i}]);
     end
     error('TODO: add column selector');
   end
@@ -85,11 +88,11 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
     maxval = NaN;
   else
     if length(zlimits)==2
-    minval = zlimits(1);
-    maxval = zlimits(2);
+      minval = zlimits(1);
+      maxval = zlimits(2);
     else
-      disp(size(zlimits))
-      error('Incorrect zlimits size.')
+      disp(size(zlimits));
+      error('Incorrect zlimits size.');
     end
   end
   
@@ -106,7 +109,7 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   end
   
   %% Determine size of snapshot
-  ii=1; ValPrev = handles.data(ii,1); grid_j = 1;
+  ii = 1; ValPrev = handles.data(ii,1); grid_j = 1;
   while ii<handles.dataSize(1)
     if handles.data(ii,1) ~= ValPrev
       ValPrev = handles.data(ii,1);
@@ -117,15 +120,15 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   grid_i = handles.dataSize(1)/grid_j;
   
   %% Create meshgrids for snapshot
-  for pp=1:grid_j
-    for qq=1:grid_i
-      i(pp,qq)=handles.data(qq,2);
+  for pp = 1:grid_j
+    for qq = 1:grid_i
+      i(pp,qq) = handles.data(qq,2);
     end
   end
   
-  for pp=1:grid_j
-    for qq=1:grid_i
-      j(pp,qq)=handles.data((qq+((pp-1)*grid_i)),1);
+  for pp = 1:grid_j
+    for qq = 1:grid_i
+      j(pp,qq) = handles.data((qq+((pp-1)*grid_i)),1);
     end
   end
   
@@ -173,10 +176,12 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   end
   
   %% Create figure and plot data
-  if hide_figures
-    fig = figure('visible','off');
-  else
-    fig = figure('visible','on');
+  if handles.createFigure
+    if hide_figures
+      fig = figure('visible','off');
+    else
+      fig = figure('visible','on');
+    end
   end
   grey = 0;
   if (handles.colour)
@@ -271,20 +276,37 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   end
 
   % for octave, but might make things easier for matlab too
-  view(0,90);
+  %view(0,90);
   %view(45,45);
   %axis equal;
-  
-  if rotate90
-    view(90,90);
-    if handles.drawColorBar
-      colorbar('South');
-    end
-  else
-    if handles.drawColorBar
-      colorbar
-    end
+
+  view(azimuth,90);
+  if handles.drawColorBar
+    handle_colorbar = colorbar(handles.colorbarPosition);
   end
+  %if azimuth
+    %view(90,90);
+  %else
+    %view(0,90);
+  %end
+
+  %if exist('colorbarPosition','var')==1
+    %if handles.drawColorBar
+      %colorbar(handles.colorbarPosition);
+    %end
+  %else
+    %azimuth
+    %if azimuth
+      %view(90,90);
+      %if handles.drawColorBar
+        %colorbar('South');
+      %end
+    %else
+      %if handles.drawColorBar
+        %colorbar
+      %end
+    %end  
+  %end
 
   % old code from unknown origin and for unknow use  
   %snapshot_filename
@@ -292,39 +314,42 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   %snapfile_full = char(titlesnap(length(titlesnap)));
   
   % much easier and apparently working solution...
-  snapfile_full = snapshot_filename
+  snapfile_full = snapshot_filename;
+  disp(['snapfile_full = ',snapfile_full]);
 
   [ snapfile_full_folder, snapfile_full_basename, snapfile_full_ext ] = fileparts(snapfile_full);
   [ snapfile_full_folder_folder, snapfile_full_folder_basename ] = fileparts(snapfile_full_folder);
   
-  title_base = [ snapfile_full_folder_basename, filesep, snapfile_full_basename, snapfile_full_ext ]
+  title_base = [ snapfile_full_folder_basename, filesep, snapfile_full_basename, snapfile_full_ext ];
+  disp(['title_base = ',title_base]);
 
-  if handles.Type == 1 % probe
-    error('ERROR: Trying to plot probe with snapshot plotter');
-    return;
-  elseif handles.Type == 2 % time snapshot
-    % TODO: Add more info to title?
-    title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
-  elseif handles.Type == 3 % frequency snapshot
-    if exist('FDTDobj','var')==1
-      Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
-      Nsnap
-      length(FDTDobj.frequency_snapshots)
-      
-      freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-      lambda_snap_mum = get_c0()/freq_snap_MHz;
-      lambda_snap_nm = lambda_snap_mum*1e3;
-      title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
-    else
+  if handles.drawTitle
+    if handles.Type == 1 % probe
+      error('ERROR: Trying to plot probe with snapshot plotter');
+      return;
+    elseif handles.Type == 2 % time snapshot
+      % TODO: Add more info to title?
       title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
+    elseif handles.Type == 3 % frequency snapshot
+      if exist('FDTDobj','var')==1
+        Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+        disp(['Nsnap = ',num2str(Nsnap)]);
+        disp(['length(FDTDobj.frequency_snapshots) = ',num2str(length(FDTDobj.frequency_snapshots))]);
+        
+        freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+        lambda_snap_mum = get_c0()/freq_snap_MHz;
+        lambda_snap_nm = lambda_snap_mum*1e3;
+        title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+      else
+        title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
+      end
+    elseif handles.Type == 4 % excitation template
+      title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');  
+    else
+      warning(['Unknown data type: handles.Type = ',num2str(handles.Type)]);
+      %return;
     end
-  elseif handles.Type == 4 % excitation template
-    title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');  
-  else
-    warning(['Unknown data type: handles.Type = ',num2str(handles.Type)]);
-    %return;
   end
-  
   clear titlesnap;
   hold on;
   
@@ -565,7 +590,21 @@ function plotSnapshot(snapshot_filename, column, zlimits, handles, rotate90, hid
   clear FDTDobj;
   clearvars i j k FDTDobj;
   %clear;
-  clear all;
-  clearvars -global;
+  
+  % TODO: Implement close(figure) or close all to prevent RAM filling when running in automated mode (hidden figures remain in memory and exiting the function does not close them)
+  
+  % Added to prevent RAM filling. But prevents returning values.
+  %clear all;
+  %clearvars -global;
+
+  if  nargout
+    ret.handle_axis = gca;
+    %if exist('handle_axis','var')==0
+      %ret.handle_axis = gca;
+    %end
+    if exist('handle_colorbar','var')
+      ret.handle_colorbar = handle_colorbar;
+    end
+  end
 
 end
