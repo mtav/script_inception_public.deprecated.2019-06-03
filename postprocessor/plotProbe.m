@@ -396,20 +396,22 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
 
   %N=10000; xmin=778; xmax=784; Q=112970; y0=0; x0=780.8162; FWHM=x0/Q; A = 0.5*FWHM*(pi*(2.5*1e6-y0)); plot(linspace(xmin,xmax,N),lorentz([x0, y0, A, FWHM],linspace(xmin,xmax,N)),'r-');
 
-  % autosaving
-  if autosave == 1
-    set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
-    figout = [dirname(filename), filesep, basename, '_', char(data_name), '.png'];
-    disp(['Saving figure as ',figout]);
-    print(fig,'-dpng','-r300',figout);
-  end
-  
-  % normal saving
-  if ( exist('imageSaveName','var')~=0 ) & (length(imageSaveName)>0)
-    set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
-    disp(['Saving figure as ',imageSaveName]);
-    print(fig,'-dpng','-r300',imageSaveName);
-    %print(fig,'-depsc','-r1500',imageSaveName);
+  if ~plotNothing
+    % autosaving
+    if autosave == 1
+      set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
+      figout = [dirname(filename), filesep, basename, '_', char(data_name), '.png'];
+      disp(['Saving figure as ',figout]);
+      print(fig,'-dpng','-r300',figout);
+    end
+    
+    % normal saving
+    if ( exist('imageSaveName','var')~=0 ) & (length(imageSaveName)>0)
+      set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
+      disp(['Saving figure as ',imageSaveName]);
+      print(fig,'-dpng','-r300',imageSaveName);
+      %print(fig,'-depsc','-r1500',imageSaveName);
+    end
   end
 
   %name=>save with name
