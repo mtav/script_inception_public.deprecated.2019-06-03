@@ -168,7 +168,6 @@ class FDTDGeometryObjects(object):
 
       return
 
-
         #scene = Blender.Scene.GetCurrent()
         #mesh = Blender.Mesh.Primitives.Cube(1.0)
         #mesh.materials = self.materials(permittivity, conductivity)
