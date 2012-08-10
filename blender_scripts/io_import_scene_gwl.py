@@ -30,6 +30,14 @@ bl_info = {
     'category': 'Import-Export',
     }
 
+"""
+TODO: Documentation
+TODO: Cleanup
+TODO: import options
+TODO: Compare class vs module, different ways of creating addons, choose best
+TODO: Figure out how to enable the addon directly after installation
+"""
+
 import os
 import codecs
 import math
@@ -44,24 +52,12 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
 
-def read_gwl(context, filepath, use_some_setting):
-    print("running read_gwl...")
-    f = open(filepath, 'r', encoding='utf-8')
-    data = f.read()
-    f.close()
-
-    # would normally load the data here
-    print(data)
-
-    return {'FINISHED'}
-
 class ImportGWL(Operator, ImportHelper):
     '''This appears in the tooltip of the operator and in the generated docs'''
     bl_idname = "import_gwl.gwl"  # important since its how bpy.ops.import_gwl.gwl is constructed
     bl_label = "Import GWL"
 
     # ImportHelper mixin class uses this
-    filename_ext = ".gwl"
     filter_glob = StringProperty(default="*.gwl", options={'HIDDEN'})
 
     # List of operator properties, the attributes will be assigned
@@ -81,13 +77,13 @@ class ImportGWL(Operator, ImportHelper):
             )
 
     def execute(self, context):
-        #return read_gwl(context, self.filepath, self.use_setting)
+        #return test(context, self.filepath, self.use_setting)
         importGWL(self.filepath)
         return {'FINISHED'}
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
-    self.layout.operator(ImportGWL.bl_idname, text="GWL Import Operator")
+    self.layout.operator(ImportGWL.bl_idname, text="GWL (.gwl)")
 
 def register():
     bpy.utils.register_class(ImportGWL)
