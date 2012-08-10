@@ -152,20 +152,20 @@ def importBristolFDTD(filename):
         # initialise rotation_matrix
         rotation_matrix = Matrix()
         rotation_matrix.identity()
+        
+        # add rotations
+        for r in block.rotation_list:
+          rotation_matrix = rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees)*rotation_matrix
 
         # position object
         T = Matrix.Translation(pos)
         rotation_matrix *= T
-        
-        # add rotations
-        for r in block.rotation_list:
-          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees)
 
         ## scale object
-        #Sx = Matrix.Scale(abs(diag[0]), 4, Vector((1,0,0)) )
-        #Sy = Matrix.Scale(abs(diag[1]), 4, Vector((0,1,0)) )
-        #Sz = Matrix.Scale(abs(diag[2]), 4, Vector((0,0,1)) )
-        #rotation_matrix *= Sx*Sy*Sz;
+        Sx = Matrix.Scale(abs(diag[0]), 4, Vector((1,0,0)) )
+        Sy = Matrix.Scale(abs(diag[1]), 4, Vector((0,1,0)) )
+        Sz = Matrix.Scale(abs(diag[2]), 4, Vector((0,0,1)) )
+        rotation_matrix *= Sx*Sy*Sz;
 
         # create object
         FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity)
@@ -183,21 +183,21 @@ def importBristolFDTD(filename):
       
         # initialise rotation_matrix
         rotation_matrix = Matrix()
-        rotation_matrix.identity();
+        rotation_matrix.identity()
 
-        # because FDTD cylinders are aligned with the Y axis by default
-        rotation_matrix *= rotationMatrix(Vector([0,0,0]), Vector([1,0,0]), -90)
-        
+        # add rotations
+        for r in cylinder.rotation_list:
+          rotation_matrix = rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees)*rotation_matrix
+
         # position object
         T = Matrix.Translation(Vector([cylinder.centre[0],cylinder.centre[1],cylinder.centre[2]]))
         rotation_matrix *= T;
-        
-        # add rotations
-        for r in cylinder.rotation_list:
-          rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees)
-        
+
+        # because FDTD cylinders are aligned with the Y axis by default
+        rotation_matrix *= rotationMatrix(Vector([0,0,0]), Vector([1,0,0]), -90)
+
         # create object
-        FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius,cylinder.outer_radius,cylinder.height,cylinder.permittivity,cylinder.conductivity)
+        FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius, cylinder.outer_radius, cylinder.height, cylinder.permittivity, cylinder.conductivity)
         
         #angle_X = numpy.deg2rad(-90)
         #angle_X = -0.5*numpy.pi

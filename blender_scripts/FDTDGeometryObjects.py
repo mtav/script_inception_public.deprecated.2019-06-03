@@ -404,16 +404,16 @@ class FDTDGeometryObjects(object):
         #obj.transp = True; obj.wireMode = True
         #return
     
-    def GEOcylinder_matrix(self, name, rotation_matrix, inner_radius, outer_radius, H, permittivity, conductivity):
-        #scene = Blender.Scene.GetCurrent()
-        mesh = Blender.Mesh.Primitives.Cylinder(32, 2*outer_radius, H)
-        mesh.materials = self.materials(permittivity, conductivity)
-        for f in mesh.faces:
-            f.mat = 0
-    
-        obj = scene.objects.new(mesh, name)
-        obj.setMatrix(rotation_matrix)
-        obj.transp = True; obj.wireMode = True
+    # TODO: Create a tube primitive to really support inner radius
+    # TODO: sanitize rotation/import system, cleanup, etc
+    def GEOcylinder_matrix(self, name, rotation_matrix, inner_radius, outer_radius, height, permittivity, conductivity):
+        # passing the radius+depth directly will apply them directly, leading to an object of scale (1,1,1). So no need to add scaling to the rotation_matrix.
+        bpy.ops.mesh.primitive_cylinder_add(location = Vector([0,0,0]), radius=outer_radius, depth=height, rotation=(0,0,0))
+        obj = bpy.context.active_object
+        obj.name = name
+        obj.active_material = self.materials(permittivity, conductivity)
+        obj.show_transparent = True; obj.show_wire = True
+        obj.matrix_world = rotation_matrix
         return
     
     def GEOsphere(self, name, center, outer_radius, inner_radius, permittivity, conductivity):
@@ -917,8 +917,8 @@ def rotationMatrix(axis_point, axis_direction, angle_degrees):
   C = Vector([axis_point[0],axis_point[1],axis_point[2]])
   T = Matrix.Translation(C)
   Tinv = Matrix.Translation(-C)
-  R = Matrix.Rotation(angle_degrees, 4, axis)
-  return Tinv*R*T
+  R = Matrix.Rotation(math.radians(angle_degrees), 4, axis)
+  return T*R*Tinv
 
 ###############################
 # TEST FUNCTIONS
