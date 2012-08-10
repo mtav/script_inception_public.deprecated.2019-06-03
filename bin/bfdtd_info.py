@@ -34,6 +34,29 @@ def printExcitationDirection(infile,verbosity):
 def printFormattedString(FORMAT):
   return
 
+def rotate(infile, outfile, axis_point, axis_direction, angle_degrees):
+  sim = bfdtd.readBristolFDTD(infile)
+  sim.rotate(axis_point, axis_direction, angle_degrees)
+  sim.writeGeoFile(outfile)
+
+def automeshWithMeshingFactor(infile, outfile, meshing_factor):
+  sim = bfdtd.readBristolFDTD(infile)
+  sim.autoMeshGeometry(meshing_factor)
+  sim.writeInpFile(outfile)
+
+# TODO: finish this in a nice usable way
+def automeshWithMaxCells(infile, outfile, meshing_factor, MAXCELLS, Lambda, a):
+  sim = bfdtd.readBristolFDTD(infile)
+  sim.autoMeshGeometry(meshing_factor)
+  sim.writeInpFile(outfile)
+
+  sim = bfdtd.readBristolFDTD(infile)
+  sim.autoMeshGeometry(Lambda/a)
+  while(sim.getNcells()>MAXCELLS and a>1):
+    a = a-1
+    sim.autoMeshGeometry(Lambda/a)
+  sim.writeInpFile(outfile)
+
 def main():
   
   ## command-line option handling

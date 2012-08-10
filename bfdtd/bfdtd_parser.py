@@ -665,15 +665,21 @@ class Cylinder(Geometry_object):
 # TODO: meshing params in case of rotations
 class Rotation(object):
   def __init__(self,
-      name = 'rotation',
-      axis_point = [0,0,0],
-      axis_direction = [0,0,0],
-      angle_degrees = 0):
-        
+      name = None,
+      axis_point = None,
+      axis_direction = None,
+      angle_degrees = None):
+      
+    if name is None: name = 'rotation'
+    if axis_point is None: axis_point = [0,0,0]
+    if axis_direction is None: axis_direction = [0,0,0]
+    if angle_degrees is None: angle_degrees = 0
+    
     self.name = name
     self.axis_point = axis_point
     self.axis_direction = axis_direction
     self.angle_degrees = angle_degrees
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'axis_point = ' + str(self.axis_point) + '\n'
@@ -1933,6 +1939,16 @@ class BFDTDobject(object):
     self.mesh.setXmeshDelta(delta_X_vector)
     self.mesh.setYmeshDelta(delta_Y_vector)
     self.mesh.setZmeshDelta(delta_Z_vector)
+  
+  def rotate(self, axis_point, axis_direction, angle_degrees):
+    for obj in self.geometry_object_list:
+      self.rotation_list.append(Rotation(axis_point = axis_point, axis_direction = axis_direction, angle_degrees = angle_degrees))
+    return
+    
+  def applyTransformationMatrix(self, M):
+    # TODO
+    return
+
     
 class MeshBox(Geometry_object):
   def __init__(self,
