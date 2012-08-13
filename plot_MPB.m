@@ -118,6 +118,7 @@ function plot_MPB(filename,scale_factor)
 
   set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
   saveas(gcf,[filename,'.fig'],'fig');
+  % octave compatible image saving
   print(gcf,'-dpng','-r300',[filename,'.png']);
   %print('-r600','-dpng',[filename,'.png']);
   %print('-r600','-dpdf',[filename,'.pdf']);
