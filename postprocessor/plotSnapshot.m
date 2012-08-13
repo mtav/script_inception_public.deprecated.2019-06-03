@@ -308,7 +308,7 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     %end  
   %end
 
-  % old code from unknown origin and for unknow use  
+  % old code from unknown origin and for unknown use  
   %snapshot_filename
   %titlesnap = strread(snapshot_filename,'%s','delimiter','\\');
   %snapfile_full = char(titlesnap(length(titlesnap)));
