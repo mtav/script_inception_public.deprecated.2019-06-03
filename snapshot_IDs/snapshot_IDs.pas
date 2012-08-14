@@ -12,7 +12,7 @@ program snapshot_IDs;
     plane_id : string;
     N : integer;
     i : integer;
-  {	
+  {
   type  
        unsigned_int = 0..65536;  
   var  

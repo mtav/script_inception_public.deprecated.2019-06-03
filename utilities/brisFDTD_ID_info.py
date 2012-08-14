@@ -2,11 +2,15 @@
 """
 Converts between numID (01,02,67) and alphaID (df,jk,{l,etc)
 """
+
+import sys
+import math
+
 def div(A,B):
   ret = idivide(int32(A),int32(B))
   return ret
 
-def numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number):
+def numID_to_alphaID(numID, snap_plane = 'x', probe_ident = 'id', snap_time_number = 0):
   '''
   Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
   function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
@@ -19,34 +23,24 @@ def numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number):
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 836 = 26+(126-(ord('a')-1))*27
   '''
 
-  if numID<1 or numID>836 :
-    error('numID must be between 1 and 836 or else you will suffer death by monkeys!!!')
+  if numID<1 or numID>836:
+    print('ERROR: numID must be between 1 and 836 or else you will suffer death by monkeys!!!', file=sys.stderr)
   
-  if exist('snap_plane','var')==0:
-    snap_plane = 'x'
-
-  if exist('probe_ident','var')==0:
-    probe_ident = 'id'
-
-  if exist('snap_time_number','var')==0:
-    snap_time_number = 0
-  #if snap_time_number<0 | snap_time_number>99:
-    #error('snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!')
+  if snap_time_number<0 or snap_time_number>99:
+    print('ERROR: snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!', file=sys.stderr)
 
   #snap_time_number = mod(snap_time_number,100);
-  ilo = mod(snap_time_number,10)
-  ihi = floor(snap_time_number/10)
+  ilo = snap_time_number%10 # gets the 10^0 digit from snap_time_number
+  ihi = snap_time_number//10 # gets the 10^1 digit from snap_time_number
   
   if numID<27:
-    alphaID = char(numID + double('a')-1)
+    alphaID = chr(numID + ord('a')-1)
   else:
-    alphaID = strcat(char(div(numID, 27) + double('a')-1), char(mod(numID, 27) + double('a')))
+    alphaID = chr(numID//27 + ord('a')-1) + chr(numID%27 + ord('a'))
 
-  filename = snap_plane + alphaID + probe_ident + char(ihi + double('0')) + char(ilo + double('0')) + '.prn'
-  pair = [num2str(numID),':',alphaID]
+  filename = snap_plane + alphaID + probe_ident + chr(ihi + ord('0')) + chr(ilo + ord('0')) + '.prn'
+  pair = str(numID) + ':' + alphaID
   
-  filename = char(filename)
-
   return filename, alphaID, pair
 
 def alphaID_to_numID(alphaID, probe_ident):
@@ -106,21 +100,12 @@ def alphaID_to_numID(alphaID, probe_ident):
   return numID, snap_plane, snap_time_number
   
 def main():
-  # parse command line options
-  try:
-    opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
-  except getopt.error, msg:
-    print msg
-    print "for help use --help"
-    sys.exit(2)
-  # process options
-  for o, a in opts:
-    if o in ("-h", "--help"):
-      print __doc__
-      sys.exit(0)
-  # process arguments
-  for arg in args:
-    process(arg) # process() is defined elsewhere
+  N = 26+(126-(ord('a')-1))*27
+  for i in range(N):
+    filename, alphaID, pair = numID_to_alphaID(i+1)
+    print(pair)
+    
+  return
 
 if __name__ == "__main__":
   main()
