@@ -114,84 +114,90 @@ def alphaID_to_numID(alphaID_or_filename):
   snap_time_number = None
   alphaID = None
   
+  object_type = None
+  
   if not isinstance(alphaID_or_filename, str):
     print('ERROR: alphaID_or_filename should be a string.', file=sys.stderr)
     sys.exit(-1)
   
   (directory,basename) = os.path.split(alphaID_or_filename)
     
-  pattern_alphaID = re.compile(r"^([a-z\{\|\}~][a-z\{]|[a-z])$")
-  pattern_filename = re.compile(r"^([xyz])([a-z\{\|\}~][a-z\{]|[a-z])(.*)(\d\d)\.prn$")
+  pattern_alphaID_fsnap = re.compile(r"^([a-z\{\|\}~][a-z\{]|[a-z])$")
+  pattern_filename_fsnap = re.compile(r"^([xyz])([a-z\{\|\}~][a-z\{]|[a-z])(.*)(\d\d)\.prn$")
+  m_alphaID_fsnap = pattern_alphaID_fsnap.match(basename)
+  m_filename_fsnap = pattern_filename_fsnap.match(basename)
+
+  pattern_alphaID_tsnap = re.compile(r"^([1-9A-Z:;<=>?@[]\d|\d)$")
+  pattern_filename_tsnap = re.compile(r"^([xyz])([1-9A-Z:;<=>?@[]\d|\d)(.*)(\d\d)\.prn$")
+  m_alphaID_tsnap = pattern_alphaID_tsnap.match(basename)
+  m_filename_tsnap = pattern_filename_tsnap.match(basename)
+
+  pattern_alphaID_probe = re.compile(r"^([0-9A-Z:;<=>?@[]\d)$")
+  pattern_filename_probe = re.compile(r"^p([0-9A-Z:;<=>?@[]\d)(.*)\.prn$")
+  m_alphaID_probe = pattern_alphaID_probe.match(basename)
+  m_filename_probe = pattern_filename_probe.match(basename)
   
-  #print(alphaID_or_filename)
-  m_alphaID = pattern_alphaID.match(basename)
-  #print(m_alphaID)
-  m_filename = pattern_filename.match(basename)
-  #print(m_filename)
-  
-  if m_alphaID:
-    alphaID = m_alphaID.group(1)
-  elif m_filename:
-    #print(m_filename.groups())
-    snap_plane = m_filename.group(1)
-    alphaID = m_filename.group(2)
-    probe_ident = m_filename.group(3)
-    snap_time_number = int(m_filename.group(4))
+  if m_alphaID_fsnap:
+    alphaID = m_alphaID_fsnap.group(1)
+    object_type = 'fsnap'
+  elif m_alphaID_tsnap:
+    alphaID = m_alphaID_tsnap.group(1)
+    object_type = 'probe or tsnap'
+  elif m_alphaID_probe:
+    alphaID = m_alphaID_probe.group(1)
+    object_type = 'probe or tsnap'
+  elif m_filename_fsnap:
+    snap_plane = m_filename_fsnap.group(1)
+    alphaID = m_filename_fsnap.group(2)
+    probe_ident = m_filename_fsnap.group(3)
+    snap_time_number = int(m_filename_fsnap.group(4))
+    object_type = 'fsnap'
+  elif m_filename_tsnap:
+    snap_plane = m_filename_tsnap.group(1)
+    alphaID = m_filename_tsnap.group(2)
+    probe_ident = m_filename_tsnap.group(3)
+    snap_time_number = int(m_filename_tsnap.group(4))
+    object_type = 'tsnap'
+  elif m_filename_probe:
+    alphaID = m_filename_probe.group(1)
+    probe_ident = m_filename_probe.group(2)
+    object_type = 'probe'
   else:
     print('ERROR: All matches failed : basename = ' + basename, file=sys.stderr)
     #sys.exit(-1)
 
   if alphaID:
-    if len(alphaID) == 1:
-      numID = ord(alphaID) - ord('a') + 1
-    elif len(alphaID) == 2:
-      numID = 27*(ord(alphaID[0]) - ord('a') + 1) + (ord(alphaID[1]) - ord('a'))
+    
+    if object_type == 'fsnap':
+      
+      if len(alphaID) == 1:
+        numID = ord(alphaID) - ord('a') + 1
+      elif len(alphaID) == 2:
+        numID = 27*(ord(alphaID[0]) - ord('a') + 1) + (ord(alphaID[1]) - ord('a'))
+      else:
+        print('ERROR: alphaID is not of length 1 or 2: alphaID = ' + alphaID, file=sys.stderr)
+        #sys.exit(-1)
+      
+      if snap_plane is None or numID is None or probe_ident is None or snap_time_number is None:
+        fixed_filename = None
+      else:
+        fixed_filename = os.path.join(directory, 'fsnap_' + snap_plane + "%03d"%numID + probe_ident + "%02d"%snap_time_number + '.prn')
+
+    elif object_type == 'tsnap':
+      ko
+      sys.exit(-1)
+    elif object_type == 'probe':
+      ko
+      sys.exit(-1)
+    elif object_type == 'probe or tsnap':
+      ko
+      sys.exit(-1)
     else:
-      print('ERROR: alphaID is not of length 1 or 2: alphaID = ' + alphaID, file=sys.stderr)
-      #sys.exit(-1)
+      ko
+      sys.exit(-1)
   else:
     print('ERROR: alphaID not found for basename = ' + basename, file=sys.stderr)
-
-  #if len(alphaID)==1 | len(alphaID)==2:
-    #[tokens, match] =  regexp(alphaID, alphaID_pattern, 'tokens', 'match', 'warnings')
-    #if length(match)==1:
-      #snap_plane = 'x'
-      #just_alphaID = alphaID
-      #snap_time_number = 0
-    #else:
-      #print('Match error. Invalid alphaID.', file = sys.stderr)
-      #sys.exit(-1)
       
-  #elif len(alphaID)>2:
-    #[tokens, match] =  regexp(alphaID, ['([xyz])',alphaID_pattern,probe_ident,'(..)\.prn'], 'tokens', 'match', 'warnings')
-    
-    #if len(match)==1:
-      #snap_plane = tokens{:}(1)
-      #just_alphaID = tokens{:}{2}
-      #snap_time_number = str2num(tokens{:}{3})
-
-      #ilo = mod(snap_time_number,10)
-      #ihi = div(snap_time_number,10)
-    
-      #if len(just_alphaID)==1:
-        #numID = double(just_alphaID(1)) - double('a') + 1
-      #else:
-        #numID = 27*(double(just_alphaID(1)) - double('a') + 1) + (double(just_alphaID(2)) - double('a'))
-
-    #else:
-      #warning(['Match error. Invalid alphaID:',' alphaID=',alphaID,' probe_ident=',probe_ident])
-      #numID = 1
-      #snap_plane = 'a'
-      #snap_time_number = -1
-  #else:
-    #print('Me thinks you made a little mistake in your alphaID...', file=sys.stderr)
-    #sys.exit(-1)
-    
-  if snap_plane is None or numID is None or probe_ident is None or snap_time_number is None:
-    fixed_filename = None
-  else:
-    fixed_filename = os.path.join(directory, 'fsnap_' + snap_plane + "%03d"%numID + probe_ident + "%02d"%snap_time_number + '.prn')
-  
   return numID, snap_plane, probe_ident, snap_time_number, fixed_filename
   
 def FrequencySnapshotID_Test():
@@ -217,9 +223,47 @@ def FrequencySnapshotID_Test():
   return
   
 def TimeSnapshotID_Test():
+  N = TIMESNAPSHOT_MAX
+  for i in range(N):
+    numID_in = i+1
+    
+    print('numID_to_alphaID_TimeSnapshot(numID_in) check')
+    filename_in, alphaID, pair = numID_to_alphaID_TimeSnapshot(numID_in)
+    print((filename_in, alphaID, pair))
+    
+    print('alphaID_to_numID(alphaID) check')
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(alphaID)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    if numID_out != numID_in:
+      sys.exit(-1)
+
+    print('alphaID_to_numID(filename_in) check')
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(filename_in)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    if numID_out != numID_in:
+      sys.exit(-1)
   return
   
 def ProbeID_Test():
+  N = PROBE_MAX
+  for i in range(N):
+    numID_in = i+1
+    
+    print('numID_to_alphaID_Probe(numID_in) check')
+    filename_in, alphaID, pair = numID_to_alphaID_Probe(numID_in)
+    print((filename_in, alphaID, pair))
+    
+    print('alphaID_to_numID(alphaID) check')
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(alphaID)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    if numID_out != numID_in:
+      sys.exit(-1)
+
+    print('alphaID_to_numID(filename_in) check')
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(filename_in)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    if numID_out != numID_in:
+      sys.exit(-1)
   return
 
 def FrequencySnapshotID_List():
@@ -247,10 +291,11 @@ def ProbeID_List():
   return
   
 def main():
-  #FrequencySnapshotID_Test()
   #FrequencySnapshotID_List()
+  #TimeSnapshotID_List()
   #ProbeID_List()
-  TimeSnapshotID_List()
+  #FrequencySnapshotID_Test()
+  TimeSnapshotID_Test()
   return
 
 if __name__ == "__main__":
