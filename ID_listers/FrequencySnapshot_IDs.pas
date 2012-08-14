@@ -5,7 +5,7 @@ program FrequencySnapshot_IDs;
   var
     snap_serial_number : integer;
     probe_ident : string = '_id_';
-    snap_plane : string = 'x_';
+    snap_plane : string = 'x';
     ilo,ihi : integer;
     snap_time_number : integer;
     filename : string;
@@ -42,7 +42,8 @@ begin
     else begin
       plane_id := chr((snap_serial_number div 27) + ord('a')-1) + chr((snap_serial_number mod 27) + ord('a'));
       filename := snap_plane + plane_id + probe_ident + chr(ihi + ord('0')) + chr(ilo + ord('0')) + '.prn';
-      writeln(snap_serial_number,':',plane_id);
+      //writeln(snap_serial_number,':',plane_id);
+      writeln(filename)
     end;
   end
 
