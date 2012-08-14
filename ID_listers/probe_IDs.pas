@@ -34,8 +34,8 @@ begin
 
     probe_id := chr(ihi + ord('0'))+chr(ilo + ord('0'));
     filename := 'p' + probe_id + probe_ident + '.prn';
-    //writeln(probe_serial_number,':',probe_id);
-    writeln(filename)
+    writeln(probe_serial_number,':',probe_id);
+    //writeln(filename)
     
   end
   

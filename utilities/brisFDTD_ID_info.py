@@ -8,10 +8,14 @@ import math
 import re
 import os
 
+FREQUENCYSNAPSHOT_MAX = 836
+TIMESNAPSHOT_MAX = 439
+PROBE_MAX = 439
+
 # TODO: This currently only handles frequency snapshot numbering. Time snapshot numbering is different! Handle it as well.
 # TODO: Also handle probe numbering
 
-def numID_to_alphaID(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
+def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
   Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
   function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
@@ -24,8 +28,8 @@ def numID_to_alphaID(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_nu
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 836 = 26+(126-(ord('a')-1))*27
   '''
 
-  if numID<1 or numID>836:
-    print('ERROR: numID must be between 1 and 836 or else you will suffer death by monkeys!!!', file=sys.stderr)
+  if numID<1 or numID>FREQUENCYSNAPSHOT_MAX:
+    print('ERROR: numID must be between 1 and '+str(FREQUENCYSNAPSHOT_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
     sys.exit(-1)
   
   if snap_time_number<0 or snap_time_number>99:
@@ -42,6 +46,51 @@ def numID_to_alphaID(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_nu
     alphaID = chr(numID//27 + ord('a')-1) + chr(numID%27 + ord('a'))
 
   filename = snap_plane + alphaID + probe_ident + chr(ihi + ord('0')) + chr(ilo + ord('0')) + '.prn'
+  pair = str(numID) + ':' + alphaID
+  
+  return filename, alphaID, pair
+
+def numID_to_alphaID_TimeSnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
+  '''
+  TODO
+  '''
+
+  if numID<1 or numID>TIMESNAPSHOT_MAX:
+    print('ERROR: numID must be between 1 and '+str(TIMESNAPSHOT_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
+    sys.exit(-1)
+  
+  if snap_time_number<0 or snap_time_number>99:
+    print('ERROR: snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!', file=sys.stderr)
+    sys.exit(-1)
+
+  ilo = snap_time_number%10
+  ihi = snap_time_number//10
+
+  if numID<10:
+    alphaID = chr(numID + ord('0'))
+  else:
+    alphaID = chr((numID//10) + ord('0')) + chr((numID%10) + ord('0'))
+
+  filename = snap_plane + alphaID + probe_ident + chr(ihi + ord('0')) + chr(ilo + ord('0')) + '.prn'
+  pair = str(numID) + ':' + alphaID
+  
+  return filename, alphaID, pair
+
+def numID_to_alphaID_Probe(numID, probe_ident = '_id_'):
+  '''
+  TODO
+  '''
+
+  if numID<1 or numID>PROBE_MAX:
+    print('ERROR: numID must be between 1 and '+str(PROBE_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
+    sys.exit(-1)
+
+  ilo = numID%10;
+  ihi = numID//10;
+
+  alphaID = chr(ihi + ord('0')) + chr(ilo + ord('0'))
+  filename = 'p' + alphaID + probe_ident + '.prn'
+
   pair = str(numID) + ':' + alphaID
   
   return filename, alphaID, pair
@@ -145,13 +194,13 @@ def alphaID_to_numID(alphaID_or_filename):
   
   return numID, snap_plane, probe_ident, snap_time_number, fixed_filename
   
-def main():
-  N = 26 + (126-(ord('a')-1))*27
+def FrequencySnapshotID_Test():
+  N = FREQUENCYSNAPSHOT_MAX
   for i in range(N):
     numID_in = i+1
     
-    print('numID_to_alphaID(numID_in) check')
-    filename_in, alphaID, pair = numID_to_alphaID(numID_in)
+    print('numID_to_alphaID_FrequencySnapshot(numID_in) check')
+    filename_in, alphaID, pair = numID_to_alphaID_FrequencySnapshot(numID_in)
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
@@ -165,7 +214,43 @@ def main():
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
-    
+  return
+  
+def TimeSnapshotID_Test():
+  return
+  
+def ProbeID_Test():
+  return
+
+def FrequencySnapshotID_List():
+  N = FREQUENCYSNAPSHOT_MAX
+  for i in range(N):
+    numID_in = i+1
+    filename_in, alphaID, pair = numID_to_alphaID_FrequencySnapshot(numID_in)
+    print(pair)
+  return
+  
+def TimeSnapshotID_List():
+  N = TIMESNAPSHOT_MAX
+  for i in range(N):
+    numID_in = i+1
+    filename_in, alphaID, pair = numID_to_alphaID_TimeSnapshot(numID_in)
+    print(pair)
+  return
+  
+def ProbeID_List():
+  N = PROBE_MAX
+  for i in range(N):
+    numID_in = i+1
+    filename_in, alphaID, pair = numID_to_alphaID_Probe(numID_in)
+    print(pair)
+  return
+  
+def main():
+  #FrequencySnapshotID_Test()
+  #FrequencySnapshotID_List()
+  #ProbeID_List()
+  TimeSnapshotID_List()
   return
 
 if __name__ == "__main__":
