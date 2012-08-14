@@ -1,7 +1,7 @@
 {
-  Program to test the snapshot numbering used in Bristol FDTD 2003
+  Program to test the frequency snapshot numbering used in Bristol FDTD 2003
 }
-program snapshot_IDs;
+program FrequencySnapshot_IDs;
   var
     snap_serial_number : integer;
     probe_ident : string = '_id_';
@@ -12,12 +12,6 @@ program snapshot_IDs;
     plane_id : string;
     N : integer;
     i : integer;
-  {
-  type  
-       unsigned_int = 0..65536;  
-  var  
-       u: unsigned_int;  
-  }
   
   {
   MAXIMUM NUMBER OF SNAPSHOTS: 32767 (=(2^8)*(2^8)/2 -1)
