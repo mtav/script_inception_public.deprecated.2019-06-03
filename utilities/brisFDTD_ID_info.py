@@ -6,8 +6,10 @@ Converts between numID (01,02,67) and alphaID (df,jk,{l,etc)
 import sys
 import math
 import re
+import os
 
-# TODO: This currently only handles frequency snapshot numbering. Time sanpshot numbering is different! Handle it as well.
+# TODO: This currently only handles frequency snapshot numbering. Time snapshot numbering is different! Handle it as well.
+# TODO: Also handle probe numbering
 
 def numID_to_alphaID(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
@@ -61,18 +63,21 @@ def alphaID_to_numID(alphaID_or_filename):
   snap_plane = None
   probe_ident = None
   snap_time_number = None
+  alphaID = None
   
   if not isinstance(alphaID_or_filename, str):
     print('ERROR: alphaID_or_filename should be a string.', file=sys.stderr)
     sys.exit(-1)
+  
+  (directory,basename) = os.path.split(alphaID_or_filename)
     
   pattern_alphaID = re.compile(r"^([a-z\{\|\}~][a-z\{]|[a-z])$")
   pattern_filename = re.compile(r"^([xyz])([a-z\{\|\}~][a-z\{]|[a-z])(.*)(\d\d)\.prn$")
   
   #print(alphaID_or_filename)
-  m_alphaID = pattern_alphaID.match(alphaID_or_filename)
+  m_alphaID = pattern_alphaID.match(basename)
   #print(m_alphaID)
-  m_filename = pattern_filename.match(alphaID_or_filename)
+  m_filename = pattern_filename.match(basename)
   #print(m_filename)
   
   if m_alphaID:
@@ -82,18 +87,21 @@ def alphaID_to_numID(alphaID_or_filename):
     snap_plane = m_filename.group(1)
     alphaID = m_filename.group(2)
     probe_ident = m_filename.group(3)
-    snap_time_number = m_filename.group(4)
+    snap_time_number = int(m_filename.group(4))
   else:
-    print('Me thinks you made a little mistake in your alphaID_or_filename...', file=sys.stderr)
-    sys.exit(-1)
+    print('ERROR: All matches failed : basename = ' + basename, file=sys.stderr)
+    #sys.exit(-1)
 
-  if len(alphaID) == 1:
-    numID = ord(alphaID) - ord('a') + 1
-  elif len(alphaID) == 2:
-    numID = 27*(ord(alphaID[0]) - ord('a') + 1) + (ord(alphaID[1]) - ord('a'))
+  if alphaID:
+    if len(alphaID) == 1:
+      numID = ord(alphaID) - ord('a') + 1
+    elif len(alphaID) == 2:
+      numID = 27*(ord(alphaID[0]) - ord('a') + 1) + (ord(alphaID[1]) - ord('a'))
+    else:
+      print('ERROR: alphaID is not of length 1 or 2: alphaID = ' + alphaID, file=sys.stderr)
+      #sys.exit(-1)
   else:
-    print('Me thinks you made a little mistake in your alphaID...', file=sys.stderr)
-    sys.exit(-1)
+    print('ERROR: alphaID not found for basename = ' + basename, file=sys.stderr)
 
   #if len(alphaID)==1 | len(alphaID)==2:
     #[tokens, match] =  regexp(alphaID, alphaID_pattern, 'tokens', 'match', 'warnings')
@@ -130,7 +138,12 @@ def alphaID_to_numID(alphaID_or_filename):
     #print('Me thinks you made a little mistake in your alphaID...', file=sys.stderr)
     #sys.exit(-1)
     
-  return numID, snap_plane, probe_ident, snap_time_number
+  if snap_plane is None or numID is None or probe_ident is None or snap_time_number is None:
+    fixed_filename = None
+  else:
+    fixed_filename = os.path.join(directory, 'fsnap_' + snap_plane + "%03d"%numID + probe_ident + "%02d"%snap_time_number + '.prn')
+  
+  return numID, snap_plane, probe_ident, snap_time_number, fixed_filename
   
 def main():
   N = 26 + (126-(ord('a')-1))*27
@@ -142,14 +155,14 @@ def main():
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
-    numID_out, snap_plane, probe_ident, snap_time_number = alphaID_to_numID(alphaID)
-    print((numID_out, snap_plane, probe_ident, snap_time_number))
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(alphaID)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
-    numID_out, snap_plane, probe_ident, snap_time_number = alphaID_to_numID(filename_in)
-    print((numID_out, snap_plane, probe_ident, snap_time_number))
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(filename_in)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
     

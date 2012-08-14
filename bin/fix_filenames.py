@@ -7,7 +7,7 @@ import fnmatch
 import os
 import string
 import argparse
-#from utilities.brisFDTD_ID_info import numID_to_alphaID, alphaID_to_numID
+from utilities.brisFDTD_ID_info import numID_to_alphaID, alphaID_to_numID
 
 # TODO: add support for the full range of char IDs (;,<, etc)
 def main():
@@ -38,18 +38,24 @@ def main():
       
       src.extend(matches)
   
-  dst = []
-  print(src)    
-  return
+  dst = len(src)*[0]
   
   for i in range(len(src)):
-    if arguments.verbose:
-      print(src[i]+' -> '+dst[i])
-    if (not os.path.isfile(dst[i])) or arguments.force:
-      if (not arguments.no_act):
-        os.rename(src[i], dst[i])
+    numID, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(src[i])
+    dst[i] = fixed_filename
+    if dst[i]:
+      if arguments.verbose:
+        print(src[i]+' -> '+dst[i])
+      if os.path.isfile(src[i]):
+        if (not os.path.isfile(dst[i])) or arguments.force:
+          if (not arguments.no_act):
+            os.rename(src[i], dst[i])
+        else:
+          print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : destination file exists', file=sys.stderr)
+      else:
+        print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : source file does not exist', file=sys.stderr)
     else:
-      print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : destination file exists', file=sys.stderr)
+      print('WARNING: ' + src[i] + ' could not be converted', file=sys.stderr)
 
   # left in for reference
   #for filename in fnmatch.filter(filenames, '*:*.prn'):
