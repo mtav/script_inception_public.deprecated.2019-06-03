@@ -12,7 +12,7 @@ program probe_IDs;
   
   {
   MAXIMUM NUMBER OF SNAPSHOTS: TODO
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE RETURN to aa: TODO
+  MAXIMUM NUMBER OF SNAPSHOTS BEFORE RETURN TO FIRST ID: TODO
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE DUPLICATE IDs: TODO
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 789
   }
@@ -36,6 +36,7 @@ begin
     filename := 'p' + probe_id + probe_ident + '.prn';
     //writeln(probe_serial_number,':',probe_id);
     writeln(filename)
+    
   end
   
 end.

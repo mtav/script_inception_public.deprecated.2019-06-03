@@ -37,21 +37,15 @@ begin
     if snap_serial_number<27 then begin
       plane_id := chr(snap_serial_number + ord('a')-1);
       filename := snap_plane + plane_id + probe_ident + chr(ihi + ord('0')) + chr(ilo + ord('0')) + '.prn';
-      writeln(snap_serial_number,':',plane_id);
     end
     else begin
       plane_id := chr((snap_serial_number div 27) + ord('a')-1) + chr((snap_serial_number mod 27) + ord('a'));
       filename := snap_plane + plane_id + probe_ident + chr(ihi + ord('0')) + chr(ilo + ord('0')) + '.prn';
-      //writeln(snap_serial_number,':',plane_id);
-      writeln(filename)
     end;
+    
+    //writeln(snap_serial_number,':',plane_id);
+    writeln(filename)
+    
   end
-
-  {
-  for  i := 97  to  97+255  do
-  begin
-    writeln(i mod 256,':',chr(i));
-  end
-  }
-  
+        
 end.

@@ -14,10 +14,10 @@ program TimeSnapshot_IDs;
     i : integer;
   
   {
-  MAXIMUM NUMBER OF SNAPSHOTS: 32767 (=(2^8)*(2^8)/2 -1)
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE RETURN to aa: 6938 = 26+256*27
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE DUPLICATE IDs: 4508 = 26+(6-(ord('a')-1)+256)*27+1 (6=character before non-printable bell character)
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 836 = 26+(126-(ord('a')-1))*27
+  MAXIMUM NUMBER OF SNAPSHOTS: TODO
+  MAXIMUM NUMBER OF SNAPSHOTS BEFORE RETURN TO FIRST ID: TODO
+  MAXIMUM NUMBER OF SNAPSHOTS BEFORE DUPLICATE IDs: TODO
+  MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): TODO
   }
   
 begin
@@ -25,12 +25,13 @@ begin
   //N := 26+166*27+1;
   //N:=1;
   //writeln(N);
-  N := 26+(126-(ord('a')-1))*27;
+  //N := 26+(126-(ord('a')-1))*27;
+  N := 439; //to prevent \ in filenames
   //N:=4508;
   for  snap_serial_number := 1  to  N  do
   begin
 
-    snap_time_number:=0;
+    snap_time_number:=1;
 
     ilo:=snap_time_number mod 10;ihi:=snap_time_number div 10;
 
@@ -45,6 +46,7 @@ begin
 
     //writeln(snap_serial_number,':',plane_id);
     writeln(filename)
+    
   end
   
 end.
