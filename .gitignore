@@ -21,9 +21,9 @@ Release
 
 # binaries
 bris2meep/bris2meep
-snapshot_IDs/TimeSnapshot_IDs
-snapshot_IDs/FrequencySnapshot_IDs
-snapshot_IDs/probe_IDs
+TimeSnapshot_IDs
+FrequencySnapshot_IDs
+probe_IDs
 
 hello
 *_automesh
