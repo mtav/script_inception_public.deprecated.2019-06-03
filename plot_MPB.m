@@ -50,28 +50,35 @@ function plot_MPB(filename,scale_factor)
   %gapsize = gap/midgap
   %hline(midgap,'r',num2str(midgap));
 
-  i = 3;
-  b = data(1+(i-1)*10,find(strcmp(header,'band_3')));
-  i = 4;
-  aa = data(1+(i-1)*10,find(strcmp(header,'band_2')));
-  delta = abs(b-aa);
+  i = 7;
+  maxi = data(1+(i-1)*10,find(strcmp(header,'band_3')));
+  i = 7;
+  mini = data(1+(i-1)*10,find(strcmp(header,'band_2')));
+  delta = abs(maxi-mini);
   %hline(aa,'r',num2str(aa));
   %hline(b,'r',num2str(b));
   %text(1,0.5*(aa+b),num2str(delta));
-  gap = abs(b-aa);
-  midgap = 0.5*(aa+b);
+  gap = abs(maxi-mini);
+  midgap = 0.5*(mini+maxi);
   gapsize = gap/midgap;
   hold on;
-  hline(aa,'r',num2str(aa));
+  hline(mini,'r',num2str(mini));
   hline(midgap,'g',num2str(midgap));
-  hline(b,'b',num2str(b));
+  hline(maxi,'b',num2str(maxi));
   
   %lambda0=1.55
-  lambda0=1.6;
-  a_value = aa*lambda0;
-  a_value/aa;
-  a_value/midgap;
-  a_value/b;
+  lambda0 = 0.637;
+  a_value = midgap*lambda0;
+  lambda_mini = a_value/mini;
+  lambda_midgap = a_value/midgap;
+  lambda_maxi = a_value/maxi;
+  
+  disp(['midgap = ',num2str(midgap)]);
+  disp(['lambda0 = ',num2str(lambda0)]);
+  disp(['a_value = ',num2str(a_value)]);
+  disp(['lambda_mini = ',num2str(lambda_mini)]);
+  disp(['lambda_midgap = ',num2str(lambda_midgap)]);
+  disp(['lambda_maxi = ',num2str(lambda_maxi)]);
   
   %midgap1=0.645561870915862
   %hline(midgap1,'r',num2str(midgap1));
@@ -82,10 +89,10 @@ function plot_MPB(filename,scale_factor)
 
   %hline(0.585,'b',num2str(0.585));
 
-  %spacepoints = {'X','U','L','\Gamma','W','K','X''','U''','W''','K''','W'''''};
+  spacepoints = {'X','U','L','\Gamma','W','K','X''','U''','W''','K''','W'''''};
   %spacepoints = {'X','U','W'};
   %spacepoints = {'X','U','L','\Gamma','X''','W''','K'''};
-  spacepoints = {'\Gamma','X','U','L'};
+  %spacepoints = {'\Gamma','X','U','L'};
   for i=1:length(spacepoints)
     vline(data(1+(i-1)*10,1),'r',spacepoints{i});
   end

@@ -90,7 +90,7 @@ def GEOshellscript(filename, BASENAME, EXE = 'fdtd', WORKDIR = '$JOBDIR', WALLTI
     FILE.write("cd $WORKDIR\n")
     FILE.write("\n")
     FILE.write("$EXE %s.in > %s.out\n" %  (BASENAME, BASENAME))
-    FILE.write("fix_filenames.py -v .\n")
+    #FILE.write("fix_filenames.py -v .\n")
   
     #close file
     FILE.close()
