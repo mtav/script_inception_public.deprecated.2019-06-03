@@ -7,9 +7,8 @@ import fnmatch
 import os
 import string
 import argparse
-from utilities.brisFDTD_ID_info import numID_to_alphaID, alphaID_to_numID
+from utilities.brisFDTD_ID_info import alphaID_to_numID
 
-# TODO: add support for the full range of char IDs (;,<, etc)
 def main():
   # command-line option handling  
   parser = argparse.ArgumentParser(description = 'rename .prn files produced by BFDTD to NTFS compatible names (as well as human readable)')
@@ -41,7 +40,7 @@ def main():
   dst = len(src)*[0]
   
   for i in range(len(src)):
-    numID, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(src[i])
+    numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(src[i])
     dst[i] = fixed_filename
     if dst[i]:
       if arguments.verbose:

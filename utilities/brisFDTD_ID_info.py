@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Converts between numID (01,02,67) and alphaID (df,jk,{l,etc)
+Converts between numID (01,02,67) and alphaID (01,A1,df,jk,{l,etc)
 """
 
 import sys
@@ -12,16 +12,19 @@ FREQUENCYSNAPSHOT_MAX = 836
 TIMESNAPSHOT_MAX = 439
 PROBE_MAX = 439
 
-# TODO: This currently only handles frequency snapshot numbering. Time snapshot numbering is different! Handle it as well.
-# TODO: Also handle probe numbering
+# TODO: Check the limits of the different numbering systems
 
 def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
   Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
-  function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
+
+  return values:
+  filename, alphaID, pair
+
   examples:
   26 -> z
   26+27 -> a{
+
   MAXIMUM NUMBER OF SNAPSHOTS: 32767 (=(2^8)*(2^8)/2 -1)
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE RETURN to aa: 6938 = 26+256*27
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE DUPLICATE IDs: 4508 = 26+(6-(ord('a')-1)+256)*27+1 (6=character before non-printable bell character)
@@ -52,7 +55,14 @@ def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_
 
 def numID_to_alphaID_TimeSnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
-  TODO
+  Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
+
+  return values:
+  filename, alphaID, pair
+  
+  examples:
+  99 -> 99
+  100 -> :0
   '''
 
   if numID<1 or numID>TIMESNAPSHOT_MAX:
@@ -78,15 +88,22 @@ def numID_to_alphaID_TimeSnapshot(numID, snap_plane = 'x', probe_ident = '_id_',
 
 def numID_to_alphaID_Probe(numID, probe_ident = '_id_'):
   '''
-  TODO
+  Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
+
+  return values:
+  filename, alphaID, pair
+  
+  examples:
+  99 -> 99
+  100 -> :0
   '''
 
   if numID<1 or numID>PROBE_MAX:
     print('ERROR: numID must be between 1 and '+str(PROBE_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
     sys.exit(-1)
 
-  ilo = numID%10;
-  ihi = numID//10;
+  ilo = numID%10
+  ihi = numID//10
 
   alphaID = chr(ihi + ord('0')) + chr(ilo + ord('0'))
   filename = 'p' + alphaID + probe_ident + '.prn'
@@ -98,24 +115,26 @@ def numID_to_alphaID_Probe(numID, probe_ident = '_id_'):
 def alphaID_to_numID(alphaID_or_filename):
   '''
   Converts alpha IDs used by Bristol FDTD 2003 to numeric IDs
-  function [ numID, snap_plane, snap_time_number ] = alphaID_to_numID(alphaID, probe_ident)
+  
+  return values:
+  numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type
+
   examples:
   z -> 26
   a{ -> 26+27
-  MAXIMUM NUMBER OF SNAPSHOTS: 32767 (=(2^8)*(2^8)/2 -1)
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE RETURN to aa: 6938 = 26+256*27
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE DUPLICATE IDs: 4508 = 26+(6-(ord('a')-1)+256)*27+1 (6=character before non-printable bell character)
-  MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 836 = 26+(126-(ord('a')-1))*27
+  99 -> 99
+  :0 -> 100
   '''
   
+  # default values
   numID = None
   snap_plane = None
   probe_ident = None
   snap_time_number = None
   alphaID = None
-  
-  object_type = None
-  
+  object_type = None  
+  fixed_filename = None
+
   if not isinstance(alphaID_or_filename, str):
     print('ERROR: alphaID_or_filename should be a string.', file=sys.stderr)
     sys.exit(-1)
@@ -164,7 +183,6 @@ def alphaID_to_numID(alphaID_or_filename):
     object_type = 'probe'
   else:
     print('ERROR: All matches failed : basename = ' + basename, file=sys.stderr)
-    #sys.exit(-1)
 
   if alphaID:
     
@@ -176,29 +194,35 @@ def alphaID_to_numID(alphaID_or_filename):
         numID = 27*(ord(alphaID[0]) - ord('a') + 1) + (ord(alphaID[1]) - ord('a'))
       else:
         print('ERROR: alphaID is not of length 1 or 2: alphaID = ' + alphaID, file=sys.stderr)
-        #sys.exit(-1)
-      
-      if snap_plane is None or numID is None or probe_ident is None or snap_time_number is None:
-        fixed_filename = None
-      else:
+      if not (snap_plane is None or numID is None or probe_ident is None or snap_time_number is None):
         fixed_filename = os.path.join(directory, 'fsnap_' + snap_plane + "%03d"%numID + probe_ident + "%02d"%snap_time_number + '.prn')
 
     elif object_type == 'tsnap':
-      ko
-      sys.exit(-1)
+      if len(alphaID) == 1:
+        numID = ord(alphaID[0])-ord('0')
+      else:
+        numID = 10*(ord(alphaID[0])-ord('0')) + (ord(alphaID[1])-ord('0'))
+      if not (snap_plane is None or numID is None or probe_ident is None or snap_time_number is None):
+        fixed_filename = os.path.join(directory, 'tsnap_' + snap_plane + "%03d"%numID + probe_ident + "%02d"%snap_time_number + '.prn')
+
     elif object_type == 'probe':
-      ko
-      sys.exit(-1)
+      numID = 10*(ord(alphaID[0])-ord('0')) + (ord(alphaID[1])-ord('0'))
+      if not (numID is None or probe_ident is None):
+        fixed_filename = os.path.join(directory, 'p' + "%03d"%numID + probe_ident + '.prn')
+
     elif object_type == 'probe or tsnap':
-      ko
-      sys.exit(-1)
+      if len(alphaID) == 1:
+        numID = ord(alphaID[0])-ord('0')
+      else:
+        numID = 10*(ord(alphaID[0])-ord('0')) + (ord(alphaID[1])-ord('0'))
+
     else:
-      ko
-      sys.exit(-1)
+      print('ERROR: Unknown object type for basename = ' + basename+' and alphaID = '+str(alphaID), file=sys.stderr)
+      
   else:
     print('ERROR: alphaID not found for basename = ' + basename, file=sys.stderr)
       
-  return numID, snap_plane, probe_ident, snap_time_number, fixed_filename
+  return numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type
   
 def FrequencySnapshotID_Test():
   N = FREQUENCYSNAPSHOT_MAX
@@ -210,13 +234,13 @@ def FrequencySnapshotID_Test():
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
-    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(alphaID)
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
-    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(filename_in)
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
@@ -232,13 +256,13 @@ def TimeSnapshotID_Test():
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
-    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(alphaID)
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
-    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(filename_in)
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
@@ -254,13 +278,13 @@ def ProbeID_Test():
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
-    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(alphaID)
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
-    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename = alphaID_to_numID(filename_in)
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
     print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
     if numID_out != numID_in:
       sys.exit(-1)
@@ -291,11 +315,12 @@ def ProbeID_List():
   return
   
 def main():
-  #FrequencySnapshotID_List()
-  #TimeSnapshotID_List()
-  #ProbeID_List()
-  #FrequencySnapshotID_Test()
+  FrequencySnapshotID_List()
+  TimeSnapshotID_List()
+  ProbeID_List()
+  FrequencySnapshotID_Test()
   TimeSnapshotID_Test()
+  ProbeID_Test()
   return
 
 if __name__ == "__main__":
