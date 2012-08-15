@@ -1,7 +1,7 @@
 {
   Program to test the mode filtered probe numbering used in Bristol FDTD 2003
 }
-program TimeSnapshot_IDs;
+program ModeFilteredProbe_IDs;
   var
     snap_serial_number : integer;
     probe_ident : string = '_id_';
@@ -31,8 +31,8 @@ begin
     plane_id := chr(snap_serial_number + ord('0'));
     filename := 'i'+plane_id+probe_ident+'00.prn';
 
-    //writeln(snap_serial_number,':',plane_id);
-    writeln(filename)
+    writeln(snap_serial_number,':',plane_id);
+    //writeln(filename)
     
   end
   

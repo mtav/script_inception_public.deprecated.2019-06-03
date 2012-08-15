@@ -11,6 +11,7 @@ import os
 FREQUENCYSNAPSHOT_MAX = 836
 TIMESNAPSHOT_MAX = 439
 PROBE_MAX = 439
+MODEFILTEREDPROBE_MAX = 43
 
 # TODO: Check the limits of the different numbering systems
 
@@ -107,6 +108,29 @@ def numID_to_alphaID_Probe(numID, probe_ident = '_id_'):
 
   alphaID = chr(ihi + ord('0')) + chr(ilo + ord('0'))
   filename = 'p' + alphaID + probe_ident + '.prn'
+
+  pair = str(numID) + ':' + alphaID
+  
+  return filename, alphaID, pair
+
+def numID_to_alphaID_ModeFilteredProbe(numID, probe_ident = '_id_'):
+  '''
+  Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
+
+  return values:
+  filename, alphaID, pair
+  
+  examples:
+  9 -> 9
+  10 -> :
+  '''
+
+  if numID<1 or numID>MODEFILTEREDPROBE_MAX:
+    print('ERROR: numID must be between 1 and '+str(MODEFILTEREDPROBE_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
+    sys.exit(-1)
+
+  alphaID = chr(numID + ord('0'));
+  filename = 'i' + alphaID + probe_ident + '00.prn';
 
   pair = str(numID) + ':' + alphaID
   
@@ -290,6 +314,28 @@ def ProbeID_Test():
       sys.exit(-1)
   return
 
+def ModeFilteredProbeID_Test():
+  N = MODEFILTEREDPROBE_MAX
+  for i in range(N):
+    numID_in = i+1
+    
+    print('numID_to_alphaID_ModeFilteredProbe(numID_in) check')
+    filename_in, alphaID, pair = numID_to_alphaID_ModeFilteredProbe(numID_in)
+    print((filename_in, alphaID, pair))
+    
+    print('alphaID_to_numID(alphaID) check')
+    numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
+    print((numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename))
+    if numID_out != numID_in:
+      sys.exit(-1)
+
+    print('alphaID_to_numID(filename_in) check')
+    numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
+    print((numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename))
+    if numID_out != numID_in:
+      sys.exit(-1)
+  return
+
 def FrequencySnapshotID_List():
   N = FREQUENCYSNAPSHOT_MAX
   for i in range(N):
@@ -313,14 +359,24 @@ def ProbeID_List():
     filename_in, alphaID, pair = numID_to_alphaID_Probe(numID_in)
     print(pair)
   return
+
+def ModeFilteredProbeID_List():
+  N = MODEFILTEREDPROBE_MAX
+  for i in range(N):
+    numID_in = i+1
+    filename_in, alphaID, pair = numID_to_alphaID_ModeFilteredProbe(numID_in)
+    print(pair)
+  return
   
 def main():
-  FrequencySnapshotID_List()
-  TimeSnapshotID_List()
-  ProbeID_List()
-  FrequencySnapshotID_Test()
-  TimeSnapshotID_Test()
-  ProbeID_Test()
+  #FrequencySnapshotID_List()
+  #TimeSnapshotID_List()
+  #ProbeID_List()
+  ModeFilteredProbeID_List()
+  #FrequencySnapshotID_Test()
+  #TimeSnapshotID_Test()
+  #ProbeID_Test()
+  #ModeFilteredProbeID_Test()
   return
 
 if __name__ == "__main__":
