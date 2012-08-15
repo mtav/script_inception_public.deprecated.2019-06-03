@@ -6,6 +6,10 @@ from bfdtd.bfdtd_parser import *
 
 import sys
 
+'''
+Excitation template objects, used to generate the template files.
+'''
+
 # TODO: Create template parent class, improve class names of excitations and templates, review the whole excitation+template system
 #TODO: Add .dat file reading
 

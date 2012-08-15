@@ -8,6 +8,10 @@ from bfdtd.meshobject import *
 from bfdtd.excitationTemplate import *
 from constants.constants import *
 
+'''
+Various type of Excitation objects, used for writing the excitations into the .inp file.
+'''
+
 # TODO: check coherence between excitation_direction (templates) and E,H (excitation) attributes. Are both necessary? Leads to confusion.
 
 # excitation objects
