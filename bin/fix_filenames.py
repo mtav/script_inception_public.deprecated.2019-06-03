@@ -9,6 +9,8 @@ import string
 import argparse
 from utilities.brisFDTD_ID_info import alphaID_to_numID
 
+# TODO: Add option to fix only NTFS/FAT32 incompatible filenames or create/look for script to make filenames NTFS/FAT32 compatible
+
 def main():
   # command-line option handling  
   parser = argparse.ArgumentParser(description = 'rename .prn files produced by BFDTD to NTFS compatible names (as well as human readable)')

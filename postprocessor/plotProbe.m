@@ -2,6 +2,8 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   % Usage:
   %[ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures, plotNothing)
 
+  % TODO: Use single harminv input file for global and local harminv runs.
+
   % defaults
   wavelength_nm = -1;
   Q_lorentz = -1;

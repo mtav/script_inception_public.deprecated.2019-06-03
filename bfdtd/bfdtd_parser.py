@@ -17,6 +17,7 @@ from constants.constants import *
 #==== CLASSES START ====#
 
 # TODO: Add function to easily change basename
+# TODO: Add check for negative values in mesh.
 
 # mandatory objects
 class Flag(object):
