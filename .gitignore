@@ -23,7 +23,8 @@ Release
 bris2meep/bris2meep
 TimeSnapshot_IDs
 FrequencySnapshot_IDs
-probe_IDs
+Probe_IDs
+ModeFilteredProbe_IDs
 
 hello
 *_automesh
@@ -63,5 +64,8 @@ tmp.dat
 e_id_.txt
 namiki.txt
 time.txt
+i
+*.int
+
 
 *.list

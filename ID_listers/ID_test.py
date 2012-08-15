@@ -2,37 +2,37 @@
 
 from bfdtd.bfdtd_parser import *
 
+FREQUENCYSNAPSHOT_MAX = 836
+TIMESNAPSHOT_MAX = 439
+PROBE_MAX = 439
+MODEFILTEREDPROBE_MAX = 43
+
 p = Probe()
 t = Time_snapshot()
 f = Frequency_snapshot()
+m = ModeFilteredProbe()
 
 sim = BFDTDobject()
 sim.flag.iterations=10
 
 sim.fileList = []
-sim.probe_list = 439*[p]
+sim.probe_list = PROBE_MAX*[p]
 sim.snapshot_list = []
 sim.writeAll('Probes')
 
 sim.fileList = []
 sim.probe_list = []
-sim.snapshot_list = 439*[t]
+sim.snapshot_list = TIMESNAPSHOT_MAX*[t]
 sim.writeAll('TimeSnapshots')
 
 sim.fileList = []
 sim.probe_list = []
-sim.snapshot_list = 836*[f]
+sim.snapshot_list = FREQUENCYSNAPSHOT_MAX*[f]
 sim.writeAll('FrequencySnapshots')
 
-# TESTING COMMANDS:
-#grep -ci ^probe */*.inp
-#grep -ci ^snapshot */*.inp
-#grep -ci ^frequency_snapshot */*.inp
+sim.excitation_list = [ExcitationWithGaussianTemplate()]
 
-#ls -1 Probes/*.prn | wc -l
-#ls -1 TimeSnapshots/*.prn | wc -l
-#ls -1 FrequencySnapshots/*.prn | wc -l
-
-#./FrequencySnapshot_IDs | xargs -n1 -I{} ls FrequencySnapshots/{} 1>/dev/null
-#./TimeSnapshot_IDs | xargs -n1 -I{} ls TimeSnapshots/{} 1>/dev/null
-#./probe_IDs | xargs -n1 -I{} ls Probes/{} 1>/dev/null
+sim.fileList = []
+sim.probe_list = []
+sim.snapshot_list = MODEFILTEREDPROBE_MAX*[m]
+sim.writeAll('ModeFilteredProbes')

@@ -1,9 +1,11 @@
 OPTS=-Fu/usr/local/languages/fpc-2.4.0/lib/fpc/2.4.0/units/x86_64-linux/rtl/
 
-all: probe_IDs FrequencySnapshot_IDs TimeSnapshot_IDs
+#TODO: Fix: /usr/bin/ld: warning: link.res contains output sections; did you forget -T?
 
-probe_IDs: probe_IDs.pas
-	fpc $(OPTS) probe_IDs.pas
+all: Probe_IDs FrequencySnapshot_IDs TimeSnapshot_IDs ModeFilteredProbe_IDs
+
+Probe_IDs: Probe_IDs.pas
+	fpc $(OPTS) Probe_IDs.pas
 
 FrequencySnapshot_IDs: FrequencySnapshot_IDs.pas
 	fpc $(OPTS) FrequencySnapshot_IDs.pas
@@ -11,5 +13,8 @@ FrequencySnapshot_IDs: FrequencySnapshot_IDs.pas
 TimeSnapshot_IDs: TimeSnapshot_IDs.pas
 	fpc $(OPTS) TimeSnapshot_IDs.pas
 
+ModeFilteredProbe_IDs: ModeFilteredProbe_IDs.pas
+	fpc $(OPTS) ModeFilteredProbe_IDs.pas
+
 clean:
-	rm -f *.o probe_IDs FrequencySnapshot_IDs TimeSnapshot_IDs
+	rm -f *.o Probe_IDs FrequencySnapshot_IDs TimeSnapshot_IDs ModeFilteredProbe_IDs
