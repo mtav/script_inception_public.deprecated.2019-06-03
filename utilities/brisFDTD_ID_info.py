@@ -179,16 +179,24 @@ def alphaID_to_numID(alphaID_or_filename):
   pattern_filename_probe = re.compile(r"^p([0-9A-Z:;<=>?@[]\d)(.*)\.prn$")
   m_alphaID_probe = pattern_alphaID_probe.match(basename)
   m_filename_probe = pattern_filename_probe.match(basename)
+
+  pattern_alphaID_mfprobe = re.compile(r"^([1-9A-Z:;<=>?@[])$")
+  pattern_filename_mfprobe = re.compile(r"^i([1-9A-Z:;<=>?@[])(.*)00\.prn$")
+  m_alphaID_mfprobe = pattern_alphaID_mfprobe.match(basename)
+  m_filename_mfprobe = pattern_filename_mfprobe.match(basename)
   
   if m_alphaID_fsnap:
     alphaID = m_alphaID_fsnap.group(1)
     object_type = 'fsnap'
   elif m_alphaID_tsnap:
     alphaID = m_alphaID_tsnap.group(1)
-    object_type = 'probe or tsnap'
+    object_type = 'probe or tsnap or mfprobe'
   elif m_alphaID_probe:
     alphaID = m_alphaID_probe.group(1)
-    object_type = 'probe or tsnap'
+    object_type = 'probe or tsnap or mfprobe'
+  elif m_alphaID_mfprobe:
+    alphaID = m_alphaID_mfprobe.group(1)
+    object_type = 'probe or tsnap or mfprobe'
   elif m_filename_fsnap:
     snap_plane = m_filename_fsnap.group(1)
     alphaID = m_filename_fsnap.group(2)
@@ -205,6 +213,10 @@ def alphaID_to_numID(alphaID_or_filename):
     alphaID = m_filename_probe.group(1)
     probe_ident = m_filename_probe.group(2)
     object_type = 'probe'
+  elif m_filename_mfprobe:
+    alphaID = m_filename_mfprobe.group(1)
+    probe_ident = m_filename_mfprobe.group(2)
+    object_type = 'mfprobe'
   else:
     print('ERROR: All matches failed : basename = ' + basename, file=sys.stderr)
 
@@ -234,7 +246,12 @@ def alphaID_to_numID(alphaID_or_filename):
       if not (numID is None or probe_ident is None):
         fixed_filename = os.path.join(directory, 'p' + "%03d"%numID + probe_ident + '.prn')
 
-    elif object_type == 'probe or tsnap':
+    elif object_type == 'mfprobe':
+      numID = (ord(alphaID[0])-ord('0'))
+      if not (numID is None or probe_ident is None):
+        fixed_filename = os.path.join(directory, 'i' + "%03d"%numID + probe_ident + '00.prn')
+
+    elif object_type == 'probe or tsnap or mfprobe':
       if len(alphaID) == 1:
         numID = ord(alphaID[0])-ord('0')
       else:
@@ -369,14 +386,17 @@ def ModeFilteredProbeID_List():
   return
   
 def main():
-  #FrequencySnapshotID_List()
-  #TimeSnapshotID_List()
-  #ProbeID_List()
+  
+  FrequencySnapshotID_List()
+  TimeSnapshotID_List()
+  ProbeID_List()
   ModeFilteredProbeID_List()
-  #FrequencySnapshotID_Test()
-  #TimeSnapshotID_Test()
-  #ProbeID_Test()
-  #ModeFilteredProbeID_Test()
+  
+  FrequencySnapshotID_Test()
+  TimeSnapshotID_Test()
+  ProbeID_Test()
+  ModeFilteredProbeID_Test()
+  
   return
 
 if __name__ == "__main__":

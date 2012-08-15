@@ -31,8 +31,9 @@ begin
     plane_id := chr(snap_serial_number + ord('0'));
     filename := 'i'+plane_id+probe_ident+'00.prn';
 
-    writeln(snap_serial_number,':',plane_id);
-    //writeln(filename)
+    //writeln(snap_serial_number,':',plane_id);
+    //writeln(plane_id);
+    writeln(filename)
     
   end
   
