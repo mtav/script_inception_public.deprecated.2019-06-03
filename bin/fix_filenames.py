@@ -26,6 +26,8 @@ def main():
   parser.add_argument("-f", "--force", action="store_true", dest="force", default=False, help="Force: overwrite existing files.")
   parser.add_argument("-d", "--directory", action="append", dest="directory", help="rename all .prn files in this directory recursively. Multiple directories can be specified with -d DIR1 -d DIR2")
   parser.add_argument('files', action="store", nargs='*', help='input files (.prn)')
+  parser.add_argument("--id", action="store", dest="probe_ident", default=None, help="specify a probe identifier")
+  parser.add_argument("--type", action="store", dest="expected_object_type", choices=['fsnap','tsnap','mfprobe','probe'], default=None, help="specify the type of .prn file")
 
   arguments = parser.parse_args()
   
@@ -48,7 +50,7 @@ def main():
   dst = len(src)*[0]
   
   for i in range(len(src)):
-    numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(src[i])
+    numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(src[i], arguments.expected_object_type, arguments.probe_ident)
     dst[i] = fixed_filename
     if dst[i]:
       if arguments.verbose:

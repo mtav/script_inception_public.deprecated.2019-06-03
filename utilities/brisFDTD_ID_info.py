@@ -11,7 +11,8 @@ import os
 FREQUENCYSNAPSHOT_MAX = 836
 TIMESNAPSHOT_MAX = 439
 PROBE_MAX = 439
-MODEFILTEREDPROBE_MAX = 43
+#MODEFILTEREDPROBE_MAX = 43
+MODEFILTEREDPROBE_MAX = 118
 
 # TODO: Check the limits of the different numbering systems
 
@@ -136,7 +137,7 @@ def numID_to_alphaID_ModeFilteredProbe(numID, probe_ident = '_id_'):
   
   return filename, alphaID, pair
 
-def alphaID_to_numID(alphaID_or_filename):
+def alphaID_to_numID(alphaID_or_filename, expected_object_type=None, probe_ident=None):
   '''
   Converts alpha IDs used by Bristol FDTD 2003 to numeric IDs
   
@@ -153,7 +154,6 @@ def alphaID_to_numID(alphaID_or_filename):
   # default values
   numID = None
   snap_plane = None
-  probe_ident = None
   snap_time_number = None
   alphaID = None
   object_type = None  
@@ -180,12 +180,19 @@ def alphaID_to_numID(alphaID_or_filename):
   m_alphaID_probe = pattern_alphaID_probe.match(basename)
   m_filename_probe = pattern_filename_probe.match(basename)
 
-  pattern_alphaID_mfprobe = re.compile(r"^([1-9A-Z:;<=>?@[])$")
-  pattern_filename_mfprobe = re.compile(r"^i([1-9A-Z:;<=>?@[])(.*)00\.prn$")
+  #pattern_alphaID_mfprobe = re.compile(r"^([1-9A-Z:;<=>?@[])$")
+  #pattern_filename_mfprobe = re.compile(r"^i([1-9A-Z:;<=>?@[])(.*)00\.prn$")
+  
+  #pattern_mfprobe = r"([1-9A-Z:;<=>?@[\]\\^_`a-z{|}~\x7f\x80])"
+  
+  pattern_mfprobe = r"([0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0¡¢£¤¥¦])"
+  pattern_alphaID_mfprobe = re.compile(r"^"+pattern_mfprobe+r"$")
+  #pattern_filename_mfprobe = re.compile(r"^i([0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0¡¢£¤¥¦])(.*)00\.prn$")
+  pattern_filename_mfprobe = re.compile(r"^i"+pattern_mfprobe+r"(.*)00\.prn$")
   m_alphaID_mfprobe = pattern_alphaID_mfprobe.match(basename)
   m_filename_mfprobe = pattern_filename_mfprobe.match(basename)
   
-  if m_alphaID_fsnap:
+  if m_alphaID_fsnap and (expected_object_type is None or expected_object_type=='fsnap'):
     alphaID = m_alphaID_fsnap.group(1)
     object_type = 'fsnap'
   elif m_alphaID_tsnap:
@@ -249,7 +256,7 @@ def alphaID_to_numID(alphaID_or_filename):
     elif object_type == 'mfprobe':
       numID = (ord(alphaID[0])-ord('0'))
       if not (numID is None or probe_ident is None):
-        fixed_filename = os.path.join(directory, 'i' + "%03d"%numID + probe_ident + '00.prn')
+        fixed_filename = os.path.join(directory, 'mfprobe_i' + "%03d"%numID + probe_ident + '00.prn')
 
     elif object_type == 'probe or tsnap or mfprobe':
       if len(alphaID) == 1:
@@ -276,13 +283,13 @@ def FrequencySnapshotID_Test():
     
     print('alphaID_to_numID(alphaID) check')
     numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
-    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
     numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
-    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
   return
@@ -298,13 +305,13 @@ def TimeSnapshotID_Test():
     
     print('alphaID_to_numID(alphaID) check')
     numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
-    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
     numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
-    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
   return
@@ -320,13 +327,13 @@ def ProbeID_Test():
     
     print('alphaID_to_numID(alphaID) check')
     numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
-    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
     numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
-    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
   return
@@ -341,14 +348,14 @@ def ModeFilteredProbeID_Test():
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
-    numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
-    print((numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename))
+    numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID,'mfprobe')
+    print((numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
 
     print('alphaID_to_numID(filename_in) check')
     numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
-    print((numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename))
+    print((numID_out, snap_plane, ModeFilteredProbe_ident, snap_time_number, fixed_filename, object_type))
     if numID_out != numID_in:
       sys.exit(-1)
   return
