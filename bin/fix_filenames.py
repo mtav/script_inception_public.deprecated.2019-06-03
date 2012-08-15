@@ -11,6 +11,12 @@ from utilities.brisFDTD_ID_info import alphaID_to_numID
 
 # TODO: Add option to fix only NTFS/FAT32 incompatible filenames or create/look for script to make filenames NTFS/FAT32 compatible
 
+# Note: On bluecrystal, you can use (old rename binary):
+#find . -name "*.prn" -exec rename ":" "10" {} \;
+#find . -name "p??id.prn" -exec rename "p" "p0" {} \;
+#rename : 10 *.prn
+#rename p p0 p??id.prn
+
 def main():
   # command-line option handling  
   parser = argparse.ArgumentParser(description = 'rename .prn files produced by BFDTD to NTFS compatible names (as well as human readable)')
