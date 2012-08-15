@@ -10,6 +10,10 @@ import argparse
 from utilities.brisFDTD_ID_info import alphaID_to_numID
 
 # TODO: Add option to fix only NTFS/FAT32 incompatible filenames or create/look for script to make filenames NTFS/FAT32 compatible
+# ex: recode, convmv, detox
+# cf: http://ubuntuforums.org/showthread.php?t=1479470
+# cf: http://techtots.blogspot.co.uk/2010/01/removing-invalidencoded-characters-from.html
+# convmv -r --notest -f windows-1255 -t UTF-8 *
 
 # Note: On bluecrystal, you can use (old rename binary):
 #find . -name "*.prn" -exec rename ":" "10" {} \;

@@ -165,30 +165,32 @@ def alphaID_to_numID(alphaID_or_filename, expected_object_type=None, probe_ident
   
   (directory,basename) = os.path.split(alphaID_or_filename)
     
-  pattern_alphaID_fsnap = re.compile(r"^([a-z\{\|\}~][a-z\{]|[a-z])$")
-  pattern_filename_fsnap = re.compile(r"^([xyz])([a-z\{\|\}~][a-z\{]|[a-z])(.*)(\d\d)\.prn$")
+  if probe_ident is None:
+    pattern_probe_ident = r"(.*)"
+  else:
+    pattern_probe_ident = r"(" + probe_ident + r")"
+  
+  pattern_fsnap = r"([a-z\{\|\}~][a-z\{]|[a-z])"
+  pattern_alphaID_fsnap = re.compile(r"^" + pattern_fsnap + r"$")
+  pattern_filename_fsnap = re.compile(r"^([xyz])" + pattern_fsnap + pattern_probe_ident + r"(\d\d)\.prn$")
   m_alphaID_fsnap = pattern_alphaID_fsnap.match(basename)
   m_filename_fsnap = pattern_filename_fsnap.match(basename)
 
-  pattern_alphaID_tsnap = re.compile(r"^([1-9A-Z:;<=>?@[]\d|\d)$")
-  pattern_filename_tsnap = re.compile(r"^([xyz])([1-9A-Z:;<=>?@[]\d|\d)(.*)(\d\d)\.prn$")
+  pattern_tsnap = r"([1-9A-Z:;<=>?@[]\d|\d)"
+  pattern_alphaID_tsnap = re.compile(r"^" + pattern_tsnap + r"$")
+  pattern_filename_tsnap = re.compile(r"^([xyz])" + pattern_tsnap + pattern_probe_ident + r"(\d\d)\.prn$")
   m_alphaID_tsnap = pattern_alphaID_tsnap.match(basename)
   m_filename_tsnap = pattern_filename_tsnap.match(basename)
 
-  pattern_alphaID_probe = re.compile(r"^([0-9A-Z:;<=>?@[]\d)$")
-  pattern_filename_probe = re.compile(r"^p([0-9A-Z:;<=>?@[]\d)(.*)\.prn$")
+  pattern_probe = r"([0-9A-Z:;<=>?@[]\d)"
+  pattern_alphaID_probe = re.compile(r"^" + pattern_probe + r"$")
+  pattern_filename_probe = re.compile(r"^p" + pattern_probe + pattern_probe_ident + r"\.prn$")
   m_alphaID_probe = pattern_alphaID_probe.match(basename)
   m_filename_probe = pattern_filename_probe.match(basename)
-
-  #pattern_alphaID_mfprobe = re.compile(r"^([1-9A-Z:;<=>?@[])$")
-  #pattern_filename_mfprobe = re.compile(r"^i([1-9A-Z:;<=>?@[])(.*)00\.prn$")
-  
-  #pattern_mfprobe = r"([1-9A-Z:;<=>?@[\]\\^_`a-z{|}~\x7f\x80])"
   
   pattern_mfprobe = r"([0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0¡¢£¤¥¦])"
-  pattern_alphaID_mfprobe = re.compile(r"^"+pattern_mfprobe+r"$")
-  #pattern_filename_mfprobe = re.compile(r"^i([0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0¡¢£¤¥¦])(.*)00\.prn$")
-  pattern_filename_mfprobe = re.compile(r"^i"+pattern_mfprobe+r"(.*)00\.prn$")
+  pattern_alphaID_mfprobe = re.compile(r"^" + pattern_mfprobe + r"$")
+  pattern_filename_mfprobe = re.compile(r"^i" + pattern_mfprobe + pattern_probe_ident + r"00\.prn$")
   m_alphaID_mfprobe = pattern_alphaID_mfprobe.match(basename)
   m_filename_mfprobe = pattern_filename_mfprobe.match(basename)
   
