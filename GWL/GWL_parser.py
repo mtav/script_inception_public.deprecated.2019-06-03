@@ -7,6 +7,10 @@ import numpy
 import os
 from utilities.common import *
 
+# TODO: Somehow get voxel size based on scanspeed/power/dwelltime/defocusfactor/etc
+DEFAULT_VOXEL_WIDTH = 0.100 # in mum
+DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
+
 class GWLobject(object):
   def __init__(self):
     self.verbosity = 0
@@ -298,7 +302,11 @@ class GWLobject(object):
     #if dim[0]>dim[1] and dim[0]>dim[2]:
       #self.addXblock(self, lower, upper, LineNumber_Horizontal=dim[2], LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
 
-  def addXblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
+  def addXblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+
+    if LineNumber_Horizontal is None: LineNumber_Horizontal = math.floor( (abs(P2[1]-P1[1])/LineDistance_Horizontal) + 1 )
+    if LineNumber_Vertical is None: LineNumber_Vertical = math.floor( (abs(P2[2]-P1[2])/LineDistance_Vertical) + 1 )
+
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
     Zcenter = 0.5*(P1[2] + P2[2])
@@ -327,7 +335,11 @@ class GWLobject(object):
           self.GWL_voxels.append([B,A])
         counter = counter + 1
 
-  def addYblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
+  def addYblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+
+    if LineNumber_Horizontal is None: LineNumber_Horizontal = math.floor( (abs(P2[0]-P1[0])/LineDistance_Horizontal) + 1 )
+    if LineNumber_Vertical is None: LineNumber_Vertical = math.floor( (abs(P2[2]-P1[2])/LineDistance_Vertical) + 1 )
+
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
     Zcenter = 0.5*(P1[2] + P2[2])
@@ -355,7 +367,11 @@ class GWLobject(object):
         counter = counter + 1
 
   # TODO: API improvement: use P1,P2 to specify BottomToTop? Leave in BottomToTop? Pass just x, y or z coordinates instead of [x,y,z]? X,Y,Z functions should be more or less the same if possible.
-  def addZblock(self, P1, P2, LineNumber_X, LineDistance_X, LineNumber_Y, LineDistance_Y):
+  def addZblock(self, P1, P2, LineNumber_X = None, LineDistance_X = DEFAULT_VOXEL_WIDTH, LineNumber_Y = None, LineDistance_Y = DEFAULT_VOXEL_WIDTH):
+    
+    if LineNumber_X is None: LineNumber_X = math.floor( (abs(P2[0]-P1[0])/LineDistance_X) + 1 )
+    if LineNumber_Y is None: LineNumber_Y = math.floor( (abs(P2[1]-P1[1])/LineDistance_Y) + 1 )
+    
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
     Zcenter = 0.5*(P1[2] + P2[2])
@@ -366,7 +382,7 @@ class GWLobject(object):
 
     ylist = []
     L = (LineNumber_Y-1)*LineDistance_Y
-    ylist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber_Y)
+    ylist = numpy.linspace(Ycenter-0.5*L, Ycenter+0.5*L, LineNumber_Y)
 
     counter = 0
     for y in ylist:
