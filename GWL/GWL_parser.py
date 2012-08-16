@@ -295,12 +295,23 @@ class GWLobject(object):
         self.GWL_voxels.append([B,A])
       counter = counter + 1
 
+  def addBlockCentroSize(self, centro, size, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+    centro = numpy.array(centro)
+    size = numpy.array(size)
+    lower = centro - 0.5*size
+    upper = centro + 0.5*size
+    self.addBlockLowerUpper(lower, upper, LineDistance_Horizontal, LineDistance_Vertical, BottomToTop)
+
   ## TODO: API: Was it a good idea to specify the other blocks in terms of LineNumber* in the first place?
-  #def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=0.1, LineDistance_Vertical=0.2, BottomToTop = False):
-    #(lower,upper) = fixLowerUpper(lower,upper)
-    #dim = [ abs(upper[i]-lower[i]) for i in len(lower) ]
-    #if dim[0]>dim[1] and dim[0]>dim[2]:
-      #self.addXblock(self, lower, upper, LineNumber_Horizontal=dim[2], LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+  def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+    (lower,upper) = fixLowerUpper(lower,upper)
+    dim = [ abs(upper[i]-lower[i]) for i in [0,1,2] ]
+    if dim[0]>dim[1] and dim[0]>dim[2]:
+      self.addXblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
+    if dim[1]>dim[0] and dim[1]>dim[2]:
+      self.addYblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
+    if dim[2]>dim[0] and dim[2]>dim[1]:
+      self.addZblock(lower, upper, LineDistance_X=LineDistance_Horizontal, LineDistance_Y=LineDistance_Horizontal)
 
   def addXblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
 
