@@ -224,7 +224,7 @@ class GWLobject(object):
           if zigzag: counter+=1
     return
     
-  def rotate(self, rotation_axis, theta):
+  def rotate(self, axis_point, axis_direction, angle_degrees):
     #TODO    
     #numpy.dot(rotation_matrix(rotation_axis,theta),P)
     return
@@ -291,6 +291,13 @@ class GWLobject(object):
         self.GWL_voxels.append([B,A])
       counter = counter + 1
 
+  ## TODO: API: Was it a good idea to specify the other blocks in terms of LineNumber* in the first place?
+  #def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=0.1, LineDistance_Vertical=0.2, BottomToTop = False):
+    #(lower,upper) = fixLowerUpper(lower,upper)
+    #dim = [ abs(upper[i]-lower[i]) for i in len(lower) ]
+    #if dim[0]>dim[1] and dim[0]>dim[2]:
+      #self.addXblock(self, lower, upper, LineNumber_Horizontal=dim[2], LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop)
+
   def addXblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
@@ -341,6 +348,31 @@ class GWLobject(object):
       for x in xlist:
         A = [x,P1[1],z]
         B = [x,P2[1],z]
+        if counter%2 == 0:
+          self.GWL_voxels.append([A,B])
+        else:
+          self.GWL_voxels.append([B,A])
+        counter = counter + 1
+
+  # TODO: API improvement: use P1,P2 to specify BottomToTop? Leave in BottomToTop? Pass just x, y or z coordinates instead of [x,y,z]? X,Y,Z functions should be more or less the same if possible.
+  def addZblock(self, P1, P2, LineNumber_X, LineDistance_X, LineNumber_Y, LineDistance_Y):
+    Xcenter = 0.5*(P1[0] + P2[0])
+    Ycenter = 0.5*(P1[1] + P2[1])
+    Zcenter = 0.5*(P1[2] + P2[2])
+
+    xlist = []
+    L = (LineNumber_X-1)*LineDistance_X
+    xlist = numpy.linspace(Xcenter-0.5*L, Xcenter+0.5*L, LineNumber_X)
+
+    ylist = []
+    L = (LineNumber_Y-1)*LineDistance_Y
+    ylist = numpy.linspace(Zcenter-0.5*L, Zcenter+0.5*L, LineNumber_Y)
+
+    counter = 0
+    for y in ylist:
+      for x in xlist:
+        A = [x,y,P1[2]]
+        B = [x,y,P2[2]]
         if counter%2 == 0:
           self.GWL_voxels.append([A,B])
         else:
