@@ -15,6 +15,15 @@ def Identity(size):
   '''
   return numpy.matlib.identity(size)
     
+def rotationMatrix(axis_point, axis_direction, angle_degrees):
+  ''' return a rotation matrix for a rotation around an arbitrary axis '''
+  axis_direction = numpy.array(axis_direction)
+  axis_point = numpy.array(axis_point)
+  T = Translation(axis_point)
+  Tinv = Translation(-axis_point)
+  R = Rotation(math.radians(angle_degrees), 4, axis_direction)
+  return T*R*Tinv
+    
 def Rotation(angle_rad, size, axis = None):
   '''
   Create a matrix representing a rotation.
@@ -30,10 +39,17 @@ def Rotation(angle_rad, size, axis = None):
   
   S = ['X','Y','Z']
   V = [[1,0,0],[0,1,0],[0,0,1]]
+
+  axis_letter = None
   
   if isinstance(axis,str):
-    if axis.upper() in S:
-      axis = V[S.index(axis.upper())]
+    axis_letter = axis.upper()
+    if axis_letter in S:
+      axis = V[S.index(axis_letter)]
+  else:
+    # list(axis) converts axis to list if it is a numpy.array
+    if list(axis) in V:
+      axis_letter = S[V.index(list(axis))]
 
   if axis is not None and len(axis) != 3:
     print("ERROR: Matrix.Rotation(angle_rad, size, axis), invalid 'axis' arg", file = sys.stderr)
@@ -61,9 +77,9 @@ def Rotation(angle_rad, size, axis = None):
     mat[1,0] =  angle_sin
     mat[1,1] =  angle_cos
     
-  elif axis in V:
+  elif axis_letter:
     # X, Y or Z axis
-    if axis == [1,0,0]: # rotation around X
+    if axis_letter == 'X': # rotation around X
       mat[0,0] = 1
       mat[0,1] = 0
       mat[0,2] = 0
@@ -73,7 +89,7 @@ def Rotation(angle_rad, size, axis = None):
       mat[2,0] = 0
       mat[2,1] = angle_sin
       mat[2,2] = angle_cos
-    elif axis == [0,1,0]: # rotation around Y
+    elif axis_letter == 'Y': # rotation around Y
       mat[0,0] = angle_cos
       mat[0,1] = 0
       mat[0,2] = angle_sin
@@ -83,7 +99,7 @@ def Rotation(angle_rad, size, axis = None):
       mat[2,0] = -angle_sin
       mat[2,1] = 0
       mat[2,2] = angle_cos
-    elif axis == [0,0,1]: # rotation around Z
+    elif axis_letter == 'Z': # rotation around Z
       mat[0,0] = angle_cos
       mat[0,1] = -angle_sin
       mat[0,2] = 0
