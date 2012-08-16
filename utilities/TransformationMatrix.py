@@ -3,6 +3,31 @@ import numpy.matlib
 import sys
 import math
 
+def applyTransformation(M,voxel):
+  '''
+  Applies 4x4 transformation matrix M to list,array or matrix voxel of size 3 or 4.
+  If voxel is of size 4, the 4th element will not be affected (Useful for power)!
+  If voxel is of size 3, a 4th element of value -1 is added.
+  Return value: a voxel with the transformed location and same power (or -1 if no previous power given)
+  '''
+  
+  # make sure voxel is an array
+  voxel = numpy.asarray(voxel).reshape(-1)
+  
+  # create location and power variables
+  location = numpy.matrix([[voxel[0]], [voxel[1]], [voxel[2]], [1]])
+  if len(voxel)>3:
+    power = voxel[3]
+  else:
+    power = -1
+    
+  # apply transformation to location
+  location = M*location
+  #location = P*numpy.transpose(numpy.matrix(location))
+  #location = numpy.asarray(location).reshape(-1) #numpy.array(numpy.transpose(M))[0]
+
+  return [location[0,0],location[1,0],location[2,0],power]
+
 def Identity(size):
   '''
   Create an identity matrix.

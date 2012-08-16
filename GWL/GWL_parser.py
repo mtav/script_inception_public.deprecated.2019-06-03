@@ -6,7 +6,8 @@ import re
 import numpy
 import os
 from utilities.common import *
-
+from utilities import TransformationMatrix
+ 
 # TODO: Somehow get voxel size based on scanspeed/power/dwelltime/defocusfactor/etc
 DEFAULT_VOXEL_WIDTH = 0.100 # in mum
 DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
@@ -229,8 +230,10 @@ class GWLobject(object):
     return
     
   def rotate(self, axis_point, axis_direction, angle_degrees):
-    #TODO
-    #numpy.dot(rotation_matrix(rotation_axis,theta),P)
+    M = TransformationMatrix.rotationMatrix(axis_point, axis_direction, angle_degrees)
+    for write_sequence in self.GWL_voxels:
+      for i in range(len(write_sequence)):
+        write_sequence[i] = TransformationMatrix.applyTransformation(M,write_sequence[i])
     return
     
   # TODO: Use better names/transformation system to implement translations
