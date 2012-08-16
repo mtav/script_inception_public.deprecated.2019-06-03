@@ -5,7 +5,7 @@ import numpy
 from GWL.GWL_parser import *
 from bfdtd.bfdtd_parser import *
 
-class Woodpile:
+class Woodpile(object):
   def __init__(self):
     self.Nlayers_Z = 12
     self.NRodsPerLayer_X = 17

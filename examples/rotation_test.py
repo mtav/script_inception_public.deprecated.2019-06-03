@@ -10,8 +10,6 @@ from GWL.GWL_parser import *
   
 def main():
   box = GWLobject()
-  #box.addZblock(P1=[0,0,0], P2=[1,2,3], LineNumber_Horizontal=10, LineDistance_Horizontal=0.2, LineNumber_Vertical=10, LineDistance_Vertical=0.2, BottomToTop = False)
-  #box.addZblock(P1=[0,0,0], P2=[1,2,3], LineNumber_X=10, LineDistance_X=0.2, LineNumber_Y=10, LineDistance_Y=0.2)
 
   box.clear()
   box.addXblock(P1=[0,0,0], P2=[1,2,3], LineDistance_Horizontal=3.7, LineDistance_Vertical=3.8)
@@ -49,7 +47,10 @@ def main():
   box.addBlockCentroSize([20,-10,0],[7,8,9])
   box.write_GWL('7-8-9.gwl')
 
-  #box.rotate(axis_point=[0,0,0], axis_direction=[1,0,0], angle_degrees=0)
+  box.clear()
+  box.addBlockCentroSize([0,0,0],[3,2,1])
+  box.rotate(axis_point=[0,0,0], axis_direction=[0,0,1], angle_degrees=45)
+  box.write_GWL('rotation_test.gwl')
 
 if __name__ == "__main__":
   main()

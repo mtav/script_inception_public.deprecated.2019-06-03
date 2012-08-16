@@ -27,27 +27,6 @@ def LimitsToThickness(limits):
 #E = subtract(excitation.P2,excitation.P1)
 #E = list(E/linalg.norm(E))
 
-def Unit(vec):
-  ''' return unit vector parallel to vec. '''
-  tot = numpy.linalg.norm(vec)
-  if tot > 0.0:
-    return vec/tot
-  else:
-    return vec
-
-  #tot = Mag2(vec)
-  #if tot > 0.0:
-    #return vec*(1.0/math.sqrt(tot))
-  #else:
-    #return vec
-
-def Mag2(vec):
-  return vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]
-
-def Mag(vec):
-  ''' return the magnitude (rho in spherical coordinate system) '''
-  return math.sqrt(Mag2(vec))
-
 def getProbeColumnFromExcitation(excitation):
   print(('excitation = ',excitation))
   probe_col = 0
@@ -116,8 +95,8 @@ def getExtension(filename):
 
 ''' Returns ([1,0,0],'x'),etc corresponding to var(alpha or vector) '''
 def getVecAlphaDirectionFromVar(var):
-  S=['x','y','z']
-  V=[[1,0,0],[0,1,0],[0,0,1]]
+  S = ['x','y','z']
+  V = [[1,0,0],[0,1,0],[0,0,1]]
   if var in V:
     return var, S[var.index(1)]
   elif var.lower() in S:

@@ -229,7 +229,7 @@ class GWLobject(object):
     return
     
   def rotate(self, axis_point, axis_direction, angle_degrees):
-    #TODO    
+    #TODO
     #numpy.dot(rotation_matrix(rotation_axis,theta),P)
     return
     
