@@ -1,6 +1,7 @@
 import numpy
 import numpy.matlib
 import sys
+import math
 
 def Identity(size):
   '''
@@ -26,13 +27,17 @@ def Rotation(angle_rad, size, axis = None):
   Return type:
     Matrix
   '''
-  mat = numpy.matlib.identity(size)
+  
+  S = ['X','Y','Z']
+  V = [[1,0,0],[0,1,0],[0,0,1]]
   
   if isinstance(axis,str):
-    S = ['X','Y','Z']
-    V = [[1,0,0],[0,1,0],[0,0,1]]
     if axis.upper() in S:
       axis = V[S.index(axis.upper())]
+
+  if axis is not None and len(axis) != 3:
+    print("ERROR: Matrix.Rotation(angle_rad, size, axis), invalid 'axis' arg", file = sys.stderr)
+    sys.exit(-1)
 
   if size<2 or size>4:
     print('ERROR: Invalid size = '+str(size), file = sys.stderr)
@@ -44,22 +49,75 @@ def Rotation(angle_rad, size, axis = None):
     print("ERROR: Matrix.Rotation(): axis of rotation for 3d and 4d matrices is required", file = sys.stderr)
     sys.exit(-1)
 
-  if axis:
-    if len(axis) != 3:
-      print("ERROR: Matrix.Rotation(angle_rad, size, axis), invalid 'axis' arg", file = sys.stderr)
-      sys.exit(-1)
-    axis_angle_to_mat3((float (*)[3])mat, tvec, angle_rad);
-  elif (size == 2):
-    angle_cos = math.cos(angle_rad)
-    angle_sin = math.sin(angle_rad)
+  mat = numpy.matlib.identity(size)
+
+  angle_cos = math.cos(angle_rad)
+  angle_sin = math.sin(angle_rad)
+
+  if (size == 2):
     # 2D rotation matrix
     mat[0,0] =  angle_cos
-    mat[0,1] =  angle_sin
-    mat[1,0] = -angle_sin
+    mat[0,1] = -angle_sin
+    mat[1,0] =  angle_sin
     mat[1,1] =  angle_cos
+    
+  elif axis in V:
+    # X, Y or Z axis
+    if axis == [1,0,0]: # rotation around X
+      mat[0,0] = 1
+      mat[0,1] = 0
+      mat[0,2] = 0
+      mat[1,0] = 0
+      mat[1,1] = angle_cos
+      mat[1,2] = -angle_sin
+      mat[2,0] = 0
+      mat[2,1] = angle_sin
+      mat[2,2] = angle_cos
+    elif axis == [0,1,0]: # rotation around Y
+      mat[0,0] = angle_cos
+      mat[0,1] = 0
+      mat[0,2] = angle_sin
+      mat[1,0] = 0
+      mat[1,1] = 1
+      mat[1,2] = 0
+      mat[2,0] = -angle_sin
+      mat[2,1] = 0
+      mat[2,2] = angle_cos
+    elif axis == [0,0,1]: # rotation around Z
+      mat[0,0] = angle_cos
+      mat[0,1] = -angle_sin
+      mat[0,2] = 0
+      mat[1,0] = angle_sin
+      mat[1,1] = angle_cos
+      mat[1,2] = 0
+      mat[2,0] = 0
+      mat[2,1] = 0
+      mat[2,2] = 1
+      
   else:
-    # valid axis checked above
-    single_axis_angle_to_mat3((float (*)[3])mat, axis[0], angle_rad);
+    # other axis
+
+    axis_norm = numpy.linalg.norm(axis)
+
+    if axis_norm == 0:
+      return numpy.matlib.identity(size)
+    
+    # normalize the axis first (to remove unwanted scaling)
+    nor = axis/axis_norm
+
+    ico = (1 - angle_cos)
+    
+    nsi = nor*angle_sin
+
+    mat[0,0] = ((nor[0] * nor[0]) * ico) + angle_cos
+    mat[0,1] = ((nor[0] * nor[1]) * ico) - nsi[2]
+    mat[0,2] = ((nor[0] * nor[2]) * ico) + nsi[1]
+    mat[1,0] = ((nor[0] * nor[1]) * ico) + nsi[2]
+    mat[1,1] = ((nor[1] * nor[1]) * ico) + angle_cos
+    mat[1,2] = ((nor[1] * nor[2]) * ico) - nsi[0]
+    mat[2,0] = ((nor[0] * nor[2]) * ico) - nsi[1]
+    mat[2,1] = ((nor[1] * nor[2]) * ico) + nsi[0]
+    mat[2,2] = ((nor[2] * nor[2]) * ico) + angle_cos
   
   return mat
 
@@ -121,6 +179,7 @@ def Translation(vector):
 
 def Unit(vec):
   ''' return unit vector parallel to vec. '''
+  vec = numpy.array(vec)
   tot = numpy.linalg.norm(vec)
   if tot > 0.0:
     return vec/tot
@@ -141,77 +200,3 @@ def Mag2(vec):
 def Mag(vec):
   ''' return the magnitude (rho in spherical coordinate system) '''
   return math.sqrt(Mag2(vec))
-
-def single_axis_angle_to_mat3(float mat[3][3], const char axis, const float angle_rad):
-  angle_cos = math.cos(angle_rad)
-  angle_sin = math.sin(angle_rad)
-
-  switch (axis) {
-    case 'X': # rotation around X
-      mat[0][0] = 1.0f;
-      mat[0][1] = 0.0f;
-      mat[0][2] = 0.0f;
-      mat[1][0] = 0.0f;
-      mat[1][1] = angle_cos;
-      mat[1][2] = angle_sin;
-      mat[2][0] = 0.0f;
-      mat[2][1] = -angle_sin;
-      mat[2][2] = angle_cos;
-      break;
-    case 'Y': # rotation around Y
-      mat[0][0] = angle_cos;
-      mat[0][1] = 0.0f;
-      mat[0][2] = -angle_sin;
-      mat[1][0] = 0.0f;
-      mat[1][1] = 1.0f;
-      mat[1][2] = 0.0f;
-      mat[2][0] = angle_sin;
-      mat[2][1] = 0.0f;
-      mat[2][2] = angle_cos;
-      break;
-    case 'Z': # rotation around Z
-      mat[0][0] = angle_cos;
-      mat[0][1] = angle_sin;
-      mat[0][2] = 0.0f;
-      mat[1][0] = -angle_sin;
-      mat[1][1] = angle_cos;
-      mat[1][2] = 0.0f;
-      mat[2][0] = 0.0f;
-      mat[2][1] = 0.0f;
-      mat[2][2] = 1.0f;
-      break;
-    default:
-      assert(0);
-  }
-}
-
-# axis angle to 3x3 matrix - safer version (normalization of axis performed)
-#
-# note: we may want a normalized and non normalized version of this function.
-#
-def axis_angle_to_mat3(mat[3][3], axis[3], angle_rad):
-  nor[3], nsi[3], co, si, ico;
-
-  # normalize the axis first (to remove unwanted scaling)
-  if (normalize_v3_v3(nor, axis) == 0):
-    unit_m3(mat)
-    return
-
-  # now convert this to a 3x3 matrix
-  co = math.cos(angle_rad)
-  si = math.sin(angle_rad)
-
-  ico = (1.0f - co)
-  nsi[0] = nor[0] * si
-  nsi[1] = nor[1] * si
-  nsi[2] = nor[2] * si
-
-  mat[0][0] = ((nor[0] * nor[0]) * ico) + co
-  mat[0][1] = ((nor[0] * nor[1]) * ico) + nsi[2]
-  mat[0][2] = ((nor[0] * nor[2]) * ico) - nsi[1]
-  mat[1][0] = ((nor[0] * nor[1]) * ico) - nsi[2]
-  mat[1][1] = ((nor[1] * nor[1]) * ico) + co
-  mat[1][2] = ((nor[1] * nor[2]) * ico) + nsi[0]
-  mat[2][0] = ((nor[0] * nor[2]) * ico) + nsi[1]
-  mat[2][1] = ((nor[1] * nor[2]) * ico) - nsi[0]
-  mat[2][2] = ((nor[2] * nor[2]) * ico) + co
