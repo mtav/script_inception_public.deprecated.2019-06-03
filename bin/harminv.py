@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import division
+
 import os
 import re
 import sys
@@ -66,7 +66,7 @@ def comparePeaks(harminv_filename, matlab_filename, out_filename):
   #for peak in merge_peak_list:
     #print peak
 
-  print(merge_peak_list[len(merge_peak_list)-1])
+  print((merge_peak_list[len(merge_peak_list)-1]))
 
   out_file = open(out_filename,'w')
   
@@ -97,13 +97,13 @@ def harminv(infile, outfile, parameterFile):
     
     f = open(outfile,'w')
     f.close()
-    print('-->Processing '+infile)
+    print(('-->Processing '+infile))
     if os.path.isfile(infile):
       # f = open(outfile,'a')
       # f.write('=== '+infile+'\n')
       # f.close()
       cmd='harminv -t '+dt+' '+fmin+'-'+fmax+' <'+infile+' 1>'+outfile+' 2>&1'
-      print '\t'+cmd
+      print('\t'+cmd)
       os.system(cmd)
       # f = open(outfile,'a')
       # f.write('=============================================================\n')
@@ -120,7 +120,7 @@ def harminv(infile, outfile, parameterFile):
 def harminv_top_probes(dir):
   pattern = re.compile("final: dt=(.*) fmin=(.*) fmax=(.*)")
 
-  print 'Processing '+dir
+  print('Processing '+dir)
   parameterFile = dir+'/'+'harminv_parameters.txt'
 
   if os.path.isfile(parameterFile):
@@ -144,7 +144,7 @@ def harminv_top_probes(dir):
     best_peak = []
     Qmax = -1
     for infile in probeFiles:
-      print 'dir=',dir
+      print('dir=',dir)
       outfile = os.path.splitext(infile)[0] + '_harminv.log'
       peak = harminv(infile, outfile, parameterFile)
       Q = peak[2]
@@ -164,8 +164,8 @@ def harminv_top_probes(dir):
         # f = open(outfile,'a')
         # f.write('=============================================================\n')
         # f.close()
-  print 'And the winner is:'
-  print best_peak
+  print('And the winner is:')
+  print(best_peak)
 
   out_file = open(dir+'/'+'best_peak.txt','w')
   out_file.write('frequency (MHz), decay constant, Q, amplitude, phase, error, wavelength (nm)\n')
@@ -174,7 +174,7 @@ def harminv_top_probes(dir):
   return best_peak
 
 def batch_harminv(topdir):
-  print topdir+'resonance_peaks.csv'
+  print(topdir+'resonance_peaks.csv')
   f = open(topdir+'/'+'resonance_peaks.csv','w')
   f.write('pillar\tfrequency(MHz)\tdecay_constant\tQ\tamplitude\tphase\terror\twavelength(nm)\n')
   for dir in os.listdir(topdir):
@@ -203,17 +203,17 @@ def main():
   (options, args) = parser.parse_args()
   
   if options.batch:
-    print 'You have selected batch processing.'
+    print('You have selected batch processing.')
     batch_harminv(args[0])
-    print 'SUCCESS'
+    print('SUCCESS')
   elif options.top_probes:
-    print 'You have selected top probes processing.'
+    print('You have selected top probes processing.')
     harminv_top_probes(args[0])
-    print 'SUCCESS'
+    print('SUCCESS')
   else:
-    print 'You have selected single probe processing.'
+    print('You have selected single probe processing.')
     harminv(args[0],args[1],args[2])
-    print 'SUCCESS'
+    print('SUCCESS')
 
 if __name__ == "__main__":
   main()
