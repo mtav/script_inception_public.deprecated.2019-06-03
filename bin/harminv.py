@@ -16,15 +16,15 @@ def getFrequencies(filename):
   1	4.7257745e+14	634.37741293	40.4569
   2	4.9540615e+14	605.14480606	90.37
   '''
-  freq_snapshots = []
+  freq_MHz = []
   with open(filename, 'r') as f:
-    f.readline()
+    f.readline() # read/skip the first line
     for line in f:
-      freq_snapshots.append(float(line.split()[1])*1e-6)
-            #read_data = f.read()
-    #print read_data
+      freq_MHz.append(float(line.split()[1])*1e-6)
+    #read_data = f.read()
+    #print(read_data)
   f.closed
-  return freq_snapshots
+  return freq_MHz
 
 def getPeaks(filename):
   peak_list = []
@@ -217,4 +217,3 @@ def main():
 
 if __name__ == "__main__":
   main()
-  
