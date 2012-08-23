@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from bin.bfdtd_info import *
+from bin.bfdtd_tool import *
 
 def main(argv=None):
   '''
