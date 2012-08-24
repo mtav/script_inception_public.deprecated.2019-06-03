@@ -165,26 +165,127 @@ def rerun_with_new_excitation(src, dst, excitation_wavelength_nm, excitation_tim
   FDTDobj.writeAll(dst,fileBaseName)
   bfdtd.GEOshellscript(dst+os.sep+fileBaseName+'.sh', fileBaseName,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 
+def addModeVolumeFrequencySnapshots(arguments):
+  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+  (size,res) = FDTDobj.mesh.getSizeAndResolution()
+  
+  if arguments.verbosity>0:
+    print('res = ',res)
+
+  if arguments.slicing_direction is None:
+    # take the direction with the smallest number of snapshots to reduce number of generated .prn files
+    arguments.slicing_direction = res.index(min(res))
+    S = ['X','Y','Z']
+    arguments.slicing_direction = S[arguments.slicing_direction]
+    
+  frequency_vector = []
+  if arguments.freqListFile is not None:
+    frequency_vector.extend(getFrequencies(arguments.freqListFile))
+  if arguments.wavelength_mum is not None:
+    frequency_vector.extend([get_c0()/i for i in arguments.wavelength_mum])
+  if arguments.frequency_MHz is not None:
+    frequency_vector.extend(arguments.frequency_MHz)
+  
+  if len(frequency_vector)<=0:
+    print('ERROR: Great scot! You forgot to specify frequencies.', file=sys.stderr)
+    sys.exit(-1)
+  
+  #print(arguments.slicing_direction)
+  if arguments.slicing_direction == 'X':
+    pos_list = FDTDobj.mesh.getXmesh()
+    for pos in pos_list:
+      f = FDTDobj.addFrequencySnapshot('X',pos)
+      f.name = 'ModeVolumeFrequencySnapshot'
+      f.first = arguments.first
+      f.repetition = arguments.repetition
+      f.frequency_vector = frequency_vector
+  elif arguments.slicing_direction == 'Y':
+    pos_list = FDTDobj.mesh.getYmesh()
+    for pos in pos_list:
+      f = FDTDobj.addFrequencySnapshot('Y',pos)
+      f.name = 'ModeVolumeFrequencySnapshot'
+      f.first = arguments.first
+      f.repetition = arguments.repetition
+      f.frequency_vector = frequency_vector
+  elif arguments.slicing_direction == 'Z':
+    pos_list = FDTDobj.mesh.getZmesh()
+    for pos in pos_list:
+      f = FDTDobj.addFrequencySnapshot('Z',pos)
+      f.name = 'ModeVolumeFrequencySnapshot'
+      f.first = arguments.first
+      f.repetition = arguments.repetition
+      f.frequency_vector = frequency_vector
+  else:
+    print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
+    sys.exit(-1)
+
+  FDTDobj.flag.iterations = arguments.iterations
+
+  if arguments.outdir is None:
+    print('ERROR: no outdir specified', file=sys.stderr)
+    sys.exit(-1)
+  
+  if arguments.basename is None:
+    arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
+  
+  FDTDobj.fileList = []
+  FDTDobj.writeAll(arguments.outdir, arguments.basename)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh')
+
+  return
+
 def main():
+  
+  # TODO: split options into read-only and read-write operations?
+  # operations: read & print info, copy, copy with changes, write back with changes, create shellscript, create .in file, etc
+  # too many operations. Needs GUI!
   
   # command-line option handling
   parser = argparse.ArgumentParser(description = 'get info about bfdtd related files')
-  parser.add_argument('-N','--ncells', action="store_true", dest='print_Ncells', default=False, help='print the number of cells')
-  parser.add_argument('-E','--excitation', action="store_true", dest='print_Excitation', default=False, help='print out excitations')
-  parser.add_argument('-A','--all', action="store_true", dest='print_all', default=False, help='print out all information')
-  parser.add_argument('-D','--printExcitationDirection', action="store_true", dest='print_ExcitationDirection', default=False, help='print out excitation directions')
-  parser.add_argument('-f','--format', action="store_true", dest='format', default=False, help='Use FORMAT as the format string that controls the output.')
-  parser.add_argument('-r','--rotate', action="store_true", dest='rotate', default=False, help='Rotate the geometry.')
-  parser.add_argument('-m','--mesh', action="store_true", dest='mesh', default=False, help='Automatically mesh the geometry.')
-  parser.add_argument('-o','--out', action="store", dest="outfile", default='.', help='output file or directory')
-  parser.add_argument('-b','--basename', action="store", dest="basename", default='sim', help='output basename')
-  parser.add_argument('--id', action="store", metavar='ID', dest="id_list", nargs='+', type=int, help='ID(s) of the object(s) you want to print out.')
-  parser.add_argument('-v','--verbose', action="count", dest="verbosity", default=0, help='verbosity level')
   parser.add_argument('infile', action="store", help='input file (.geo, .inp or .in)')
+  parser.add_argument('-v','--verbose', action="count", dest="verbosity", default=0, help='verbosity level')
 
-#axis_point
-#axis_direction
-#angle_degrees
+  parser.add_argument('-o','--outfile', action="store", dest="outfile", default=None, help='output file')
+  parser.add_argument('-d','--outdir', action="store", dest="outdir", default=None, help='output directory')
+  parser.add_argument('-b','--basename', action="store", dest="basename", default=None, help='output basename')
+
+  #group = parser.add_mutually_exclusive_group()
+  #group.add_argument('--foo', action='store_true')
+  #group.add_argument('--bar', action='store_false')
+  
+  #subparsers = parser.add_subparsers(help='functions',dest='subparser_name')
+  #modevolume_parser = subparsers.add_parser('modevolume', help='Add frequency snapshots to calculate the mode volume')
+  #modevolume_parser.add_argument('--slicing-direction', choices=['X','Y','Z'])
+
+  #tmp_parser = subparsers.add_parser('lol', help='lalalala')
+  #tmp_parser.add_argument('--slicing-death', choices=['Xoxo','Yoyo','Zozo'], help='lol you are LEAKING!')
+
+  group = parser.add_argument_group('Read-only operations')
+  group.add_argument('-N','--ncells', action="store_true", dest='print_Ncells', default=False, help='print the number of cells')
+  group.add_argument('-E','--excitation', action="store_true", dest='print_Excitation', default=False, help='print out excitations')
+  group.add_argument('-A','--all', action="store_true", dest='print_all', default=False, help='print out all information')
+  group.add_argument('-D','--printExcitationDirection', action="store_true", dest='print_ExcitationDirection', default=False, help='print out excitation directions')
+  group.add_argument('-f','--format', action="store_true", dest='format', default=False, help='Use FORMAT as the format string that controls the output.')
+  group.add_argument('--id', action="store", metavar='ID', dest="id_list", nargs='+', type=int, help='ID(s) of the object(s) you want to print out.')
+  
+  group = parser.add_argument_group('Mode volume calculation')
+  group.add_argument('--modevolume', help='Add frequency snapshots to calculate the mode volume', action="store_true", dest='modevolume', default=False)
+  group.add_argument('--slicing-direction', choices=['X','Y','Z'], default=None, dest='slicing_direction')
+  group.add_argument('--first', type=int, default=3200, help='first iteration at which to take snapshot')
+  group.add_argument('--repetition', type=int, default=32000, help='step in number of iterations at which to take snapshots')
+  group.add_argument('--iterations', type=int, default=67200, help='number of iterations')
+  group.add_argument('--freqListFile', default=None, help='frequency list file')
+  group.add_argument('--frequency_MHz', type=float, help='frequency in MHz', action='store', metavar='f(MHz)', nargs='+')
+  group.add_argument('--wavelength_mum', type=float, help='wavelength in µm', action='store', metavar='lambda(µm)', nargs='+')
+
+  group = parser.add_argument_group('Rotate')
+  group.add_argument('-r','--rotate', action="store_true", dest='rotate', default=False, help='Rotate the geometry.')
+  #axis_point
+  #axis_direction
+  #angle_degrees
+
+  group = parser.add_argument_group('Meshing')
+  group.add_argument('-m','--mesh', action="store_true", dest='mesh', default=False, help='Automatically mesh the geometry.')
 
   arguments = parser.parse_args()
   
@@ -192,11 +293,13 @@ def main():
     print('---------')
     print(arguments)
     print('---------')
-  
+    
   if arguments.print_all: printAll(arguments.infile,arguments.verbosity)
   if arguments.print_Ncells: printNcells(arguments.infile,arguments.verbosity)
   if arguments.print_Excitation: printExcitation(arguments.infile, arguments.id_list, arguments.verbosity)
   if arguments.print_ExcitationDirection: printExcitationDirection(arguments.infile, arguments.id_list, arguments.verbosity)
+
+  if arguments.modevolume: addModeVolumeFrequencySnapshots(arguments)
   
   #for infile in sys.argv[1:]:
     #print('infile = '+infile)
