@@ -80,3 +80,10 @@ class MeshObject(object):
 
   def getZmeshCentres(self):
     return [ 0.5*(self.zmesh[i+1]+self.zmesh[i]) for i in range(len(self.zmesh)-1)]
+
+  def getNcells(self):
+    ''' Returns the number of cells in the mesh. '''
+    return len(self.getXmeshDelta())*len(self.getYmeshDelta())*len(self.getZmeshDelta())
+
+  def getSizeAndResolution(self):
+    return ([self.xmesh[-1],self.zmesh[-1],self.zmesh[-1]],[len(self.getXmeshDelta()),len(self.getYmeshDelta()),len(self.getZmeshDelta())])

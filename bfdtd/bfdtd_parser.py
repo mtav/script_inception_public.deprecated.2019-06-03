@@ -955,12 +955,13 @@ class Frequency_snapshot(object):
   6)mod_all: Write the modulus AND the real and imaginary parts to file
   7)plane: 0=all, 1=x, 2=y, 3=z
   8-13)P1,P2: coordinates of the lower left and top right corners of the plane P1(x1,y1,z1), P2(x2,y2,z2)
-  14)frequency_vector: frequency (in Hz! ). Will create a frequency snapshot for each frequency in the list/vector
+  14)frequency_vector: frequency (in MHz! ). Will create a frequency snapshot for each frequency in the list/vector
   15)starting_sample: iteration number at which to start the running fourier transforms
   16-24)E,H,J: field components to be sampled E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
   
   The output file is of the same format as the snapshot “list format” and the naming is the same except that the time serial number starts at “00" instead of “aa”.
   '''
+  # TODO: Change frequency_vector to frequency_vector_Mhz?
   def __init__(self,
     name = None,
     first = None,
@@ -1316,7 +1317,7 @@ class BFDTDobject(object):
       return ret
   
   def getNcells(self):
-    return len(self.mesh.getXmeshDelta())*len(self.mesh.getYmeshDelta())*len(self.mesh.getZmeshDelta())
+    return self.mesh.getNcells()
 
   def addBoxFrequencySnapshots(self):
     L = [self.box.lower[0], self.box.lower[1], self.box.lower[2]]
@@ -1766,7 +1767,7 @@ class BFDTDobject(object):
         #os.mkdir(newDirName)
 
     if fileBaseName is None:
-      fileBaseName = os.path.basename(newDirName)
+      fileBaseName = os.path.basename(os.path.abspath(newDirName))
     
     #print('fileBaseName = '+fileBaseName)
     

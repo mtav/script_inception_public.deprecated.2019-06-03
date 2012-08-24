@@ -11,7 +11,7 @@ from optparse import OptionParser
 
 def getFrequencies(filename):
   '''
-  Returns a list of frequencies based on a file in the following format:
+  Returns a list of frequencies (in Mhz) based on a file in the following format:
   PeakNo	Frequency(Hz)	Wavelength(nm)	QFactor	
   1	4.7257745e+14	634.37741293	40.4569
   2	4.9540615e+14	605.14480606	90.37
