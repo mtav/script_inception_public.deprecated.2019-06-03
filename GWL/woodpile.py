@@ -11,8 +11,8 @@ class Woodpile(object):
     self.NRodsPerLayer_X = 17
     self.NRodsPerLayer_Y = 17
 
-    self.rod_width = 0.100
-    self.rod_height = 0.200
+    #self.rod_width = 0.100
+    #self.rod_height = 0.200
 
     self.LineNumber_Vertical = 1
     self.LineDistance_Vertical = 0.100
