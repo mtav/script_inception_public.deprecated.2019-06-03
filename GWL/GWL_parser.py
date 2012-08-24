@@ -298,23 +298,41 @@ class GWLobject(object):
         self.GWL_voxels.append([B,A])
       counter = counter + 1
 
-  def addBlockCentroSize(self, centro, size, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+  def addBlockCentroSize(self, centro, size, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False, direction=None):
     centro = numpy.array(centro)
     size = numpy.array(size)
     lower = centro - 0.5*size
     upper = centro + 0.5*size
-    self.addBlockLowerUpper(lower, upper, LineDistance_Horizontal, LineDistance_Vertical, BottomToTop)
+    self.addBlockLowerUpper(lower, upper, LineDistance_Horizontal, LineDistance_Vertical, BottomToTop, direction)
 
   ## TODO: API: Was it a good idea to specify the other blocks in terms of LineNumber* in the first place?
-  def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+  def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False, direction=None):
     (lower,upper) = fixLowerUpper(lower,upper)
+    print(lower)
+    print(upper)
     dim = [ abs(upper[i]-lower[i]) for i in [0,1,2] ]
-    if dim[0]>dim[1] and dim[0]>dim[2]:
+    print(dim)
+
+    # TODO: will fix later    
+    #self.addXblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
+
+    if direction is None:
+      if dim[0]>=dim[1] and dim[0]>=dim[2]:
+        direction = 'X'
+      elif dim[1]>=dim[0] and dim[1]>=dim[2]:
+        direction = 'Y'
+      else: #dim[2]>=dim[0] and dim[2]>=dim[1]:
+        direction = 'Z'
+
+    if direction == 'X':
       self.addXblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
-    if dim[1]>dim[0] and dim[1]>dim[2]:
+    elif direction == 'Y':
       self.addYblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
-    if dim[2]>dim[0] and dim[2]>dim[1]:
+    elif direction == 'Z':
       self.addZblock(lower, upper, LineDistance_X=LineDistance_Horizontal, LineDistance_Y=LineDistance_Horizontal)
+    else:
+      print("ERROR: Invalid direction. Should be 'X','Y' or 'Z'", file=sys.stderr)
+      sys.exit(-1)
 
   def addXblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
 
