@@ -221,6 +221,22 @@ def addModeVolumeFrequencySnapshots(arguments):
 
   FDTDobj.flag.iterations = arguments.iterations
 
+  # temporary hack to rectify excitation direction
+  P1 = numpy.array(FDTDobj.excitation_list[0].P1)
+  P2 = numpy.array(FDTDobj.excitation_list[0].P2)
+  Pdiff = P2-P1
+  Pdiff = list(Pdiff)
+  exc_dir = Pdiff.index(max(Pdiff))
+  if exc_dir == 0:
+    FDTDobj.excitation_list[0].E = [1,0,0]
+  elif exc_dir == 1:
+    FDTDobj.excitation_list[0].E = [0,1,0]
+  elif exc_dir == 2:
+    FDTDobj.excitation_list[0].E = [0,0,1]
+  else:
+    print('ERROR: wrong exc_dir = '+str(exc_dir)+' Pdiff = '+str(Pdiff), file=sys.stderr)
+    sys.exit(-1)
+
   if arguments.outdir is None:
     print('ERROR: no outdir specified', file=sys.stderr)
     sys.exit(-1)
@@ -230,7 +246,7 @@ def addModeVolumeFrequencySnapshots(arguments):
   
   FDTDobj.fileList = []
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh')
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 
   return
 
