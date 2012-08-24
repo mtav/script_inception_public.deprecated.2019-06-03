@@ -5,7 +5,7 @@
 import os
 import re
 import sys
-from optparse import OptionParser
+import argparse
 
 # TODO: probe list input + more modularization (separate harminv log generation and file comparison)
 
@@ -187,18 +187,9 @@ def batch_harminv(topdir):
   f.close()
   
 def main():
-  usagestr = "usage: %prog [-b topdir] [-t subdir] [infile outfile parameterFile]"
-  
-  parser = OptionParser(usage=usagestr)
-  # parser = OptionParser()
-  
-  parser.add_option("-b", "--batch",
-            action="store_true", dest="batch", default=False,
-            help="Process subdirectories (batch job)")
-  
-  parser.add_option("-t", "--top-probes",
-            action="store_true", dest="top_probes", default=False,
-            help="Process all top probes")
+  parser = argparse.ArgumentParser(description = 'python harminv wrapper, allowing direct usage of bfdtd probe files')
+  parser.add_argument("-b", "--batch", action="store_true", dest="batch", default=False, help="Process subdirectories (batch job)")  
+  parser.add_argument("-t", "--top-probes", action="store_true", dest="top_probes", default=False, help="Process all top probes")
   
   (options, args) = parser.parse_args()
   
