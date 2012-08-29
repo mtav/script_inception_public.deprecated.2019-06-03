@@ -6,7 +6,8 @@ n=3.5;
 snapDirInt=snapDirection-119;
 
 %folder='J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400';
-folder='J:\optics\Erman\M1_13_11\M1_exe_inside\Ex_537.942766\y';
+% folder='J:\optics\Erman\M1_13_11\M1_exe_inside\Ex_537.942766\y';
+folder='J:\all\4Matthieu\latest\M1_13_11\M1_exe_inside\Ex_537.942766\y';
 FsnapFiles=dir([folder,filesep,snapDirection,'*00.prn']);
 
 % [InpFileName,InpPathName] = uigetfile('*.inp','Select INP file','J:\optics\Erman\Optimal vertical emission oPC cavities(optL3)\48nm_half\65400');
@@ -89,5 +90,7 @@ for m=1:length(Snaps)
 end
     
 Veff=Nom/currMax 
+
+% Which of those 2 is correct?
 Foptn= Veff/(Lamda/(n))^3
-    
+% Foptn= Veff/((Lamda/1000)/(2*n))^3
