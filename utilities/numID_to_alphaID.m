@@ -1,4 +1,4 @@
-function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
+function [ filename, alphaID, pair ] = numID_to_alphaID_FrequencySnapshot(numID, snap_plane, probe_ident, snap_time_number)
   % Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
   % function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe_ident, snap_time_number)
   % examples:
@@ -28,6 +28,7 @@ function [ filename, alphaID, pair ] = numID_to_alphaID(numID, snap_plane, probe
     %error('snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!');
   %end
 
+  % TODO: why use this inline function instead of simply floor(a/b) as used for ihi?
   function ret = div(A,B)
     ret = idivide(int32(A),int32(B));
   end

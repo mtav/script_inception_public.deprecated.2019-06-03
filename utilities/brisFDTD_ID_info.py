@@ -17,6 +17,7 @@ MODEFILTEREDPROBE_MAX = 118
 
 # TODO: Check the limits of the different numbering systems
 # TODO: BFDTD 2008 uses a different numbering system for frequency snapshots (but still with horrible characters). Yay... Implement that somehow.
+# WARNING: if there is a mix of time snapshots and epsilon snapshots, they will be numbered together!!! i.e. 1 esnap + 1 tsnap will lead to x1...+x2... according to their respective order of appearance in the .inp file.
 
 def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
@@ -115,7 +116,7 @@ def numID_to_alphaID_Probe(numID, probe_ident = '_id_'):
   100 -> :0
   '''
 
-  if numID<1 or numID>PROBE_MAX:
+  if numID < 1 or numID > PROBE_MAX:
     print('ERROR: numID must be between 1 and '+str(PROBE_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
     sys.exit(-1)
 

@@ -6,6 +6,7 @@
 
 import bfdtd.bfdtd_parser as bfdtd
 from utilities.common import *
+from utilities.brisFDTD_ID_info import *
 from constants.constants import *
 import argparse
 import sys
@@ -258,6 +259,21 @@ def addModeVolumeFrequencySnapshots(arguments):
 
   return
 
+def calculateModeVolume(arguments):
+  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+
+  if arguments.fsnapfiles is None:
+    arguments.fsnapfiles = FDTDobj.getFrequencySnapshots()
+  if arguments.esnapfiles is None:
+    arguments.esnapfiles = FDTDobj.getEpsilonSnapshots()
+    
+  if len(arguments.fsnapfiles) != len(arguments.esnapfiles):
+    print('ERROR: number of frequency snapshots and epsilon snapshots do not match', file=sys.stderr)
+    sys.exit(-1)
+    
+  
+  return
+
 def main():
   
   # TODO: split options into read-only and read-write operations?
@@ -302,6 +318,15 @@ def main():
   group.add_argument('--frequency_MHz', type=float, help='frequency in MHz', action='store', metavar='f(MHz)', nargs='+')
   group.add_argument('--wavelength_mum', type=float, help='wavelength in µm', action='store', metavar='lambda(µm)', nargs='+')
 
+  group = parser.add_argument_group('Calculate mode volume')
+  group.add_argument('--calc-modevolume', help='Calculate the mode volume', action="store_true", dest='calc_modevolume', default=False)
+  group.add_argument('--fsnapfiles', metavar='FSNAP', help='Frequency snapshots to use', nargs='+')
+  group.add_argument('--tsnapfiles', metavar='TSNAP', help='Time snapshots to use', nargs='+')
+  group.add_argument('--esnapfiles', metavar='ESNAP', help='Epsilon snapshots to use', nargs='+')
+  group.add_argument('--msnapfiles', metavar='MSNAP', help='Mode filtered probes to use', nargs='+')
+  group.add_argument('--probefiles', metavar='PROBE', help='Probes to use', nargs='+')
+  group.add_argument('--prnfiles', metavar='PRN', help='.prn files to use', nargs='+')
+
   group = parser.add_argument_group('Rotate')
   group.add_argument('-r','--rotate', action="store_true", dest='rotate', default=False, help='Rotate the geometry.')
   #axis_point
@@ -324,6 +349,7 @@ def main():
   if arguments.print_ExcitationDirection: printExcitationDirection(arguments.infile, arguments.id_list, arguments.verbosity)
 
   if arguments.modevolume: addModeVolumeFrequencySnapshots(arguments)
+  if arguments.calc_modevolume: calculateModeVolume(arguments)
   
   #for infile in sys.argv[1:]:
     #print('infile = '+infile)
@@ -338,4 +364,3 @@ def main():
   
 if __name__ == "__main__":
   main()
-  

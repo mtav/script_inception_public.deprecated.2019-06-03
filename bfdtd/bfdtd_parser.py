@@ -18,6 +18,7 @@ from constants.constants import *
 
 # TODO: Add function to easily change basename
 # TODO: Add check for negative values in mesh.
+# TODO: refactor class names with "_", get rid of unused lists or use them
 
 # mandatory objects
 class Flag(object):
@@ -1441,7 +1442,6 @@ class BFDTDobject(object):
     self.snapshot_list.append(F)
     return F
 
-  # TODO: other clear functions, refactor class names with "_", get rid of unused lists or use them
   def clearTimeSnapshots(self):
     self.snapshot_list = [ s for s in self.snapshot_list if ( not isinstance(s,Time_snapshot) or isinstance(s,EpsilonSnapshot) or isinstance(s,ModeFilteredProbe) ) ]
     self.time_snapshot_list[:] = []
@@ -1450,6 +1450,12 @@ class BFDTDobject(object):
     self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Frequency_snapshot) ]
     self.frequency_snapshot_list[:] = []
 
+  def clearEpsilonSnapshots(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,EpsilonSnapshot) ]
+
+  def clearModeFilteredProbes(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,ModeFilteredProbe) ]
+
   def clearAllSnapshots(self):
     self.snapshot_list[:] = []
     self.time_snapshot_list[:] = []
@@ -1457,6 +1463,14 @@ class BFDTDobject(object):
 
   def clearProbes(self):
     self.probe_list[:] = []
+
+  def getEpsilonSnapshots(self):
+    for i in range(len(self.snapshot_list)):
+      s = self.snapshot_list[i]
+    # TODO: To be continued...
+      #if 
+    epsilon_snapshot_list = [ s for s in self.snapshot_list if isinstance(s,EpsilonSnapshot) ]
+
 
   def clearMesh():
     self.mesh = MeshObject()

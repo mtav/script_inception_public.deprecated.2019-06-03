@@ -106,12 +106,15 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
     dataV = [];
     % remove empty lines
     lines = strread(data,'%s','delimiter','\n');
-    cellFlag = 1;
+    
+    %cellFlag = 1;
+    
     for L = 1:length(lines)
       if ~length(lines{L})
         continue;
       end
 
+      % num_val will be an empty [] if lines{L} is string
       num_val = str2num(lines{L});
       %L
       %num_val
@@ -120,21 +123,21 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
       str_val = str_val(str_val ~= '"');% remove double quotes
 
       % TODO: Check if this can't be simplified, or if it's even necessary.
-      if cellFlag
+      %if cellFlag
         if length(num_val) %% num_val is num
           dataV{length(dataV)+1} = num_val;
         else %% num_val is not num
           dataV{length(dataV)+1} = str_val;
         end
-      else
-         if length(num_val) %% num_val is num
-          dataV = [dataV,num_val];
-        else %% num_val is not num
-          cellFlag = 1;
-          dataV = num2cell(dataV);
-          dataV{length(dataV)+1} = str_val;
-        end
-      end
+      %else
+        %if length(num_val) %% num_val is num
+          %dataV = [dataV,num_val];
+        %else %% num_val is not num
+          %cellFlag = 1;
+          %dataV = num2cell(dataV);
+          %dataV{length(dataV)+1} = str_val;
+        %end
+      %end
     end % end of loop through lines
     
     entry.name = name;
@@ -174,11 +177,11 @@ function [ entries, structured_entries ] = single_GEO_INP_reader(filename, entri
         current_excitation = add_excitation(entry);
         excitations = [ excitations, current_excitation ];
       case {'XMESH'}
-        structured_entries.xmesh = entry.data;
+        structured_entries.xmesh = cell2mat(entry.data);
       case {'YMESH'}
-        structured_entries.ymesh = entry.data;
+        structured_entries.ymesh = cell2mat(entry.data);
       case {'ZMESH'}
-        structured_entries.zmesh = entry.data;
+        structured_entries.zmesh = cell2mat(entry.data);
             case {'FLAG'}
         structured_entries.flag = add_flag(entry);
             case {'BOUNDARY'}
