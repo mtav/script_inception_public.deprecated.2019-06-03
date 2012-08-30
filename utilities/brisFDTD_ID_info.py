@@ -10,11 +10,13 @@ import os
 
 FREQUENCYSNAPSHOT_MAX = 836
 TIMESNAPSHOT_MAX = 439
+EPSILONSNAPSHOT_MAX = 439
 PROBE_MAX = 439
 #MODEFILTEREDPROBE_MAX = 43
 MODEFILTEREDPROBE_MAX = 118
 
 # TODO: Check the limits of the different numbering systems
+# TODO: BFDTD 2008 uses a different numbering system for frequency snapshots (but still with horrible characters). Yay...
 
 def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
@@ -87,6 +89,19 @@ def numID_to_alphaID_TimeSnapshot(numID, snap_plane = 'x', probe_ident = '_id_',
   pair = str(numID) + ':' + alphaID
   
   return filename, alphaID, pair
+
+def numID_to_alphaID_EpsilonSnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
+  '''
+  Converts numeric IDs to alpha IDs used by Bristol FDTD 2003
+
+  return values:
+  filename, alphaID, pair
+  
+  examples:
+  99 -> 99
+  100 -> :0
+  '''
+  return numID_to_alphaID_TimeSnapshot(numID, snap_plane, probe_ident, snap_time_number)
 
 def numID_to_alphaID_Probe(numID, probe_ident = '_id_'):
   '''
@@ -193,19 +208,19 @@ def alphaID_to_numID(alphaID_or_filename, expected_object_type=None, probe_ident
   pattern_filename_mfprobe = re.compile(r"^i" + pattern_mfprobe + pattern_probe_ident + r"00\.prn$")
   m_alphaID_mfprobe = pattern_alphaID_mfprobe.match(basename)
   m_filename_mfprobe = pattern_filename_mfprobe.match(basename)
-  
+    
   if m_alphaID_fsnap and (expected_object_type is None or expected_object_type=='fsnap'):
     alphaID = m_alphaID_fsnap.group(1)
     object_type = 'fsnap'
   elif m_alphaID_tsnap:
     alphaID = m_alphaID_tsnap.group(1)
-    object_type = 'probe or tsnap or mfprobe'
+    object_type = 'probe or tsnap or esnap or mfprobe'
   elif m_alphaID_probe:
     alphaID = m_alphaID_probe.group(1)
-    object_type = 'probe or tsnap or mfprobe'
+    object_type = 'probe or tsnap or esnap or mfprobe'
   elif m_alphaID_mfprobe:
     alphaID = m_alphaID_mfprobe.group(1)
-    object_type = 'probe or tsnap or mfprobe'
+    object_type = 'probe or tsnap or esnap or mfprobe'
   elif m_filename_fsnap:
     snap_plane = m_filename_fsnap.group(1)
     alphaID = m_filename_fsnap.group(2)
@@ -213,6 +228,7 @@ def alphaID_to_numID(alphaID_or_filename, expected_object_type=None, probe_ident
     snap_time_number = int(m_filename_fsnap.group(4))
     object_type = 'fsnap'
   elif m_filename_tsnap:
+    # TODO: look into .prn file to determine if it is a tsnap or esnap?
     snap_plane = m_filename_tsnap.group(1)
     alphaID = m_filename_tsnap.group(2)
     probe_ident = m_filename_tsnap.group(3)
@@ -260,7 +276,7 @@ def alphaID_to_numID(alphaID_or_filename, expected_object_type=None, probe_ident
       if not (numID is None or probe_ident is None):
         fixed_filename = os.path.join(directory, 'mfprobe_i' + "%03d"%numID + probe_ident + '00.prn')
 
-    elif object_type == 'probe or tsnap or mfprobe':
+    elif object_type == 'probe or tsnap or esnap or mfprobe':
       if len(alphaID) == 1:
         numID = ord(alphaID[0])-ord('0')
       else:
@@ -303,6 +319,28 @@ def TimeSnapshotID_Test():
     
     print('numID_to_alphaID_TimeSnapshot(numID_in) check')
     filename_in, alphaID, pair = numID_to_alphaID_TimeSnapshot(numID_in)
+    print((filename_in, alphaID, pair))
+    
+    print('alphaID_to_numID(alphaID) check')
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(alphaID)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
+    if numID_out != numID_in:
+      sys.exit(-1)
+
+    print('alphaID_to_numID(filename_in) check')
+    numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(filename_in)
+    print((numID_out, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type))
+    if numID_out != numID_in:
+      sys.exit(-1)
+  return
+
+def EpsilonSnapshotID_Test():
+  N = EPSILONSNAPSHOT_MAX
+  for i in range(N):
+    numID_in = i+1
+    
+    print('numID_to_alphaID_EpsilonSnapshot(numID_in) check')
+    filename_in, alphaID, pair = numID_to_alphaID_EpsilonSnapshot(numID_in)
     print((filename_in, alphaID, pair))
     
     print('alphaID_to_numID(alphaID) check')
@@ -377,6 +415,14 @@ def TimeSnapshotID_List():
     filename_in, alphaID, pair = numID_to_alphaID_TimeSnapshot(numID_in)
     print(pair)
   return
+
+def EpsilonSnapshotID_List():
+  N = EPSILONSNAPSHOT_MAX
+  for i in range(N):
+    numID_in = i+1
+    filename_in, alphaID, pair = numID_to_alphaID_EpsilonSnapshot(numID_in)
+    print(pair)
+  return
   
 def ProbeID_List():
   N = PROBE_MAX
@@ -398,11 +444,13 @@ def main():
   
   FrequencySnapshotID_List()
   TimeSnapshotID_List()
+  EpsilonSnapshotID_List()
   ProbeID_List()
   ModeFilteredProbeID_List()
   
   FrequencySnapshotID_Test()
   TimeSnapshotID_Test()
+  EpsilonSnapshotID_Test()
   ProbeID_Test()
   ModeFilteredProbeID_Test()
   

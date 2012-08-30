@@ -1,7 +1,7 @@
 function mode_volume = calculateModeVolume(folder)
+
+  % read the input files
   snapDirection = 'y';
-  Lambda = 537.942766;
-  n = 3.5;
 
   snapDirInt = snapDirection - 119;
 
@@ -38,8 +38,7 @@ function mode_volume = calculateModeVolume(folder)
      end
   end
 
-
-  Veff = 0;
+  % calculate the mode volume
   currMax = 0;
   Nom = 0;
   vv = [];
@@ -69,7 +68,7 @@ function mode_volume = calculateModeVolume(folder)
       nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*eps(:,:);
       
       % TODO: shouldn't this be:
-      % maxVal=nom;
+      % maxVal = max(nom);
       maxVal = max(sum(sum(nom)));
       vv = [vv,maxVal];
       
@@ -85,11 +84,12 @@ function mode_volume = calculateModeVolume(folder)
   %     imagesc(eps)
   end
       
-  Veff = Nom/currMax 
+  mode_volume = Nom/currMax;
 
   % Which of those 2 is correct?
-  Foptn = Veff/(Lambda/(n))^3
-  % Foptn = Veff/((Lambda/1000)/(2*n))^3
+  % Lambda = 537.942766;
+  % n = 3.5;
+  % Foptn = mode_volume/(Lambda/(n))^3
+  % Foptn = mode_volume/((Lambda/1000)/(2*n))^3
   
-  mode_volume = -1
 end

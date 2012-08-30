@@ -70,5 +70,6 @@ i
 geom_info.txt
 snap_info.txt
 time_id_.txt
+heat.txt
 
 *.list
