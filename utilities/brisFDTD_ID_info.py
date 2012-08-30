@@ -16,7 +16,7 @@ PROBE_MAX = 439
 MODEFILTEREDPROBE_MAX = 118
 
 # TODO: Check the limits of the different numbering systems
-# TODO: BFDTD 2008 uses a different numbering system for frequency snapshots (but still with horrible characters). Yay...
+# TODO: BFDTD 2008 uses a different numbering system for frequency snapshots (but still with horrible characters). Yay... Implement that somehow.
 
 def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
