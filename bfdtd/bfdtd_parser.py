@@ -1441,8 +1441,9 @@ class BFDTDobject(object):
     self.snapshot_list.append(F)
     return F
 
+  # TODO: other clear functions, refactor class names with "_", get rid of unused lists or use them
   def clearTimeSnapshots(self):
-    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Time_snapshot) ]
+    self.snapshot_list = [ s for s in self.snapshot_list if ( not isinstance(s,Time_snapshot) or isinstance(s,EpsilonSnapshot) or isinstance(s,ModeFilteredProbe) ) ]
     self.time_snapshot_list[:] = []
 
   def clearFrequencySnapshots(self):

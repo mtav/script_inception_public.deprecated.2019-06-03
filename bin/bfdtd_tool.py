@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # script to quickly get various info from bfdtd related files
+# TODO: Integrate some of those functions into the BFDTD class?
 
 import bfdtd.bfdtd_parser as bfdtd
 from utilities.common import *
@@ -194,6 +195,7 @@ def addModeVolumeFrequencySnapshots(arguments):
   if arguments.slicing_direction == 'X':
     pos_list = FDTDobj.mesh.getXmesh()
     for pos in pos_list:
+      e = FDTDobj.addEpsilonSnapshot('X',pos)
       f = FDTDobj.addFrequencySnapshot('X',pos)
       f.name = 'ModeVolumeFrequencySnapshot'
       f.first = arguments.first
@@ -202,6 +204,7 @@ def addModeVolumeFrequencySnapshots(arguments):
   elif arguments.slicing_direction == 'Y':
     pos_list = FDTDobj.mesh.getYmesh()
     for pos in pos_list:
+      e = FDTDobj.addEpsilonSnapshot('Y',pos)
       f = FDTDobj.addFrequencySnapshot('Y',pos)
       f.name = 'ModeVolumeFrequencySnapshot'
       f.first = arguments.first
@@ -210,6 +213,7 @@ def addModeVolumeFrequencySnapshots(arguments):
   elif arguments.slicing_direction == 'Z':
     pos_list = FDTDobj.mesh.getZmesh()
     for pos in pos_list:
+      e = FDTDobj.addEpsilonSnapshot('Z',pos)
       f = FDTDobj.addFrequencySnapshot('Z',pos)
       f.name = 'ModeVolumeFrequencySnapshot'
       f.first = arguments.first
@@ -236,6 +240,10 @@ def addModeVolumeFrequencySnapshots(arguments):
   else:
     print('ERROR: wrong exc_dir = '+str(exc_dir)+' Pdiff = '+str(Pdiff), file=sys.stderr)
     sys.exit(-1)
+
+  # temporary hack to disable frequency snaphsots
+  FDTDobj.clearFrequencySnapshots()
+  FDTDobj.clearTimeSnapshots()
 
   if arguments.outdir is None:
     print('ERROR: no outdir specified', file=sys.stderr)

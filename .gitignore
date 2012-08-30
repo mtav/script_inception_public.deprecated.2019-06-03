@@ -67,6 +67,8 @@ time.txt
 ea.txt
 i
 *.int
-
+geom_info.txt
+snap_info.txt
+time_id_.txt
 
 *.list
