@@ -220,9 +220,17 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   disp(['minval = ',num2str(minval)]);
   disp(['maxval = ',num2str(maxval)]);
   if (modu == 1) || (handles.modulus == 1)
-    caxis([minval maxval]);
+    if minval ~= maxval
+      caxis([minval maxval]);
+    else
+      caxis([minval maxval+1]);
+    end
   else
-    caxis([-maxval maxval]);
+    if maxval ~= 0
+      caxis([-maxval maxval]);
+    else
+      caxis([-(maxval+1) maxval+1]);
+    end
   end
   AspectRatio = get(gca,'DataAspectRatio');
   AspectRatio(1) = AspectRatio(2);

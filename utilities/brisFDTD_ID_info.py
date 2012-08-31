@@ -17,7 +17,9 @@ MODEFILTEREDPROBE_MAX = 118
 
 # TODO: Check the limits of the different numbering systems
 # TODO: BFDTD 2008 uses a different numbering system for frequency snapshots (but still with horrible characters). Yay... Implement that somehow.
-# WARNING: if there is a mix of time snapshots and epsilon snapshots, they will be numbered together!!! i.e. 1 esnap + 1 tsnap will lead to x1...+x2... according to their respective order of appearance in the .inp file.
+# WARNING: if there is a mix of time snapshots, epsilon snapshots and/or mode filtered probes, they will be numbered together!!!
+# i.e. 1 esnap + 1 tsnap will lead to x1...+x2... according to their respective order of appearance in the .inp file.
+# snap_time_number starts at 0 for ModeFilteredProbes and at 1 for Time and epsilon snapshots.
 
 def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
