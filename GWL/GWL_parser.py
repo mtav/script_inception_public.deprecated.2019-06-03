@@ -11,6 +11,28 @@ from utilities import TransformationMatrix
 # TODO: Somehow get voxel size based on scanspeed/power/dwelltime/defocusfactor/etc
 DEFAULT_VOXEL_WIDTH = 0.100 # in mum
 DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
+DEFAULT_OVERLAP_HORIZONTAL = 0.5
+DEFAULT_OVERLAP_VERTICAL = 0.5
+
+def calculateNvoxelsAndInterVoxelDistance(Length, Voxelsize, Overlap):
+  '''
+  Calulates the number of voxels and the distance between them so that they fit into length "Length" with an overlap "Overlap", i.e. so that:
+  InterVoxelDistance = (1-Overlap)*Voxelsize
+  (Nvoxels-1)*InterVoxelDistance + Voxelsize <= Length
+  '''
+  
+  if Overlap < 0 or Overlap > 1:
+    print('ERROR: Invalid Overlap', file=sys.stderr)
+    sys.exit(-1)
+    
+  InterVoxelDistance = (1-Overlap)*Voxelsize
+  Nvoxels = math.floor( ((Length-Voxelsize)/InterVoxelDistance) + 1 )
+
+  if(Nvoxels) <= 0:
+    Nvoxels = 1
+    print('WARNING: Voxel too big for specified length', file=sys.stderr)
+
+  return (Nvoxels, InterVoxelDistance)
 
 class GWLobject(object):
   def __init__(self):
