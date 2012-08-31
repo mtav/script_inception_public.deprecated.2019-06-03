@@ -47,12 +47,12 @@ function [header,data,ux,uy] = readPrnFile(filename)
       ny=length(x)/nx;
       uy=y(1:ny);
       for m=3:size(data,2)
-        Data(:,:,m-2)=reshape(data(:,m),ny,nx);
+        data_reshaped(:,:,m-2)=reshape(data(:,m),ny,nx);
       end
-      data=Data;
-      imagesc(ux,uy,Data(:,:,1));
-      xlabel(header(1));
-      ylabel(header(2));
+      data=data_reshaped;
+      %imagesc(ux,uy,data_reshaped(:,:,1));
+      %xlabel(header(1));
+      %ylabel(header(2));
     end
   %catch
     %error('FATAL ERROR: Could not read .prn file correctly.');
