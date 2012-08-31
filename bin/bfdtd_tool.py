@@ -191,14 +191,20 @@ def addModeVolumeFrequencySnapshots(arguments):
   if len(frequency_vector)<=0:
     print('ERROR: Great scot! You forgot to specify frequencies.', file=sys.stderr)
     sys.exit(-1)
+
+  FDTDobj.flag.iterations = arguments.iterations
   
+  NAME = 'ModeVolume'
   #print(arguments.slicing_direction)
   if arguments.slicing_direction == 'X':
     pos_list = FDTDobj.mesh.getXmesh()
     for pos in pos_list:
       e = FDTDobj.addEpsilonSnapshot('X',pos)
+      e.name = NAME
+      e.first = 1
+      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       f = FDTDobj.addFrequencySnapshot('X',pos)
-      f.name = 'ModeVolumeFrequencySnapshot'
+      f.name = NAME
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
@@ -206,8 +212,11 @@ def addModeVolumeFrequencySnapshots(arguments):
     pos_list = FDTDobj.mesh.getYmesh()
     for pos in pos_list:
       e = FDTDobj.addEpsilonSnapshot('Y',pos)
+      e.name = NAME
+      e.first = 1
+      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       f = FDTDobj.addFrequencySnapshot('Y',pos)
-      f.name = 'ModeVolumeFrequencySnapshot'
+      f.name = NAME
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
@@ -215,16 +224,17 @@ def addModeVolumeFrequencySnapshots(arguments):
     pos_list = FDTDobj.mesh.getZmesh()
     for pos in pos_list:
       e = FDTDobj.addEpsilonSnapshot('Z',pos)
+      e.name = NAME
+      e.first = 1
+      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       f = FDTDobj.addFrequencySnapshot('Z',pos)
-      f.name = 'ModeVolumeFrequencySnapshot'
+      f.name = NAME
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
   else:
     print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
     sys.exit(-1)
-
-  FDTDobj.flag.iterations = arguments.iterations
 
   # temporary hack to rectify excitation direction
   P1 = numpy.array(FDTDobj.excitation_list[0].P1)
@@ -243,8 +253,8 @@ def addModeVolumeFrequencySnapshots(arguments):
     sys.exit(-1)
 
   # temporary hack to disable frequency snaphsots
-  FDTDobj.clearFrequencySnapshots()
-  FDTDobj.clearTimeSnapshots()
+  #FDTDobj.clearFrequencySnapshots()
+  #FDTDobj.clearTimeSnapshots()
 
   if arguments.outdir is None:
     print('ERROR: no outdir specified', file=sys.stderr)
@@ -255,7 +265,9 @@ def addModeVolumeFrequencySnapshots(arguments):
   
   FDTDobj.fileList = []
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
+  #FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+
 
   return
 
@@ -288,6 +300,8 @@ def main():
   parser.add_argument('-o','--outfile', action="store", dest="outfile", default=None, help='output file')
   parser.add_argument('-d','--outdir', action="store", dest="outdir", default=None, help='output directory')
   parser.add_argument('-b','--basename', action="store", dest="basename", default=None, help='output basename')
+
+  parser.add_argument('--walltime', type=int, default=360, help='walltime in hours (default: 360 hours = 15*24 hours = 15 days)')
 
   #group = parser.add_mutually_exclusive_group()
   #group.add_argument('--foo', action='store_true')
