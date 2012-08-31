@@ -19,6 +19,8 @@ from constants.constants import *
 # TODO: Add function to easily change basename
 # TODO: Add check for negative values in mesh.
 # TODO: refactor class names with "_", get rid of unused lists or use them
+# TODO: Add check for more than 99/100 snapshots (number only go from 0/1 to 99)
+# TODO: create ref document about .prn files numbering, bfdtd output files, etc
 
 # mandatory objects
 class Flag(object):
@@ -897,7 +899,7 @@ class ModeFilteredProbe(Time_snapshot):
 
     if name is None: name = 'mode_filtered_probe'
     if first is None: first = 1 # crashes if = 0
-    if repetition is None: repetition = 10,
+    if repetition is None: repetition = 10
     if plane is None: plane = 1 #1,2,3 for x,y,z
     if P1 is None: P1 = [0,0,0]
     if P2 is None: P2 = [0,1,1]
@@ -924,7 +926,7 @@ class EpsilonSnapshot(Time_snapshot):
 
     if name is None: name = 'epsilon_snapshot'
     if first is None: first = 1 # crashes if = 0
-    if repetition is None: repetition = 1,
+    if repetition is None: repetition = 1
     if plane is None: plane = 1 #1,2,3 for x,y,z
     if P1 is None: P1 = [0,0,0]
     if P2 is None: P2 = [0,1,1]
