@@ -1,30 +1,21 @@
-function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures, plotNothing)
+function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, saveImageAndFigure, imageSaveBasename, hide_figures, plotNothing)
   % Usage:
-  %[ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, autosave, imageSaveName, hide_figures, plotNothing)
+  %  [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotProbe(filename, probe_col, saveImageAndFigure, imageSaveBasename, hide_figures, plotNothing)
 
   % TODO: Use single harminv input file for global and local harminv runs.
+  % TODO: return figure handle instead of taking care of saving inside this function?
+
+  % default arguments
+  if exist('saveImageAndFigure','var') == 0; saveImageAndFigure = false; end;
+  if exist('imageSaveBasename','var') == 0; imageSaveBasename = ''; end;
+  if exist('hide_figures','var') == 0; hide_figures = false; end;
+  if exist('plotNothing','var') == 0; plotNothing = false; end;
 
   % defaults
   wavelength_nm = -1;
   Q_lorentz = -1;
   Q_harminv_local = -1;
   Q_harminv_global = -1;
-
-  % default arguments
-  if exist('autosave','var')==0; autosave = false; end;
-  %if exist('imageSaveName','var')==0; imageSaveName = false; end;
-  if exist('hide_figures','var')==0; hide_figures = false; end;
-  if exist('plotNothing','var')==0; plotNothing = false; end;  
-
-  %name|autosave|save|name|result
-  %0   |0       |0   |0   |no save
-  %0   |1       |1   |0   |save with default name
-  %1   |0       |1   |1   |save with name
-  %1   |1       |1   |1   |save with name
-
-  %if ~imageSaveName
-
-  %end
 
   DoAnalysis = true;
   plotLorentzFit = false;
@@ -399,28 +390,20 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   %N=10000; xmin=778; xmax=784; Q=112970; y0=0; x0=780.8162; FWHM=x0/Q; A = 0.5*FWHM*(pi*(2.5*1e6-y0)); plot(linspace(xmin,xmax,N),lorentz([x0, y0, A, FWHM],linspace(xmin,xmax,N)),'r-');
 
   if ~plotNothing
-    % autosaving
-    if autosave == 1
+    if saveImageAndFigure == 1
+      if length(imageSaveBasename) <= 0
+        imageSaveBasename = [dirname(filename), filesep, basename, '_', char(data_name)];
+      end
       set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
-      figout = [dirname(filename), filesep, basename, '_', char(data_name), '.png'];
-      disp(['Saving figure as ',figout]);
-      print(fig,'-dpng','-r300',figout);
-    end
-    
-    % normal saving
-    if ( exist('imageSaveName','var')~=0 ) & (length(imageSaveName)>0)
-      set(fig, 'Position', get(0,'Screensize')); % Maximize figure.
-      disp(['Saving figure as ',imageSaveName]);
-      print(fig,'-dpng','-r300',imageSaveName);
-      %print(fig,'-depsc','-r1500',imageSaveName);
-    end
+      disp(['Saving figure as ', imageSaveBasename, '.png']);
+      print(fig,'-dpng','-r300',[imageSaveBasename, '.png']);
+
+      disp(['Saving figure as ', imageSaveBasename, '.fig']);
+      saveas(gcf,[imageSaveBasename, '.fig'],'fig');
+
+      %print(fig,'-depsc','-r1500',imageSaveBasename);
+      %saveas(gcf,[imageSaveBasename,'.png'],'png');
+    end    
   end
-
-  %name=>save with name
-  %no name=>autosave=>save with default name
-         %=>no autosave+>no save
-
-  %saveas(gcf,[imageSaveName,'.png'],'png');
-  %saveas(gcf,[imageSaveName,'.fig'],'fig');
 
 end
