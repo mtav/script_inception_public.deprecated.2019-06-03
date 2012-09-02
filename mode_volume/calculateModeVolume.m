@@ -112,9 +112,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
 
   % Which of those 2 is correct?
   Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Z(1).frequency
-  n = 3.3;
+  % n = 3.3;
   % Foptn = mode_volume/(Lambda/(n))^3
   % Foptn = mode_volume/((Lambda/1000)/(2*n))^3
-  Foptn = mode_volume_mum3/(Lambda_mum/(2*n))^3
-  
+  % Foptn = mode_volume_mum3/(Lambda_mum/(2*n))^3;
+  disp(['mode_volume_mum3 = ',num2str(mode_volume_mum3)]);
 end
