@@ -150,11 +150,19 @@ function filename_cellarray_all = holes_test(fileBaseName,type,mag,dwell,beamCur
   holes_Size_Y_all = [ holes_Size_Y_bottom, holes_Size_Y_top ];
   holes_Type_all = [ holes_Type_bottom, holes_Type_top ];
   
-  separate_files = 1;
+  separate_files = 0;
 
   fileBaseName3 = [dirname(fileBaseName), filesep, basename(fileBaseName,'.str')];
   infoString = ['.mag_',num2str(mag),'.dwell_',num2str(dwell),'.beamCurrent_',num2str(beamCurrent),'.radius_',num2str(radius_mum),'.Nbottom_',num2str(Nbottom),'.Ntop_',num2str(Ntop),'.rep_',num2str(rep),'.hry_',num2str(size_y_mum)];
-  filename_cellarray_bottom = holes([fileBaseName3,'.bottom',infoString],mag,dwell,rep,holes_X_bottom,holes_Y_bottom,holes_Size_X_bottom,holes_Size_Y_bottom,holes_Type_bottom,separate_files);
+  
+  %disp('JOJO')
+  %disp(holes_Size_Y_bottom(1:10))
+  %disp(holes_Type_bottom)
+  
+  filename_cellarray_bottom = holes([fileBaseName3,'.bottom1',infoString],mag,dwell,rep,holes_X_bottom(1:10),holes_Y_bottom(1:10),holes_Size_X_bottom(1:10),holes_Size_Y_bottom(1:10),holes_Type_bottom(1:10),separate_files);
+  filename_cellarray_bottom = holes([fileBaseName3,'.bottom2',infoString],mag,dwell,rep,holes_X_bottom(10:20),holes_Y_bottom(10:20),holes_Size_X_bottom(10:20),holes_Size_Y_bottom(10:20),holes_Type_bottom(10:20),separate_files);
+  
   filename_cellarray_top = holes([fileBaseName3,'.top',infoString],mag,dwell,rep,holes_X_top,holes_Y_top,holes_Size_X_top,holes_Size_Y_top,holes_Type_top,separate_files);
-  filename_cellarray_all = holes([fileBaseName3,'.all',infoString],mag,dwell,rep,holes_X_all,holes_Y_all,holes_Size_X_all,holes_Size_Y_all,holes_Type_all,separate_files);
+  %filename_cellarray_all = holes([fileBaseName3,'.all',infoString],mag,dwell,rep,holes_X_all,holes_Y_all,holes_Size_X_all,holes_Size_Y_all,holes_Type_all,separate_files);
+  filename_cellarray_all = {}
 end

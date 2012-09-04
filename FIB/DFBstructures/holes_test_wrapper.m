@@ -11,7 +11,8 @@ size_x_mum = 2*0.066
 size_y_mum = 0.5
 rep = 2
 
-DSTDIR='~/FIBstreamfiles/1286.5_separatefiles'
+%DSTDIR='~/FIBstreamfiles/1286.5_separatefiles'
+DSTDIR='~/FIBstreamfiles/2012-05-23-b'
 
 % Note: beamCurrent argument still unused
 
@@ -24,7 +25,7 @@ DSTDIR='~/FIBstreamfiles/1286.5_separatefiles'
 
 beamCurrent = 11
 %a = holes_test([DSTDIR,filesep,'loncar'],'loncar',mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,customconfig);
-a = holes_test([DSTDIR,filesep,'all'],'custom',mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
+%a = holes_test([DSTDIR,filesep,'all'],'custom',mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
 
 %a = holes_test([DSTDIR,filesep,'bottom'],'custom',mag,dwell,beamCurrent,radius_mum,0,Nbottom,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
 %a = holes_test([DSTDIR,filesep,'top'],'custom',mag,dwell,beamCurrent,radius_mum,Ntop,0,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
@@ -38,9 +39,9 @@ a = holes_test([DSTDIR,filesep,'right'],'custom',mag,dwell,beamCurrent,radius_mu
 %a = holes_test([DSTDIR,filesep,'top_left'],'custom',mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
 %a = holes_test([DSTDIR,filesep,'top_right'],'custom',mag,dwell,beamCurrent,radius_mum,Ntop,Nbottom,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
 
-a = holes_test([DSTDIR,filesep,'single'],'custom',mag,dwell,beamCurrent,radius_mum,0,1,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
-a = holes_test([DSTDIR,filesep,'single_left'],'custom',mag,dwell,beamCurrent,radius_mum,0,1,size_x_mum,size_y_mum,rep,[1,0,1,1,0,0]);
-a = holes_test([DSTDIR,filesep,'single_right'],'custom',mag,dwell,beamCurrent,radius_mum,0,1,size_x_mum,size_y_mum,rep,[1,0,1,0,0,1]);
+%a = holes_test([DSTDIR,filesep,'single'],'custom',mag,dwell,beamCurrent,radius_mum,0,1,size_x_mum,size_y_mum,rep,[1,0,1,1,0,1]);
+%a = holes_test([DSTDIR,filesep,'single_left'],'custom',mag,dwell,beamCurrent,radius_mum,0,1,size_x_mum,size_y_mum,rep,[1,0,1,1,0,0]);
+%a = holes_test([DSTDIR,filesep,'single_right'],'custom',mag,dwell,beamCurrent,radius_mum,0,1,size_x_mum,size_y_mum,rep,[1,0,1,0,0,1]);
 
 %a = holes_test([DSTDIR,filesep,'DFBrectSpiral'],'DFBrectSpiral',mag,dwell,beamCurrent,radius_mum,0,Nbottom,size_x_mum,size_y_mum,rep,customconfig);
 %a = holes_test([DSTDIR,filesep,'DFBrectSpiral'],'DFBrectSpiral',mag,dwell,beamCurrent,radius_mum,Ntop,0,size_x_mum,size_y_mum,rep,customconfig);
