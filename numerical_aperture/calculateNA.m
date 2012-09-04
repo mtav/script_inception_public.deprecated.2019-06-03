@@ -131,7 +131,7 @@ function NA = calculateNA(INP_FILE, PRN_FILE, center_offset, save_as_filename)
   function NA = gaussian_fit(fit_input, type, legend_txt)
     %% fitting
     disp(['=== Using ',type,' ===']);
-    [sigma,mu,A] = mygaussfit(z,fit_input);
+    [sigma,mu,A] = fitGaussian(z,fit_input);
     fit_output = A*exp(-(z-mu).^2/(2*sigma^2));
     
     disp(['sigma = ',num2str(sigma)]);

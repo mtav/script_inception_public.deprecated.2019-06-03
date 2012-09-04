@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.5.2" />
-<title></title>
+<title>script_inception_public documentation</title>
 <style type="text/css">
 /* Debug borders */
 p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
@@ -417,7 +417,7 @@ div#toc a:visited { color: blue; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
-window.onload = function(){asciidoc.footnotes();}
+window.onload = function(){asciidoc.footnotes(); asciidoc.toc(4);}
 var asciidoc = {  // Namespace.
 
 /////////////////////////////////////////////////////////////////////
@@ -551,14 +551,19 @@ footnotes: function () {
 </head>
 <body>
 <div id="header">
+<h1>script_inception_public documentation</h1>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
 </div>
 <div id="content">
-<h2 id="_what_this_is">What this is:</h2>
+<h2 id="_what_this_is">What this is</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Useful scripts for MEEP and Bristol FDTD and maybe other stuff :)</p></div>
+<div class="paragraph"><p>Useful scripts for MEEP and Bristol FDTD and maybe other stuff. :)</p></div>
 <div class="paragraph"><p>The idea is to centralize scripts used by almost everyone to reduce code duplication and therefore errors and time wasting, as well as improve the overall quality of code over time.</p></div>
 </div>
-<h2 id="_license">License:</h2>
+<h2 id="_license">License</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Unless otherwise specified inside a file or folder, everything is under GPLv3 (cf COPYING.txt).</p></div>
 <div class="paragraph"><p>The following (written by Ian Buss) are under the LGPL:</p></div>
@@ -580,14 +585,211 @@ Geo2Str
 </li>
 </ul></div>
 </div>
-<h2 id="_links">Links:</h2>
+<h2 id="_links">Links</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>For more info: <a href="https://wikis.bris.ac.uk/display/Photonics/Public+scripts+repository">https://wikis.bris.ac.uk/display/Photonics/Public+scripts+repository</a></p></div>
+<h3 id="_other_useful_links_tools">Other useful links/tools</h3><div style="clear:left"></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Blender documentation: <a href="http://wiki.blender.org/">http://wiki.blender.org/</a>
+</p>
+</li>
+<li>
+<p>
+Python 3 documentation: <a href="http://docs.python.org/py3k/">http://docs.python.org/py3k/</a>
+</p>
+</li>
+<li>
+<p>
+Git documentation: <a href="http://git-scm.com/documentation">http://git-scm.com/documentation</a>
+</p>
+</li>
+<li>
+<p>
+Pyscripter: <a href="https://code.google.com/p/pyscripter/">https://code.google.com/p/pyscripter/</a>
+</p>
+</li>
+<li>
+<p>
+Notepad++: <a href="http://www.notepad-plus-plus.org/">http://www.notepad-plus-plus.org/</a>
+</p>
+</li>
+<li>
+<p>
+Tortoise git: <a href="https://code.google.com/p/tortoisegit/">https://code.google.com/p/tortoisegit/</a>
+</p>
+</li>
+</ul></div>
+</div>
+<h2 id="_directories_for_the_installation">Directories for the installation</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Directories that will be used:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>SCRIPT_DIR</strong>: This will be where you placed the scripts from this repository.<br />
+ex: H:\script_inception_public
+</p>
+</li>
+<li>
+<p>
+<strong>BLENDER_DIR</strong>: Here you can choose your Blender installation directory (for system-wide availability) or the user-specific Blender directory (created after first running Blender):<br />
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+For a system-wide install:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Windows XP: <em>C:\Program Files\Blender Foundation\Blender\2.63</em>
+</p>
+</li>
+<li>
+<p>
+Windows Vista/7: <em>C:\Program Files\Blender Foundation\Blender\2.63</em>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+For a user-specific install:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Windows XP:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+For Blender 2.6x: <em>C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\2.63</em>
+</p>
+</li>
+<li>
+<p>
+For Blender 2.49: <em>C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender</em>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+Windows Vista/7: <em>C:\Users\USERNAME\AppData\Roaming\Blender Foundation\Blender\2.63</em>
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+<strong>PYTHONDIR</strong>: Where your python 3 installation is located.<br />
+ex: <em>C:\Python32</em>
+</p>
+</li>
+</ul></div>
+<h3 id="_notes">Notes</h3><div style="clear:left"></div>
+<div class="ulist"><ul>
+<li>
+<p>
+The paths might be slightly different on your system, so adapt as necessary.
+</p>
+</li>
+<li>
+<p>
+If you do not have admin rights, don&#8217;t worry. You can get installers or .zip packages for all the necessary software, except numpy. For numpy, you can install it somewhere else where you have admin rights and then just copy the numpy folder from there. :)
+</p>
+</li>
+<li>
+<p>
+The "Application Data" folder may be hidden. To unhide it: <a href="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true_">http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true_</a><br />
+</p>
+</li>
+<li>
+<p>
+The .py extensions may be hidden. You can unhide them in a way similar to showing hidden folders. Uncheck the "Mask known file extensions" somewhere.
+</p>
+</li>
+</ul></div>
 </div>
 <h2 id="_blender_scripts">Blender scripts</h2>
 <div class="sectionbody">
-<h3 id="_installation_howto">Installation HOWTO:</h3><div style="clear:left"></div>
-<div class="paragraph"><p>I still need to make it a bit more user-friendly, but to install it, here&#8217;s what you have to do (tested on Windows XP):</p></div>
+<h3 id="_installation_howto">Installation HOWTO</h3><div style="clear:left"></div>
+<div class="paragraph"><p>I still need to make it a bit more user-friendly, but to install it, here&#8217;s what you have to do (tested on Windows XP and Vista/Windows 7):</p></div>
+<h4 id="_windows_install_with_blender_2_6">Windows install with Blender 2.6+</h4>
+<div class="paragraph"><p><strong>Because there isn&#8217;t any numpy 64-bit installer at the moment, it is best to install 32-bit versions of everything.</strong></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Install Blender 2.6+ (32bit)<br />
+<a href="http://www.blender.org/download/get-blender/">http://www.blender.org/download/get-blender/</a>
+</p>
+</li>
+<li>
+<p>
+Install python 3 (32bit)<br />
+<a href="http://www.python.org/download/releases/3.2.3/">http://www.python.org/download/releases/3.2.3/</a>
+</p>
+</li>
+<li>
+<p>
+Install numpy 1.6.2 (32bit) for python 3.2<br />
+<a href="http://sourceforge.net/projects/numpy/files/NumPy/1.6.2/">http://sourceforge.net/projects/numpy/files/NumPy/1.6.2/</a>
+</p>
+</li>
+<li>
+<p>
+Copy <strong>PYTHONDIR\Lib\site-packages\numpy</strong> into <strong>BLENDER_DIR\scripts\modules</strong>
+</p>
+</li>
+<li>
+<p>
+Create a file named <em>custompath.py</em> in <strong>BLENDER_DIR\scripts\startup</strong> with the following in it (create directories as necessary):
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>#!/usr/bin/env python3
+import sys +
+#Note: make sure that all "\" characters in SCRIPT_DIR are doubled, i.e. of the form "\\" +
+#ex: sys.path.append('C:\\somewhere\\randomdir\\script_inception_public')
+sys.path.append('SCRIPT_DIR')</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+Download and extract the latest version of the repository to <strong>SCRIPT_DIR</strong>: <a href="https://github.com/mtav/script_inception_public/archives/master">https://github.com/mtav/script_inception_public/archives/master</a><br />
+<em>Note: You can also checkout/clone the repository using git, which is a much better option, and will allow you to easily update it. Try <a href="https://code.google.com/p/tortoisegit/">TortoiseGit</a> for an easy way to do this for example. It will also allow you to push changes back to the repository, should you wish to contribute code. ;)</em>
+</p>
+</li>
+<li>
+<p>
+Create the directory <strong>BLENDER_DIR\scripts\addons</strong> if it does not exist.
+</p>
+</li>
+<li>
+<p>
+Copy <strong>SCRIPT_DIR\blender_scripts\io_import_scene_bfdtd.py</strong> into <strong>BLENDER_DIR\scripts\addons</strong>
+</p>
+</li>
+<li>
+<p>
+Copy <strong>SCRIPT_DIR\blender_scripts\io_import_scene_gwl.py</strong> into <strong>BLENDER_DIR\scripts\addons</strong>
+</p>
+</li>
+<li>
+<p>
+Start Blender, go to File&#8594;User preferences&#8594;Addons and enable the addons.
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>You can use <em>Help&#8594;Toggle system console</em> for debugging in case of problems.</p></div>
+<h4 id="_windows_install_with_blender_2_49">Windows install with Blender 2.49</h4>
+<div class="paragraph"><p>The import scripts have all been updated for Blender 2.6x and will not work with older versions.
+But you may still find the following instructions useful if you want to use the Blender caliper and layer manager scripts (which have not been ported yet) with Blender 2.49:</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -609,19 +811,18 @@ Install blender 2.49b (so, not the latest version, but I&#8217;ll try to fix tha
 </li>
 <li>
 <p>
-Download and extract the latest version of the repository wherever you want, let&#8217;s say <strong>H:\script_inception_public</strong> for example: <a href="https://github.com/mtav/script_inception_public/archives/master">https://github.com/mtav/script_inception_public/archives/master</a>
+Download and extract the latest version of the repository to <strong>SCRIPT_DIR</strong>: <a href="https://github.com/mtav/script_inception_public/archives/master">https://github.com/mtav/script_inception_public/archives/master</a>
 </p>
 </li>
 <li>
 <p>
-Copy all the .py files from <strong>H:\script_inception_public\blender_scripts</strong> into <strong>C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts</strong><br />
-<em>Note 1: The "Application Data" folder may be hidden. To unhide it: <a href="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true">http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/win_fcab_show_file_extensions.mspx?mfr=true</a></em><br />
-<em>Note 2: The .py extensions may be hidden, but just copy all the contents of the folder. The other files shouldn&#8217;t cause problems.</em>
+Copy all the .py files from <strong>SCRIPT_DIR\blender_scripts</strong> into <strong>BLENDER_DIR\scripts</strong><br />
+<em>Note: The .py extensions may be hidden, but just copy all the contents of the folder. The other files shouldn&#8217;t cause problems.</em>
 </p>
 </li>
 <li>
 <p>
-Copy the file <strong>H:\script_inception_public\blender_scripts\.B.blend</strong> into <strong>C:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender</strong><br />
+Copy the file <strong>SCRIPT_DIR\blender_scripts\.B.blend</strong> into <strong>BLENDER_DIR</strong><br />
 <em>Note: This is just to set up a nicer default workspace, so it is optional. You can save your workspace as the default at any time in Blender with <strong>File&#8594;Save default settings</strong>.</em>
 </p>
 </li>
@@ -637,21 +838,21 @@ Define the following environment variables (cf <a href="http://support.microsoft
 </li>
 <li>
 <p>
-<strong>PYTHONPATH = H:\script_inception_public</strong> (Use the folder you chose in step 4)
+<strong>PYTHONPATH = SCRIPT_DIR</strong> (Use the folder you chose in step 4)
 </p>
 </li>
 </ul></div>
 </li>
 </ol></div>
 <div class="paragraph"><p>Ok, you are now ready to import BFDTD files with blender.</p></div>
-<h3 id="_example_filestructure_after_installation">Example filestructure after installation:</h3><div style="clear:left"></div>
-<div class="paragraph"><p>H:\script_inception_public\addpath_recurse<br />
-H:\script_inception_public\README.html<br />
+<h5 id="_example_filestructure_after_installation">Example filestructure after installation</h5>
+<div class="paragraph"><p><strong>SCRIPT_DIR</strong>\addpath_recurse<br />
+<strong>SCRIPT_DIR</strong>\README.html<br />
 &#8230;<br />
-H:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\.B.blend<br />
-H:\Documents and Settings\USERNAME\Application Data\Blender Foundation\Blender\.blender\scripts\FDTDGeometryObjects.py<br />
+<strong>BLENDER_DIR</strong>\.B.blend<br />
+<strong>BLENDER_DIR</strong>\scripts\FDTDGeometryObjects.py<br />
 &#8230;</p></div>
-<h3 id="_usage_instructions">Usage instructions:</h3><div style="clear:left"></div>
+<h4 id="_usage_instructions">Usage instructions</h4>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -660,35 +861,100 @@ Start blender
 </li>
 <li>
 <p>
-<strong>File&#8594;Import&#8594;Bristol FDTD</strong>
+<strong>File&#8594;Import&#8594;BristolFDTD (.geo,.inp,.in)</strong> or <strong>File&#8594;Import&#8594;GWL (.gwl)</strong>
 </p>
 </li>
 <li>
 <p>
-Search for .geo,.inp or .in files and import them (Tip: middle-click on a file opens it)
+Search for .geo,.inp,.in or .gwl files and import them (Tip: In Blender 2.49, middle-click on a file opens it)
 </p>
 </li>
 </ol></div>
-<h3 id="_other_blender_scripts">Other blender scripts:</h3><div style="clear:left"></div>
-<h4 id="_1_layer_manager">1) Layer manager:</h4>
+<h3 id="_other_blender_scripts">Other blender scripts</h3><div style="clear:left"></div>
+<h4 id="_1_layer_manager_not_yet_ported_to_python3_blender_2_6x">1) Layer manager (not yet ported to python3/blender 2.6x)</h4>
 <div class="paragraph"><p>It makes it easier to show/hide the diverse components of the BFDTD files.<br />
 To use it, in the "scripts window" (On the right if you copied .B.blend from the repository as your default workspace), click on <strong>Scripts&#8594;System&#8594;Layer manager</strong>.</p></div>
-<h4 id="_2_blender_caliper">2) Blender caliper:</h4>
+<h4 id="_2_blender_caliper_not_yet_ported_to_python3_blender_2_6x">2) Blender caliper (not yet ported to python3/blender 2.6x)</h4>
 <div class="paragraph"><p>To show dimensions, etc, you can use the blender caliper script.<br />
 To use it, in the "scripts window" (On the right if you copied .B.blend from the repository as your default workspace), click on <strong>Scripts&#8594;Wizards&#8594;Blender caliper</strong>.</p></div>
+<h3 id="_notes_on_the_python_3_port_work_in_progress">Notes on the python 3 port (Work in progress)</h3><div style="clear:left"></div>
+<div class="paragraph"><p>On Ubuntu 10.04 and maybe other old distributions, it may be necessary to install python, numpy and blender from source.
+Some scripts still need to be ported, but BFDTD and GWL import in Blender works.</p></div>
+<h4 id="_useful_links">Useful links</h4>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://blenderartists.org/forum/showthread.php?233753-adding-3rd-party-modules">http://blenderartists.org/forum/showthread.php?233753-adding-3rd-party-modules</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://www.blender.org/download/source-code/">http://www.blender.org/download/source-code/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Ubuntu/CMake">http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Ubuntu/CMake</a>
+</p>
+</li>
+</ul></div>
+<h4 id="_quick_guide">Quick guide</h4>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Install python 3.2 from source with $HOME/opt as prefix for example (<strong>./configure --prefix=$PREFIX</strong>)
+</p>
+</li>
+<li>
+<p>
+Configure the environment with:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>export PYTHONPATH=$PYTHONPATH:$HOME/opt/lib/python3.2/site-packages/
+export PYTHONPATH=$PYTHONPATH:$HOME/Development/script_inception_public
+export LD_LIBRARY_PATH=$HOME/opt/lib:$LD_LIBRARY_PATH</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install blender from source: configure the PYTHON variables in cmake correctly so they point to your python installation
+</p>
+</li>
+<li>
+<p>
+Install numpy from source with the same prefix as before: <strong>python setup.py install --prefix=$PREFIX</strong>
+</p>
+</li>
+<li>
+<p>
+Run setup_linux.sh
+</p>
+</li>
+<li>
+<p>
+Start Blender and go to <strong>File&#8594;User preferences&#8594;Addons</strong>, search for the BFDTD import script and enable it.
+</p>
+</li>
+<li>
+<p>
+Now you should be able to import BFDTD files through <strong>File&#8594;Import&#8594;Import BFDTD</strong>
+</p>
+</li>
+</ol></div>
 </div>
-<h2 id="_matlab_octave_scripts">Matlab/Octave scripts:</h2>
+<h2 id="_matlab_octave_scripts">Matlab/Octave scripts</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>To effectively use the Matlab/Octave scripts from this repository, you should add the paths to your Matlab/Octave path.<br /></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-First of all, edit <strong>startup.m</strong> by setting <strong>PUBLIC_REPO_DIR</strong> to the directory where you placed the repository (ex: <em>H:\script_inception_public</em>):
+First of all, edit <strong>startup.m</strong> by setting <strong>PUBLIC_REPO_DIR</strong> to the directory where you placed the repository, i.e. <strong>SCRIPT_DIR</strong>:
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><tt>    % Adapt those settings according to your setup and where you placed the repository
-    PUBLIC_REPO_DIR = H:\script_inception_public;</tt></pre>
+    PUBLIC_REPO_DIR = SCRIPT_DIR;</tt></pre>
 </div></div>
 </li>
 <li>
@@ -697,7 +963,7 @@ Then:
 </p>
 </li>
 </ol></div>
-<h3 id="_if_you_use_matlab">If you use Matlab:</h3><div style="clear:left"></div>
+<h3 id="_if_you_use_matlab">If you use Matlab</h3><div style="clear:left"></div>
 <div class="paragraph"><p>For Matlab, there are several ways to do this. Choose one of the following options:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -723,7 +989,7 @@ Edit your own <strong>startup.m</strong> appropriately.
 </ul></div>
 <div class="paragraph"><p>To test if it works, you can run <strong>get_c0()</strong> for example or <strong>postprocessor()</strong>.</p></div>
 <div class="paragraph"><p><em>Note: You can also set up the environment variable <strong>MATLABPATH</strong> to define the Matlab search path.</em></p></div>
-<h3 id="_if_you_use_octave">If you use Octave:</h3><div style="clear:left"></div>
+<h3 id="_if_you_use_octave">If you use Octave</h3><div style="clear:left"></div>
 <div class="paragraph"><p>Under GNU/Linux:</p></div>
 <div class="listingblock">
 <div class="content">
@@ -734,7 +1000,7 @@ Edit your own <strong>startup.m</strong> appropriately.
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2011-09-13 15:56:21 BST
+Last updated 2012-08-10 15:48:02 BST
 </div>
 </div>
 </body>

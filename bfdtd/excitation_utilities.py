@@ -5,6 +5,10 @@ from utilities.common import *
 from bfdtd.excitation import *
 from bfdtd.excitationTemplate import *
 
+'''
+Wrapper functions to create specific types of excitation.
+'''
+
 def ExcitationWrapper(Ysym, centre, size, plane_direction, type, excitation_direction, frequency, template_filename='template.dat'):
   '''
   Returns an Excitation and Template object: (excitation, template)

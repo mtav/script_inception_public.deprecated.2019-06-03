@@ -1,4 +1,4 @@
-function [header,data,ux,uy]=readPrnFile(filename)
+function [header,data,ux,uy] = readPrnFile(filename)
   % function [header,data,ux,uy]=readPrnFile(filename)
   % header = first line
   % data = rest of file, matrix of size(NX*NY, N_columns)
@@ -7,8 +7,6 @@ function [header,data,ux,uy]=readPrnFile(filename)
   % ux will be the list of unique values in column 1 and of size NX
   % uy will be the list of unique values in column 2 and of size NY
   % data will then also be of size (NY, NX, N_data_columns)
-  
-  disp(['Opening: ',filename]);
   
   if (nargin==0)
     [FileName,PathName] = uigetfile({'*.prn *.dat'},'Select the prn-file',getenv('DATADIR'));
@@ -49,12 +47,12 @@ function [header,data,ux,uy]=readPrnFile(filename)
       ny=length(x)/nx;
       uy=y(1:ny);
       for m=3:size(data,2)
-        Data(:,:,m-2)=reshape(data(:,m),ny,nx);
+        data_reshaped(:,:,m-2)=reshape(data(:,m),ny,nx);
       end
-      data=Data;
-      imagesc(ux,uy,Data(:,:,1));
-      xlabel(header(1));
-      ylabel(header(2));
+      data=data_reshaped;
+      %imagesc(ux,uy,data_reshaped(:,:,1));
+      %xlabel(header(1));
+      %ylabel(header(2));
     end
   %catch
     %error('FATAL ERROR: Could not read .prn file correctly.');

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 ##!BPY
@@ -25,20 +25,20 @@ from blender_scripts.GWL_import import *
 if __name__ == "__main__":
   filename = sys.argv[-1]
 
-  print '->Processing .in file : ', filename
+  print('->Processing .in file : ', filename)
   
   fileList = []
   f_handle = open(filename, 'r')
   for line in f_handle:
-      print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
-      print 'line.strip()=', line.strip() # remove any \n or similar
+      print('os.path.dirname(filename): ', os.path.dirname(filename)) # directory of .in file
+      print('line.strip()=', line.strip()) # remove any \n or similar
       # this is done so that you don't have to be in the directory containing the .geo/.inp files
       #subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip()))
       subfile = os.path.join(os.path.dirname(filename),line.strip())
-      print 'subfile: ', subfile
+      print('subfile: ', subfile)
       fileList.append(subfile)
   f_handle.close()
-  print fileList
+  print(fileList)
   
   for file in fileList:
     ext = getExtension(file)
@@ -47,5 +47,5 @@ if __name__ == "__main__":
     elif ext == 'geo' or ext == 'inp' or ext == 'in':
       importBristolFDTD(file)
     else:
-      print('ERROR: Unknown file extension: '+ext)
+      print(('ERROR: Unknown file extension: '+ext))
       sys.exit()

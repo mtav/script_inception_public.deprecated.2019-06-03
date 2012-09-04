@@ -51,8 +51,7 @@ function probe_fft(number,sim,start,col)
         end
         [hdr,datain] = hdrload(file);
                 
-        NFFT = 2^17;
-        [fft_out,lambda,freq] = calcFFT(datain(:,col), (datain(2,1)-datain(1,1))*1e-12, NFFT);
+        [fft_out,lambda,freq] = calcFFT(datain(:,col), (datain(2,1)-datain(1,1))*1e-12);
         %calculate magnitude of fft
         y_mag = abs(fft_out);
         %calculate power of fft

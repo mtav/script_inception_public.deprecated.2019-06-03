@@ -8,6 +8,10 @@ from bfdtd.meshobject import *
 from bfdtd.excitationTemplate import *
 from constants.constants import *
 
+'''
+Various type of Excitation objects, used for writing the excitations into the .inp file.
+'''
+
 # TODO: check coherence between excitation_direction (templates) and E,H (excitation) attributes. Are both necessary? Leads to confusion.
 
 # excitation objects
@@ -37,8 +41,8 @@ class Excitation(object):
     if name is None: name = 'excitation'
     if current_source is None: current_source = 7
     if P1 is None: P1 = [0,0,0]
-    if P2 is None: P2 = [0,0,0]
-    if E is None: E = [0,0,0]
+    if P2 is None: P2 = [1,0,0]
+    if E is None: E = [1,0,0]
     if H is None: H = [0,0,0]
     if Type is None: Type = 10
     if time_constant is None: time_constant = 4.000000E-09 #mus
@@ -77,12 +81,20 @@ class Excitation(object):
     self.template_rotation = template_rotation
 
     self.meshing_parameters = MeshingParameters()
+    
+    self.fixLowerUpperAtWrite = True
 
   def setLambda(self, lambda_mum):
     self.frequency = get_c0()/lambda_mum
     
   def setFrequency(self, freq_MHz):
     self.frequency = freq_MHz
+
+  def getLambda(self):
+    return get_c0()/self.frequency
+  
+  def getFrequency(self):
+    return self.frequency
 
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -141,7 +153,8 @@ class Excitation(object):
     
   def write_entry(self, FILE):
     if self.current_source != 11:
-      self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
+      if self.fixLowerUpperAtWrite:
+        self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
       FILE.write('EXCITATION **name='+self.name+'\n')
       FILE.write('{\n')
       FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
@@ -164,8 +177,8 @@ class Excitation(object):
       FILE.write("%E **FREQ (MHz if dimensions in mum)\n" % self.frequency)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
-      FILE.write('"'+str(self.template_filename)+'" ** TEMPLATE FILENAME\n')
-      FILE.write('"'+str(self.template_source_plane)+'" ** TEMPLATE SOURCE PLANE\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_filename)+' ** TEMPLATE FILENAME\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_source_plane)+' ** TEMPLATE SOURCE PLANE\n')
       FILE.write('}\n')
       FILE.write('\n')
     else:
@@ -195,9 +208,9 @@ class Excitation(object):
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
       # template specific
-      FILE.write('"'+self.template_filename+'" ** TEMPLATE FILENAME\n')
-      FILE.write('"'+self.template_source_plane+'" ** TEMPLATE SOURCE PLANE\n')
-      FILE.write('"'+self.template_target_plane+'" ** TEMPLATE TARGET PLANE\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_filename)+' ** TEMPLATE FILENAME\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_source_plane)+' ** TEMPLATE SOURCE PLANE\n')
+      FILE.write(addDoubleQuotesIfMissing(self.template_target_plane)+' ** TEMPLATE TARGET PLANE\n')
       FILE.write("%d ** DIRECTION 0=-ve 1=+ve\n" % self.template_direction)
       FILE.write("%d ** ROTATE 0=no, 1=yes\n" % self.template_rotation)
       FILE.write('}\n')

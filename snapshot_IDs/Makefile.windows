@@ -1,6 +1,0 @@
-OPTS=
-
-all:
-	fpc $(OPTS) snapshot_IDs.pas
-clean:
-	rm -f *.o hello

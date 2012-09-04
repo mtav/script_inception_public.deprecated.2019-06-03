@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: Get rid of the ghostscript stuff if possible. Simple "convert OLD -trim NEW" for multiple files should be enough.
+# TODO: Use input arguments, CLI options, etc (python?)
+
 set -eux
 
 trimit()

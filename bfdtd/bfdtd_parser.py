@@ -16,6 +16,12 @@ from constants.constants import *
 
 #==== CLASSES START ====#
 
+# TODO: Add function to easily change basename
+# TODO: Add check for negative values in mesh.
+# TODO: refactor class names with "_", get rid of unused lists or use them
+# TODO: Add check for more than 99/100 snapshots (number only go from 0/1 to 99)
+# TODO: create ref document about .prn files numbering, bfdtd output files, etc
+
 # mandatory objects
 class Flag(object):
   def __init__(self):
@@ -28,7 +34,7 @@ class Flag(object):
     self.flagTwo = 0
     self.iterations = 25000
     self.timeStep = 0.9; #mus
-    self.id = 'id' #'_id_'
+    self.id = '_id_'
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'iMethod = ' + str(self.iterationMethod) + '\n' +\
@@ -217,8 +223,27 @@ class Box(object):
     FILE.write("%E **ZU\n" % self.upper[2])
     FILE.write('}\n')
     FILE.write('\n')
-  def getCenter(self):
+
+  def translate(self, vec3):
+    self.lower = numpy.array(self.lower)
+    self.upper = numpy.array(self.upper)
+    self.lower = self.lower + vec3
+    self.upper = self.upper + vec3
+
+  def getCentro(self):
     return numpy.array([ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ])
+  def setCentro(self, nova_centro):
+    nova_centro = numpy.array(nova_centro)    
+    nuna_centro = self.getCentro()
+    self.translate(nova_centro - nuna_centro)
+    
+  def getSize(self):
+    return numpy.array(self.upper)-numpy.array(self.lower)
+  def setSize(self, size_vec3):
+    C = self.getCentro()
+    self.lower = C - 0.5*numpy.array(size_vec3)
+    self.upper = C + 0.5*numpy.array(size_vec3)
+    return
 
 # geometry objects
 class Geometry_object(object):
@@ -239,18 +264,46 @@ class Geometry_object(object):
     self.permittivity = pow(n,2)
     self.conductivity = 0
 
-class Sphere(Geometry_object):
-  def __init__(self):
-    Geometry_object.__init__(self)
-    self.name = 'sphere'
-    self.layer = 'sphere'
-    self.group = 'sphere'
+  def getRefractiveIndex(self,n):
+    # TODO: Use conductivity?
+    return numpy.sqrt(self.permittivity)
     
-    self.centre = [0,0,0]
-    self.outer_radius = 0
-    self.inner_radius = 0
-    self.permittivity = 1
-    self.conductivity = 0
+  # this function requires the child objects to define a getCentro() and translate() method
+  def setCentro(self, nova_centro):
+    nova_centro = numpy.array(nova_centro)    
+    nuna_centro = self.getCentro()
+    self.translate(nova_centro - nuna_centro)
+
+class Sphere(Geometry_object):
+  def __init__(self,
+    name = None,
+    layer = None,
+    group = None,
+    centre = None,
+    outer_radius = None,
+    inner_radius = None,
+    permittivity = None,
+    conductivity = None):
+
+    if name is None: name = 'sphere'
+    if layer is None: layer = 'sphere'
+    if group is None: group = 'sphere'
+    if centre is None: centre = [0,0,0]
+    if outer_radius is None: outer_radius = 0.5
+    if inner_radius is None: inner_radius = 0
+    if permittivity is None: permittivity = 1
+    if conductivity is None: conductivity = 0
+
+    Geometry_object.__init__(self)
+    self.name = name
+    self.layer = layer
+    self.group = group
+    self.centre = centre
+    self.outer_radius = outer_radius
+    self.inner_radius = inner_radius
+    self.permittivity = permittivity
+    self.conductivity = conductivity
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'centre = ' + str(self.centre) + '\n' +\
@@ -260,6 +313,7 @@ class Sphere(Geometry_object):
     'conductivity = ' + str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
+
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -269,6 +323,7 @@ class Sphere(Geometry_object):
     self.permittivity = float(entry.data[5])
     self.conductivity = float(entry.data[6])
     return(0)
+    
   def write_entry(self, FILE):
     ''' sphere
     {
@@ -287,6 +342,13 @@ class Sphere(Geometry_object):
     FILE.write("%E **conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
+
+  def getCentro(self):
+    return numpy.array(self.centre)
+    
+  def translate(self, vec3):
+    self.centre = numpy.array(self.centre)
+    self.centre = self.centre + vec3
 
 class Block(Geometry_object):
   def __init__(self,
@@ -314,6 +376,7 @@ class Block(Geometry_object):
     self.upper = upper
     self.permittivity = permittivity
     self.conductivity = conductivity
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
@@ -322,6 +385,7 @@ class Block(Geometry_object):
     ret += 'conductivity = '+str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -329,6 +393,7 @@ class Block(Geometry_object):
     self.upper = float_array(entry.data[3:6])
     self.permittivity = float(entry.data[6])
     self.conductivity = float(entry.data[7])
+    
   def write_entry(self, FILE):
     self.lower, self.upper = fixLowerUpper(self.lower, self.upper)
     FILE.write('BLOCK **name='+self.name+'\n')
@@ -343,9 +408,16 @@ class Block(Geometry_object):
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
-  def getCenter(self):
-    return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
+  def getCentro(self):
+    return numpy.array([ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ])
+    
+  def translate(self, vec3):
+    self.lower = numpy.array(self.lower)
+    self.upper = numpy.array(self.upper)
+    self.lower = self.lower + vec3
+    self.upper = self.upper + vec3
+  
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = numpy.sort([self.lower[0],self.upper[0]])
     objy = numpy.sort([self.lower[1],self.upper[1]])
@@ -358,11 +430,20 @@ class Block(Geometry_object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
+    
+  def getSize(self):
+    return abs(numpy.array(self.upper)-numpy.array(self.lower))
+
+  def setSize(self, size_vec3):
+    C = self.getCentro()
+    self.lower = C - 0.5*numpy.array(size_vec3)
+    self.upper = C + 0.5*numpy.array(size_vec3)
+    return
 
 class Distorted(Geometry_object):
   '''
-  0,1,2,3 = top face numbered clockwise
-  4,5,6,7 = bottom face numbered clockwise
+  0,1,2,3 = top face numbered clockwise viewed from outside
+  4,5,6,7 = bottom face numbered clockwise viewed from outside
   3 connected to 4
   2 connected to 5
   0 connected to 7
@@ -373,7 +454,7 @@ class Distorted(Geometry_object):
     [0,1,6,7]
     [1,2,5,6]
     [2,3,4,5]
-    [3,0,7,4]  
+    [3,0,7,4]
   '''
   def __init__(self,
     name = None,
@@ -386,7 +467,8 @@ class Distorted(Geometry_object):
     if name is None: name = 'distorted'
     if layer is None: layer = 'distorted',
     if group is None: group = 'distorted',
-    if vertices is None: vertices = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+    if vertices is None: vertices = [[1,0,1],[0,0,1],[0,1,1],[1,1,1],[1,1,0],[0,1,0],[0,0,0],[1,0,0]]
+                                   #0        1       2       3       4       5        6      7
     if permittivity is None: permittivity = 1 # vacuum by default
     if conductivity is None: conductivity = 0
     
@@ -405,6 +487,7 @@ class Distorted(Geometry_object):
     ret += 'conductivity = '+str(self.conductivity)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -412,6 +495,7 @@ class Distorted(Geometry_object):
       self.vertices[i] = float_array(entry.data[3*i:3*i+3])
     self.permittivity = float(entry.data[8*3])
     self.conductivity = float(entry.data[8*3+1])
+    
   def write_entry(self, FILE):
     FILE.write('DISTORTED **name='+self.name+'\n')
     FILE.write('{\n')
@@ -423,25 +507,45 @@ class Distorted(Geometry_object):
     FILE.write("%E **Conductivity\n" % self.conductivity)
     FILE.write('}\n')
     FILE.write('\n')
-  #def getCenter(self):
-    #S = [0,0,0]
-    #for i in range(len(self.vertices)):
-      #S = S + self.vertices[i][0]+self.upper[0])
-      
-    #return [ 1./8.*(, 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
-  #def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
-    #objx = numpy.sort([self.lower[0],self.upper[0]])
-    #objy = numpy.sort([self.lower[1],self.upper[1]])
-    #objz = numpy.sort([self.lower[2],self.upper[2]])
-    #eps = self.permittivity
-    #xvec = numpy.vstack([xvec,objx])
-    #yvec = numpy.vstack([yvec,objy])
-    #zvec = numpy.vstack([zvec,objz])
-    #epsx = numpy.vstack([epsx,eps])
-    #epsy = numpy.vstack([epsy,eps])
-    #epsz = numpy.vstack([epsz,eps])
-    #return xvec,yvec,zvec,epsx,epsy,epsz
+  def translate(self, vec3):
+    for i in range(len(self.vertices)):
+      self.vertices[i] = numpy.array(self.vertices[i]) + numpy.array(vec3)
+  
+  def getCentro(self):
+    S = numpy.array([0,0,0])
+    for v in self.vertices:
+      #print('S='+str(S)+' + v='+str(v))
+      S = S + numpy.array(v)
+      #print('= S='+str(S))
+    return 1./len(self.vertices)*S
+    
+  def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
+    # TODO: improve meshing system + add support for rotations
+    
+    # determine lower and upper points of distorted object
+    vertex_min = numpy.array(self.vertices[0])
+    vertex_max = numpy.array(self.vertices[0])
+    for vertex in self.vertices:
+      #print('vertex = '+str(vertex))
+      for i in range(3):
+        if vertex[i]<vertex_min[i]: vertex_min[i] = vertex[i]
+        if vertex[i]>vertex_max[i]: vertex_max[i] = vertex[i]
+    
+    #print('vertex_min = '+str(vertex_min))
+    #print('vertex_max = '+str(vertex_max))
+    
+    objx = numpy.sort([vertex_min[0],vertex_max[0]])
+    objy = numpy.sort([vertex_min[1],vertex_max[1]])
+    objz = numpy.sort([vertex_min[2],vertex_max[2]])
+    eps = self.permittivity
+    xvec = numpy.vstack([xvec,objx])
+    yvec = numpy.vstack([yvec,objy])
+    zvec = numpy.vstack([zvec,objz])
+    epsx = numpy.vstack([epsx,eps])
+    epsy = numpy.vstack([epsy,eps])
+    epsz = numpy.vstack([epsz,eps])
+    return xvec,yvec,zvec,epsx,epsy,epsz
 
 class Cylinder(Geometry_object):
   def __init__(self,
@@ -459,8 +563,8 @@ class Cylinder(Geometry_object):
     if name is None: name = 'cylinder'
     if centre is None: centre = [0,0,0]
     if inner_radius is None: inner_radius = 0
-    if outer_radius is None: outer_radius = 0
-    if height is None: height = 0
+    if outer_radius is None: outer_radius = 0.5
+    if height is None: height = 1
     if permittivity is None: permittivity = 0
     if conductivity is None: conductivity = 0
     if angle_deg is None: angle_deg = 0
@@ -478,9 +582,21 @@ class Cylinder(Geometry_object):
     self.permittivity = permittivity
     self.conductivity = conductivity
     self.angle_deg = angle_deg
-    
+  
+  def getLower(self):
+    return [self.centre[0]-self.outer_radius,self.centre[1]-0.5*self.height,self.centre[2]-self.outer_radius]
+  def getUpper(self):
+    return [self.centre[0]+self.outer_radius,self.centre[1]+0.5*self.height,self.centre[2]+self.outer_radius]
+  
   def setDiametre(self,diametre):
     self.outer_radius = 0.5*diametre
+
+  def getCentro(self):
+    return numpy.array(self.centre)
+    
+  def translate(self, vec3):
+    self.centre = numpy.array(self.centre)
+    self.centre = self.centre + vec3
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -545,19 +661,29 @@ class Cylinder(Geometry_object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
+    
+  def getSize(self):
+    # TODO: Take rotations into account?
+    return numpy.array([2*self.outer_radius, self.height, 2*self.outer_radius])
 
 # TODO: meshing params in case of rotations
 class Rotation(object):
   def __init__(self,
-      name = 'rotation',
-      axis_point = [0,0,0],
-      axis_direction = [0,0,0],
-      angle_degrees = 0):
-        
+      name = None,
+      axis_point = None,
+      axis_direction = None,
+      angle_degrees = None):
+      
+    if name is None: name = 'rotation'
+    if axis_point is None: axis_point = [0,0,0]
+    if axis_direction is None: axis_direction = [0,0,0]
+    if angle_degrees is None: angle_degrees = 0
+    
     self.name = name
     self.axis_point = axis_point
     self.axis_direction = axis_direction
     self.angle_degrees = angle_degrees
+    
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'axis_point = ' + str(self.axis_point) + '\n'
@@ -684,6 +810,7 @@ class Time_snapshot(object):
     'power = ' + str(self.power) + '\n' +\
     'eps = ' + str(self.eps)
     return ret
+    
   def read_entry(self,entry):
     if entry.name:
       self.name = entry.name
@@ -701,6 +828,7 @@ class Time_snapshot(object):
     self.power = float(entry.data[idx]); idx = idx+1
     if(len(entry.data)>idx): self.eps = int(float(entry.data[idx])); idx = idx+1
     return(0)
+    
   def write_entry(self, FILE):
     self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
   
@@ -744,6 +872,7 @@ class Time_snapshot(object):
       snapshot(2,[self.P1[0],self.P2[1],self.P1[2]],[self.P2[0],self.P2[1],self.P2[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P1[2]],[self.P2[0],self.P2[1],self.P1[2]])
       snapshot(3,[self.P1[0],self.P1[1],self.P2[2]],[self.P2[0],self.P2[1],self.P2[2]])
+      
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = numpy.sort([self.P1[0],self.P2[0]])
     objy = numpy.sort([self.P1[1],self.P2[1]])
@@ -756,7 +885,7 @@ class Time_snapshot(object):
     epsy = numpy.vstack([epsy,eps])
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
-
+  
 class ModeFilteredProbe(Time_snapshot):
   def __init__(self,
       name = None,
@@ -770,7 +899,7 @@ class ModeFilteredProbe(Time_snapshot):
 
     if name is None: name = 'mode_filtered_probe'
     if first is None: first = 1 # crashes if = 0
-    if repetition is None: repetition = 10,
+    if repetition is None: repetition = 10
     if plane is None: plane = 1 #1,2,3 for x,y,z
     if P1 is None: P1 = [0,0,0]
     if P2 is None: P2 = [0,1,1]
@@ -783,6 +912,33 @@ class ModeFilteredProbe(Time_snapshot):
     self.J = [0,0,0]
     self.power = 0
     self.eps = 0
+
+class EpsilonSnapshot(Time_snapshot):
+  def __init__(self,
+      name = None,
+      first = None,
+      repetition = None,
+      plane = None,
+      P1 = None,
+      P2 = None,
+      layer = None,
+      group = None):
+
+    if name is None: name = 'epsilon_snapshot'
+    if first is None: first = 1 # crashes if = 0
+    if repetition is None: repetition = 1
+    if plane is None: plane = 1 #1,2,3 for x,y,z
+    if P1 is None: P1 = [0,0,0]
+    if P2 is None: P2 = [0,1,1]
+    if layer is None: layer = 'epsilon_snapshot'
+    if group is None: group = 'epsilon_snapshot'
+    
+    Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
+    self.E = [0,0,0]
+    self.H = [0,0,0]
+    self.J = [0,0,0]
+    self.power = 0
+    self.eps = 1
   
 class Frequency_snapshot(object):
   '''
@@ -802,12 +958,13 @@ class Frequency_snapshot(object):
   6)mod_all: Write the modulus AND the real and imaginary parts to file
   7)plane: 0=all, 1=x, 2=y, 3=z
   8-13)P1,P2: coordinates of the lower left and top right corners of the plane P1(x1,y1,z1), P2(x2,y2,z2)
-  14)frequency_vector: frequency (in Hz! ). Will create a frequency snapshot for each frequency in the list/vector
+  14)frequency_vector: frequency (in MHz! ). Will create a frequency snapshot for each frequency in the list/vector
   15)starting_sample: iteration number at which to start the running fourier transforms
   16-24)E,H,J: field components to be sampled E(Ex,Ey,Ez), H(Hx,Hy,Hz), J(Jx,Jy,Jz)
   
   The output file is of the same format as the snapshot “list format” and the naming is the same except that the time serial number starts at “00" instead of “aa”.
   '''
+  # TODO: Change frequency_vector to frequency_vector_Mhz?
   def __init__(self,
     name = None,
     first = None,
@@ -862,7 +1019,10 @@ class Frequency_snapshot(object):
     self.E = E
     self.H = H
     self.J = J
-    
+  
+  def getLambda(self):
+    return get_c0()/numpy.array(self.frequency_vector)
+  
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'first = ' + str(self.first) + '\n' +\
@@ -969,10 +1129,10 @@ class Probe(object):
   def __init__(self,
     position = [0,0,0],
     name = 'probe',
-    step=10,
-    E=[1,1,1],
-    H=[1,1,1],
-    J=[0,0,0],
+    step = 10,
+    E = [1,1,1],
+    H = [1,1,1],
+    J = [0,0,0],
     power = 0,
     layer = 'probe',
     group = 'probe'):
@@ -1070,7 +1230,7 @@ class BFDTDobject(object):
     self.excitation_list = []
     
     # measurement objects
-    self.measurement_object_list = []
+    self.measurement_object_list = [] # TODO: make sure fully unused + not necessary and remove? use subclasses, etc...
     self.snapshot_list = []
     self.time_snapshot_list = []
     self.frequency_snapshot_list = []
@@ -1082,6 +1242,16 @@ class BFDTDobject(object):
 
     # special
     self.fileList = []
+    
+    
+    # excitation object meshes
+    self.fitMeshToExcitations = True
+    self.fitMeshToProbes = False
+    self.fitMeshToSnapshots = False
+    
+    self.verboseMeshing = False
+    
+    self.verbosity = 1
     
   def __str__(self):
       ret = '--->snapshot_list\n'
@@ -1150,7 +1320,7 @@ class BFDTDobject(object):
       return ret
   
   def getNcells(self):
-    return len(self.mesh.getXmeshDelta())*len(self.mesh.getYmeshDelta())*len(self.mesh.getZmeshDelta())
+    return self.mesh.getNcells()
 
   def addBoxFrequencySnapshots(self):
     L = [self.box.lower[0], self.box.lower[1], self.box.lower[2]]
@@ -1160,15 +1330,19 @@ class BFDTDobject(object):
     return F
   
   def addFrequencySnapshot(self, plane, position):
-    if plane == 1:
+    if not isinstance(position,int) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
       name='X frequency snapshot'
       L = [position, self.box.lower[1], self.box.lower[2]]
       U = [position, self.box.upper[1], self.box.upper[2]]
-    elif plane == 2:
+    elif alpha == 'y':
       name='Y frequency snapshot'
       L = [self.box.lower[0], position, self.box.lower[2]]
       U = [self.box.upper[0], position, self.box.upper[2]]
-    elif plane == 3:
+    elif alpha == 'z':
       name='Z frequency snapshot'
       L = [self.box.lower[0], self.box.lower[1], position]
       U = [self.box.upper[0], self.box.upper[1], position]
@@ -1180,15 +1354,19 @@ class BFDTDobject(object):
     return F
   
   def addTimeSnapshot(self, plane, position):
-    if plane == 1:
+    if not isinstance(position,int) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)      
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
       name='X Time snapshot'
       L = [position, self.box.lower[1], self.box.lower[2]]
       U = [position, self.box.upper[1], self.box.upper[2]]
-    elif plane == 2:
+    elif alpha == 'y':
       name='Y Time snapshot'
       L = [self.box.lower[0], position, self.box.lower[2]]
       U = [self.box.upper[0], position, self.box.upper[2]]
-    elif plane == 3:
+    elif alpha == 'z':
       name='Z Time snapshot'
       L = [self.box.lower[0], self.box.lower[1], position]
       U = [self.box.upper[0], self.box.upper[1], position]
@@ -1200,7 +1378,7 @@ class BFDTDobject(object):
     return F
 
   def addModeFilteredProbe(self, plane, position):
-    if not isinstance(position,float) and not isinstance(position,float):
+    if not isinstance(position,int) and not isinstance(position,float):
       print('ERROR: position argument is not int or float, but is '+str(type(position)))
       sys.exit(1)      
     # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
@@ -1228,9 +1406,80 @@ class BFDTDobject(object):
     self.snapshot_list.append(F)
     return F
 
+  def addEpsilonSnapshot(self, plane, position):
+    if not isinstance(position,int) and not isinstance(position,float):
+      print('ERROR: position argument is not int or float, but is '+str(type(position)))
+      sys.exit(1)
+    if isinstance(plane,int) or isinstance(plane,float):
+      if plane == 1:
+        plane = 'x'
+      elif plane == 2:
+        plane = 'y'
+      elif plane == 3:
+        plane = 'z'
+      print('WARNING: Interpreting plane as being '+str(plane))
+      
+    # TODO: use x,y,z or vectors wherever possible instead of 1,2,3/0,1,2 to avoid confusion
+    # TODO: support multiple types for position argument (int/float or array)
+    vec, alpha = getVecAlphaDirectionFromVar(plane)
+    if alpha == 'x':
+      name='X epsilon snapshot'
+      L = [position, self.box.lower[1], self.box.lower[2]]
+      U = [position, self.box.upper[1], self.box.upper[2]]
+      plane = 1
+    elif alpha == 'y':
+      name='Y epsilon snapshot'
+      L = [self.box.lower[0], position, self.box.lower[2]]
+      U = [self.box.upper[0], position, self.box.upper[2]]
+      plane = 2
+    elif alpha == 'z':
+      name='Z epsilon snapshot'
+      L = [self.box.lower[0], self.box.lower[1], position]
+      U = [self.box.upper[0], self.box.upper[1], position]
+      plane = 3
+    else:
+      print(('ERROR: Invalid plane : ',plane))
+      sys.exit(1)
+    F = EpsilonSnapshot(name=name, plane=plane, P1=L, P2=U)
+    self.snapshot_list.append(F)
+    return F
+
+  def clearTimeSnapshots(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if ( not isinstance(s,Time_snapshot) or isinstance(s,EpsilonSnapshot) or isinstance(s,ModeFilteredProbe) ) ]
+    self.time_snapshot_list[:] = []
+
+  def clearFrequencySnapshots(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Frequency_snapshot) ]
+    self.frequency_snapshot_list[:] = []
+
+  def clearEpsilonSnapshots(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,EpsilonSnapshot) ]
+
+  def clearModeFilteredProbes(self):
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,ModeFilteredProbe) ]
+
+  def clearAllSnapshots(self):
+    self.snapshot_list[:] = []
+    self.time_snapshot_list[:] = []
+    self.frequency_snapshot_list[:] = []
+
+  def clearProbes(self):
+    self.probe_list[:] = []
+
+  def getEpsilonSnapshots(self):
+    for i in range(len(self.snapshot_list)):
+      s = self.snapshot_list[i]
+    # TODO: To be continued...
+      #if 
+    epsilon_snapshot_list = [ s for s in self.snapshot_list if isinstance(s,EpsilonSnapshot) ]
+
+
+  def clearMesh():
+    self.mesh = MeshObject()
+
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
-      print 'Processing ', filename
+      if self.verbosity>0: print('Processing ' + filename)
       box_read = False
       xmesh_read = False
       
@@ -1280,7 +1529,9 @@ class BFDTDobject(object):
           # split data by spaces and new lines
           data = re.split('\s+',data)
           # remove empty lines from data
-          data = filter(None, data)
+          #data = filter(None, data)
+          data = list(filter(None, data))
+          #print('data = '+str(data))
           
           entry = Entry()
           entry.Type = Type
@@ -1354,13 +1605,13 @@ class BFDTDobject(object):
               self.probe_list.append(probe)
   
           else:
-              print 'Unknown Type: ', entry.Type
+              print('Unknown Type: ', entry.Type)
 
       return [ xmesh_read, box_read ]
 
   def read_inputs(self,filename):
       ''' read .in file '''
-      print '->Processing .in file : ', filename
+      if self.verbosity>0: print('->Processing .in file : ', filename)
       
       box_read = False
       xmesh_read = False
@@ -1368,13 +1619,13 @@ class BFDTDobject(object):
       f = open(filename, 'r')
       for line in f:
           if line.strip(): # only process line if it is not empty
-            print 'os.path.dirname(filename): ', os.path.dirname(filename) # directory of .in file
-            print 'line.strip()=', line.strip() # remove any \n or similar
+            if self.verbosity>0: print(('os.path.dirname(filename): ', os.path.dirname(filename))) # directory of .in file
+            if self.verbosity>0: print(('line.strip()=', line.strip())) # remove any \n or similar
             self.fileList.append(line.strip())
             # this is done so that you don't have to be in the directory containing the .geo/.inp files
             #subfile = os.path.join(os.path.dirname(filename),os.path.basename(line.strip())) # converts absolute paths to relative
             subfile = os.path.join(os.path.dirname(filename),line.strip()) # uses absolute paths if given
-            print 'subfile: ', subfile
+            if self.verbosity>0: print(('subfile: ', subfile))
             if (not xmesh_read): # as long as the mesh hasn't been read, .inp is assumed as the default extension
                 subfile_ext = addExtension(subfile,'inp')
             else:
@@ -1388,9 +1639,9 @@ class BFDTDobject(object):
                 box_read = True
       f.close()
       if (not xmesh_read):
-          print 'WARNING: mesh not found'
+          print('WARNING: mesh not found')
       if (not box_read):
-          print 'WARNING: box not found'
+          print('WARNING: box not found')
 
   def writeMesh(self,FILE):
     ''' writes mesh to FILE '''
@@ -1434,7 +1685,7 @@ class BFDTDobject(object):
       out.write('\n')
 
       # write geometry objects
-      #print 'len(self.geometry_object_list) = ', len(self.geometry_object_list)
+      #print('len(self.geometry_object_list) = '+len(self.geometry_object_list))
       for obj in self.geometry_object_list:
         #print obj.name
         #print obj.__class__.__name__
@@ -1533,9 +1784,9 @@ class BFDTDobject(object):
         #os.mkdir(newDirName)
 
     if fileBaseName is None:
-      fileBaseName = os.path.basename(newDirName)
+      fileBaseName = os.path.basename(os.path.abspath(newDirName))
     
-    #print 'fileBaseName = ', fileBaseName
+    #print('fileBaseName = '+fileBaseName)
     
     geoFileName = newDirName+os.sep+fileBaseName+'.geo'
     inpFileName = newDirName+os.sep+fileBaseName+'.inp'
@@ -1552,6 +1803,11 @@ class BFDTDobject(object):
     self.writeDatFiles(newDirName)
     #self.writeCondorScript(cmdFileName)
     #self.writeShellScript(shFileName)
+  
+  def fitBox(self, vec6):
+    ''' Changes the limits of the box to fit the geometry. Moves all other things as necessary to have box min be [0,0,0] (necessary?). 
+    TODO: finish this function '''
+    print('fitBox not working yet')
   
   def calculateMeshingParameters(self, minimum_mesh_delta_vector3):
     ''' returns parameters that can be used for meshing:
@@ -1585,24 +1841,31 @@ class BFDTDobject(object):
 
     # geometry object meshes
     for obj in self.geometry_object_list:
-      #print(obj.name)
+      if self.verboseMeshing:
+        print(obj.name)
+        print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+      if self.verboseMeshing:
+        print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
 
     # mesh object meshes
     for obj in self.mesh_object_list:
       Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # excitation object meshes
-    for obj in self.excitation_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+    if self.fitMeshToExcitations:
+      for obj in self.excitation_list:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # probe object meshes
-    for obj in self.probe_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+    if self.fitMeshToProbes:
+      for obj in self.probe_list:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # snapshot object meshes
-    for obj in self.snapshot_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+    if self.fitMeshToSnapshots:
+      for obj in self.snapshot_list:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
       
     # postprocess the meshes
     Xvec[Xvec<simMinX] = simMinX
@@ -1688,13 +1951,23 @@ class BFDTDobject(object):
     
   def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-3,1e-3,1e-3]):
     meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
-    #print(meshing_parameters)
+    if self.verboseMeshing: print(meshing_parameters)
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
     self.mesh.setXmeshDelta(delta_X_vector)
     self.mesh.setYmeshDelta(delta_Y_vector)
     self.mesh.setZmeshDelta(delta_Z_vector)
+  
+  def rotate(self, axis_point, axis_direction, angle_degrees):
+    for obj in self.geometry_object_list:
+      self.rotation_list.append(Rotation(axis_point = axis_point, axis_direction = axis_direction, angle_degrees = angle_degrees))
+    return
+    
+  def applyTransformationMatrix(self, M):
+    # TODO
+    return
+
     
 class MeshBox(Geometry_object):
   def __init__(self,
@@ -1745,26 +2018,27 @@ class MeshBox(Geometry_object):
     
 #==== CLASSES END ====#
 
-def readBristolFDTD(filename):
+def readBristolFDTD(filename, verbosity = 1):
     ''' reads .in (=>.inp+.geo), .geo or .inp '''
-    print '->Processing generic file : ', filename
+    if verbosity>0: print('->Processing generic file : '+filename)
 
     structured_entries = BFDTDobject()
+    structured_entries.verbosity = verbosity
     
     extension = getExtension(filename)
     if extension == 'in':
-        print '.in file detected'
+        if verbosity>0: print('.in file detected')
         structured_entries.read_inputs(filename)
     elif extension == 'inp':
-        print '.inp file detected'
+        if verbosity>0: print('.inp file detected')
         structured_entries.read_input_file(filename)
     elif extension == 'geo':
-        print '.geo file detected'
+        if verbosity>0: print('.geo file detected')
         structured_entries.read_input_file(filename)
     elif extension == 'prn':
-        print '.prn file detected: Not supported yet'
+        if verbosity>0: print('.prn file detected: Not supported yet')
     else:
-        print 'Unknown file format:', extension
+        if verbosity>0: print('Unknown file format: '+extension)
         sys.exit(-1)
     
     #~ print '================'
@@ -1845,18 +2119,18 @@ def main(argv=None):
   try:
     try:
       opts, args = getopt.getopt(argv[1:], "h", ["help"])
-    except getopt.error, msg:
+    except getopt.error as msg:
       raise Usage(msg)
     # main function
     # for testing
-    print '----->Importing bristol FDTD geometry...'
+    print('----->Importing bristol FDTD geometry...')
     structured_entries = readBristolFDTD(sys.argv[1])
-    print structured_entries
-    print '...done'
+    print(structured_entries)
+    print('...done')
     
-  except Usage, err:
-    print >>sys.stderr, err.msg
-    print >>sys.stderr, "for help use --help"
+  except Usage as err:
+    print(err.msg, file=sys.stderr)
+    print("for help use --help", file=sys.stderr)
     return 2
 
 if __name__ == "__main__":

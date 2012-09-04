@@ -231,7 +231,7 @@ function [ vEnd, vStart, dt, fmin, fmax, peak_frequency_vector, data_min, data_m
   
   % [x0, y0, A, FWHM] = getLorentzStartValues(wavelength_vec, c_Mag_zoom_2, 0);
   % vStart = [x0, y0, A, FWHM];
-  % [x0, y0, A, FWHM] = mylorentzfit(wavelength_vec, c_Mag_zoom_2, vStart);
+  % [x0, y0, A, FWHM] = getLorentzEndValues(wavelength_vec, c_Mag_zoom_2, vStart);
   % vEnd = [x0, y0, A, FWHM];
   
   % return

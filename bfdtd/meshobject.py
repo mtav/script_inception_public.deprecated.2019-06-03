@@ -2,6 +2,8 @@
 
 from __future__ import division
 import numpy
+from bfdtd.meshobject import *
+from meshing.subGridMultiLayer import *
 
 class MeshObject(object):
   def __init__(self):
@@ -63,3 +65,25 @@ class MeshObject(object):
     return(numpy.diff(self.zmesh))
   def getMeshDelta(self):
     return(numpy.diff(self.xmesh),numpy.diff(self.ymesh),numpy.diff(self.zmesh))
+
+  def setSizeAndResolution(self, size_vec3, N_vec3):
+    self.xmesh = numpy.linspace(0, size_vec3[0], N_vec3[0]+1)
+    self.ymesh = numpy.linspace(0, size_vec3[1], N_vec3[1]+1)
+    self.zmesh = numpy.linspace(0, size_vec3[2], N_vec3[2]+1)
+    return
+
+  def getXmeshCentres(self):
+    return [ 0.5*(self.xmesh[i+1]+self.xmesh[i]) for i in range(len(self.xmesh)-1)]
+
+  def getYmeshCentres(self):
+    return [ 0.5*(self.ymesh[i+1]+self.ymesh[i]) for i in range(len(self.ymesh)-1)]
+
+  def getZmeshCentres(self):
+    return [ 0.5*(self.zmesh[i+1]+self.zmesh[i]) for i in range(len(self.zmesh)-1)]
+
+  def getNcells(self):
+    ''' Returns the number of cells in the mesh. '''
+    return len(self.getXmeshDelta())*len(self.getYmeshDelta())*len(self.getZmeshDelta())
+
+  def getSizeAndResolution(self):
+    return ([self.xmesh[-1],self.zmesh[-1],self.zmesh[-1]],[len(self.getXmeshDelta()),len(self.getYmeshDelta()),len(self.getZmeshDelta())])

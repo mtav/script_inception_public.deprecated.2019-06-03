@@ -1,12 +1,40 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
 import re
 import numpy
 import os
+from utilities.common import *
+from utilities import TransformationMatrix
+ 
+# TODO: Somehow get voxel size based on scanspeed/power/dwelltime/defocusfactor/etc
+DEFAULT_VOXEL_WIDTH = 0.100 # in mum
+DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
+DEFAULT_OVERLAP_HORIZONTAL = 0.5
+DEFAULT_OVERLAP_VERTICAL = 0.5
 
-class GWLobject:
+def calculateNvoxelsAndInterVoxelDistance(Length, Voxelsize, Overlap):
+  '''
+  Calulates the number of voxels and the distance between them so that they fit into length "Length" with an overlap "Overlap", i.e. so that:
+  InterVoxelDistance = (1-Overlap)*Voxelsize
+  (Nvoxels-1)*InterVoxelDistance + Voxelsize <= Length
+  '''
+  
+  if Overlap < 0 or Overlap > 1:
+    print('ERROR: Invalid Overlap', file=sys.stderr)
+    sys.exit(-1)
+    
+  InterVoxelDistance = (1-Overlap)*Voxelsize
+  Nvoxels = math.floor( ((Length-Voxelsize)/InterVoxelDistance) + 1 )
+
+  if(Nvoxels) <= 0:
+    Nvoxels = 1
+    print('WARNING: Voxel too big for specified length', file=sys.stderr)
+
+  return (Nvoxels, InterVoxelDistance)
+
+class GWLobject(object):
   def __init__(self):
     self.verbosity = 0
     self.GWL_voxels = []
@@ -22,7 +50,16 @@ class GWLobject:
     self.path_substitutes = []
     self.writingTimeInSeconds = 0
     self.writingDistanceInMum = 0
-    self.DwellTime = 200
+    self.DwellTime = 200 # in ms = 1e-3 seconds
+    self.minDistanceBetweenLines = 1000 # shortest distance from end of one line to start of next one
+    self.maxDistanceBetweenLines = 0 # maximum acceptable distance from end of one line to start of next one
+    self.LastVoxel = [0,0,0,0]
+    self.LastVoxelSet = False
+    self.out_of_range = False
+
+  # TODO
+  def getMinDistanceBetweenVoxels():
+    return(0)
 
   def getLimits(self):
     Pmin = 4*[0]
@@ -61,9 +98,184 @@ class GWLobject:
     self.GWL_voxels = []
     self.voxel_offset = [0,0,0,0]
 
-  def addLine(self,P1,P2):
+  def addLine(self,P1,P2,power=-1):
     write_sequence = [P1,P2]
     self.GWL_voxels.append(write_sequence)
+
+  def addLineCylinder(self, P1, P2, power, inner_radius, outer_radius, PointDistance_r, PointDistance_theta):
+    # prepare some variables
+    v = numpy.array(P2)-numpy.array(P1) # vector to rotate
+    #print(('v=',v))
+    centro = 0.5*(numpy.array(P2)+numpy.array(P1)) # center of LineCylinder
+    #print(('centro=',centro))
+    u = numpy.array([0,0,1]) # direction of standard TubeWithVerticalLines
+    #print(('u=',u))
+
+    theta = Angle(u,v) # angle by which to rotate
+    #print(('theta=',theta))
+
+    rotation_axis = numpy.cross(u,v) # axis around which to rotate
+    #print(('rotation_axis=',rotation_axis))
+
+    height = numpy.linalg.norm(v)
+    #print(('height=',height))
+
+    # build a basis from the P1-P2 direction
+    k = v
+    i = Orthogonal(k)
+    j = numpy.cross(k,i)
+
+    #print(('i=',i))
+    #print(('j=',j))
+    #print(('k=',k))
+
+    i = i/numpy.linalg.norm(i)
+    j = j/numpy.linalg.norm(j)
+    k = k/numpy.linalg.norm(k)
+
+    #print(('i=',i))
+    #print(('j=',j))
+    #print(('k=',k))
+
+    # transformation matrix from (x,y,z) into (i,j,k)
+    P = numpy.transpose(numpy.matrix([i,j,k]))
+    #print(P)
+    #print(P.T)
+    #print(P*P.T)
+
+    # create a vertical tube and rotate it
+    tube = GWLobject()
+    origin = [0,0,0]
+    tube.addTubeWithVerticalLines(origin, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=False)
+    #print(('tube.GWL_voxels=',tube.GWL_voxels))
+    #tube.write_GWL('test.gwl')
+
+    #print(P)
+    #print(('centro=',centro))
+    tube.applyTransformationMatrix(P, centro)
+    #print(('tube.GWL_voxels=',tube.GWL_voxels))
+    self.addGWLobject(tube)
+
+
+    ## prepare some variables
+    #v = numpy.array(P2)-numpy.array(P1) # vector to rotate
+    #centro = 0.5*(numpy.array(P2)+numpy.array(P1)) # center of LineCylinder
+    #u = numpy.array([0,0,1]) # direction of standard TubeWithVerticalLines
+    #theta = Angle(u,v) # angle by which to rotate
+    #rotation_axis = numpy.cross(u,v) # axis around which to rotate
+    #height = numpy.linalg.norm(v)
+    
+    ## build a basis from the P1-P2 direction
+    #i = v
+    #j = Orthogonal(i)
+    #k = numpy.cross(i,j)
+    
+    #i = i/numpy.linalg.norm(i)
+    #j = j/numpy.linalg.norm(j)
+    #k = k/numpy.linalg.norm(k)
+    
+    ## transformation matrix from (x,y,z) into (i,j,k)
+    #P = numpy.transpose(numpy.matrix([i,j,k]))
+    #print(P)
+    #print(P.T)
+    #print(P*P.T)
+
+    ## create a vertical tube and rotate it
+    #tube = GWLobject()
+    #tube.addTubeWithVerticalLines(centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=False)
+    #tube.applyTransformationMatrix(P.getI(), centro)
+    #self.addGWLobject(tube)
+    return
+
+  def addGWLobject(self, obj):
+    self.GWL_voxels += obj.GWL_voxels
+    #for write_sequence in tube.GWL_voxels:
+          #self.GWL_voxels.append(write_sequence)
+
+      #for voxel in write_sequence:
+        #for i in range(len(voxel)):
+          #value = voxel[i] + writingOffset[i]
+          #if i!=3: #coordinates
+            #file.write( str( "%.3f" % (value) ) )
+          #else: #power
+            #if 0<=value and value<=100:
+              #file.write( str( "%.3f" % (value) ) )
+          ## add tab or line ending
+          #if i<len(voxel)-1:
+            #file.write('\t')
+          #else:
+            #file.write('\n')
+
+            
+      #self.addWrite()
+
+    #for write_sequence in obj.GWL_voxels:
+      #for voxel in write_sequence:
+        #self.add
+          
+        #voxel = write_sequence[i]
+        #location = [voxel[0],voxel[1],voxel[2]]
+        #if len(voxel)>3:
+          #power = voxel[3]
+        #else:
+          #power = -1
+        ##point = point - centro
+        #location = P.getI()*numpy.transpose(numpy.matrix(location))
+        #location = centro + location
+        #write_sequence[i] = [location[0],location[1],location[2],power]
+    
+
+  def addTubeWithVerticalLines(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, downwardWriting=True, zigzag=True):
+    # counter value used to determine the writing direction: 0=down->top 1=top->down
+    counter = int(downwardWriting)
+    
+    # TODO: optimize with zigzag writing
+    for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
+      if radius < 0.5*PointDistance_theta:
+        # TODO: power argument could probably be passed through centro?
+        P = numpy.array([centro[0],centro[1],centro[2],power])
+        if counter%2==1:
+          self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
+        else:
+          self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+        if zigzag: counter+=1
+      else:
+        alphaStep = 2*numpy.arcsin(PointDistance_theta/float(2*radius))
+        N = int(2*numpy.pi/alphaStep)
+        for i in range(N):
+          P = numpy.array([centro[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),centro[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),centro[2],power])
+          if counter%2==1:
+            self.addLine(P+0.5*height*numpy.array([0,0,1,0]),P-0.5*height*numpy.array([0,0,1,0]), power) # Downward writing
+          else:
+            self.addLine(P-0.5*height*numpy.array([0,0,1,0]),P+0.5*height*numpy.array([0,0,1,0]), power) # Upward writing
+          if zigzag: counter+=1
+    return
+    
+  def rotate(self, axis_point, axis_direction, angle_degrees):
+    M = TransformationMatrix.rotationMatrix(axis_point, axis_direction, angle_degrees)
+    for write_sequence in self.GWL_voxels:
+      for i in range(len(write_sequence)):
+        write_sequence[i] = TransformationMatrix.applyTransformation(M,write_sequence[i])
+    return
+    
+  # TODO: Use better names/transformation system to implement translations
+  def applyTransformationMatrix(self, P, centro):
+    for write_sequence in self.GWL_voxels:
+      for i in range(len(write_sequence)):
+        voxel = write_sequence[i]
+        #print(voxel)
+        location = [voxel[0],voxel[1],voxel[2]]
+        if len(voxel)>3:
+          power = voxel[3]
+        else:
+          power = -1
+        #point = point - centro
+        location = P*numpy.transpose(numpy.matrix(location))
+        location = numpy.asarray(location).reshape(-1) #numpy.array(numpy.transpose(M))[0]
+        location = centro + location
+        #print(('location=',location))
+        write_sequence[i] = [location[0],location[1],location[2],power]
+    return
 
   def addHorizontalGrating(self, P1, P2, LineNumber, LineDistance):
     u = numpy.array(P2)-numpy.array(P1)
@@ -108,7 +320,47 @@ class GWLobject:
         self.GWL_voxels.append([B,A])
       counter = counter + 1
 
-  def addXblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
+  def addBlockCentroSize(self, centro, size, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False, direction=None):
+    centro = numpy.array(centro)
+    size = numpy.array(size)
+    lower = centro - 0.5*size
+    upper = centro + 0.5*size
+    self.addBlockLowerUpper(lower, upper, LineDistance_Horizontal, LineDistance_Vertical, BottomToTop, direction)
+
+  ## TODO: API: Was it a good idea to specify the other blocks in terms of LineNumber* in the first place?
+  def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False, direction=None):
+    (lower,upper) = fixLowerUpper(lower,upper)
+    print(lower)
+    print(upper)
+    dim = [ abs(upper[i]-lower[i]) for i in [0,1,2] ]
+    print(dim)
+
+    # TODO: will fix later    
+    #self.addXblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
+
+    if direction is None:
+      if dim[0]>=dim[1] and dim[0]>=dim[2]:
+        direction = 'X'
+      elif dim[1]>=dim[0] and dim[1]>=dim[2]:
+        direction = 'Y'
+      else: #dim[2]>=dim[0] and dim[2]>=dim[1]:
+        direction = 'Z'
+
+    if direction == 'X':
+      self.addXblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
+    elif direction == 'Y':
+      self.addYblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)
+    elif direction == 'Z':
+      self.addZblock(lower, upper, LineDistance_X=LineDistance_Horizontal, LineDistance_Y=LineDistance_Horizontal)
+    else:
+      print("ERROR: Invalid direction. Should be 'X','Y' or 'Z'", file=sys.stderr)
+      sys.exit(-1)
+
+  def addXblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+
+    if LineNumber_Horizontal is None: LineNumber_Horizontal = math.floor( (abs(P2[1]-P1[1])/LineDistance_Horizontal) + 1 )
+    if LineNumber_Vertical is None: LineNumber_Vertical = math.floor( (abs(P2[2]-P1[2])/LineDistance_Vertical) + 1 )
+
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
     Zcenter = 0.5*(P1[2] + P2[2])
@@ -137,7 +389,11 @@ class GWLobject:
           self.GWL_voxels.append([B,A])
         counter = counter + 1
 
-  def addYblock(self, P1, P2, LineNumber_Horizontal, LineDistance_Horizontal, LineNumber_Vertical, LineDistance_Vertical, BottomToTop = False):
+  def addYblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
+
+    if LineNumber_Horizontal is None: LineNumber_Horizontal = math.floor( (abs(P2[0]-P1[0])/LineDistance_Horizontal) + 1 )
+    if LineNumber_Vertical is None: LineNumber_Vertical = math.floor( (abs(P2[2]-P1[2])/LineDistance_Vertical) + 1 )
+
     Xcenter = 0.5*(P1[0] + P2[0])
     Ycenter = 0.5*(P1[1] + P2[1])
     Zcenter = 0.5*(P1[2] + P2[2])
@@ -163,6 +419,45 @@ class GWLobject:
         else:
           self.GWL_voxels.append([B,A])
         counter = counter + 1
+
+  # TODO: API improvement: use P1,P2 to specify BottomToTop? Leave in BottomToTop? Pass just x, y or z coordinates instead of [x,y,z]? X,Y,Z functions should be more or less the same if possible.
+  def addZblock(self, P1, P2, LineNumber_X = None, LineDistance_X = DEFAULT_VOXEL_WIDTH, LineNumber_Y = None, LineDistance_Y = DEFAULT_VOXEL_WIDTH):
+    
+    if LineNumber_X is None: LineNumber_X = math.floor( (abs(P2[0]-P1[0])/LineDistance_X) + 1 )
+    if LineNumber_Y is None: LineNumber_Y = math.floor( (abs(P2[1]-P1[1])/LineDistance_Y) + 1 )
+    
+    Xcenter = 0.5*(P1[0] + P2[0])
+    Ycenter = 0.5*(P1[1] + P2[1])
+    Zcenter = 0.5*(P1[2] + P2[2])
+
+    xlist = []
+    L = (LineNumber_X-1)*LineDistance_X
+    xlist = numpy.linspace(Xcenter-0.5*L, Xcenter+0.5*L, LineNumber_X)
+
+    ylist = []
+    L = (LineNumber_Y-1)*LineDistance_Y
+    ylist = numpy.linspace(Ycenter-0.5*L, Ycenter+0.5*L, LineNumber_Y)
+
+    counter = 0
+    for y in ylist:
+      for x in xlist:
+        A = [x,y,P1[2]]
+        B = [x,y,P2[2]]
+        if counter%2 == 0:
+          self.GWL_voxels.append([A,B])
+        else:
+          self.GWL_voxels.append([B,A])
+        counter = counter + 1
+
+  def addTube(self, centro, inner_radius, outer_radius, height, power, PointDistance_r, PointDistance_theta, PointDistance_z):
+    #print('=== addTube ===')
+    #print((numpy.linspace(inner_radius, outer_radius, float((outer_radius - inner_radius)/PointDistance_r))))
+    for radius in numpy.linspace(inner_radius, outer_radius, float(1+(outer_radius - inner_radius)/PointDistance_r)):
+      for z in numpy.linspace(centro[2]+0.5*height, centro[2]-0.5*height, float(1+height/PointDistance_z)):
+        #print((radius,z))
+      #for i_theta in numpy.linspace(0, 2*numpy.pi, (outer_radius - inner_radius)/PointDistance_r):
+        self.addHorizontalCircle([centro[0],centro[1],z], radius, power, PointDistance_theta)
+    return
 
   def addHorizontalCircle(self, center, radius, power, PointDistance):
     #print radius
@@ -212,7 +507,7 @@ class GWLobject:
       # symetrify list
       zlist = zlist + [ -i for i in zlist[len(zlist)-2::-1] ]
 
-      for z in zlist:
+      for z in sorted(zlist, reverse=True):
         local_radius = numpy.sqrt(pow(radius,2)-pow(z,2))
         #print(('local_radius 1 = ',local_radius))
         #local_radius = radius*numpy.sin(i*numpy.pi/float(N))
@@ -237,7 +532,7 @@ class GWLobject:
     self.GWL_voxels.append(write_sequence)
 
   def readSubstitutes(self, subsFile):
-    print('Reading substitution pairs from '+subsFile)
+    print(('Reading substitution pairs from '+subsFile))
     self.path_substitutes = []
     try:
       with open(subsFile, 'r') as file:
@@ -248,11 +543,13 @@ class GWLobject:
             new = t[1].strip()
             old = old.replace('\\',os.path.sep).replace('/',os.path.sep)
             new = new.replace('\\',os.path.sep).replace('/',os.path.sep)
-            print(old+' -> '+new)
+            print((old+' -> '+new))
             self.path_substitutes.append((old,new))
-    except IOError as (errno, strerror):
-      print "I/O error({0}): {1}".format(errno, strerror)
-      print 'Failed to open '+subsFile
+    #TODO: reimplement nice exception system
+    #except IOError as (errno, strerror):
+    except:
+      #print "I/O error({0}): {1}".format(errno, strerror)
+      print(('Failed to open '+subsFile))
 
     return self.path_substitutes
 
@@ -282,19 +579,21 @@ class GWLobject:
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                     self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
+                    self.maxDistanceBetweenLines = self.ScanSpeed*1e-3*self.DwellTime
                 else:
                   #print('other match')
                   if cmd[0].lower()=='write':
                     self.GWL_voxels.append(write_sequence)
                     write_sequence = []
                     self.writingTimeInSeconds = self.writingTimeInSeconds + 1e-3*self.DwellTime
+                    self.maxDistanceBetweenLines = self.ScanSpeed*1e-3*self.DwellTime
                   elif cmd[0].lower()=='include':
-                    print('line_stripped = ' + line_stripped)
+                    print(('line_stripped = ' + line_stripped))
                     file_to_include = re.split('\s+',line_stripped,1)[1]
-                    print('including file_to_include = ' + file_to_include)
+                    print(('including file_to_include = ' + file_to_include))
                     print('Fixing file separators')
                     file_to_include = file_to_include.replace('\\',os.path.sep).replace('/',os.path.sep)
-                    print('including file_to_include = ' + file_to_include)
+                    print(('including file_to_include = ' + file_to_include))
                     file_to_include_fullpath = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_include)))
                     print(file_to_include_fullpath)
                     if not os.path.isfile(file_to_include_fullpath):
@@ -305,58 +604,63 @@ class GWLobject:
                         #print('filename = ',filename)
                         #print('os.path.dirname(filename) = ',os.path.dirname(filename))
                         file_to_try = os.path.normpath(os.path.join(os.path.dirname(filename), os.path.expanduser(file_to_try)))
-                        print('Trying file_to_try = ' + file_to_try)
+                        if self.verbosity > 10:
+                          print(('old = ' + old))
+                          print(('new = ' + new))
+                          print(('file_to_include = ' + file_to_include))
+                          print(('filename = ' + filename))
+                        print(('Trying file_to_try = ' + file_to_try))
                         if os.path.isfile(file_to_try):
                           file_to_include_fullpath = file_to_try
                           break
                     self.readGWL(file_to_include_fullpath)
 
                   elif cmd[0].lower()=='movestagex':
-                    print('Moving X by '+cmd[1])
+                    print(('Moving X by '+cmd[1]))
                     self.stage_position[0] = self.stage_position[0] + float(cmd[1])
                   elif cmd[0].lower()=='movestagey':
-                    print('Moving Y by '+cmd[1])
+                    print(('Moving Y by '+cmd[1]))
                     self.stage_position[1] = self.stage_position[1] + float(cmd[1])
 
                   elif cmd[0].lower()=='addxoffset':
-                    print 'Adding X offset of '+cmd[1]
+                    print('Adding X offset of '+cmd[1])
                     self.voxel_offset[0] = self.voxel_offset[0] + float(cmd[1])
                   elif cmd[0].lower()=='addyoffset':
-                    print 'Adding Y offset of '+cmd[1]
+                    print('Adding Y offset of '+cmd[1])
                     self.voxel_offset[1] = self.voxel_offset[1] + float(cmd[1])
                   elif cmd[0].lower()=='addzoffset':
-                    print 'Adding Z offset of '+cmd[1]
+                    print('Adding Z offset of '+cmd[1])
                     self.voxel_offset[2] = self.voxel_offset[2] + float(cmd[1])
 
                   elif cmd[0].lower()=='xoffset':
-                    print 'Setting X offset to '+cmd[1]
+                    print('Setting X offset to '+cmd[1])
                     self.voxel_offset[0] = float(cmd[1])
                   elif cmd[0].lower()=='yoffset':
-                    print 'Setting Y offset to '+cmd[1]
+                    print('Setting Y offset to '+cmd[1])
                     self.voxel_offset[1] = float(cmd[1])
                   elif cmd[0].lower()=='zoffset':
-                    print 'Setting Z offset to '+cmd[1]
+                    print('Setting Z offset to '+cmd[1])
                     self.voxel_offset[2] = float(cmd[1])
 
                   elif cmd[0].lower()=='linenumber':
-                    print 'Setting LineNumber to '+cmd[1]
+                    print('Setting LineNumber to '+cmd[1])
                     self.LineNumber = float(cmd[1])
                   elif cmd[0].lower()=='linedistance':
-                    print 'Setting LineDistance to '+cmd[1]
+                    print('Setting LineDistance to '+cmd[1])
                     self.LineDistance = float(cmd[1])
                   elif cmd[0].lower()=='powerscaling':
-                    print 'Setting PowerScaling to '+cmd[1]
+                    print('Setting PowerScaling to '+cmd[1])
                     self.PowerScaling = float(cmd[1])
                   elif cmd[0].lower()=='laserpower':
                     if self.verbosity > 5:
-                      print 'Setting LaserPower to '+cmd[1]
+                      print('Setting LaserPower to '+cmd[1])
                     self.LaserPower = float(cmd[1])
                   elif cmd[0].lower()=='scanspeed':
-                    print 'Setting ScanSpeed to '+cmd[1]
+                    print('Setting ScanSpeed to '+cmd[1])
                     self.ScanSpeed = float(cmd[1])
 
                   elif cmd[0].lower()=='repeat':
-                    print 'Repeating next command '+cmd[1]+' times.'
+                    print('Repeating next command '+cmd[1]+' times.')
                     self.Repeat = int(cmd[1])
                     stopRepeat = False
 
@@ -364,22 +668,32 @@ class GWLobject:
                     #print 'defocusfactor'
 
                   elif cmd[0].lower()=='findinterfaceat':
-                    print 'Setting FindInterfaceAt to '+cmd[1]
+                    print('Setting FindInterfaceAt to '+cmd[1])
                     self.FindInterfaceAt = [0,0,float(cmd[1]),0]
 
                   elif cmd[0].lower()=='dwelltime':
-                    print 'Setting DwellTime to '+cmd[1]
+                    print('Setting DwellTime to '+cmd[1])
                     self.DwellTime = float(cmd[1])
 
 
                   else:
-                    print('UNKNOWN COMMAND: '+cmd[0])
+                    print(('UNKNOWN COMMAND: '+cmd[0]))
                     #sys.exit(-1)
               else:
                 #print '=>VOXEL'
                 voxel = []
                 for i in range(len(cmd)):
-                  voxel.append( float(cmd[i]) + self.voxel_offset[i] + self.stage_position[i] - self.FindInterfaceAt[i] )
+                  piezo_position = float(cmd[i]) + self.voxel_offset[i]
+                  if piezo_position<0 or piezo_position>300:
+                    if not self.out_of_range:
+                      print('ERROR: voxel out of range! len(voxel) = '+str(len(voxel))+' piezo_position = '+str(piezo_position)+' i = '+str(i), file=sys.stderr)
+                      print('piezo_position = float(cmd[i]) + self.voxel_offset[i]', file=sys.stderr)
+                      print(str(piezo_position)+' = '+str(float(cmd[i]))+' + '+str(self.voxel_offset[i]), file=sys.stderr)
+                      print('filename = '+str(filename), file=sys.stderr)
+                      print('cmd = '+str(cmd), file=sys.stderr)
+                      self.out_of_range = True
+                    #sys.exit(-1)
+                  voxel.append( piezo_position + self.stage_position[i] - self.FindInterfaceAt[i] )
                 #voxel = [ float(i) for i in cmd ]
                 (last_voxel,found_last_voxel) = self.getLastVoxel()
                 write_sequence.append(voxel)
@@ -403,33 +717,55 @@ class GWLobject:
             # reset repeat
             if stopRepeat:
                 self.Repeat = 1
-    except IOError as (errno, strerror):
-      print "I/O error({0}): {1}".format(errno, strerror)
-      print 'Failed to open '+filename
+    except IOError as xxx_todo_changeme:
+      (errno, strerror) = xxx_todo_changeme.args
+      print("I/O error({0}): {1}".format(errno, strerror))
+      print('Failed to open '+filename)
 
-    print('Nvoxels = '+str(Nvoxels))
-    if self.verbosity > 5:
-      print('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds))
-      print('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.))
-      print('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.)))
-      print('self.writingDistanceInMum = '+str(self.writingDistanceInMum))
+    print(('Nvoxels = '+str(Nvoxels)))
+    if self.verbosity >= 0:
+      print(('self.writingTimeInSeconds = '+str(self.writingTimeInSeconds)))
+      print(('self.writingTimeInMinutes = '+str(self.writingTimeInSeconds/60.)))
+      print(('self.writingTimeInHours = '+str(self.writingTimeInSeconds/(60.*60.))))
+      print(('self.writingDistanceInMum = '+str(self.writingDistanceInMum)))
     #return GWL_voxels
 
   def write_GWL(self, filename, writingOffset = [0,0,0,0]):
-    print('Writing GWL to '+filename)
+    print(('Writing GWL to '+filename))
     with open(filename, 'w') as file:
       for write_sequence in self.GWL_voxels:
         for voxel in write_sequence:
+          
+          # TODO: add options to enable/disable warnings for coords/power out of range or invalid voxel sizes
+          
+          ## only for standard voxels (length 3 or 4)
+          #if len(voxel)>4:
+            #print('ERROR: voxel with more than 4 parameters',file=stderr)
+            #sys.exit(-1)
           for i in range(len(voxel)):
-            file.write( str( voxel[i] + writingOffset[i] ) )
+            value = voxel[i] + writingOffset[i]
+            if i!=3: #coordinates
+              file.write( str( "%.3f" % (value) ) )
+            else: #power
+              if 0<=value and value<=100:
+                file.write( str( "%.3f" % (value) ) )
+            # add tab or line ending
             if i<len(voxel)-1:
               file.write('\t')
             else:
               file.write('\n')
-        #file.write('-999\t-999\t-999\n')
+
+          ## general method for voxels of any length
+          #for i in range(len(voxel)):
+            #file.write( str( "%.3f" % (voxel[i] + writingOffset[i]) ) )
+            #if i<len(voxel)-1:
+              #file.write('\t')
+            #else:
+              #file.write('\n')
+              
         file.write('Write\n')
 
-if __name__ == "__main__":
+def main():
   #GWL_obj = GWLobject()
   #GWL_obj.readGWL(sys.argv[1])
   ##print GWL_obj.GWL_voxels
@@ -493,7 +829,7 @@ if __name__ == "__main__":
   GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
   GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
-  print '300'
+  print('300')
   HorizontalPointDistance = 0.050
   VerticalPointDistance = 0.100
   center = [60,0,3]
@@ -503,7 +839,7 @@ if __name__ == "__main__":
   GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
   GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
-  print '350'
+  print('350')
   center = [70,0,3]
   radius = 0.5*0.350
   GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
@@ -511,7 +847,7 @@ if __name__ == "__main__":
   GWL_obj.addSphere([center[0],center[1],center[2]+1+11], radius, power, HorizontalPointDistance, VerticalPointDistance, False)
   GWL_obj.addSphere([center[0],center[1],center[2]+1+22], radius, power, HorizontalPointDistance, VerticalPointDistance, True)
 
-  print '400'
+  print('400')
   center = [80,0,3]
   radius = 0.5*0.400
   GWL_obj.addHorizontalCircle(center, radius, power, HorizontalPointDistance)
@@ -526,3 +862,6 @@ if __name__ == "__main__":
   GWL_obj.addXblock([0,0,2.75],[10,0,2.75],5,0.050,8,0.100)
   GWL_obj.addYblock([1,0,2.75],[1,20,2.75],5,0.050,8,0.100)
   GWL_obj.write_GWL('xblock2.gwl')
+
+if __name__ == "__main__":
+  main()

@@ -3,20 +3,23 @@
 
 import numpy
 from GWL.GWL_parser import *
+from bfdtd.bfdtd_parser import *
 
-class Woodpile:
+class Woodpile(object):
   def __init__(self):
     self.Nlayers_Z = 12
     self.NRodsPerLayer_X = 17
     self.NRodsPerLayer_Y = 17
 
-    self.rod_width = 0.100
-    self.rod_height = 0.200
+    #self.rod_width = 0.100
+    #self.rod_height = 0.200
 
-    self.LineNumber_Vertical = 1
-    self.LineDistance_Vertical = 0.100
-    self.LineNumber_Horizontal = 1
-    self.LineDistance_Horizontal = 0.050
+    self.LineNumber_X = 1
+    self.LineDistance_X = 0.050
+    self.LineNumber_Y = 1
+    self.LineDistance_Y = 0.050
+    self.LineNumber_Z = 1
+    self.LineDistance_Z = 0.100
 
     self.rod_type = 'cylinder'
     self.interLayerDistance = 0.212
@@ -69,7 +72,7 @@ class Woodpile:
           P1 = self.offset + numpy.array([X,self.Ymax,layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([X,self.Ymin,layer_idx*self.interLayerDistance])
           #GWL_obj.addLine(P1,P2)
-          GWL_obj.addYblock(P1, P2, self.LineNumber_Horizontal, self.LineDistance_Horizontal, self.LineNumber_Vertical, self.LineDistance_Vertical, self.BottomToTop)
+          GWL_obj.addYblock(P1, P2, self.LineNumber_X, self.LineDistance_X, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
         layer_type_X = (layer_type_X + 1) % 2
         
       else:
@@ -85,7 +88,7 @@ class Woodpile:
           P1 = self.offset + numpy.array([self.Xmin,Y,layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([self.Xmax,Y,layer_idx*self.interLayerDistance])
           #GWL_obj.addLine(P1,P2)
-          GWL_obj.addXblock(P1, P2, self.LineNumber_Horizontal, self.LineDistance_Horizontal, self.LineNumber_Vertical, self.LineDistance_Vertical, self.BottomToTop)
+          GWL_obj.addXblock(P1, P2, self.LineNumber_Y, self.LineDistance_Y, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
         layer_type_Y = (layer_type_Y + 1) % 2
         
       # optional: just add another write to easily distinguish layers inside file
@@ -96,6 +99,12 @@ class Woodpile:
     GWL_obj = self.getGWL()
     (Pmin, Pmax) = GWL_obj.getLimits()
     GWL_obj.write_GWL(filename, writingOffset = [0,0,-Pmin[2],0] )
+    
+  def write_BFDTD(self, filename):
+    BFDTD_obj = BFDTDobject()
+    BFDTD_obj.geometry_object_list.append(Block())
+    print('Writing GWL to '+filename)
+    BFDTD_obj.writeGeoFile(filename)
 
 if __name__ == "__main__":
   woodpile_obj = Woodpile()
