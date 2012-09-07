@@ -236,3 +236,6 @@ Under GNU/Linux:
 ln -s $PATH_TO_REPO/.octaverc ~/.octaverc 
 ----
 
+Private repository:
+-------------------
+git@git.assembla.com:script_inception_private.git
