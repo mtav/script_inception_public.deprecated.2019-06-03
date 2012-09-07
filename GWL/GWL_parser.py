@@ -330,10 +330,10 @@ class GWLobject(object):
   ## TODO: API: Was it a good idea to specify the other blocks in terms of LineNumber* in the first place?
   def addBlockLowerUpper(self, lower, upper, LineDistance_Horizontal=DEFAULT_VOXEL_WIDTH, LineDistance_Vertical=DEFAULT_VOXEL_HEIGHT, BottomToTop = False, direction=None):
     (lower,upper) = fixLowerUpper(lower,upper)
-    print(lower)
-    print(upper)
+    #print(lower)
+    #print(upper)
     dim = [ abs(upper[i]-lower[i]) for i in [0,1,2] ]
-    print(dim)
+    #print(dim)
 
     # TODO: will fix later    
     #self.addXblock(lower, upper, LineDistance_Horizontal=LineDistance_Horizontal, LineDistance_Vertical=LineDistance_Vertical, BottomToTop=BottomToTop)

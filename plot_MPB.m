@@ -1,5 +1,5 @@
 % script to plot photonic bandgap diagrams from MPB output
-function plot_MPB(filename,scale_factor)
+function plot_MPB(filename,scale_factor,titolo)
 
   [ folder, basename, ext ] = fileparts(filename);
   [header, rawdata] = readPrnFile(filename);
@@ -118,7 +118,7 @@ function plot_MPB(filename,scale_factor)
 %set(hNewAxes,'YDir','reverse');
 
   %titolo = [filename,', "log width:" w=0.2*a, "vertical 4-layer period:" a=',num2str(a_value),' mum, "horizontal period": d=a/sqrt(2)=',num2str(a_value/sqrt(2)),' mum'];
-  titolo = [filename,', w=0.2*a, a=',num2str(a_value),' mum, d=a/sqrt(2)=',num2str(a_value/sqrt(2)),' mum'];
+  %titolo = [filename,', w=0.2*a, a=',num2str(a_value),' mum, d=a/sqrt(2)=',num2str(a_value/sqrt(2)),' mum'];
   title(titolo,'Interpreter', 'none','fontsize',20);
   %disp(['w=0.2*a, "*a vertical 4-layer period:" a=',num2str(a_value),' mum, "horizontal period": d=a/sqrt(2)=',num2str(a_value/sqrt(2)),' nm']);
   disp(titolo);
