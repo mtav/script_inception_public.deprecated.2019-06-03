@@ -1949,6 +1949,19 @@ class BFDTDobject(object):
     
     return meshing_parameters
     
+  def autoMeshGeometryWithMaxNumberOfCells(self, Lambda, MAXCELLS = 1e7):
+    a = 10
+    self.autoMeshGeometry(Lambda/a)
+    print(self.getNcells()<MAXCELLS)
+    while(self.getNcells()<MAXCELLS):
+      print(a)
+      a = a+1
+      self.autoMeshGeometry(Lambda/a)
+    while(self.getNcells()>MAXCELLS and a>1):
+      a = a-1
+      self.autoMeshGeometry(Lambda/a)
+    return(a)
+    
   def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-3,1e-3,1e-3]):
     meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
     if self.verboseMeshing: print(meshing_parameters)
