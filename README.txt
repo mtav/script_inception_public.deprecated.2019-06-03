@@ -1,6 +1,11 @@
 script_inception_public documentation
 =====================================
-:toc:
+:backend: html5
+:theme: flask
+:toc2:
+:icons:
+:data-uri:
+:pygments:
 :toclevels: 4
 
 What this is
