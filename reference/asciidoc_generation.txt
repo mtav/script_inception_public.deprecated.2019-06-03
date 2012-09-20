@@ -14,3 +14,8 @@ git rm README.html
 git commit -am "asciidoc upgrade"
 git pull && git push
 git checkout master
+
+# asciidoc icon location:
+$ cat ~/.asciidoc/asciidoc.conf
+[attributes]
+iconsdir=/.../.asciidoc/images/icons/
