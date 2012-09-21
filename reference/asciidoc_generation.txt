@@ -4,14 +4,14 @@ asciidoc -a toc README.txt
 # the new way:
 asciidoc ./README.asciidoc
 
-# then to update gh-pages
-git commit -am "asciidoc upgrade"
+# to update gh-pages
+asciidoc -o index.html ./README.asciidoc
+git add index.html
+git commit -m "website update"
 git pull && git push
 git checkout gh-pages
-git checkout master README.html
-mv README.html index.html
-git rm README.html
-git commit -am "asciidoc upgrade"
+git checkout master index.html
+git commit -m "website update"
 git pull && git push
 git checkout master
 
