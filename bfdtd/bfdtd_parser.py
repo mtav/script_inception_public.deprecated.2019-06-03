@@ -34,7 +34,7 @@ class Flag(object):
     self.flagTwo = 0
     self.iterations = 25000
     self.timeStep = 0.9; #mus
-    self.id = '_id_'
+    self.id_string = '_id_'
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'iMethod = ' + str(self.iterationMethod) + '\n' +\
@@ -43,7 +43,7 @@ class Flag(object):
     'flagTwo = ' + str(self.flagTwo) + '\n' +\
     'iterations = ' + str(self.iterations) + '\n' +\
     'timeStep = ' + str(self.timeStep) + '\n' +\
-    'id = ' + self.id
+    'id = ' + self.id_string
     return ret
   def read_entry(self, entry):
     if entry.name:
@@ -54,7 +54,7 @@ class Flag(object):
     self.flagTwo = float(entry.data[3])
     self.iterations = float(entry.data[4])
     self.timeStep = float(entry.data[5])
-    self.id = entry.data[6]
+    self.id_string = entry.data[6]
   def write_entry(self, FILE):
     FILE.write('FLAG  **name='+self.name+'\n')
     FILE.write('{\n')
@@ -64,7 +64,7 @@ class Flag(object):
     FILE.write("%d **FLAG TWO\n" % self.flagTwo)
     FILE.write("%d **ITERATIONS\n" % self.iterations)
     FILE.write("%E **TIMESTEP as a proportion of the maximum allowed\n" % self.timeStep)
-    FILE.write("\"%s\" **ID CHARACTER (ALWAYS USE QUOTES)\n" % self.id.strip('"'))
+    FILE.write("\"%s\" **ID CHARACTER (ALWAYS USE QUOTES)\n" % self.id_string.strip('"'))
     FILE.write('}\n')
     FILE.write('\n')
 
