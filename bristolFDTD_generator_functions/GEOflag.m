@@ -1,5 +1,5 @@
 function GEOflag(FILE, iteration_method, propagation_constant, flag_1, flag_2, iterations, timestep, id_character)
-  fprintf(FILE,'FLAG  **PROGRAM CONTROL OPTIONS\n');
+  fprintf(FILE,'FLAG  **name=flag\n'); %PROGRAM CONTROL OPTIONS
   fprintf(FILE,'{\n');
   fprintf(FILE,'%d **ITERATION METHOD\n', iteration_method);
   fprintf(FILE,'%E **PROPAGATION CONSTANT (IGNORED IN 3D MODEL)\n', propagation_constant);

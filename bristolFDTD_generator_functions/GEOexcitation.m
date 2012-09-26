@@ -10,9 +10,9 @@ function GEOexcitation(FILE, current_source, P1, P2, E, H, source_type, time_con
 
   if current_source ~= 11
     [P1, P2] = fixLowerUpper(P1, P2);
-    fprintf(FILE,'EXCITATION **EXCITATION DEFINITION\n');
+    fprintf(FILE,'EXCITATION **name=excitation\n');
     fprintf(FILE,'{\n');
-    fprintf(FILE,'%d ** CURRENT SOURCE \n', current_source);
+    fprintf(FILE,'%d ** CURRENT SOURCE\n', current_source);
     fprintf(FILE,'%E **X1\n', P1(1));
     fprintf(FILE,'%E **Y1\n', P1(2));
     fprintf(FILE,'%E **Z1\n', P1(3));
@@ -29,7 +29,7 @@ function GEOexcitation(FILE, current_source, P1, P2, E, H, source_type, time_con
     fprintf(FILE,'%E **TIME CONSTANT\n', time_constant);
     fprintf(FILE,'%E **AMPLITUDE\n', amplitude);
     fprintf(FILE,'%E **TIME OFFSET\n', time_offset);
-    fprintf(FILE,'%E **FREQ (HZ)\n', frequency);
+    fprintf(FILE,'%E **FREQUENCY (MHz if dimensions in mum) (c0/f = %E)\n', frequency, get_c0()/frequency);
     fprintf(FILE,'%d **UNUSED PARAMETER\n', param1);
     fprintf(FILE,'%d **UNUSED PARAMETER\n', param2);
     fprintf(FILE,['"',template_filename,'" ** TEMPLATE FILENAME\n']);
@@ -40,9 +40,9 @@ function GEOexcitation(FILE, current_source, P1, P2, E, H, source_type, time_con
     E = [1,1,1];
     H = [1,1,1];
     [P1, P2] = fixLowerUpper(P1, P2);
-    fprintf(FILE,'EXCITATION **EXCITATION DEFINITION\n');
+    fprintf(FILE,'EXCITATION **name=excitation\n');
     fprintf(FILE,'{\n');
-    fprintf(FILE,'%d ** CURRENT SOURCE \n', current_source);
+    fprintf(FILE,'%d ** CURRENT SOURCE\n', current_source);
     fprintf(FILE,'%E **X1\n', P1(1));
     fprintf(FILE,'%E **Y1\n', P1(2));
     fprintf(FILE,'%E **Z1\n', P1(3));
@@ -59,7 +59,7 @@ function GEOexcitation(FILE, current_source, P1, P2, E, H, source_type, time_con
     fprintf(FILE,'%E **TIME CONSTANT\n', time_constant);
     fprintf(FILE,'%E **AMPLITUDE\n', amplitude);
     fprintf(FILE,'%E **TIME OFFSET\n', time_offset);
-    fprintf(FILE,'%E **FREQ (HZ)\n', frequency);
+    fprintf(FILE,'%E **FREQUENCY (MHz if dimensions in mum) (c0/f = %E)\n', frequency, get_c0()/frequency);
     fprintf(FILE,'%d **UNUSED PARAMETER\n', param1);
     fprintf(FILE,'%d **UNUSED PARAMETER\n', param2);
     % template specific;
