@@ -150,14 +150,15 @@ class Excitation(object):
     if idx<len(entry.data):
       self.template_rotation = int(entry.data[idx]); idx = idx+1
     return(0)
-    
+  
+  # TODO: reduce code duplication here
   def write_entry(self, FILE):
     if self.current_source != 11:
       if self.fixLowerUpperAtWrite:
         self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
       FILE.write('EXCITATION **name='+self.name+'\n')
       FILE.write('{\n')
-      FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
+      FILE.write("%d ** CURRENT SOURCE\n" % self.current_source)
       FILE.write("%E **X1\n" % self.P1[0])
       FILE.write("%E **Y1\n" % self.P1[1])
       FILE.write("%E **Z1\n" % self.P1[2])
@@ -174,7 +175,7 @@ class Excitation(object):
       FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
       FILE.write("%E **AMPLITUDE\n" % self.amplitude)
       FILE.write("%E **TIME OFFSET\n" % self.time_offset)
-      FILE.write("%E **FREQ (MHz if dimensions in mum)\n" % self.frequency)
+      FILE.write("%E **FREQUENCY (MHz if dimensions in mum) (c0/f = %E)\n" % (self.frequency, get_c0()/self.frequency))
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
       FILE.write(addDoubleQuotesIfMissing(self.template_filename)+' ** TEMPLATE FILENAME\n')
@@ -187,7 +188,7 @@ class Excitation(object):
       self.P1, self.P2 = fixLowerUpper(self.P1, self.P2)
       FILE.write('EXCITATION **name='+self.name+'\n')
       FILE.write('{\n')
-      FILE.write("%d ** CURRENT SOURCE \n" % self.current_source)
+      FILE.write("%d ** CURRENT SOURCE\n" % self.current_source)
       FILE.write("%E **X1\n" % self.P1[0])
       FILE.write("%E **Y1\n" % self.P1[1])
       FILE.write("%E **Z1\n" % self.P1[2])
@@ -204,7 +205,7 @@ class Excitation(object):
       FILE.write("%E **TIME CONSTANT\n" % self.time_constant)
       FILE.write("%E **AMPLITUDE\n" % self.amplitude)
       FILE.write("%E **TIME OFFSET\n" % self.time_offset)
-      FILE.write("%E **FREQ (MHz if dimensions in mum)\n" % self.frequency)
+      FILE.write("%E **FREQUENCY (MHz if dimensions in mum) (c0/f = %E)\n" % (self.frequency, get_c0()/self.frequency))
       FILE.write("%d **UNUSED PARAMETER\n" % self.param1)
       FILE.write("%d **UNUSED PARAMETER\n" % self.param2)
       # template specific
