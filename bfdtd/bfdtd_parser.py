@@ -244,6 +244,12 @@ class Box(object):
     self.lower = C - 0.5*numpy.array(size_vec3)
     self.upper = C + 0.5*numpy.array(size_vec3)
     return
+    
+  # convenience get functions, to get numpy arrays directly
+  def getLower(self):
+    return numpy.array(self.lower)
+  def getUpper(self):
+    return numpy.array(self.upper)
 
 # geometry objects
 class Geometry_object(object):
@@ -1989,14 +1995,14 @@ class MeshBox(Geometry_object):
     group = None,
     lower = None,
     upper = None,
-    permittivity3D = None):
+    delta_max = None):
 
     if name is None: name = 'mesh_box'
     if layer is None: layer = 'mesh_box'
     if group is None: group = 'mesh_box'
     if lower is None: lower = [0,0,0]
     if upper is None: upper = [1,1,1]
-    if permittivity3D is None: permittivity3D = [1e-3,1e-3,1e-3]
+    if delta_max is None: permittivity3D = [1e-3,1e-3,1e-3]
     
     Geometry_object.__init__(self)
     self.name = name
@@ -2004,17 +2010,17 @@ class MeshBox(Geometry_object):
     self.group = group
     self.lower = lower
     self.upper = upper
-    self.permittivity3D = permittivity3D
+    self.delta_max = delta_max
 
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
     ret += 'upper = '+str(self.upper)+'\n'
-    ret += 'permittivity3D = '+str(self.permittivity3D)+'\n'
+    ret += 'delta_max = '+str(self.delta_max)+'\n'
     ret += Geometry_object.__str__(self)
     return ret
 
-  def getCenter(self):
+  def getCentro(self):
     return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
     
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
@@ -2024,9 +2030,9 @@ class MeshBox(Geometry_object):
     xvec = numpy.vstack([xvec,objx])
     yvec = numpy.vstack([yvec,objy])
     zvec = numpy.vstack([zvec,objz])
-    epsx = numpy.vstack([epsx,self.permittivity3D[0]])
-    epsy = numpy.vstack([epsy,self.permittivity3D[1]])
-    epsz = numpy.vstack([epsz,self.permittivity3D[2]])
+    epsx = numpy.vstack([epsx,self.delta_max[0]])
+    epsy = numpy.vstack([epsy,self.delta_max[1]])
+    epsz = numpy.vstack([epsz,self.delta_max[2]])
     return xvec,yvec,zvec,epsx,epsy,epsz
     
 #==== CLASSES END ====#

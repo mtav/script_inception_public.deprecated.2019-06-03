@@ -107,7 +107,7 @@ def importBristolFDTD(filename):
     for probe in structured_entries.probe_list:
         # print('probe = ',Vector(probe.position))
         Nprobes += 1
-        ProbeFileName = 'p' + str(Nprobes).zfill(2) + structured_entries.flag.id.replace('\"','') + '.prn'
+        ProbeFileName = 'p' + str(Nprobes).zfill(2) + structured_entries.flag.id_string.replace('\"','') + '.prn'
         #FDTDGeometryObjects_obj.GEOprobe(probe.name+' ('+ProbeFileName+')', Vector(probe.position));
         FDTDGeometryObjects_obj.GEOprobe(ProbeFileName, Vector(probe.position));
     

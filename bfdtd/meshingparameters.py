@@ -3,12 +3,24 @@
 from __future__ import division
 import numpy
 
+# TODO: sanitize class system:
+#class MeshBox(Geometry_object):
+#class MeshingParameters(object):
+#class MeshObject(object):
+
+# TODO: Allow delta specification directly or with factor where delta=factor*lambda/n (current system, easier to scale if needed)?
+# TODO: parameter in geometry objects to enable/disable use of meshing parameters + allow custom meshing parameters per geometry object
+
 class MeshingParameters(object):
   # TODO: think about the best way to design this class and then do it.
   # Might be better to really have delta+thickness for each object and then some global MeshingParameters with addMeshingParameters function.
   # permittivity to delta conversion could be specified differently for each object.
   # thickness <-> limits
-  # delta <factor*1/sqrt(permittivity)> permittivity <sqrt> refractive index
+  # delta <-factor*1/sqrt(permittivity)-> permittivity <-sqrt-> refractive index
+  
+  # TODO: Combine with MeshObject? Create way to merge 2 or more existing meshes (i.e. MeshObject objects)? Create MeshObject from set of MeshingParameters? Don't forget about MEEP and BFDTD subgridding.
+  # TODO: support 1-D,2-D (n-D?) meshing parameters as well
+  
   def __init__(self):
     self.maxPermittivityVector_X = [1]
     self.thicknessVector_X = [1]
