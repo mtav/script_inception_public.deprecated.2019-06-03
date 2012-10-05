@@ -2009,22 +2009,20 @@ class BFDTDobject(object):
     # TODO
     return
 
-    
+# NOTE: I might keep this class, just because of rotations for the meshs... Mmh... Or is Geometry_object enough if it gets the MeshParams stuff?
 class MeshBox(Geometry_object):
   def __init__(self,
     name = None,
     layer = None,
     group = None,
     lower = None,
-    upper = None,
-    delta_max = None):
+    upper = None):
 
     if name is None: name = 'mesh_box'
     if layer is None: layer = 'mesh_box'
     if group is None: group = 'mesh_box'
     if lower is None: lower = [0,0,0]
     if upper is None: upper = [1,1,1]
-    if delta_max is None: permittivity3D = [1e-3,1e-3,1e-3]
     
     Geometry_object.__init__(self)
     self.name = name
@@ -2032,19 +2030,32 @@ class MeshBox(Geometry_object):
     self.group = group
     self.lower = lower
     self.upper = upper
-    self.delta_max = delta_max
+    
+    # first mesh object list test case :)
+    self.xmesh_params = [MeshParams(lower[0],upper[0])]
+    self.ymesh_params = [MeshParams(lower[1],upper[1])]
+    self.zmesh_params = [MeshParams(lower[2],upper[2])]
   
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
     ret += 'upper = '+str(self.upper)+'\n'
-    ret += 'delta_max = '+str(self.delta_max)+'\n'
+    ret += 'xmesh_params:\n'
+    for i in self.xmesh_params:
+      ret += i.__str__() + '\n'
+    ret += 'ymesh_params:\n'
+    for i in self.ymesh_params:
+      ret += i.__str__() + '\n'
+    ret += 'zmesh_params:\n'
+    for i in self.zmesh_params:
+      ret += i.__str__() + '\n'
     ret += Geometry_object.__str__(self)
     return ret
 
   def getCentro(self):
     return [ 0.5*(self.lower[0]+self.upper[0]), 0.5*(self.lower[1]+self.upper[1]), 0.5*(self.lower[2]+self.upper[2]) ]
-    
+  
+  # NOTE: adapting and leaving this until we have time to rework the automeshing function
   def getMeshingParameters(self,xvec,yvec,zvec,epsx,epsy,epsz):
     objx = numpy.sort([self.lower[0],self.upper[0]])
     objy = numpy.sort([self.lower[1],self.upper[1]])
@@ -2052,11 +2063,16 @@ class MeshBox(Geometry_object):
     xvec = numpy.vstack([xvec,objx])
     yvec = numpy.vstack([yvec,objy])
     zvec = numpy.vstack([zvec,objz])
-    epsx = numpy.vstack([epsx,self.delta_max[0]])
-    epsy = numpy.vstack([epsy,self.delta_max[1]])
-    epsz = numpy.vstack([epsz,self.delta_max[2]])
+    # TODO: Should merge the meshes if there are more than one...
+    epsx = numpy.vstack([epsx,self.xmesh_params[0].getPermittivityMin()])
+    epsy = numpy.vstack([epsy,self.ymesh_params[0].getPermittivityMin()])
+    epsz = numpy.vstack([epsz,self.zmesh_params[0].getPermittivityMin()])
     return xvec,yvec,zvec,epsx,epsy,epsz
     
+  # NOTE: Does nothing for the moment. Could eventually add a nice little comment to the .geo or .inp file. Or we bypass it in the writeGeoFile function.
+  def write_entry(self, FILE):
+    return
+
 #==== CLASSES END ====#
 
 def readBristolFDTD(filename, verbosity = 1):
