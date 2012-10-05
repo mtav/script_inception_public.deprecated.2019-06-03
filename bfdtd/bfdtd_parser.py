@@ -259,6 +259,7 @@ class Geometry_object(object):
     self.meshing_parameters = MeshingParameters()
     self.permittivity = 1
     self.conductivity = 0
+    self.useForMeshing = True # set to False to disable use of this object during automeshing
   def __str__(self):
     ret = '--->object rotation_list'
     for i in range(len(self.rotation_list)):
@@ -802,6 +803,8 @@ class Time_snapshot(object):
     self.J = J
     self.power = power
     self.eps = eps
+
+    self.useForMeshing = True # set to False to disable use of this object during automeshing
     
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -1025,6 +1028,8 @@ class Frequency_snapshot(object):
     self.E = E
     self.H = H
     self.J = J
+
+    self.useForMeshing = True # set to False to disable use of this object during automeshing
   
   def getLambda(self):
     return get_c0()/numpy.array(self.frequency_vector)
@@ -1152,6 +1157,8 @@ class Probe(object):
     self.H = H
     self.J = J
     self.power = power
+
+    self.useForMeshing = True # set to False to disable use of this object during automeshing
   
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
@@ -1847,31 +1854,36 @@ class BFDTDobject(object):
 
     # geometry object meshes
     for obj in self.geometry_object_list:
-      if self.verboseMeshing:
-        print(obj.name)
-        print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
-      if self.verboseMeshing:
-        print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
+      if obj.useForMeshing:
+        if self.verboseMeshing:
+          print(obj.name)
+          print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+        if self.verboseMeshing:
+          print((Xvec,Yvec,Zvec,epsX,epsY,epsZ))
 
     # mesh object meshes
     for obj in self.mesh_object_list:
-      Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+      if obj.useForMeshing:
+        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # excitation object meshes
     if self.fitMeshToExcitations:
       for obj in self.excitation_list:
-        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+        if obj.useForMeshing:
+          Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # probe object meshes
     if self.fitMeshToProbes:
       for obj in self.probe_list:
-        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+        if obj.useForMeshing:
+          Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
 
     # snapshot object meshes
     if self.fitMeshToSnapshots:
       for obj in self.snapshot_list:
-        Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
+        if obj.useForMeshing:
+          Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
       
     # postprocess the meshes
     Xvec[Xvec<simMinX] = simMinX
@@ -1955,28 +1967,38 @@ class BFDTDobject(object):
     
     return meshing_parameters
     
-  def autoMeshGeometryWithMaxNumberOfCells(self, Lambda, MAXCELLS = 1e7):
-    a = 10
+  def autoMeshGeometryWithMaxNumberOfCells(self, Lambda, MAXCELLS = 1e7, a_min = 1, a_step = 1, a_start = 10):
+    a = a_start
     self.autoMeshGeometry(Lambda/a)
-    print(self.getNcells()<MAXCELLS)
-    while(self.getNcells()<MAXCELLS):
-      print(a)
-      a = a+1
+    #print(self.getNcells()<MAXCELLS)
+    while( self.getNcells() < MAXCELLS ):
+      #print(a)
+      a = a + a_step
       self.autoMeshGeometry(Lambda/a)
-    while(self.getNcells()>MAXCELLS and a>1):
-      a = a-1
+    while( self.getNcells() > MAXCELLS and a - a_step >= a_min ):
+      a = a - a_step
       self.autoMeshGeometry(Lambda/a)
     return(a)
     
   def autoMeshGeometry(self,meshing_factor, minimum_mesh_delta_vector3 = [1e-3,1e-3,1e-3]):
     meshing_parameters = self.calculateMeshingParameters(minimum_mesh_delta_vector3)
-    if self.verboseMeshing: print(meshing_parameters)
+    if self.verboseMeshing:
+      print('=== meshing_parameters ===')
+      print(meshing_parameters)
+      print('meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_X) = '+str(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_X)))
+      print('meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Y) = '+str(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Y)))
+      print('meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Z) = '+str(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Z)))
+      print('==========================')
     delta_X_vector, local_delta_X_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_X), meshing_parameters.thicknessVector_X)
     delta_Y_vector, local_delta_Y_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Y), meshing_parameters.thicknessVector_Y)
     delta_Z_vector, local_delta_Z_vector = subGridMultiLayer(meshing_factor*1./numpy.sqrt(meshing_parameters.maxPermittivityVector_Z), meshing_parameters.thicknessVector_Z)
     self.mesh.setXmeshDelta(delta_X_vector)
     self.mesh.setYmeshDelta(delta_Y_vector)
     self.mesh.setZmeshDelta(delta_Z_vector)
+    if self.verboseMeshing > 10:
+      print('=== mesh ===')
+      print(self.mesh)
+      print('============')
   
   def rotate(self, axis_point, axis_direction, angle_degrees):
     for obj in self.geometry_object_list:

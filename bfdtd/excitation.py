@@ -83,6 +83,7 @@ class Excitation(object):
     self.meshing_parameters = MeshingParameters()
     
     self.fixLowerUpperAtWrite = True
+    self.useForMeshing = True # set to False to disable use of this object during automeshing
 
   def setLambda(self, lambda_mum):
     self.frequency = get_c0()/lambda_mum
