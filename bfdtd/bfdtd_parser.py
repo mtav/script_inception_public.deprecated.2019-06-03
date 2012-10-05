@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # parses BFDTD files
 
@@ -2033,7 +2033,7 @@ class MeshBox(Geometry_object):
     self.lower = lower
     self.upper = upper
     self.delta_max = delta_max
-
+  
   def __str__(self):
     ret  = 'name = '+self.name+'\n'
     ret += 'lower = '+str(self.lower)+'\n'
