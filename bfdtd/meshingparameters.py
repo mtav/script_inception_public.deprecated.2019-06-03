@@ -38,7 +38,10 @@ class MeshingParameters(object):
     ret += 'maxPermittivityVector_Y = '+str(self.maxPermittivityVector_Y)+'\n'
     ret += 'thicknessVector_Y = '+str(self.thicknessVector_Y)+'\n'
     ret += 'maxPermittivityVector_Z = '+str(self.maxPermittivityVector_Z)+'\n'
-    ret += 'thicknessVector_Z = '+str(self.thicknessVector_Z)
+    ret += 'thicknessVector_Z = '+str(self.thicknessVector_Z)+'\n'
+    ret += 'limits_X = '+str(self.limits_X)+'\n'
+    ret += 'limits_Y = '+str(self.limits_Y)+'\n'
+    ret += 'limits_Z = '+str(self.limits_Z)
     return ret
   
   def addLimits_X(self,limits,permittivity):
