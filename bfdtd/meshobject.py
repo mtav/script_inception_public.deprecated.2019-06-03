@@ -6,6 +6,8 @@ from bfdtd.meshobject import *
 from meshing.subGridMultiLayer import *
 from bfdtd.meshingparameters import MeshingParameters
 
+# TODO: mesh based on position instead of just thicknesses? More flexibility if ever needed... (like now :/)
+
 class MeshObject(object):
   def __init__(self):
     '''
