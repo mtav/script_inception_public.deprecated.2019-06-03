@@ -65,6 +65,13 @@ def subGridMultiLayer(Section_MaxDeltaVector_in = [1.76, 2.1385, 2.3535, 1],Sect
   nLayers = len(Section_ThicknessVector);
 
   nCellsV = numpy.ceil( Section_ThicknessVector.astype(float) / Section_MaxDeltaVector.astype(float) )
+  #print('nCellsV')
+  #print(nCellsV)
+  #sys.exit(-1)
+  for i in range(len(nCellsV)):
+    if nCellsV[i]==0:
+      nCellsV[i]=1
+    
   Section_FinalDeltaVector = Section_ThicknessVector.astype(float) / nCellsV.astype(float)
 
   Mesh_ThicknessVector = [];
