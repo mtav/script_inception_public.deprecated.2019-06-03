@@ -236,7 +236,11 @@ class Box(object):
     nova_centro = numpy.array(nova_centro)    
     nuna_centro = self.getCentro()
     self.translate(nova_centro - nuna_centro)
-    
+  
+  def setExtension(self,lower,upper):
+    self.setLower(lower)
+    self.setUpper(upper)
+  
   def getSize(self):
     return numpy.array(self.upper)-numpy.array(self.lower)
   def setSize(self, size_vec3):
@@ -1966,7 +1970,7 @@ class BFDTDobject(object):
         meshing_parameters.thicknessVector_Z.append(thicknessVZ[idx])
     
     return meshing_parameters
-    
+  
   def autoMeshGeometryWithMaxNumberOfCells(self, Lambda, MAXCELLS = 1e7, a_min = 1, a_step = 1, a_start = 10):
     a = a_start
     self.autoMeshGeometry(Lambda/a)
