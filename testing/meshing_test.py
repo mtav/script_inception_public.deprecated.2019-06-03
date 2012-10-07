@@ -33,6 +33,26 @@ mesh.setExtension(2, 3.25)
 mesh.setDeltaMax(0.15)
 MeshParamsList.append(mesh)
 
+mesh = MeshParams()
+mesh.setExtension(-10, 10)
+mesh.setDeltaMax(1)
+MeshParamsList.append(mesh)
+
+mesh = MeshParams()
+mesh.setExtension(-5, -1)
+mesh.setDeltaMax(numpy.inf)
+MeshParamsList.append(mesh)
+
+mesh = MeshParams()
+mesh.setExtension(0, 2)
+mesh.setDeltaMax(numpy.inf)
+MeshParamsList.append(mesh)
+
+mesh = MeshParams()
+mesh.setExtension(100, 200)
+mesh.setDeltaMax(numpy.inf)
+MeshParamsList.append(mesh)
+
 merged = mergeMeshingParameters(MeshParamsList)
 
 for idx in range(len(MeshParamsList)):

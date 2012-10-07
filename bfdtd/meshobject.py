@@ -332,6 +332,7 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
   delta_X_vector, local_delta_X_vector = subGridMultiLayer(maxPermittivityVector_X, thicknessVector_X)
 
   print('~~~~~~~~~~~~~')
+  print(local_delta_X_vector)
   print(delta_X_vector)
   mesh = numpy.cumsum(numpy.hstack((VX[0],delta_X_vector)))
   print(mesh)
