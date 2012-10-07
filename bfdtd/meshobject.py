@@ -333,12 +333,12 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
 
   print('~~~~~~~~~~~~~')
   print(delta_X_vector)
-  xmesh = numpy.cumsum(numpy.hstack((VX[0],delta_X_vector)))
-  print(xmesh)
+  mesh = numpy.cumsum(numpy.hstack((VX[0],delta_X_vector)))
+  print(mesh)
   print('~~~~~~~~~~~~~')
   
   #return meshing_parameters
-  return
+  return mesh
 
 #class MeshingParameters(object):
   ## TODO: think about the best way to design this class and then do it.

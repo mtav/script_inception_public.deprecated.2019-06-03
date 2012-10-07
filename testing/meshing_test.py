@@ -11,19 +11,33 @@ from bfdtd.meshobject import *
 from bfdtd.meshingparameters import MeshingParameters
 #import bfdtd.bfdtd_parser as bfdtd
 
-mesh1 = MeshParams()
-mesh1.setExtension(2,10)
-mesh1.setDeltaMax(1)
+MeshParamsList = []
 
-mesh2 = MeshParams()
-mesh2.setExtension(5,7)
-mesh2.setDeltaMax(0.5)
+mesh = MeshParams()
+mesh.setExtension(0, 4)
+mesh.setDeltaMax(0.25)
+MeshParamsList.append(mesh)
 
-merged = mergeMeshingParameters([mesh1,mesh2])
+mesh = MeshParams()
+mesh.setExtension(0.5, 1.5)
+mesh.setDeltaMax(0.20)
+MeshParamsList.append(mesh)
 
-print('== mesh1 ==')
-print(mesh1)
-print('== mesh2 ==')
-print(mesh2)
+mesh = MeshParams()
+mesh.setExtension(3.25, 4.25)
+mesh.setDeltaMax(0.10)
+MeshParamsList.append(mesh)
+
+mesh = MeshParams()
+mesh.setExtension(2, 3.25)
+mesh.setDeltaMax(0.15)
+MeshParamsList.append(mesh)
+
+merged = mergeMeshingParameters(MeshParamsList)
+
+for idx in range(len(MeshParamsList)):
+  print('== mesh %d =='%idx)
+  print(MeshParamsList[idx])
+
 print('== merged ==')
 print(merged)
