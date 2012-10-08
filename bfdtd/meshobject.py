@@ -216,109 +216,26 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
     Xvec[mesh_params_idx,0] = mesh_params.pos_min
     Xvec[mesh_params_idx,1] = mesh_params.pos_max
     epsX[mesh_params_idx,0] = mesh_params.delta_max
-
-  #print(Xvec)
-  #print(epsX)
   
-  #simMinX = self.box.lower[0]
-  #simMaXX = self.box.upper[0]
-
-  ## box mesh
-  #Xvec = numpy.array([[simMinX,simMaXX]])
-  #epsX = numpy.array([[1]])
-
-  ## mesh object meshes
-  #for obj in self.mesh_object_list:
-    #Xvec,Yvec,Zvec,epsX,epsY,epsZ = obj.getMeshingParameters(Xvec,Yvec,Zvec,epsX,epsY,epsZ)
-    
-  ## postprocess the meshes
-  #Xvec[Xvec<simMinX] = simMinX
-  #Xvec[Xvec>simMaXX] = simMaXX
-
-  ###
   VX = numpy.unique(numpy.sort(numpy.vstack([Xvec[:,0],Xvec[:,1]])))
-  MX = numpy.inf*numpy.ones((Xvec.shape[0],len(VX)))
-
-  #print(VX)
-  #print(MX)
-
-  #print('@@@')
-  #print(VX)
-  #print(Xvec)
-  #print('@@@')
-  #print(Xvec[0,0])
-  #print(VX==Xvec[0,0])
-  #print('@@@')
-  #print(Xvec[1,0])
-  #print(VX==Xvec[1,0])
-  #print('@@@')
-
-  #nonzero(a)
-      #Return the indices of the elements that are non-zero. (False==0, True==1)
+  MX = numpy.inf*numpy.ones((Xvec.shape[0],len(VX))) # We fill with numpy.inf so that when we take the min(), those values get discarded.
 
   # Fill MX so that each line is filled with the eps for that line, but only in the ranges where it should apply.
   for m in range(Xvec.shape[0]):
     indmin = numpy.nonzero(VX==Xvec[m,0])[0][0] # index in VX of Xvec[m,0] (=pos_min)
     indmaX = numpy.nonzero(VX==Xvec[m,1])[0][0] # index in VX of Xvec[m,1] (=pos_max)
-    #vv = numpy.inf*numpy.ones(len(VX))
-    #vv[indmin:indmaX] = epsX[m,0]
-    #MX[m,:] = vv
     MX[m,indmin:indmaX] = epsX[m,0]
-
-  #print('#####')
-  #print(VX)
-  #print(MX)
-  #print('#####')
-
-  #>>> toto
-  #[[123.0, 123.0, 123.0, 0.0], [0.0, 45.0, 0.0, 0.0]]
-  #>>> toto_array=numpy.array(toto)
-  #>>> toto_array[numpy.nonzero(toto_array==0)]=numpy.NaN
-  #>>> toto_array
-  #array([[ 123.,  123.,  123.,   nan],
-         #[  nan,   45.,   nan,   nan]])
-  #>>> numpy.nanmin(toto_array,0)
-  #array([ 123.,   45.,  123.,   nan])
-  #>>> 
-  #numpy.inf
-  #numpy.nan
-  #numpy.nan_to_num( numpy.nanargmax( numpy.nanargmin( numpy.nanmax( numpy.nanmin( numpy.nansum(
-  #>>> numpy.nan*numpy.ones([3,4])
-  #array([[ nan,  nan,  nan,  nan],
-         #[ nan,  nan,  nan,  nan],
-         #[ nan,  nan,  nan,  nan]])
-  #>>> numpy.inf*numpy.ones([3,4])
-  #array([[ inf,  inf,  inf,  inf],
-         #[ inf,  inf,  inf,  inf],
-         #[ inf,  inf,  inf,  inf]])
-
-  # To remove zeros from a list:  
-  #>>> list(filter(lambda x: x!=0,[34,2,2,34,1,222,0]))
-  #[34, 2, 2, 34, 1, 222]
-  # Or just filter(lambda x: x!=0,[34,2,2,34,1,222,0]) to get an iterable
 
   # Compute thickness vector from position vector
   thicknessVX = numpy.diff(VX)
-  
-  #MX.shape[1] = len(VX)
-  #MX.shape[1]-1 = len(VX)-1
-  
+    
   # epsVX = MX minus the last column
   epsVX = MX[:,0:MX.shape[1]-1]
-  epsVX = epsVX.min(0) # different from current implementation in bfdtd_parser automesher! TODO: Problem because filled with zeros => 0 is smallest often.
-
-  #print(thicknessVX)
-  #print(epsVX)
-
-  ###
+  epsVX = epsVX.min(0) # different from current implementation in bfdtd_parser automesher!
   
-  #meshing_parameters = MeshingParameters()
-  #meshing_parameters.maxPermittivityVector_X = []
-  #meshing_parameters.thicknessVector_X = []
-
   maxPermittivityVector_X = []
   thicknessVector_X = []
-    
+  
   # TODO: use (thickness, epsilon) tuples so that filter() and similar functions can be used. Also prevents errors if lists have different lengths.
   # ex: t = filter(lambda x: x>=1, t)
   # filter out parts smaller than minimum_mesh_delta_vector3[i]
@@ -326,69 +243,11 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
   # TODO: Fix by merging close lines instead of simply ignoring the corresponding layers.
   for idx in range(len(thicknessVX)):
     if thicknessVX[idx] >= minimum_mesh_delta:
-      #meshing_parameters.maxPermittivityVector_X.append(epsVX[idx])
-      #meshing_parameters.thicknessVector_X.append(thicknessVX[idx])
       maxPermittivityVector_X.append(epsVX[idx])
       thicknessVector_X.append(thicknessVX[idx])
   
   delta_X_vector, local_delta_X_vector = subGridMultiLayer(maxPermittivityVector_X, thicknessVector_X)
 
-  #print('~~~~~~~~~~~~~')
-  #print(local_delta_X_vector)
-  #print(delta_X_vector)
   mesh = numpy.cumsum(numpy.hstack((VX[0],delta_X_vector)))
-  #print(mesh)
-  #print('~~~~~~~~~~~~~')
   
-  #return meshing_parameters
   return mesh
-
-#class MeshingParameters(object):
-  ## TODO: think about the best way to design this class and then do it.
-  ## Might be better to really have delta+thickness for each object and then some global MeshingParameters with addMeshingParameters function.
-  ## permittivity to delta conversion could be specified differently for each object.
-  ## thickness <-> limits
-  ## delta <-factor*1/sqrt(permittivity)-> permittivity <-sqrt-> refractive index
-  
-  ## TODO: Combine with MeshObject? Create way to merge 2 or more existing meshes (i.e. MeshObject objects)? Create MeshObject from set of MeshingParameters? Don't forget about MEEP and BFDTD subgridding.
-  ## TODO: support 1-D,2-D (n-D?) meshing parameters as well
-  
-  #def __init__(self):
-    #self.maxPermittivityVector_X = [1]
-    #self.thicknessVector_X = [1]
-    #self.maxPermittivityVector_Y = [1]
-    #self.thicknessVector_Y = [1]
-    #self.maxPermittivityVector_Z = [1]
-    #self.thicknessVector_Z = [1]
-    #self.limits_X = [0,1]
-    #self.limits_Y = [0,1]
-    #self.limits_Z = [0,1]
-    
-  #def __str__(self):
-    #ret = 'maxPermittivityVector_X = '+str(self.maxPermittivityVector_X)+'\n'
-    #ret += 'thicknessVector_X = '+str(self.thicknessVector_X)+'\n'
-    #ret += 'maxPermittivityVector_Y = '+str(self.maxPermittivityVector_Y)+'\n'
-    #ret += 'thicknessVector_Y = '+str(self.thicknessVector_Y)+'\n'
-    #ret += 'maxPermittivityVector_Z = '+str(self.maxPermittivityVector_Z)+'\n'
-    #ret += 'thicknessVector_Z = '+str(self.thicknessVector_Z)+'\n'
-    #ret += 'limits_X = '+str(self.limits_X)+'\n'
-    #ret += 'limits_Y = '+str(self.limits_Y)+'\n'
-    #ret += 'limits_Z = '+str(self.limits_Z)
-    #return ret
-  
-  #def addLimits_X(self,limits,permittivity):
-    ##print(limits)
-    ##print(permittivity)
-    ##print(limits.shape)
-    ##print(permittivity.shape)
-    
-    #self.limits_X = numpy.vstack([self.limits_X,limits])
-    #self.maxPermittivityVector_X = numpy.vstack([self.maxPermittivityVector_X,permittivity])
-    
-  #def addLimits_Y(self,limits,permittivity):
-    #self.limits_Y = numpy.vstack([self.limits_Y,limits])
-    #self.maxPermittivityVector_Y = numpy.vstack([self.maxPermittivityVector_Y,permittivity])
-    
-  #def addLimits_Z(self,limits,permittivity):
-    #self.limits_Z = numpy.vstack([self.limits_Z,limits])
-    #self.maxPermittivityVector_Z = numpy.vstack([self.maxPermittivityVector_Z,permittivity])
