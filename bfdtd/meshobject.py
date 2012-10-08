@@ -217,8 +217,8 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
     Xvec[mesh_params_idx,1] = mesh_params.pos_max
     epsX[mesh_params_idx,0] = mesh_params.delta_max
 
-  print(Xvec)
-  print(epsX)
+  #print(Xvec)
+  #print(epsX)
   
   #simMinX = self.box.lower[0]
   #simMaXX = self.box.upper[0]
@@ -239,8 +239,8 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
   VX = numpy.unique(numpy.sort(numpy.vstack([Xvec[:,0],Xvec[:,1]])))
   MX = numpy.inf*numpy.ones((Xvec.shape[0],len(VX)))
 
-  print(VX)
-  print(MX)
+  #print(VX)
+  #print(MX)
 
   #print('@@@')
   #print(VX)
@@ -265,10 +265,10 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
     #MX[m,:] = vv
     MX[m,indmin:indmaX] = epsX[m,0]
 
-  print('#####')
-  print(VX)
-  print(MX)
-  print('#####')
+  #print('#####')
+  #print(VX)
+  #print(MX)
+  #print('#####')
 
   #>>> toto
   #[[123.0, 123.0, 123.0, 0.0], [0.0, 45.0, 0.0, 0.0]]
@@ -307,8 +307,8 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
   epsVX = MX[:,0:MX.shape[1]-1]
   epsVX = epsVX.min(0) # different from current implementation in bfdtd_parser automesher! TODO: Problem because filled with zeros => 0 is smallest often.
 
-  print(thicknessVX)
-  print(epsVX)
+  #print(thicknessVX)
+  #print(epsVX)
 
   ###
   
@@ -333,12 +333,12 @@ def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
   
   delta_X_vector, local_delta_X_vector = subGridMultiLayer(maxPermittivityVector_X, thicknessVector_X)
 
-  print('~~~~~~~~~~~~~')
-  print(local_delta_X_vector)
-  print(delta_X_vector)
+  #print('~~~~~~~~~~~~~')
+  #print(local_delta_X_vector)
+  #print(delta_X_vector)
   mesh = numpy.cumsum(numpy.hstack((VX[0],delta_X_vector)))
-  print(mesh)
-  print('~~~~~~~~~~~~~')
+  #print(mesh)
+  #print('~~~~~~~~~~~~~')
   
   #return meshing_parameters
   return mesh
