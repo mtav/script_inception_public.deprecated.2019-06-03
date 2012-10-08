@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import numpy
@@ -106,6 +106,9 @@ class Woodpile(object):
     print('Writing GWL to '+filename)
     BFDTD_obj.writeGeoFile(filename)
 
-if __name__ == "__main__":
+def main():
   woodpile_obj = Woodpile()
   woodpile_obj.write_GWL('woodpile_test.gwl')
+  
+if __name__ == "__main__":
+  main()

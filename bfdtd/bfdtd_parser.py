@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # parses BFDTD files
 
+# TODO: different output options when writing the files, for easier CLI piping/processing. :)
+
 import math
 import os
 import sys
