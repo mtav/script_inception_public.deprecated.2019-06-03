@@ -39,9 +39,16 @@ class Woodpile(object):
     self.BottomToTop = False # True=write from bottom to top, False=write from top to bottom    
     self.isSymmetrical = True # If True, the layers will alternate between N and N+1 rods per layer to enable central symmetry, otherwise all layers will have the same number of rods.
     
+    # These variables determine whether the first written layer of type X-periodic or Y-periodic is shifted or not.
+    # The following layers will be changed accordingly. Essentially, it allows vertical shifting of the layers.
+    # This allows you to create "ADCB" instead of "ABCD" woodpiles.
     # (affected by BottomToTop! (TODO: fix this))
-    self.initialLayerType_X = False
-    self.initialLayerType_Y = True
+    # TODO: Allow creation of "ABAB" woodpiles... Or even more complex?
+    self.shiftInitialLayerType_X = False
+    self.shiftInitialLayerType_Y = False
+
+    # TODO: find better name? redundant with X/Yoffset and X/Ymin/max, no?
+    #self.additionalRodLength = 0
 
     # TODO: create setSize functions?
     self.Xmin = -5.5
@@ -49,6 +56,7 @@ class Woodpile(object):
     self.Ymin = -5.5
     self.Ymax = 5.5
     
+    # additional separate offsets for X and Y layers...
     self.Xoffset = 0
     self.Yoffset = 0
 
@@ -56,9 +64,13 @@ class Woodpile(object):
     
     # TODO: should take into account the width of logs, etc
     if self.isSymmetrical:
+      #LX = self.NRodsPerLayer_X*self.interRodDistance + 2*self.additionalRodLength
+      #LY = self.NRodsPerLayer_Y*self.interRodDistance + 2*self.additionalRodLength
       LX = self.NRodsPerLayer_X*self.interRodDistance
       LY = self.NRodsPerLayer_Y*self.interRodDistance
     else:
+      #LX = self.NRodsPerLayer_X*self.interRodDistance - 0.5*self.interRodDistance + 2*self.additionalRodLength
+      #LY = self.NRodsPerLayer_Y*self.interRodDistance - 0.5*self.interRodDistance + 2*self.additionalRodLength
       LX = self.NRodsPerLayer_X*self.interRodDistance - 0.5*self.interRodDistance
       LY = self.NRodsPerLayer_Y*self.interRodDistance - 0.5*self.interRodDistance
       
@@ -69,8 +81,8 @@ class Woodpile(object):
 
   def getGWL(self):
     GWL_obj = GWLobject()
-    layer_type_X = self.initialLayerType_X
-    layer_type_Y = self.initialLayerType_Y
+    layer_type_X = self.shiftInitialLayerType_X
+    layer_type_Y = self.shiftInitialLayerType_Y
 
     if self.BottomToTop:
       layer_idx_list = range(self.Nlayers_Z)
