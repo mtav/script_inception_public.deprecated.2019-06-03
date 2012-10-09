@@ -137,7 +137,7 @@ function BFDTDtoMEEP(file_list)
     excSize=abs(entry.P1-entry.P2);
     excCenter=(entry.P1+entry.P2)/2-geoCenter';
     excWidth=entry.time_constant*get_c0();
-        MEEP_excitation(FILE, excFrequency, excWidth, excComponent, excCenter, excSize);
+    MEEP_excitation(FILE, excFrequency, excWidth, excComponent, excCenter, excSize);
   end
 
   %%%%%%%%%%%%%%%%%%%%%%
