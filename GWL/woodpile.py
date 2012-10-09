@@ -5,6 +5,7 @@ import numpy
 from GWL.GWL_parser import *
 from bfdtd.bfdtd_parser import *
 
+# TODO: Same as with meshing: First carefully think through the GWL/BFDTD woodpile system, then implement. Should be as flexible as possible (offsets, shifts, etc), while remaining simple to use.
 class Woodpile(object):
   def __init__(self):
     self.Nlayers_Z = 12
@@ -21,44 +22,65 @@ class Woodpile(object):
     self.LineNumber_Z = 1
     self.LineDistance_Z = 0.100
 
-    self.rod_type = 'cylinder'
+    #self.rod_type = 'line'
+    self.rod_type = 'block'
+    #self.rod_type = 'cylinder'
+    
     self.interLayerDistance = 0.212
     self.interRodDistance = 0.600
-    self.offset = numpy.array([0,0,0])
-    self.initialDirection = 1
-    self.initialLayerType_X = 1
-    self.initialLayerType_Y = 1
+
+    # TODO: Get rid of this, since there are already GWL translating functions?
+    self.offset = numpy.array([0,0,0]) # general offset of the whole structure, added to all points
+
+    # self.bottomLayerYPeriodic = True: ->first written layer will be periodic in the Y direction
+    # else: first written layer will be periodic in the X direction
+    self.bottomLayerYPeriodic = False
+
+    self.BottomToTop = False # True=write from bottom to top, False=write from top to bottom    
+    self.isSymmetrical = True # If True, the layers will alternate between N and N+1 rods per layer to enable central symmetry, otherwise all layers will have the same number of rods.
+    
+    # (affected by BottomToTop! (TODO: fix this))
+    self.initialLayerType_X = False
+    self.initialLayerType_Y = True
+
+    # TODO: create setSize functions?
     self.Xmin = -5.5
     self.Xmax = 5.5
     self.Ymin = -5.5
     self.Ymax = 5.5
-    self.BottomToTop = 0 # 1=write from bottom to top, 0=write from top to bottom
-    
-    self.isSymmetrical = True
     
     self.Xoffset = 0
     self.Yoffset = 0
 
   def adaptXYMinMax(self):
-    self.Xmin = -0.5*self.NRodsPerLayer_X*self.interRodDistance
-    self.Xmax = 0.5*self.NRodsPerLayer_X*self.interRodDistance
-    self.Ymin = -0.5*self.NRodsPerLayer_Y*self.interRodDistance
-    self.Ymax = 0.5*self.NRodsPerLayer_Y*self.interRodDistance
+    
+    # TODO: should take into account the width of logs, etc
+    if self.isSymmetrical:
+      LX = self.NRodsPerLayer_X*self.interRodDistance
+      LY = self.NRodsPerLayer_Y*self.interRodDistance
+    else:
+      LX = self.NRodsPerLayer_X*self.interRodDistance - 0.5*self.interRodDistance
+      LY = self.NRodsPerLayer_Y*self.interRodDistance - 0.5*self.interRodDistance
+      
+    self.Xmin = -0.5*LX
+    self.Xmax = 0.5*LX
+    self.Ymin = -0.5*LY
+    self.Ymax = 0.5*LY
 
   def getGWL(self):
     GWL_obj = GWLobject()
     layer_type_X = self.initialLayerType_X
     layer_type_Y = self.initialLayerType_Y
 
-    if self.BottomToTop == 1:
+    if self.BottomToTop:
       layer_idx_list = range(self.Nlayers_Z)
     else:
       layer_idx_list = range(self.Nlayers_Z-1,-1,-1)
-      layer_type_X = (layer_type_X + 1) % 2
-      layer_type_Y = (layer_type_Y + 1) % 2
+      #layer_type_X = (layer_type_X + 1) % 2
+      #layer_type_Y = (layer_type_Y + 1) % 2
 
     for layer_idx in layer_idx_list:
-      direction = layer_idx % 2 + self.initialDirection % 2
+      direction = layer_idx % 2 + self.bottomLayerYPeriodic % 2
       
       if direction % 2 == 0: # lines in the Y direction
         
@@ -72,8 +94,10 @@ class Woodpile(object):
           X = self.Xmin + self.Xoffset + layer_type_X*0.5*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([X, self.Ymax, layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([X, self.Ymin, layer_idx*self.interLayerDistance])
-          GWL_obj.addLine(P1,P2)
-          #GWL_obj.addYblock(P1, P2, self.LineNumber_X, self.LineDistance_X, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
+          if self.rod_type == 'line':
+            GWL_obj.addLine(P1,P2)
+          else:
+            GWL_obj.addYblock(P1, P2, self.LineNumber_X, self.LineDistance_X, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
         layer_type_X = (layer_type_X + 1) % 2
         
       else: # lines in the X direction
@@ -88,8 +112,10 @@ class Woodpile(object):
           Y = self.Ymin + self.Yoffset + layer_type_Y*0.5*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([self.Xmin, Y, layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([self.Xmax, Y, layer_idx*self.interLayerDistance])
-          GWL_obj.addLine(P1,P2)
-          #GWL_obj.addXblock(P1, P2, self.LineNumber_Y, self.LineDistance_Y, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
+          if self.rod_type == 'line':
+            GWL_obj.addLine(P1,P2)
+          else:
+            GWL_obj.addXblock(P1, P2, self.LineNumber_Y, self.LineDistance_Y, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
         layer_type_Y = (layer_type_Y + 1) % 2
         
       # optional: just add another write to easily distinguish layers inside file
@@ -110,6 +136,7 @@ class Woodpile(object):
 
 def main():
   woodpile_obj = Woodpile()
+  woodpile_obj.rod_type='line'
   woodpile_obj.adaptXYMinMax()
   woodpile_obj.write_GWL('woodpile_test.gwl')
   
