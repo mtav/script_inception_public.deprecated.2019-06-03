@@ -7,7 +7,7 @@ import numpy
 import os
 from utilities.common import *
 from utilities import TransformationMatrix
- 
+
 # TODO: Somehow get voxel size based on scanspeed/power/dwelltime/defocusfactor/etc
 DEFAULT_VOXEL_WIDTH = 0.100 # in mum
 DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
@@ -549,7 +549,7 @@ class GWLobject(object):
     #except IOError as (errno, strerror):
     except:
       #print "I/O error({0}): {1}".format(errno, strerror)
-      print(('Failed to open '+subsFile))
+      print('Failed to open '+str(subsFile), file = sys.stderr)
 
     return self.path_substitutes
 
