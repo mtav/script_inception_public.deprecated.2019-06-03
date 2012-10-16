@@ -7,10 +7,10 @@ function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
   % freq = frequency
   % lambda = wavelength = c0/freq
 
-  Lin=length(datain);
+  Lin = length(datain);
 
   if exist('NFFT','var')==0
-    disp('NFFT not given');
+    % disp('NFFT not given');
     NFFT = 2^nextpow2(Lin); % Next power of 2 from length of datain
     fft_out = fft(datain);
   else
@@ -18,7 +18,7 @@ function [fft_out,lambda,freq] = calcFFT(datain,dt,NFFT)
   end
 
   Lout = length(fft_out); % = NFFT
-  fft_out = fft_out(1:Lout/2);
+  fft_out = fft_out(1:floor(Lout/2));
 
   % relative frequency according to nyquist criterion
   nyqfreq = 1/dt;
