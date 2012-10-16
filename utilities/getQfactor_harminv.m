@@ -14,21 +14,21 @@ function [Q_harminv_local, peakWaveLength_nm, Frequency_Hz] = getQfactor_harminv
       
       rel=1./err; rel=rel/max(rel)*max(Q);
       
-      [indS,val] = closestInd(lambdaH_nm,x)
+      [indS,val] = closestInd(lambdaH_nm,x);
       
       if length(indS)==0
         warning('no closest index found!!!');
         warning('Failed to get Q factor from harminv.');
       else
         for i = 1:length(indS)
-          idx = indS(i)
+          idx = indS(i);
           if i == 1
             Q_harminv_local = Q(idx);
-            err_last = err(idx)
+            err_last = err(idx);
           else
             if(err(idx)<err_last)
               Q_harminv_local = Q(idx);
-              err_last = err(idx)
+              err_last = err(idx);
             end
           end
         end

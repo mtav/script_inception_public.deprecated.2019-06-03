@@ -12,6 +12,8 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   if exist('plotNothing','var') == 0; plotNothing = false; end;
 
   % defaults
+  verbosity = 0;
+  
   wavelength_nm = -1;
   Q_lorentz = -1;
   Q_harminv_local = -1;
@@ -49,7 +51,8 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   dt_mus = time_mus(2)-time_mus(1);  % data(*,1) being in 10^-18 s (because input frequency is in 10^6 Hz), dt is in 10^-18 s/1e-12 = 10^-6 s
 
   % cut beginning of time signal:
-  tmin = 6e-8
+  % TODO: Select cutoff time based on actual input/output data...
+  tmin = 6e-8;
   if tmin<time_mus(end)
     [time_mus,data_time_domain] = zoomPlot(time_mus,data_time_domain,tmin,time_mus(end));
   else
@@ -91,8 +94,8 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     [xzoom,yzoom] = zoomPlot(time_mus,data_time_domain,tmin,time_mus(end));
     %res.trace1.x = time_mus
     %res.trace1.y = data_time_domain
-    res.trace1.x = xzoom
-    res.trace1.y = yzoom
+    res.trace1.x = xzoom;
+    res.trace1.y = yzoom;
     %ringdown(res,0.01)
   
     % go back to normal figure
@@ -189,7 +192,9 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     end
 
     peaks = peakdet(Y, delta, X);
-    peaks
+    if (verbosity>2)
+      peaks
+    end
     
     wavelength_nm = zeros(1,size(peaks,1));
     Q_lorentz = zeros(1,size(peaks,1));
@@ -244,16 +249,19 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
       fprintf(fid,'%2.8e\r\n',data_time_domain);
       fclose(fid);
       
-      disp('===> Computing global harminv:');
+      if (verbosity>1)
+        disp('===> Computing global harminv:');
+      end
       [ status, lambdaH_mum, Q, outFile, err, minErrInd, frequency, decay_constant, amplitude, phase ] = doHarminv(harminvDataFile,dt_mus,lambdaLow_mum,lambdaHigh_mum);
-      
       if ( status == 0 )
         if ( length(Q) ~= 0 )
           % calculate time-domain fit based on harminv output
           harminv_time = zeros(size(time_mus));
           %harminv_fig = figure(); hold on;
           for i=1:length(frequency)
-            disp([num2str(frequency(i)),', ', num2str(decay_constant(i)),', ', num2str(Q(i)),', ', num2str(amplitude(i)),', ', num2str(phase(i)),', ', num2str(err(i))]);
+            if (verbosity>1)
+              disp([num2str(frequency(i)),', ', num2str(decay_constant(i)),', ', num2str(Q(i)),', ', num2str(amplitude(i)),', ', num2str(phase(i)),', ', num2str(err(i))]);
+            end
             %harminv_time = harminv_time + amplitude(i)*sin(2*pi*frequency(i)*time_mus+phase(i)).*exp(-decay_constant(i)*time_mus);
             harminv_time = harminv_time + amplitude(i)*cos(-2*pi*frequency(i).*time_mus+phase(i)).*exp(decay_constant(i).*time_mus);
             %plot(time_mus, amplitude(i)*exp(-decay_constant(i).*time_mus));
@@ -288,7 +296,9 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     end % end of if computeHarminvGlobal
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    disp('===> Looping through peaks:');
+    if (verbosity>1)
+      disp('===> Looping through peaks:');
+    end
 
     fid = fopen('~/tmpQ.txt', 'at');
     fprintf(fid, '%s\n', [pwd,' | ',filename] );
@@ -320,7 +330,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
         end
       else
         Q = -1;
-      end      
+      end
       wavelength_nm(n) = peakWaveLength;
       Q_lorentz(n) = Q;
       %%%%%%%%%%%%
@@ -337,12 +347,16 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
         Q1 = ['Q_L=',num2str(Q_lorentz(n))];
         Q2 = ['Q_{Hl}=',num2str(Q_harminv_local(n))];
         %Q3 = ['Q_{Hg}=',num2str(Q_harminv_global(n))];
+        %disp('=================================================')
+        %Q_harminv_global(n)
+        %disp('=================================================')
         Q3 = ['Q = ',num2str(Q_harminv_global(n))];
         
         if Qtext
           if ~plotNothing
             %text(peakWaveLength, peakValue, {Q1;Q2;Q3}, 'FontSize', 8);
             text(peakWaveLength, peakValue, {Q3}, 'FontSize', 8);
+            fprintf(1, 'peakWaveLength = %d ; Q = %d\n', peakWaveLength, Q_harminv_global(n));
           end
         end
         
