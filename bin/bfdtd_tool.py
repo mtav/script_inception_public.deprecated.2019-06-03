@@ -222,7 +222,17 @@ def addModeVolumeFrequencySnapshots(arguments):
       f.frequency_vector = frequency_vector
   elif arguments.slicing_direction == 'Z':
     pos_list = FDTDobj.mesh.getZmesh()
-    for pos in pos_list:
+    #for pos in pos_list:
+    # another quick hack to reduce the number of snapshots to 101 around the center... TODO: add options for that...
+    reduced_range = range(len(pos_list))
+    pos_mid = int(numpy.floor(len(pos_list)/2))
+    reduced_range = pos_list[ pos_mid-50:pos_mid+50+1]
+
+    # temporary hack
+    arguments.repetition = FDTDobj.flag.iterations - arguments.first
+    
+    for pos in reduced_range:
+      #pos = pos_list[idx]
       e = FDTDobj.addEpsilonSnapshot('Z',pos)
       e.name = NAME
       e.first = 1
@@ -236,21 +246,21 @@ def addModeVolumeFrequencySnapshots(arguments):
     print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
     sys.exit(-1)
 
-  # temporary hack to rectify excitation direction
-  P1 = numpy.array(FDTDobj.excitation_list[0].P1)
-  P2 = numpy.array(FDTDobj.excitation_list[0].P2)
-  Pdiff = P2-P1
-  Pdiff = list(Pdiff)
-  exc_dir = Pdiff.index(max(Pdiff))
-  if exc_dir == 0:
-    FDTDobj.excitation_list[0].E = [1,0,0]
-  elif exc_dir == 1:
-    FDTDobj.excitation_list[0].E = [0,1,0]
-  elif exc_dir == 2:
-    FDTDobj.excitation_list[0].E = [0,0,1]
-  else:
-    print('ERROR: wrong exc_dir = '+str(exc_dir)+' Pdiff = '+str(Pdiff), file=sys.stderr)
-    sys.exit(-1)
+  ## temporary hack to rectify excitation direction
+  #P1 = numpy.array(FDTDobj.excitation_list[0].P1)
+  #P2 = numpy.array(FDTDobj.excitation_list[0].P2)
+  #Pdiff = P2-P1
+  #Pdiff = list(Pdiff)
+  #exc_dir = Pdiff.index(max(Pdiff))
+  #if exc_dir == 0:
+    #FDTDobj.excitation_list[0].E = [1,0,0]
+  #elif exc_dir == 1:
+    #FDTDobj.excitation_list[0].E = [0,1,0]
+  #elif exc_dir == 2:
+    #FDTDobj.excitation_list[0].E = [0,0,1]
+  #else:
+    #print('ERROR: wrong exc_dir = '+str(exc_dir)+' Pdiff = '+str(Pdiff), file=sys.stderr)
+    #sys.exit(-1)
 
   # temporary hack to disable frequency snaphsots
   #FDTDobj.clearFrequencySnapshots()
@@ -328,7 +338,12 @@ def main():
   group.add_argument('--first', type=int, default=3200, help='first iteration at which to take snapshot')
   group.add_argument('--repetition', type=int, default=32000, help='step in number of iterations at which to take snapshots')
   group.add_argument('--iterations', type=int, default=67200, help='number of iterations')
-  group.add_argument('--freqListFile', default=None, help='frequency list file')
+  group.add_argument('--freqListFile', default=None, help='frequency list file\n\
+  format:\n\
+  PeakNo	Frequency(Hz)	Wavelength(nm)	QFactor\n\
+  1	4.7257745e+14	634.37741293	40.4569\n\
+  2	4.9540615e+14	605.14480606	90.37')
+
   group.add_argument('--frequency_MHz', type=float, help='frequency in MHz', action='store', metavar='f(MHz)', nargs='+')
   group.add_argument('--wavelength_mum', type=float, help='wavelength in µm', action='store', metavar='lambda(µm)', nargs='+')
 
