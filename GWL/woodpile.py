@@ -12,8 +12,10 @@ class Woodpile(object):
     self.NRodsPerLayer_X = 17
     self.NRodsPerLayer_Y = 17
 
-    #self.rod_width = 0.100
-    #self.rod_height = 0.200
+    # TODO: create get/set functions for rod width/height + interRodDistance/interLayerDistance
+    # NOTE: Keep rod width/height + interRodDistance/interLayerDistance, etc separate for more flexibility or not?
+    self.rod_width = 0.100
+    self.rod_height = 0.200
 
     self.LineNumber_X = 1
     self.LineDistance_X = 0.050
@@ -79,8 +81,10 @@ class Woodpile(object):
     self.Ymin = -0.5*LY
     self.Ymax = 0.5*LY
 
-  def getGWL(self):
+  def getGWLandBFDTDobjects(self):
     GWL_obj = GWLobject()
+    BFDTD_obj = BFDTDobject()
+    
     layer_type_X = self.shiftInitialLayerType_X
     layer_type_Y = self.shiftInitialLayerType_Y
 
@@ -88,8 +92,6 @@ class Woodpile(object):
       layer_idx_list = range(self.Nlayers_Z)
     else:
       layer_idx_list = range(self.Nlayers_Z-1,-1,-1)
-      #layer_type_X = (layer_type_X + 1) % 2
-      #layer_type_Y = (layer_type_Y + 1) % 2
 
     for layer_idx in layer_idx_list:
       direction = layer_idx % 2 + self.bottomLayerYPeriodic % 2
@@ -102,7 +104,6 @@ class Woodpile(object):
           N = self.NRodsPerLayer_X
           
         for rod_idx in range(N-1,-1,-1):
-          #X = -0.5*(N - 1)*self.interRodDistance + rod_idx*self.interRodDistance
           X = self.Xmin + self.Xoffset + layer_type_X*0.5*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([X, self.Ymax, layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([X, self.Ymin, layer_idx*self.interLayerDistance])
@@ -110,6 +111,10 @@ class Woodpile(object):
             GWL_obj.addLine(P1,P2)
           else:
             GWL_obj.addYblock(P1, P2, self.LineNumber_X, self.LineDistance_X, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
+          block = Block()
+          block.lower = P1 - self.rod_width*numpy.array([1,0,0]) - self.rod_height*numpy.array([0,0,1])
+          block.upper = P2 + self.rod_width*numpy.array([1,0,0]) + self.rod_height*numpy.array([0,0,1])
+          BFDTD_obj.geometry_object_list.append(block)
         layer_type_X = (layer_type_X + 1) % 2
         
       else: # lines in the X direction
@@ -120,7 +125,6 @@ class Woodpile(object):
           N = self.NRodsPerLayer_Y
           
         for rod_idx in range(N):
-          #Y = -0.5*(N - 1)*self.interRodDistance + rod_idx*self.interRodDistance
           Y = self.Ymin + self.Yoffset + layer_type_Y*0.5*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([self.Xmin, Y, layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([self.Xmax, Y, layer_idx*self.interLayerDistance])
@@ -128,29 +132,35 @@ class Woodpile(object):
             GWL_obj.addLine(P1,P2)
           else:
             GWL_obj.addXblock(P1, P2, self.LineNumber_Y, self.LineDistance_Y, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
+          block = Block()
+          block.lower = P1 - self.rod_width*numpy.array([0,1,0]) - self.rod_height*numpy.array([0,0,1])
+          block.upper = P2 + self.rod_width*numpy.array([0,1,0]) + self.rod_height*numpy.array([0,0,1])
+          BFDTD_obj.geometry_object_list.append(block)
         layer_type_Y = (layer_type_Y + 1) % 2
         
       # optional: just add another write to easily distinguish layers inside file
       GWL_obj.addWrite()
-    return GWL_obj
+    return (GWL_obj, BFDTD_obj)
 
   def write_GWL(self, filename):
-    GWL_obj = self.getGWL()
+    (GWL_obj, BFDTD_obj) = self.getGWLandBFDTDobjects()
     (Pmin, Pmax) = GWL_obj.getLimits()
     GWL_obj.write_GWL(filename, writingOffset = [0,0,-Pmin[2],0] ) # write object so that Zmin = 0
     
   def write_BFDTD(self, filename):
     # TODO: finish implementing this function
-    BFDTD_obj = BFDTDobject()
-    BFDTD_obj.geometry_object_list.append(Block())
+    (GWL_obj, BFDTD_obj) = self.getGWLandBFDTDobjects()
     print('Writing GWL to '+filename)
     BFDTD_obj.writeGeoFile(filename)
 
 def main():
   woodpile_obj = Woodpile()
+  woodpile_obj.rod_width = 0.050
+  woodpile_obj.rod_height = 0.050
   woodpile_obj.rod_type='line'
   woodpile_obj.adaptXYMinMax()
   woodpile_obj.write_GWL('woodpile_test.gwl')
+  woodpile_obj.write_BFDTD('woodpile_test.geo')
   
 if __name__ == "__main__":
   main()
