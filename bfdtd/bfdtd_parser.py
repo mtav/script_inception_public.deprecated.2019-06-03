@@ -2006,9 +2006,15 @@ class BFDTDobject(object):
       print(self.mesh)
       print('============')
   
+  # TODO: Fix this, as it does not look like it will work this way...
   def rotate(self, axis_point, axis_direction, angle_degrees):
     for obj in self.geometry_object_list:
       self.rotation_list.append(Rotation(axis_point = axis_point, axis_direction = axis_direction, angle_degrees = angle_degrees))
+    return
+    
+  def translate(self, vec3):
+    for obj in self.geometry_object_list:
+      obj.translate(vec3)
     return
     
   def applyTransformationMatrix(self, M):

@@ -62,6 +62,30 @@ class Woodpile(object):
     self.Xoffset = 0
     self.Yoffset = 0
 
+  def setRodType():
+    return
+
+  def setRodWidth():
+    ''' set rod width (WARNING: will set LineNumber and LineDistance accordingly) '''
+    return
+  def setRodHeight():
+    ''' set rod height (WARNING: will set LineNumber and LineDistance accordingly) '''
+    return
+
+  def setLineNumberAndDistance_XY():
+    ''' set LineNumber and LineDistance (WARNING: will set rod width accordingly) '''
+    return
+  def setLineNumberAndDistance_Z():
+    ''' set LineNumber and LineDistance (WARNING: will set rod height accordingly) '''
+    return
+
+  def setVoxelSize3():
+    return
+
+  def setOverlap3():
+    #self.overlap = 
+    return
+
   def adaptXYMinMax(self):
     
     # TODO: should take into account the width of logs, etc
@@ -102,8 +126,10 @@ class Woodpile(object):
           N = self.NRodsPerLayer_X + (layer_type_X+1)%2
         else:
           N = self.NRodsPerLayer_X
-          
-        for rod_idx in range(N-1,-1,-1):
+        
+        # NOTE: some leftover from fitting the nanoscribe-style woodpile? Add option for it...? :/
+        #for rod_idx in range(N-1,-1,-1):
+        for rod_idx in range(N):
           X = self.Xmin + self.Xoffset + layer_type_X*0.5*self.interRodDistance + rod_idx*self.interRodDistance
           P1 = self.offset + numpy.array([X, self.Ymax, layer_idx*self.interLayerDistance])
           P2 = self.offset + numpy.array([X, self.Ymin, layer_idx*self.interLayerDistance])
@@ -112,8 +138,9 @@ class Woodpile(object):
           else:
             GWL_obj.addYblock(P1, P2, self.LineNumber_X, self.LineDistance_X, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
           block = Block()
-          block.lower = P1 - self.rod_width*numpy.array([1,0,0]) - self.rod_height*numpy.array([0,0,1])
-          block.upper = P2 + self.rod_width*numpy.array([1,0,0]) + self.rod_height*numpy.array([0,0,1])
+          block.lower = P1 - 0.5*self.rod_width*numpy.array([1,0,0]) - 0.5*self.rod_height*numpy.array([0,0,1])
+          block.upper = P2 + 0.5*self.rod_width*numpy.array([1,0,0]) + 0.5*self.rod_height*numpy.array([0,0,1])
+          block.name = "woodpile"
           BFDTD_obj.geometry_object_list.append(block)
         layer_type_X = (layer_type_X + 1) % 2
         
@@ -133,8 +160,9 @@ class Woodpile(object):
           else:
             GWL_obj.addXblock(P1, P2, self.LineNumber_Y, self.LineDistance_Y, self.LineNumber_Z, self.LineDistance_Z, self.BottomToTop)
           block = Block()
-          block.lower = P1 - self.rod_width*numpy.array([0,1,0]) - self.rod_height*numpy.array([0,0,1])
-          block.upper = P2 + self.rod_width*numpy.array([0,1,0]) + self.rod_height*numpy.array([0,0,1])
+          block.lower = P1 - 0.5*self.rod_width*numpy.array([0,1,0]) - 0.5*self.rod_height*numpy.array([0,0,1])
+          block.upper = P2 + 0.5*self.rod_width*numpy.array([0,1,0]) + 0.5*self.rod_height*numpy.array([0,0,1])
+          block.name = "woodpile"
           BFDTD_obj.geometry_object_list.append(block)
         layer_type_Y = (layer_type_Y + 1) % 2
         
