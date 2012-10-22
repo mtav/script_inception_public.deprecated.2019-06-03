@@ -200,6 +200,10 @@ class HeterogeneousMesh(MeshPapa):
 
 # TODO: mesh merging functions + mesh conversion functions
 # TODO: Generic 1-D function to merge meshing parameters of the form [lower, upper, maxDelta]
+# TODO: Make BFDTD import show meshboxes + add X-ray option to .geo/.inp files + group objects from same file into one group"
+# TODO: Add possibility to order meshboxes manually (ex: force to top, to bottom, to make one delta_max/N have priority over others)
+# TODO: Add "dynamic meshboxes": ex: N=3 everywhere where that meshbox gains priority. ex: Meshbox(xmin=2, xmax=10, N=3). Other meshboxes split it into 4 regions. Make each region be split into N=3 regions.
+
 def mergeMeshingParameters(MeshParamsList, minimum_mesh_delta = 1e-3):
   ''' returns parameters that can be used for meshing with subGridMultiLayer '''
 
