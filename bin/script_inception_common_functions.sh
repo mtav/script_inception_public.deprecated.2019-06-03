@@ -2,10 +2,10 @@
 
 function getOutFile()
 {
-    DIR=$(dirname $(readlink -f "$1"))
-    BASE=$(basename $1 '_4ppn.sh')
-    BASE=$(basename $BASE '_8ppn.sh')
-    BASE=$(basename $(basename $BASE '.out') .sh)
+    DIR=$(dirname "$(readlink -f "$1")")
+    BASE=$(basename "$1" '_4ppn.sh')
+    BASE=$(basename "$BASE" '_8ppn.sh')
+    BASE=$(basename "$(basename "$BASE" '.out')" .sh)
     OUTFILE="$DIR/$BASE.out"
     echo "$OUTFILE"
 }
@@ -13,9 +13,9 @@ function getOutFile()
 function getScriptFile()
 {
     DIR=$(dirname $(readlink -f "$1"))
-    BASE=$(basename $1 '_4ppn.sh')
-    BASE=$(basename $BASE '_8ppn.sh')
-    BASE=$(basename $(basename $BASE '.out') .sh)
+    BASE=$(basename "$1" '_4ppn.sh')
+    BASE=$(basename "$BASE" '_8ppn.sh')
+    BASE=$(basename "$(basename $BASE '.out')" .sh)
     SCRIPTFILE="$DIR/$BASE.sh"
     echo "$SCRIPTFILE"
 }
@@ -23,8 +23,8 @@ function getScriptFile()
 function getDataState()
 {
     OUTFILE=$(getOutFile "$1")
-    DIR=$(dirname $(readlink -f $OUTFILE))
-    BASE=$(basename $DIR)
+    DIR=$(dirname "$(readlink -f "$OUTFILE")")
+    BASE=$(basename "$DIR")
     if [ -s  "$OUTFILE" ]
     then
       if grep Deallocating  "$OUTFILE" 1>/dev/null 2>&1

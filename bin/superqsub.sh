@@ -12,13 +12,14 @@ set -eu
 
 source script_inception_common_functions.sh
 
-echo $#
+# echo "NARGS = $#"
 
 if [ $# -lt 1 ]
 then
   echo "$(basename $0) SCRIPT1 SCRIPT2 ..."
   echo 'submits scripts using the following command:'
   echo 'qsub -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT'
+  echo "NOTE: \",\" in paths lead to problems when using torque/qsub with -v because -v expects a comma separated list!!!"
 fi
 #exit
 
@@ -29,14 +30,14 @@ do
   OUTFILE=$(getOutFile "$SCRIPT")
   
   set +e
-  getDataState $SCRIPT
+  getDataState "$SCRIPT"
   status=$?
   set -e
   
   if  [ $status == 2 ]
   then
     echo "submitting $SCRIPT"
-    qsub -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f $(dirname "$SCRIPT"))" $SCRIPT
+    qsub -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
   else
     if  [ $status == 0 ]
     then
