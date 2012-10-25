@@ -2,9 +2,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
 
   % read the input files
   
-  snap_plane = 'z'
-  probe_ident = 'a'
-  snap_time_number = 1
+  snap_plane = snapDirection %'z'
+  probe_ident = 'a' % (should be gotten from parsing input files)
+  snap_time_number = 1 % (should be gotten from parsing input files)
   
   % convert snapDirection='x','y','z' to 1,2,3
   snapDirInt = (snapDirection - double('x')) + 1;
@@ -15,7 +15,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
 
   %inpfile = dir([folder,'\*.inp']);
   %inpfile = [folder, filesep, inpfile(1).name];
-  [inpEntries, structured_entries] = GEO_INP_reader({inpfile});
+  [inpEntries, structured_entries] = GEO_INP_reader({ [folder, filesep, inpfile] });
 
   Snaps = {};
   for m = 1:length(inpEntries)
@@ -37,6 +37,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
              
              SnapEntry.fileName = [folder, filesep, filename];
              SnapEntry.pos = data{7+snapDirInt};
+             
              
              [ epsfilename, alphaID, pair ] = numID_to_alphaID_TimeSnapshot(val, snap_plane, probe_ident, snap_time_number)
              
@@ -112,6 +113,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
 
   % Which of those 2 is correct?
   Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Z(1).frequency
+%  Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Y(1).frequency
+  %Lambda_mum = get_c0()/structured_entries.frequency_snapshots_X(1).frequency
+  
   % n = 3.3;
   % Foptn = mode_volume/(Lambda/(n))^3
   % Foptn = mode_volume/((Lambda/1000)/(2*n))^3
