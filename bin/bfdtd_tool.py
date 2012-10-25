@@ -200,11 +200,11 @@ def addModeVolumeFrequencySnapshots(arguments):
     pos_list = FDTDobj.mesh.getXmesh()
     for pos in pos_list:
       e = FDTDobj.addEpsilonSnapshot('X',pos)
-      e.name = NAME
+      e.name = NAME + '.eps'
       e.first = 1
       e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       f = FDTDobj.addFrequencySnapshot('X',pos)
-      f.name = NAME
+      f.name = NAME + '.freq'
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
@@ -212,11 +212,11 @@ def addModeVolumeFrequencySnapshots(arguments):
     pos_list = FDTDobj.mesh.getYmesh()
     for pos in pos_list:
       e = FDTDobj.addEpsilonSnapshot('Y',pos)
-      e.name = NAME
+      e.name = NAME + '.eps'
       e.first = 1
       e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       f = FDTDobj.addFrequencySnapshot('Y',pos)
-      f.name = NAME
+      f.name = NAME + '.freq'
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
@@ -226,7 +226,8 @@ def addModeVolumeFrequencySnapshots(arguments):
     # another quick hack to reduce the number of snapshots to 101 around the center... TODO: add options for that...
     reduced_range = range(len(pos_list))
     pos_mid = int(numpy.floor(len(pos_list)/2))
-    reduced_range = pos_list[ pos_mid-50:pos_mid+50+1]
+    #reduced_range = pos_list[ pos_mid-50:pos_mid+50+1]
+    reduced_range = pos_list[ pos_mid-25:pos_mid+25+1]
 
     # temporary hack
     arguments.repetition = FDTDobj.flag.iterations - arguments.first
@@ -234,11 +235,11 @@ def addModeVolumeFrequencySnapshots(arguments):
     for pos in reduced_range:
       #pos = pos_list[idx]
       e = FDTDobj.addEpsilonSnapshot('Z',pos)
-      e.name = NAME
+      e.name = NAME + '.eps'
       e.first = 1
       e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       f = FDTDobj.addFrequencySnapshot('Z',pos)
-      f.name = NAME
+      f.name = NAME + '.freq'
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
