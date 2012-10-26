@@ -14,6 +14,8 @@ DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
 DEFAULT_OVERLAP_HORIZONTAL = 0.5
 DEFAULT_OVERLAP_VERTICAL = 0.5
 
+#TODO: Start creating external GWL object classes like blocks, spheres, etc which can be added to a main GWL object (similar to BFDTD)
+
 def calculateNvoxelsAndInterVoxelDistance(Length, Voxelsize, Overlap):
   '''
   Calulates the number of voxels and the distance between them so that they fit into length "Length" with an overlap "Overlap", i.e. so that:
