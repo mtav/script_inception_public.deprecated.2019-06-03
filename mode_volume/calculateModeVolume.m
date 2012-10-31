@@ -101,6 +101,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
           currMax = maxVal;
       end
           
+      size(nom)
+      size(areaM)
+      size(thickness)
       Nom = Nom + sum(sum(nom.*areaM*thickness));
       
   %     figure(1)
