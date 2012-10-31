@@ -228,9 +228,10 @@ def addModeVolumeFrequencySnapshots(arguments):
     pos_mid = int(numpy.floor(len(pos_list)/2))
     #reduced_range = pos_list[ pos_mid-50:pos_mid+50+1]
     reduced_range = pos_list[ pos_mid-25:pos_mid+25+1]
+    #reduced_range = pos_list[ pos_mid-12:pos_mid+12+1]
 
     # temporary hack
-    arguments.repetition = FDTDobj.flag.iterations - arguments.first
+    #arguments.repetition = FDTDobj.flag.iterations - arguments.first
     
     for pos in reduced_range:
       #pos = pos_list[idx]
