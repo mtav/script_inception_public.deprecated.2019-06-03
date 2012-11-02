@@ -23,9 +23,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
      if strcmp(lower(inpEntries{m}.type), 'frequency_snapshot')
          % Findout which plane it is
          snapNo = length(Snaps)+1;
-         m
-         data
-         snapDirInt
+         %m
+         %data
+         disp(['snapDirInt = ',num2str(snapDirInt)])
          % check if the direction of the snapshot corresponds to snapDirection
          if data{7+snapDirInt} == data{10+snapDirInt}
          
@@ -70,27 +70,64 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
 
   for m = 1:length(Snaps)
       disp(m)
-      [header, data, ui, uj] = readPrnFile(Snaps{m}.fileName);
-      if m == length(Snaps)
-          thickness = Snaps{m}.pos-Snaps{m-1}.pos;
-      else
-          thickness = Snaps{m+1}.pos-Snaps{m}.pos;
-      end
-      Exmod = data(:,:,1);
-      Eymod = data(:,:,4);
-      Ezmod = data(:,:,7);
+      [header_fsnap, data_fsnap, ui_fsnap, uj_fsnap] = readPrnFile(Snaps{m}.fileName);
+      [header_esnap, data_esnap, ui_esnap, uj_esnap] = readPrnFile(Snaps{m}.epsFile);
       
+      disp(['==> size(data_fsnap) = ',num2str(size(data_fsnap))]);
+      disp(['==> size(ui_fsnap) = ',num2str(size(ui_fsnap))]);
+      disp(['==> size(uj_fsnap) = ',num2str(size(uj_fsnap))]);
+
+      disp(['==> size(data_esnap) = ',num2str(size(data_esnap))]);
+      disp(['==> size(ui_esnap) = ',num2str(size(ui_esnap))]);
+      disp(['==> size(uj_esnap) = ',num2str(size(uj_esnap))]);
+
+      % TODO: I really don't think this should be like this... Looks like a dirty hack...
+      if m == length(Snaps)
+        thickness = Snaps{m}.pos-Snaps{m-1}.pos;
+      else
+        thickness = Snaps{m+1}.pos-Snaps{m}.pos;
+      end
+      
+      % get size of full mesh
       v = 1:3;
       ind = find(v~=snapDirInt);
-
-      vi = mesh{ind(1)};
-      vj = mesh{ind(2)};
       
+      if( length(ui_esnap) == length(mesh{ind(1)}) )
+        % full snapshot
+        vi = mesh{ind(1)};
+      else
+        % partial snapshot
+        vi = diff(ui_esnap);
+        data_fsnap = data_fsnap(1:end-1, :, :);
+        data_esnap = data_esnap(1:end-1, :, :);
+      end
+
+      if( length(uj_esnap) == length(mesh{ind(2)}) )
+        % full snapshot
+        vj = mesh{ind(2)};
+      else
+        % partial snapshot
+        vj = diff(uj_esnap);
+        data_fsnap = data_fsnap(:, 1:end-1, :);
+        data_esnap = data_esnap(:, 1:end-1, :);
+      end
+
+      Exmod = data_fsnap(:,:,1);
+      Eymod = data_fsnap(:,:,4);
+      Ezmod = data_fsnap(:,:,7);
+
+      %vi = diff(ui_esnap);
+      %vj = diff(uj_esnap);
+
+      %vi = mesh{ind(1)};
+      %vj = mesh{ind(2)};
+
+      disp(['==> size(vi) = ',num2str(size(vi))]);
+      disp(['==> size(vj) = ',num2str(size(vj))]);
+
       areaM = vj*vi';
       
-      [header, eps, ui, uj] = readPrnFile(Snaps{m}.epsFile);
-      
-      nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*eps(:,:);
+      nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*data_esnap(:,:);
       
       % TODO: shouldn't this be:
       % maxVal = max(nom);
@@ -98,12 +135,13 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
       vv = [vv,maxVal];
       
       if (maxVal>currMax)
-          currMax = maxVal;
+        currMax = maxVal;
       end
-          
-      size(nom)
-      size(areaM)
-      size(thickness)
+
+      disp(['==> size(nom) = ',num2str(size(nom))]);
+      disp(['==> size(areaM) = ',num2str(size(areaM))]);
+      disp(['==> size(thickness) = ',num2str(size(thickness))]);
+      
       Nom = Nom + sum(sum(nom.*areaM*thickness));
       
   %     figure(1)
@@ -114,11 +152,17 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
       
   mode_volume_mum3 = Nom/currMax;
 
-  % Which of those 2 is correct?
-  Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Z(1).frequency
-%  Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Y(1).frequency
-  %Lambda_mum = get_c0()/structured_entries.frequency_snapshots_X(1).frequency
+  if snapDirection == 'x'
+    Lambda_mum = get_c0()/structured_entries.frequency_snapshots_X(1).frequency
+  elseif snapDirection == 'y'
+    Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Y(1).frequency
+  elseif snapDirection == 'z'
+    Lambda_mum = get_c0()/structured_entries.frequency_snapshots_Z(1).frequency
+  else
+    error(['Invalid snapDirection = ', num2str(snapDirection)])
+  end    
   
+  % Which of those is correct?
   % n = 3.3;
   % Foptn = mode_volume/(Lambda/(n))^3
   % Foptn = mode_volume/((Lambda/1000)/(2*n))^3
