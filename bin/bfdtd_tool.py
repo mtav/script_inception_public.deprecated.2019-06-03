@@ -3,6 +3,7 @@
 
 # script to quickly get various info from bfdtd related files
 # TODO: Integrate some of those functions into the BFDTD class?
+# TODO: Add something to create epsilon snapshots from a geometry? based on existing mode volume frequency snapshots?
 
 import bfdtd.bfdtd_parser as bfdtd
 from utilities.common import *
@@ -228,6 +229,7 @@ def addModeVolumeFrequencySnapshots(arguments):
     pos_mid = int(numpy.floor(len(pos_list)/2))
     #reduced_range = pos_list[ pos_mid-50:pos_mid+50+1]
     reduced_range = pos_list[ pos_mid-25:pos_mid+25+1]
+    #reduced_range = pos_list[ pos_mid-1:pos_mid+1+1]
     #reduced_range = pos_list[ pos_mid-12:pos_mid+12+1]
 
     # temporary hack
@@ -239,11 +241,25 @@ def addModeVolumeFrequencySnapshots(arguments):
       e.name = NAME + '.eps'
       e.first = 1
       e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
+      
+      # and more quick hacks...
+      e.P1[0] = min(reduced_range)
+      e.P1[1] = min(reduced_range)
+      e.P2[0] = max(reduced_range)
+      e.P2[1] = max(reduced_range)
+      
       f = FDTDobj.addFrequencySnapshot('Z',pos)
       f.name = NAME + '.freq'
       f.first = arguments.first
       f.repetition = arguments.repetition
       f.frequency_vector = frequency_vector
+      
+      # and more quick hacks...
+      f.P1[0] = min(reduced_range)
+      f.P1[1] = min(reduced_range)
+      f.P2[0] = max(reduced_range)
+      f.P2[1] = max(reduced_range)
+      
   else:
     print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
     sys.exit(-1)
@@ -268,6 +284,21 @@ def addModeVolumeFrequencySnapshots(arguments):
   #FDTDobj.clearFrequencySnapshots()
   #FDTDobj.clearTimeSnapshots()
 
+  # Add full X,Y,Z central snapshots for reference
+  pos = FDTDobj.box.getCentro()
+
+  for i in [0,1,2]:
+    letter = ['X','Y','Z'][i]
+    e = FDTDobj.addEpsilonSnapshot(letter,pos[i])
+    e.name = 'central.'+letter+'.eps'
+    e.first = 1
+    e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
+    f = FDTDobj.addFrequencySnapshot(letter,pos[i]);
+    f.name = 'central.'+letter+'.fsnap'
+    f.first = arguments.first
+    f.repetition = arguments.repetition
+    f.frequency_vector = frequency_vector
+    
   if arguments.outdir is None:
     print('ERROR: no outdir specified', file=sys.stderr)
     sys.exit(-1)
@@ -275,11 +306,14 @@ def addModeVolumeFrequencySnapshots(arguments):
   if arguments.basename is None:
     arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
   
+  # hack: remove epsilon snapshots and probes to increase speed
+  FDTDobj.clearEpsilonSnapshots()
+  FDTDobj.clearProbes()
+  
   FDTDobj.fileList = []
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
   #FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
   FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
-
 
   return
 
