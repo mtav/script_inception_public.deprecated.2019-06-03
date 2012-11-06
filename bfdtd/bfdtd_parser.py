@@ -1496,6 +1496,7 @@ class BFDTDobject(object):
   def clearMesh():
     self.mesh = MeshObject()
 
+  # TODO: determine if a time snapshot is an epsilon or mode filtered snapshot during file reading (useful for easier processing of the snapshots later on)
   def read_input_file(self,filename):
       ''' read GEO or INP file '''
       if self.verbosity>0: print('Processing ' + filename)
@@ -1503,11 +1504,11 @@ class BFDTDobject(object):
       xmesh_read = False
       
       # open file
-      input = open(filename)
+      input_stream = open(filename)
       # read the whole file as one string
-      fulltext = input.read()
+      fulltext = input_stream.read()
       # close file
-      input.close()
+      input_stream.close()
   
       # print fulltext
   
