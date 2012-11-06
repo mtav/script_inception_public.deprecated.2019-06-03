@@ -130,7 +130,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
       nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*data_esnap(:,:);
       
       % TODO: shouldn't this be:
-      % maxVal = max(nom);
+      % maxVal = max(nom(:));
       maxVal = max(sum(sum(nom)));
       vv = [vv,maxVal];
       
