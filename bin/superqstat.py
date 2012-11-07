@@ -2,19 +2,19 @@
 
 import sys
 import re
+import subprocess
+import getpass
+import os
 
 # TODO: Finish this
 
-def parseFile(QFILE):
+def parseQstatFullOutput(qstat_full_output):
 
-  with open(QFILE, 'r') as f:
-    # read the whole file as one string
-    fulltext = f.read()
 
   job_list = []
 
   pattern_job = re.compile("Job Id: (?P<jobId>.*?)\n(?P<jobDetails>.*?)\n\n",re.DOTALL)
-  for job_blob in pattern_job.finditer(fulltext):
+  for job_blob in pattern_job.finditer(qstat_full_output):
     job_dict = {}
 
     job_id = job_blob.groupdict()['jobId']
@@ -35,10 +35,31 @@ def parseFile(QFILE):
   return(job_list)
 
 def main():
-  job_list = parseFile(sys.argv[1])
 
-  #for job in job_list:
-    #print(job['Job_Name'])
+  if len(sys.argv)>1:
+    with open(sys.argv[1], 'r') as f:
+      qstat_full_output = f.read()
+  else:
+    qstat_process = subprocess.Popen(['qstat','-f'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    return_code = qstat_process.wait()
+    (qstat_full_output, qstat_stderr) = qstat_process.communicate()
+
+  job_list = parseQstatFullOutput(qstat_full_output)
+
+  for job in job_list:
+    if getpass.getuser() in job['Job_Owner']:
+      #print(job['Job_Name'])
+      #print(job['jobId'])
+      #print(job['submit_args'].split()[-1])
+      
+      if 'Variable_List' in job.keys():
+        variable_dict = dict([i.split('=',1) for i in job['Variable_List'].split(',')])
+        #print(variable_dict['JOBDIR'])
+        #print(variable_dict)
+        #print(variable_dict['PBS_O_WORKDIR'])
+        
+      script_path = os.path.join(variable_dict['PBS_O_WORKDIR'],job['submit_args'].split()[-1])
+      print(job['jobId'] + ' -> ' + script_path + ' job_state=' + job['job_state'])
     
   print('Number of jobs = '+str(len(job_list)))
 
