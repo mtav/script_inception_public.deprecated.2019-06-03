@@ -5,46 +5,43 @@ import re
 
 # TODO: Finish this
 
-def parseFile(infile):
+def parseFile(QFILE):
 
-  QFILE = infile
   with open(QFILE, 'r') as f:
     # read the whole file as one string
     fulltext = f.read()
 
+  job_list = []
+
   pattern_job = re.compile("Job Id: (?P<jobId>.*?)\n(?P<jobDetails>.*?)\n\n",re.DOTALL)
+  for job_blob in pattern_job.finditer(fulltext):
+    job_dict = {}
 
-  job_blob_iterator = pattern_job.finditer(fulltext)
-  Njobs = sum(1 for _ in job_blob_iterator)
-  print('Number of jobs = '+str(Njobs))
+    job_id = job_blob.groupdict()['jobId']
+    job_details = job_blob.groupdict()['jobDetails']
   
-  job_blob_iterator = pattern_job.finditer(fulltext)
-  job_blob = job_blob_iterator.__next__()
+    job_dict['jobId'] = job_id
+    
+    job_details = job_details.replace('\n\t','')
 
-  #print(job_blob.groupdict())
-  print(job_blob.groupdict()['jobId'])
-  job_details = job_blob.groupdict()['jobDetails']
-  #print(job_details)
+    pattern_jobitems = re.compile("\s*(?P<key>.*?)\s*=\s*(?P<value>.*)\s*")
+    for job_item in pattern_jobitems.finditer(job_details):
+      key = job_item.groupdict()['key']
+      value = job_item.groupdict()['value']
+      job_dict[key]=value
+    
+    job_list.append(job_dict)
   
-  job_details = job_details.replace('\n\t','')
-  #print(job_details)
-
-  pattern_jobitems = re.compile("\s*(?P<key>.*)\s*=\s*(?P<value>.*)\s*")
-  job_items_iterator = pattern_jobitems.finditer(job_details)
-
-  #job_item = job_items_iterator.__next__()
-  #print(job_item.groupdict())
-  
-  for job_item in job_items_iterator:
-    print(job_item.groupdict())
-  
-  #for job_blob in job_blob_iterator:
-    #print(job_blob)
-  
-  return
+  return(job_list)
 
 def main():
-  parseFile(sys.argv[1])
+  job_list = parseFile(sys.argv[1])
+
+  #for job in job_list:
+    #print(job['Job_Name'])
+    
+  print('Number of jobs = '+str(len(job_list)))
+
   return
   
 if __name__ == "__main__":
