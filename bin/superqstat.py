@@ -41,7 +41,7 @@ def main():
       qstat_full_output = f.read()
   else:
     qstat_process = subprocess.Popen(['qstat','-f'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    return_code = qstat_process.wait()
+    #return_code = qstat_process.wait() # causes hanging on python 2.7.2
     (qstat_full_output, qstat_stderr) = qstat_process.communicate()
 
   job_list = parseQstatFullOutput(qstat_full_output)
