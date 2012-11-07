@@ -61,7 +61,7 @@ def main():
       script_path = os.path.join(variable_dict['PBS_O_WORKDIR'],job['submit_args'].split()[-1])
       print(job['jobId'] + ' -> ' + script_path + ' job_state=' + job['job_state'])
     
-  print('Number of jobs = '+str(len(job_list)))
+  #print('Number of jobs = '+str(len(job_list)))
 
   return
   
