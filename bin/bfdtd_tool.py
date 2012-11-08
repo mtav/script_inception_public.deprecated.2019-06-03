@@ -235,34 +235,49 @@ def addModeVolumeFrequencySnapshots(arguments):
     # temporary hack
     #arguments.repetition = FDTDobj.flag.iterations - arguments.first
     
+    full_list = []
     for pos in reduced_range:
-      #pos = pos_list[idx]
-      e = FDTDobj.addEpsilonSnapshot('Z',pos)
-      e.name = NAME + '.eps'
-      e.first = 1
-      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
+      ##pos = pos_list[idx]
+      #e = FDTDobj.addEpsilonSnapshot('Z',pos)
+      #e.name = NAME + '.eps'
+      #e.first = 1
+      #e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
       
-      # and more quick hacks...
-      e.P1[0] = min(reduced_range)
-      e.P1[1] = min(reduced_range)
-      e.P2[0] = max(reduced_range)
-      e.P2[1] = max(reduced_range)
+      ## and more quick hacks...
+      #e.P1[0] = min(reduced_range)
+      #e.P1[1] = min(reduced_range)
+      #e.P2[0] = max(reduced_range)
+      #e.P2[1] = max(reduced_range)
       
-      f = FDTDobj.addFrequencySnapshot('Z',pos)
-      f.name = NAME + '.freq'
-      f.first = arguments.first
-      f.repetition = arguments.repetition
-      f.frequency_vector = frequency_vector
+      #f = FDTDobj.addFrequencySnapshot('Z',pos)
+      #f.name = NAME + '.freq'
+      #f.first = arguments.first
+      #f.repetition = arguments.repetition
+      #f.frequency_vector = frequency_vector
       
-      # and more quick hacks...
-      f.P1[0] = min(reduced_range)
-      f.P1[1] = min(reduced_range)
-      f.P2[0] = max(reduced_range)
-      f.P2[1] = max(reduced_range)
+      F = bfdtd.Frequency_snapshot()
+      F.name = NAME + '.freq'
+      F.plane = 'Z'
+      F.P1 = [ FDTDobj.box.lower[0], FDTDobj.box.lower[1], pos]
+      F.P2 = [ FDTDobj.box.upper[0], FDTDobj.box.upper[1], pos]
+      F.first = arguments.first
+      F.repetition = arguments.repetition
+      F.frequency_vector = frequency_vector
+      
+      full_list.append(F)
+      
+      ## and more quick hacks...
+      #f.P1[0] = min(reduced_range)
+      #f.P1[1] = min(reduced_range)
+      #f.P2[0] = max(reduced_range)
+      #f.P2[1] = max(reduced_range)
       
   else:
     print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
     sys.exit(-1)
+
+  list_1 = full_list[0:len(full_list)//2]
+  list_2 = full_list[len(full_list)//2:len(full_list)]
 
   ## temporary hack to rectify excitation direction
   #P1 = numpy.array(FDTDobj.excitation_list[0].P1)
@@ -284,20 +299,20 @@ def addModeVolumeFrequencySnapshots(arguments):
   #FDTDobj.clearFrequencySnapshots()
   #FDTDobj.clearTimeSnapshots()
 
-  # Add full X,Y,Z central snapshots for reference
-  pos = FDTDobj.box.getCentro()
+  ## Add full X,Y,Z central snapshots for reference
+  #pos = FDTDobj.box.getCentro()
 
-  for i in [0,1,2]:
-    letter = ['X','Y','Z'][i]
-    e = FDTDobj.addEpsilonSnapshot(letter,pos[i])
-    e.name = 'central.'+letter+'.eps'
-    e.first = 1
-    e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
-    f = FDTDobj.addFrequencySnapshot(letter,pos[i]);
-    f.name = 'central.'+letter+'.fsnap'
-    f.first = arguments.first
-    f.repetition = arguments.repetition
-    f.frequency_vector = frequency_vector
+  #for i in [0,1,2]:
+    #letter = ['X','Y','Z'][i]
+    #e = FDTDobj.addEpsilonSnapshot(letter,pos[i])
+    #e.name = 'central.'+letter+'.eps'
+    #e.first = 1
+    #e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
+    #f = FDTDobj.addFrequencySnapshot(letter,pos[i]);
+    #f.name = 'central.'+letter+'.fsnap'
+    #f.first = arguments.first
+    #f.repetition = arguments.repetition
+    #f.frequency_vector = frequency_vector
     
   if arguments.outdir is None:
     print('ERROR: no outdir specified', file=sys.stderr)
@@ -311,13 +326,22 @@ def addModeVolumeFrequencySnapshots(arguments):
   FDTDobj.clearProbes()
   
   FDTDobj.fileList = []
-  FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  #FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  
+  destdir = os.path.join(arguments.outdir,'./part_1')
+  FDTDobj.snapshot_list = list_1
+  FDTDobj.writeAll(destdir, arguments.basename)
+  FDTDobj.writeShellScript(destdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+
+  destdir = os.path.join(arguments.outdir,'./part_2')
+  FDTDobj.snapshot_list = list_2
+  FDTDobj.writeAll(destdir, arguments.basename)
+  FDTDobj.writeShellScript(destdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
 
   return
 
 def calculateModeVolume(arguments):
+  # TODO: Finish this
+  # NOTE: Add way to specify snapshots, epsilon/frequency snapshot pairs
   FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
 
   if arguments.fsnapfiles is None:
@@ -328,8 +352,65 @@ def calculateModeVolume(arguments):
   if len(arguments.fsnapfiles) != len(arguments.esnapfiles):
     print('ERROR: number of frequency snapshots and epsilon snapshots do not match', file=sys.stderr)
     sys.exit(-1)
-    
   
+  return
+
+def addCentralXYZSnapshots(arguments):
+
+  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+  
+  # hack: remove epsilon snapshots and probes to increase speed
+  FDTDobj.clearEpsilonSnapshots()
+  FDTDobj.clearProbes()
+  FDTDobj.clearAllSnapshots()
+  
+  (size,res) = FDTDobj.mesh.getSizeAndResolution()
+  
+  if arguments.verbosity>0:
+    print('res = ',res)
+  
+  frequency_vector = []
+  if arguments.freqListFile is not None:
+    frequency_vector.extend(getFrequencies(arguments.freqListFile))
+  if arguments.wavelength_mum is not None:
+    frequency_vector.extend([get_c0()/i for i in arguments.wavelength_mum])
+  if arguments.frequency_MHz is not None:
+    frequency_vector.extend(arguments.frequency_MHz)
+  
+  if len(frequency_vector)<=0:
+    print('ERROR: Great scot! You forgot to specify frequencies.', file=sys.stderr)
+    sys.exit(-1)
+
+  FDTDobj.flag.iterations = arguments.iterations
+  
+  # hack: Make sure there will be at least one long duration snapshot at the end
+  arguments.repetition = FDTDobj.flag.iterations - arguments.first
+    
+  # Add full X,Y,Z central snapshots
+  pos = FDTDobj.box.getCentro()
+
+  for i in [0,1,2]:
+    letter = ['X','Y','Z'][i]
+    f = FDTDobj.addFrequencySnapshot(letter,pos[i]);
+    f.name = 'central.'+letter+'.fsnap'
+    f.first = arguments.first
+    f.repetition = arguments.repetition
+    f.frequency_vector = frequency_vector
+    
+  if arguments.outdir is None:
+    print('ERROR: no outdir specified', file=sys.stderr)
+    sys.exit(-1)
+  
+  if arguments.basename is None:
+    arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
+  
+  FDTDobj.fileList = []  
+  FDTDobj.writeAll(arguments.outdir, arguments.basename)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+
+  return
+  
+def clearOutputs():
   return
 
 def main():
@@ -392,6 +473,10 @@ def main():
   group.add_argument('--probefiles', metavar='PROBE', help='Probes to use', nargs='+')
   group.add_argument('--prnfiles', metavar='PRN', help='.prn files to use', nargs='+')
 
+  group = parser.add_argument_group('addCentralXYZSnapshots')
+  group.add_argument('--addCentralXYZSnapshots', help='addCentralXYZSnapshots', action="store_true", dest='addCentralXYZSnapshots', default=False)
+  
+
   group = parser.add_argument_group('Rotate')
   group.add_argument('-r','--rotate', action="store_true", dest='rotate', default=False, help='Rotate the geometry.')
   #axis_point
@@ -415,6 +500,7 @@ def main():
 
   if arguments.modevolume: addModeVolumeFrequencySnapshots(arguments)
   if arguments.calc_modevolume: calculateModeVolume(arguments)
+  if arguments.addCentralXYZSnapshots: addCentralXYZSnapshots(arguments)
   
   #for infile in sys.argv[1:]:
     #print('infile = '+infile)
