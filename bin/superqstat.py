@@ -9,7 +9,11 @@ import os
 # TODO: Finish this
 
 def parseQstatFullOutput(qstat_full_output):
-
+  '''
+  Parses "qstat -f" output into a more usable format
+    input: qstat -f output in string format
+    output: a list of dictionaries containing the various attributes of a job
+  '''
 
   job_list = []
 
@@ -46,6 +50,9 @@ def main():
 
   job_list = parseQstatFullOutput(qstat_full_output)
 
+  #Job id                    Name             User            Time Use S Queue
+  #------------------------- ---------------- --------------- -------- - -----
+
   for job in job_list:
     if getpass.getuser() in job['Job_Owner']:
       #print(job['Job_Name'])
@@ -54,12 +61,25 @@ def main():
       
       if 'Variable_List' in job.keys():
         variable_dict = dict([i.split('=',1) for i in job['Variable_List'].split(',')])
-        #print(variable_dict['JOBDIR'])
         #print(variable_dict)
-        #print(variable_dict['PBS_O_WORKDIR'])
-        
-      script_path = os.path.join(variable_dict['PBS_O_WORKDIR'],job['submit_args'].split()[-1])
-      print(job['jobId'] + ' -> ' + script_path + ' job_state=' + job['job_state'])
+        #print(variable_dict['JOBDIR'])
+        #print(variable_dict['PBS_O_WORKDIR'])        
+        script_path = os.path.join(variable_dict['PBS_O_WORKDIR'],job['submit_args'].split()[-1])
+      else:
+        script_path = job['submit_args'].split()[-1]
+
+      if 'resources_used.cput' in job.keys():
+        running_time = job['resources_used.cput']
+      else:
+        running_time = '00:00:00'
+      
+      #job['jobId']
+      #script_path
+      #job['Job_Owner']
+      #running_time
+      #job['job_state']
+      #job['queue']
+      print(job['jobId'] + ' job_state=' + job['job_state'] + ' running_time=' + str(running_time) + ' -> ' + script_path)
     
   #print('Number of jobs = '+str(len(job_list)))
 
