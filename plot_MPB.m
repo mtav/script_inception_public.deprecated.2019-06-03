@@ -21,7 +21,7 @@ function plot_MPB(filename,scale_factor,titolo)
   legend(header(firstband:N),'Interpreter', 'none','location','northeast');
 
   xlabel('direction','fontsize',16);
-  ylabel('a/\lambda','fontsize',16);
+  ylabel('c/\lambda','fontsize',16);
 
   %top = min(min(data(:,firstband+2:N)));
   %bot = max(max(data(:,firstband:firstband+1)));
