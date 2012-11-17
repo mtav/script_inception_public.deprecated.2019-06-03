@@ -176,7 +176,7 @@ def create_wired_mesh(me2, me, thick):
     assignment = find_assignment(me, edges, vert_edges, cube_normals)
 
     # Create the geometry
-    n_idx = {}   
+    n_idx = {}
     for v in assignment:
         vpos = me.vertices[v]
         index = len(me2.vertices)
@@ -209,10 +209,20 @@ def create_wired_mesh(me2, me, thick):
                     # assignment failed for this edge
                     cfaces.extend(fill_cube_face(me2, n_idx[k], i))
 
+    print(edges)
+    zip(*[lst[i::n] for i in range(n)]) 
+    print(cfaces)
+
     # adding faces to the mesh
-    me2.faces.add(len(cfaces) // 4)
-    me2.faces.foreach_set("vertices_raw", cfaces)
-    me2.update(calc_edges=True)
+    #me2.faces.add(len(cfaces) // 4)
+    #me2.faces.foreach_set("vertices_raw", cfaces)
+    #me2.update(calc_edges=True)
+
+    mesh_data = bpy.data.meshes.new('name')
+    mesh_data.from_pydata([(0,0,0),(1,0,0),(1,1,0),(0,1,0)], [(0,1),(1,2),(2,3),(3,0)], [(0,1,2,3)])
+    new_object = bpy.data.objects.new('name', mesh_data)
+    scene = bpy.context.scene
+    scene.objects.link(new_object)
 
 # panel containing tools
 class VIEW3D_PT_tools_SolidifyWireframe(bpy.types.Panel):
