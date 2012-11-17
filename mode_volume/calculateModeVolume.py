@@ -1,6 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # calculates the mode volume
+
+import argparse
 
 def main():
   # command-line option handling
@@ -16,4 +18,3 @@ def main():
 
 if __name__ == "__main__":
   main()
-
