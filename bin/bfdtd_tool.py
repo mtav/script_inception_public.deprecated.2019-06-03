@@ -177,9 +177,8 @@ def addModeVolumeFrequencySnapshots(arguments):
 
   if arguments.slicing_direction is None:
     # take the direction with the smallest number of snapshots to reduce number of generated .prn files
-    arguments.slicing_direction = res.index(min(res))
     S = ['X','Y','Z']
-    arguments.slicing_direction = S[arguments.slicing_direction]
+    arguments.slicing_direction = S[res.index(min(res))]
     
   frequency_vector = []
   if arguments.freqListFile is not None:
@@ -410,18 +409,85 @@ def addCentralXYZSnapshots(arguments):
 
   return
   
-def clearOutputs():
+def clearOutputs(arguments):
+  
   return
 
-def main():
+def addEpsilonSnapshots(arguments):
   
+  if arguments.infile is None:
+    print('ERROR: No infile specified.')
+    sys.exit(-1)
+
+  if arguments.outdir is None:
+    print('ERROR: no outdir specified', file=sys.stderr)
+    sys.exit(-1)
+  
+  if arguments.basename is None:
+    arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
+  
+  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+  FDTDobj.clearProbes()
+  FDTDobj.clearAllSnapshots()
+
+  FDTDobj.flag.iterations = 1
+
+  (size,res) = FDTDobj.mesh.getSizeAndResolution()
+  
+  if arguments.verbosity>0:
+    print('res = ',res)
+
+  if arguments.slicing_direction is None:
+    # take the direction with the smallest number of snapshots to reduce number of generated .prn files
+    S = ['X','Y','Z']
+    arguments.slicing_direction = S[res.index(min(res))]
+  
+  NAME = 'Epsilon'
+  if arguments.slicing_direction == 'X':
+    pos_list = FDTDobj.mesh.getXmesh()
+    for pos in pos_list:
+      e = FDTDobj.addEpsilonSnapshot('X',pos)
+      e.name = NAME
+      e.first = 1
+      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
+  elif arguments.slicing_direction == 'Y':
+    pos_list = FDTDobj.mesh.getYmesh()
+    for pos in pos_list:
+      e = FDTDobj.addEpsilonSnapshot('Y',pos)
+      e.name = NAME
+      e.first = 1
+      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
+  elif arguments.slicing_direction == 'Z':
+    pos_list = FDTDobj.mesh.getZmesh()
+    for pos in pos_list:
+      e = FDTDobj.addEpsilonSnapshot('Z',pos)
+      e.name = NAME
+      e.first = 1
+      e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.      
+  else:
+    print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
+    sys.exit(-1)
+
+  FDTDobj.fileList = []  
+  FDTDobj.writeAll(arguments.outdir, arguments.basename)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+    
+  return
+
+def get_argument_parser():
+  """return an ArgumentParser object p with this module's options;
+  with an additional dict attribute p._geniegui to specify
+  "special" treatment (file/path dialogs) for some options.
+  """
+
   # TODO: split options into read-only and read-write operations?
   # operations: read & print info, copy, copy with changes, write back with changes, create shellscript, create .in file, etc
   # too many operations. Needs GUI!
-  
+    
   # command-line option handling
   parser = argparse.ArgumentParser(description = 'get info about bfdtd related files')
-  parser.add_argument('infile', action="store", help='input file (.geo, .inp or .in)')
+  #parser.add_argument('-i','--infile', action="append", help='input file(s) (.geo, .inp or .in) (can be more than one)')
+  parser.add_argument('-i','--infile', action="store", help='input file (.geo, .inp or .in)')
   parser.add_argument('-v','--verbose', action="count", dest="verbosity", default=0, help='verbosity level')
 
   parser.add_argument('-o','--outfile', action="store", dest="outfile", default=None, help='output file')
@@ -475,7 +541,12 @@ def main():
 
   group = parser.add_argument_group('addCentralXYZSnapshots')
   group.add_argument('--addCentralXYZSnapshots', help='addCentralXYZSnapshots', action="store_true", dest='addCentralXYZSnapshots', default=False)
+
+  group = parser.add_argument_group('clearAllOutput')
+  group.add_argument('--clearAllOutput', help='clearAllOutput', action="store_true", dest='clearAllOutput', default=False)
   
+  group = parser.add_argument_group('addEpsilonSnapshots')
+  group.add_argument('--addEpsilonSnapshots', help='addEpsilonSnapshots', action="store_true", dest='addEpsilonSnapshots', default=False)
 
   group = parser.add_argument_group('Rotate')
   group.add_argument('-r','--rotate', action="store_true", dest='rotate', default=False, help='Rotate the geometry.')
@@ -486,21 +557,41 @@ def main():
   group = parser.add_argument_group('Meshing')
   group.add_argument('-m','--mesh', action="store_true", dest='mesh', default=False, help='Automatically mesh the geometry.')
 
-  arguments = parser.parse_args()
+  # TODO: for later use :)
+  #parser.add_argument("--path","-p", default="",
+                 #help = "project path (directory) containing an .sff file")
+  #parser._geniegui = dict()
+  #parser._geniegui["--path"] = "dir"
+  return parser
+
+def main(args=None):
+  parser = get_argument_parser()
+  arguments = parser.parse_args() if args is None else parser.parse_args(args)
+  
+  # Only works if func has been defined (for example with subcommand and set_defaults())
+  #arguments.func(arguments)  # call the appropriate subcommand function
+  
+  #arguments = parser.parse_args()
+  
+  if not len(sys.argv) > 1:
+    parser.print_help()
   
   if arguments.verbosity>0:
     print('---------')
     print(arguments)
     print('---------')
-    
+  
   if arguments.print_all: printAll(arguments.infile,arguments.verbosity)
   if arguments.print_Ncells: printNcells(arguments.infile,arguments.verbosity)
   if arguments.print_Excitation: printExcitation(arguments.infile, arguments.id_list, arguments.verbosity)
   if arguments.print_ExcitationDirection: printExcitationDirection(arguments.infile, arguments.id_list, arguments.verbosity)
 
+  # TODO: Some/most functions could be moved into the BFDTD object class
   if arguments.modevolume: addModeVolumeFrequencySnapshots(arguments)
   if arguments.calc_modevolume: calculateModeVolume(arguments)
   if arguments.addCentralXYZSnapshots: addCentralXYZSnapshots(arguments)
+  if arguments.clearAllOutput: clearAllOutput(arguments)
+  if arguments.addEpsilonSnapshots: addEpsilonSnapshots(arguments)
   
   #for infile in sys.argv[1:]:
     #print('infile = '+infile)
@@ -510,8 +601,6 @@ def main():
     #for line in f:
       #print(line)
     #f.close()
-  
-  return
   
 if __name__ == "__main__":
   main()
