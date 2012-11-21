@@ -725,6 +725,7 @@ class Rotation(object):
     FILE.write('\n')
 
 # measurement objects
+# NOTE: JX,JY,JZ output does not seem to work. (Bristol FDTD issue)
 class Time_snapshot(object):
   '''
   One or more field components may be sampled over a specified plane in the structure after a specified number of iterations.
@@ -928,6 +929,7 @@ class ModeFilteredProbe(Time_snapshot):
     self.power = 0
     self.eps = 0
 
+# TODO: Get rid of this class? It is possible to output E,H,J, power and eps with the same snapshot, i.e. an epsilon snapshot is not that special compared to a time snapshot... (apart from not changing in time)
 class EpsilonSnapshot(Time_snapshot):
   def __init__(self,
       name = None,
@@ -1009,7 +1011,7 @@ class Frequency_snapshot(object):
     if plane is None: plane = 1 #1,2,3 for x,y,z
     if P1 is None: P1 = [0,0,0]
     if P2 is None: P2 = [0,1,1]
-    if frequency_vector is None: frequency_vector = [0]
+    if frequency_vector is None: frequency_vector = [1]
     if starting_sample is None: starting_sample = 0
     if E is None: E = [1,1,1]
     if H is None: H = [1,1,1]
@@ -1486,12 +1488,22 @@ class BFDTDobject(object):
     self.probe_list[:] = []
 
   def getEpsilonSnapshots(self):
-    for i in range(len(self.snapshot_list)):
-      s = self.snapshot_list[i]
-    # TODO: To be continued...
-      #if 
-    epsilon_snapshot_list = [ s for s in self.snapshot_list if isinstance(s,EpsilonSnapshot) ]
+    epsilon_snapshot_list = []
+    for s in self.snapshot_list:
+      if isinstance(s,EpsilonSnapshot) or (isinstance(s,Time_snapshot) and s.eps == 1):
+        epsilon_snapshot_list.append(s)
+    return(epsilon_snapshot_list)
 
+  def getTimeSnapshots(self):
+    time_snapshot_list = []
+    for s in self.snapshot_list:
+      if isinstance(s,Time_snapshot) and s.eps == 0:
+        time_snapshot_list.append(s)
+    return(time_snapshot_list)
+
+  def getFrequencySnapshots(self):
+    frequency_snapshot_list = [ s for s in self.snapshot_list if isinstance(s,Frequency_snapshot) ]
+    return frequency_snapshot_list
 
   def clearMesh():
     self.mesh = MeshObject()
