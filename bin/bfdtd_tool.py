@@ -514,10 +514,15 @@ def FreqToEps(arguments):
   if len(arguments.infile) <= 0 :
     print('ERROR: No infile(s) specified.')
     sys.exit(-1)
+  
+  FDTDobj = bfdtd.BFDTDobject()
+  FDTDobj.verbosity = arguments.verbosity
   for infile in arguments.infile:
-    FDTDobj = bfdtd.readBristolFDTD(infile, arguments.verbosity)
-    FDTDobj.clearProbes()
-    FDTDobj.flag.iterations = 1
+    FDTDobj.readBristolFDTD(infile)
+    #print(FDTDobj.getFrequencySnapshots())
+
+  FDTDobj.clearProbes()
+  FDTDobj.flag.iterations = 1
 
   oldlist = FDTDobj.getFrequencySnapshots()
   newlist = []
