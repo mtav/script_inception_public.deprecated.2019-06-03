@@ -166,7 +166,7 @@ class FDTDGeometryObjects(object):
       #Return to Object Mode
       bpy.ops.object.mode_set(mode='OBJECT')
 
-      return
+      return(obj)
 
         #scene = Blender.Scene.GetCurrent()
         #mesh = Blender.Mesh.Primitives.Cube(1.0)
@@ -234,7 +234,7 @@ class FDTDGeometryObjects(object):
 
       obj.matrix_world = rotation_matrix
       
-      return
+      return(obj)
 
         ##~ Blender.Window.SetActiveLayer(1<<8)
         #scene = Blender.Scene.GetCurrent()
@@ -352,7 +352,7 @@ class FDTDGeometryObjects(object):
 ######################################################################################
 
 
-        return
+        return(new_object)
     
     def GEOcylinder(self, name, center, inner_radius, outer_radius, height, permittivity, conductivity, angle_X, angle_Y, angle_Z):
         bpy.ops.mesh.primitive_cylinder_add(location = Vector(center), radius=outer_radius, depth=height, rotation=(angle_X, angle_Y, angle_Z))
@@ -401,7 +401,7 @@ class FDTDGeometryObjects(object):
         #obj.RotY = angle_Y
         #obj.RotZ = angle_Z
         #obj.transp = True; obj.wireMode = True
-        #return
+        return(obj)
     
     # TODO: Create a tube primitive to really support inner radius
     # TODO: sanitize rotation/import system, cleanup, etc
@@ -413,7 +413,7 @@ class FDTDGeometryObjects(object):
         obj.active_material = self.materials(permittivity, conductivity)
         obj.show_transparent = True; obj.show_wire = True
         obj.matrix_world = rotation_matrix
-        return
+        return(obj)
     
     def GEOsphere(self, name, center, outer_radius, inner_radius, permittivity, conductivity):
         bpy.ops.mesh.primitive_ico_sphere_add()
@@ -449,8 +449,10 @@ class FDTDGeometryObjects(object):
         
         #Return to Object Mode
         bpy.ops.object.mode_set(mode='OBJECT')
+        return(obj)
     
     def GEOsphere_matrix(self, name, rotation_matrix, outer_radius, inner_radius, permittivity, conductivity):
+      # TODO?
       return
           
     def GEObox(self, name, lower, upper):
@@ -478,7 +480,7 @@ class FDTDGeometryObjects(object):
 
       obj.show_transparent = True; obj.show_wire = True
   
-      return
+      return(obj)
 
         #scene = bpy.context.scene; Blender.Scene.GetCurrent()
         #bpy.ops.mesh.primitive_cube_add(location=(0,0,0),rotation=(0,0,0))
@@ -676,7 +678,7 @@ class FDTDGeometryObjects(object):
         # print('Nedges=', len(edges))
         # print('Nedges=', Nx*Ny + Ny*Nz + Nz*Nx)
     
-        return
+        return(bpy.context.scene.objects.active)
         
     #def GEOexcitation(self, name, P1, P2):
     def GEOexcitation(self, excitation):
@@ -770,7 +772,7 @@ class FDTDGeometryObjects(object):
     
         #scene.objects.unlink(arrow_cone_obj)
         
-        return
+        return(arrow_cylinder_obj)
     
     def snapshot(self, name, plane, P1, P2, snapshot_type):
     
@@ -838,18 +840,16 @@ class FDTDGeometryObjects(object):
         #mesh.materials = self.snapshot_materials
         #for f in mesh.faces:
             #f.mat = snapshot_type
+        return(new_object)
     
     def GEOfrequency_snapshot(self, name, plane, P1, P2):
-        self.snapshot(name, plane, P1, P2, 0)
-        return
-        
+      return self.snapshot(name, plane, P1, P2, 0)
+       
     def GEOtime_snapshot(self, name, plane, P1, P2):
-        self.snapshot(name, plane, P1, P2, 1)
-        return
+      return self.snapshot(name, plane, P1, P2, 1)
     
     def GEOeps_snapshot(self, name, plane, P1, P2):
-        self.snapshot(name, plane, P1, P2, 2)
-        return
+      return self.snapshot(name, plane, P1, P2, 2)
     
     def GEOprobe(self, name, position):
       #scene = Blender.Scene.GetCurrent()
@@ -887,7 +887,7 @@ class FDTDGeometryObjects(object):
       #bpy.ops.object.mode_set(mode = 'OBJECT')
 
       obj.show_transparent = True; obj.show_wire = True
-      return
+      return(obj)
 
 ###############################
 # UTILITY FUNCTIONS

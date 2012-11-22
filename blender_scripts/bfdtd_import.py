@@ -64,6 +64,29 @@ def importBristolFDTD(filename):
     # create structured_entries
     structured_entries = readBristolFDTD(filename);
     
+    ##################
+    # GROUP SETUP
+    ##################
+    # create group corresponding to this file
+    # deselect all
+    bpy.ops.object.select_all(action='DESELECT')
+    # TODO: truncate or not? ex: "/tmp/momo/abcdefghi"[-11:] -> 11 last characters
+    group_name = filename
+    bpy.ops.group.create(name=group_name)
+    
+    if not 'meshes' in bpy.data.groups: bpy.ops.group.create(name='meshes')
+    if not 'boxes' in bpy.data.groups: bpy.ops.group.create(name='boxes')
+    if not 'excitations' in bpy.data.groups: bpy.ops.group.create(name='excitations')
+    if not 'frequencySnapshots' in bpy.data.groups: bpy.ops.group.create(name='frequencySnapshots')
+    if not 'timeSnapshots' in bpy.data.groups: bpy.ops.group.create(name='timeSnapshots')
+    if not 'epsilonSnapshots' in bpy.data.groups: bpy.ops.group.create(name='epsilonSnapshots')
+    if not 'spheres' in bpy.data.groups: bpy.ops.group.create(name='spheres')
+    if not 'distorted' in bpy.data.groups: bpy.ops.group.create(name='distorted')
+    if not 'blocks' in bpy.data.groups: bpy.ops.group.create(name='blocks')
+    if not 'cylinders' in bpy.data.groups: bpy.ops.group.create(name='cylinders')
+    if not 'probes' in bpy.data.groups: bpy.ops.group.create(name='probes')
+    ##################
+
     FDTDGeometryObjects_obj = FDTDGeometryObjects()
     
     # Blender.Window.RedrawAll(); # This must be called before any SetActiveLayer calls!
@@ -72,34 +95,52 @@ def importBristolFDTD(filename):
     
     # Box
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('box'));
-    FDTDGeometryObjects_obj.GEObox(structured_entries.box.name, Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
+    obj = FDTDGeometryObjects_obj.GEObox(structured_entries.box.name, Vector(structured_entries.box.lower), Vector(structured_entries.box.upper));
+    bpy.context.scene.objects.active = obj
+    bpy.ops.object.group_link(group=group_name)
+    bpy.ops.object.group_link(group='boxes')
     
     # mesh
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
     #FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.delta_X_vector,structured_entries.delta_Y_vector,structured_entries.delta_Z_vector);
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('mesh'));
-    FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.mesh.getXmeshDelta(),structured_entries.mesh.getYmeshDelta(),structured_entries.mesh.getZmeshDelta());
+    obj = FDTDGeometryObjects_obj.GEOmesh('mesh', False, structured_entries.mesh.getXmeshDelta(),structured_entries.mesh.getYmeshDelta(),structured_entries.mesh.getZmeshDelta());
+    bpy.context.scene.objects.active = obj
+    bpy.ops.object.group_link(group=group_name)
+    bpy.ops.object.group_link(group='meshes')
 
     # Time_snapshot (time or EPS)
     for time_snapshot in structured_entries.time_snapshot_list:
         if time_snapshot.eps == 0:
-            #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-            FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+          #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
+          obj = FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+          bpy.context.scene.objects.active = obj
+          bpy.ops.object.group_link(group=group_name)
+          bpy.ops.object.group_link(group='timeSnapshots')
         else:
-            #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-            FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+          #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
+          obj = FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
+          bpy.context.scene.objects.active = obj
+          bpy.ops.object.group_link(group=group_name)
+          bpy.ops.object.group_link(group='epsilonSnapshots')
     # Frequency_snapshot
     for frequency_snapshot in structured_entries.frequency_snapshot_list:
-        #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
-        FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+      #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
+      obj = FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+      bpy.context.scene.objects.active = obj
+      bpy.ops.object.group_link(group=group_name)
+      bpy.ops.object.group_link(group='frequencySnapshots')
 
     # Excitation
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
     for excitation in structured_entries.excitation_list:
         #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('excitations'));
         #print(Blender.Window.GetActiveLayer())
-        print(excitation)
-        FDTDGeometryObjects_obj.GEOexcitation(excitation);
+        #print(excitation)
+        obj = FDTDGeometryObjects_obj.GEOexcitation(excitation);
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='excitations')
         #FDTDGeometryObjects_obj.GEOexcitation(excitation.name, Vector(excitation.P1), Vector(excitation.P2));
     # Probe
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('probes'));
@@ -109,7 +150,10 @@ def importBristolFDTD(filename):
         Nprobes += 1
         ProbeFileName = 'p' + str(Nprobes).zfill(2) + structured_entries.flag.id_string.replace('\"','') + '.prn'
         #FDTDGeometryObjects_obj.GEOprobe(probe.name+' ('+ProbeFileName+')', Vector(probe.position));
-        FDTDGeometryObjects_obj.GEOprobe(ProbeFileName, Vector(probe.position));
+        obj = FDTDGeometryObjects_obj.GEOprobe(ProbeFileName, Vector(probe.position));
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='probes')
     
     # Sphere
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('spheres'));
@@ -136,9 +180,12 @@ def importBristolFDTD(filename):
           #rotation_matrix *= rotationMatrix(r.axis_point, r.axis_direction, r.angle_degrees);
           
         # create object
-        FDTDGeometryObjects_obj.GEOsphere(sphere.name, sphere.centre, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity)
+        obj = FDTDGeometryObjects_obj.GEOsphere(sphere.name, sphere.centre, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity)
         #FDTDGeometryObjects_obj.GEOsphere_matrix(sphere.name, rotation_matrix, sphere.outer_radius, sphere.inner_radius, sphere.permittivity, sphere.conductivity);
         #FDTDGeometryObjects_obj.GEOblock_matrix(sphere.name, rotation_matrix, sphere.permittivity, sphere.conductivity);
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='spheres')
         
     # Block
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('blocks'))
@@ -168,14 +215,20 @@ def importBristolFDTD(filename):
         rotation_matrix *= Sx*Sy*Sz;
 
         # create object
-        FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity)
+        obj = FDTDGeometryObjects_obj.GEOblock_matrix(block.name, rotation_matrix, block.permittivity, block.conductivity)
         #FDTDGeometryObjects_obj.GEOblock(block.name, block.lower, block.upper, block.permittivity, block.conductivity)
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='blocks')
 
     # Distorted
     for distorted in structured_entries.distorted_list:
         # create object
         #print(distorted)
-        FDTDGeometryObjects_obj.GEOdistorted(distorted.name, distorted.vertices, distorted.permittivity, distorted.conductivity);
+        obj = FDTDGeometryObjects_obj.GEOdistorted(distorted.name, distorted.vertices, distorted.permittivity, distorted.conductivity);
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='distorted')
         
     # Cylinder
     #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('cylinders'));
@@ -197,7 +250,10 @@ def importBristolFDTD(filename):
         rotation_matrix *= rotationMatrix(Vector([0,0,0]), Vector([1,0,0]), -90)
 
         # create object
-        FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius, cylinder.outer_radius, cylinder.height, cylinder.permittivity, cylinder.conductivity)
+        obj = FDTDGeometryObjects_obj.GEOcylinder_matrix(cylinder.name, rotation_matrix, cylinder.inner_radius, cylinder.outer_radius, cylinder.height, cylinder.permittivity, cylinder.conductivity)
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='cylinders')
         
         #angle_X = numpy.deg2rad(-90)
         #angle_X = -0.5*numpy.pi
