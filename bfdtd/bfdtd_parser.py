@@ -258,7 +258,7 @@ class Box(object):
     return numpy.array(self.upper)
 
 # geometry objects
-class Geometry_object(object):
+class GeometryObject(object):
   def __init__(self):
     self.name = 'geometry object'
     self.rotation_list = []
@@ -287,7 +287,7 @@ class Geometry_object(object):
     nuna_centro = self.getCentro()
     self.translate(nova_centro - nuna_centro)
 
-class Sphere(Geometry_object):
+class Sphere(GeometryObject):
   def __init__(self,
     name = None,
     layer = None,
@@ -307,7 +307,7 @@ class Sphere(Geometry_object):
     if permittivity is None: permittivity = 1
     if conductivity is None: conductivity = 0
 
-    Geometry_object.__init__(self)
+    GeometryObject.__init__(self)
     self.name = name
     self.layer = layer
     self.group = group
@@ -324,7 +324,7 @@ class Sphere(Geometry_object):
     'inner_radius = ' + str(self.inner_radius) + '\n' +\
     'permittivity = ' + str(self.permittivity) + '\n' +\
     'conductivity = ' + str(self.conductivity)+'\n'
-    ret += Geometry_object.__str__(self)
+    ret += GeometryObject.__str__(self)
     return ret
 
   def read_entry(self,entry):
@@ -363,7 +363,7 @@ class Sphere(Geometry_object):
     self.centre = numpy.array(self.centre)
     self.centre = self.centre + vec3
 
-class Block(Geometry_object):
+class Block(GeometryObject):
   def __init__(self,
     name = None,
     layer = None,
@@ -381,7 +381,7 @@ class Block(Geometry_object):
     if permittivity is None: permittivity = 1 # vacuum by default
     if conductivity is None: conductivity = 0
   
-    Geometry_object.__init__(self)
+    GeometryObject.__init__(self)
     self.name = name
     self.layer = layer
     self.group = group
@@ -396,7 +396,7 @@ class Block(Geometry_object):
     ret += 'upper = '+str(self.upper)+'\n'
     ret += 'permittivity = '+str(self.permittivity)+'\n'
     ret += 'conductivity = '+str(self.conductivity)+'\n'
-    ret += Geometry_object.__str__(self)
+    ret += GeometryObject.__str__(self)
     return ret
     
   def read_entry(self,entry):
@@ -453,7 +453,7 @@ class Block(Geometry_object):
     self.upper = C + 0.5*numpy.array(size_vec3)
     return
 
-class Distorted(Geometry_object):
+class Distorted(GeometryObject):
   '''
   0,1,2,3 = top face numbered clockwise viewed from outside
   4,5,6,7 = bottom face numbered clockwise viewed from outside
@@ -485,7 +485,7 @@ class Distorted(Geometry_object):
     if permittivity is None: permittivity = 1 # vacuum by default
     if conductivity is None: conductivity = 0
     
-    Geometry_object.__init__(self)
+    GeometryObject.__init__(self)
     self.name = name
     self.layer = layer
     self.group = group
@@ -498,7 +498,7 @@ class Distorted(Geometry_object):
     ret += 'vertices = '+str(self.vertices)+'\n'
     ret += 'permittivity = '+str(self.permittivity)+'\n'
     ret += 'conductivity = '+str(self.conductivity)+'\n'
-    ret += Geometry_object.__str__(self)
+    ret += GeometryObject.__str__(self)
     return ret
     
   def read_entry(self,entry):
@@ -560,7 +560,7 @@ class Distorted(Geometry_object):
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
 
-class Cylinder(Geometry_object):
+class Cylinder(GeometryObject):
   def __init__(self,
     name = None,
     centre = None,
@@ -584,7 +584,7 @@ class Cylinder(Geometry_object):
     if layer is None: layer = 'cylinder'
     if group is None: group = 'cylinder'
     
-    Geometry_object.__init__(self)
+    GeometryObject.__init__(self)
     self.name = name
     self.layer = layer
     self.group = group
@@ -620,7 +620,7 @@ class Cylinder(Geometry_object):
     'permittivity = ' + str(self.permittivity) + '\n' +\
     'conductivity = ' + str(self.conductivity) + '\n' +\
     'angle_deg = ' + str(self.angle_deg) + '\n'
-    ret += Geometry_object.__str__(self)
+    ret += GeometryObject.__str__(self)
     return ret
   def read_entry(self,entry):
     if entry.name:
@@ -726,7 +726,7 @@ class Rotation(object):
 
 # measurement objects
 # NOTE: JX,JY,JZ output does not seem to work. (Bristol FDTD issue)
-class Time_snapshot(object):
+class TimeSnapshot(object):
   '''
   One or more field components may be sampled over a specified plane in the structure after a specified number of iterations.
   It is possible to take snapshots after every “n” iterations by setting the “iterations between snapshots” parameter to “n”.
@@ -902,7 +902,7 @@ class Time_snapshot(object):
     epsz = numpy.vstack([epsz,eps])
     return xvec,yvec,zvec,epsx,epsy,epsz
   
-class ModeFilteredProbe(Time_snapshot):
+class ModeFilteredProbe(TimeSnapshot):
   def __init__(self,
       name = None,
       first = None,
@@ -922,7 +922,7 @@ class ModeFilteredProbe(Time_snapshot):
     if layer is None: layer = 'mode_filtered_probe'
     if group is None: group = 'mode_filtered_probe'
     
-    Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
+    TimeSnapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
     self.E = [0,0,0]
     self.H = [0,0,0]
     self.J = [0,0,0]
@@ -930,7 +930,7 @@ class ModeFilteredProbe(Time_snapshot):
     self.eps = 0
 
 # TODO: Get rid of this class? It is possible to output E,H,J, power and eps with the same snapshot, i.e. an epsilon snapshot is not that special compared to a time snapshot... (apart from not changing in time)
-class EpsilonSnapshot(Time_snapshot):
+class EpsilonSnapshot(TimeSnapshot):
   def __init__(self,
       name = None,
       first = None,
@@ -950,14 +950,14 @@ class EpsilonSnapshot(Time_snapshot):
     if layer is None: layer = 'epsilon_snapshot'
     if group is None: group = 'epsilon_snapshot'
     
-    Time_snapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
+    TimeSnapshot.__init__(self, name = name, first = first, repetition = repetition, plane = plane, P1 = P1, P2 = P2, layer = layer, group = group)
     self.E = [0,0,0]
     self.H = [0,0,0]
     self.J = [0,0,0]
     self.power = 0
     self.eps = 1
   
-class Frequency_snapshot(object):
+class FrequencySnapshot(object):
   '''
   The format of a frequency snapshot object is:
   
@@ -1346,7 +1346,7 @@ class BFDTDobject(object):
   def addBoxFrequencySnapshots(self):
     L = [self.box.lower[0], self.box.lower[1], self.box.lower[2]]
     U = [self.box.upper[0], self.box.upper[1], self.box.upper[2]]
-    F = Frequency_snapshot(name='Box frequency snapshot', P1=L, P2=U)
+    F = FrequencySnapshot(name='Box frequency snapshot', P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
   
@@ -1370,7 +1370,7 @@ class BFDTDobject(object):
     else:
       print(('ERROR: Invalid plane : ',plane))
       sys.exit(1)
-    F = Frequency_snapshot(name=name, plane=plane, P1=L, P2=U)
+    F = FrequencySnapshot(name=name, plane=plane, P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
   
@@ -1394,7 +1394,7 @@ class BFDTDobject(object):
     else:
       print(('ERROR: Invalid plane : ',plane))
       sys.exit(1)
-    F = Time_snapshot(name=name, plane=plane, P1=L, P2=U)
+    F = TimeSnapshot(name=name, plane=plane, P1=L, P2=U)
     self.snapshot_list.append(F)
     return F
 
@@ -1466,11 +1466,11 @@ class BFDTDobject(object):
     return F
 
   def clearTimeSnapshots(self):
-    self.snapshot_list = [ s for s in self.snapshot_list if ( not isinstance(s,Time_snapshot) or isinstance(s,EpsilonSnapshot) or isinstance(s,ModeFilteredProbe) ) ]
+    self.snapshot_list = [ s for s in self.snapshot_list if ( not isinstance(s,TimeSnapshot) or isinstance(s,EpsilonSnapshot) or isinstance(s,ModeFilteredProbe) ) ]
     self.time_snapshot_list[:] = []
 
   def clearFrequencySnapshots(self):
-    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,Frequency_snapshot) ]
+    self.snapshot_list = [ s for s in self.snapshot_list if not isinstance(s,FrequencySnapshot) ]
     self.frequency_snapshot_list[:] = []
 
   def clearEpsilonSnapshots(self):
@@ -1490,26 +1490,49 @@ class BFDTDobject(object):
   def getEpsilonSnapshots(self):
     epsilon_snapshot_list = []
     for s in self.snapshot_list:
-      if isinstance(s,EpsilonSnapshot) or (isinstance(s,Time_snapshot) and s.eps == 1):
+      if isinstance(s,EpsilonSnapshot) or (isinstance(s,TimeSnapshot) and s.eps == 1):
         epsilon_snapshot_list.append(s)
     return(epsilon_snapshot_list)
 
   def getTimeSnapshots(self):
     time_snapshot_list = []
     for s in self.snapshot_list:
-      if isinstance(s,Time_snapshot) and s.eps == 0:
+      if isinstance(s,TimeSnapshot) and s.eps == 0:
         time_snapshot_list.append(s)
     return(time_snapshot_list)
 
   def getFrequencySnapshots(self):
-    frequency_snapshot_list = [ s for s in self.snapshot_list if isinstance(s,Frequency_snapshot) ]
+    frequency_snapshot_list = [ s for s in self.snapshot_list if isinstance(s,FrequencySnapshot) ]
     return frequency_snapshot_list
 
   def clearMesh():
     self.mesh = MeshObject()
 
+  def readBristolFDTD(filename, verbosity = 1):
+    ''' reads .in (=>.inp+.geo), .geo or .inp '''
+    if verbosity>0: print('->Processing generic file : '+filename)
+    
+    extension = getExtension(filename)
+    if extension == 'in':
+      if verbosity>0: print('.in file detected')
+      self.readFileList(filename)
+    elif extension == 'inp':
+      if verbosity>0: print('.inp file detected')
+      self.readInputFile(filename)
+    elif extension == 'geo':
+      if verbosity>0: print('.geo file detected')
+      self.readInputFile(filename)
+    elif extension == 'prn':
+      if verbosity>0: print('.prn file detected: Not supported yet')
+      sys.exit(-1)
+    else:
+      if verbosity>0: print('Unknown file format: '+extension)
+      sys.exit(-1)
+    
+    return
+
   # TODO: determine if a time snapshot is an epsilon or mode filtered snapshot during file reading (useful for easier processing of the snapshots later on)
-  def read_input_file(self,filename):
+  def readInputFile(self,filename):
       ''' read GEO or INP file '''
       if self.verbosity>0: print('Processing ' + filename)
       box_read = False
@@ -1622,12 +1645,12 @@ class BFDTDobject(object):
           
           # measurement objects
           elif entry.Type == 'FREQUENCY_SNAPSHOT':
-              frequency_snapshot = Frequency_snapshot()
+              frequency_snapshot = FrequencySnapshot()
               frequency_snapshot.read_entry(entry)
               self.frequency_snapshot_list.append(frequency_snapshot)
               self.snapshot_list.append(frequency_snapshot)
           elif entry.Type == 'SNAPSHOT':
-              time_snapshot = Time_snapshot()
+              time_snapshot = TimeSnapshot()
               time_snapshot.read_entry(entry)
               self.time_snapshot_list.append(time_snapshot)
               self.snapshot_list.append(time_snapshot)
@@ -1641,7 +1664,7 @@ class BFDTDobject(object):
 
       return [ xmesh_read, box_read ]
 
-  def read_inputs(self,filename):
+  def readFileList(self,filename):
       ''' read .in file '''
       if self.verbosity>0: print('->Processing .in file : ', filename)
       
@@ -1664,7 +1687,7 @@ class BFDTDobject(object):
                 subfile_ext = addExtension(subfile,'geo')
                 if not os.path.isfile(subfile_ext):
                   subfile_ext = addExtension(subfile,'inp')
-            [ xmesh_read_loc, box_read_loc ] = self.read_input_file(subfile_ext)
+            [ xmesh_read_loc, box_read_loc ] = self.readInputFile(subfile_ext)
             if xmesh_read_loc:
                 xmesh_read = True
             if box_read_loc:
@@ -2034,8 +2057,8 @@ class BFDTDobject(object):
     # TODO
     return
 
-# NOTE: I might keep this class, just because of rotations for the meshs... Mmh... Or is Geometry_object enough if it gets the MeshParams stuff?
-class MeshBox(Geometry_object):
+# NOTE: I might keep this class, just because of rotations for the meshs... Mmh... Or is GeometryObject enough if it gets the MeshParams stuff?
+class MeshBox(GeometryObject):
   def __init__(self,
     name = None,
     layer = None,
@@ -2049,7 +2072,7 @@ class MeshBox(Geometry_object):
     if lower is None: lower = [0,0,0]
     if upper is None: upper = [1,1,1]
     
-    Geometry_object.__init__(self)
+    GeometryObject.__init__(self)
     self.name = name
     self.layer = layer
     self.group = group
@@ -2074,7 +2097,7 @@ class MeshBox(Geometry_object):
     ret += 'zmesh_params:\n'
     for i in self.zmesh_params:
       ret += i.__str__() + '\n'
-    ret += Geometry_object.__str__(self)
+    ret += GeometryObject.__str__(self)
     return ret
 
   def getCentro(self):
@@ -2101,32 +2124,12 @@ class MeshBox(Geometry_object):
 #==== CLASSES END ====#
 
 def readBristolFDTD(filename, verbosity = 1):
-    ''' reads .in (=>.inp+.geo), .geo or .inp '''
-    if verbosity>0: print('->Processing generic file : '+filename)
-
-    structured_entries = BFDTDobject()
-    structured_entries.verbosity = verbosity
-    
-    extension = getExtension(filename)
-    if extension == 'in':
-        if verbosity>0: print('.in file detected')
-        structured_entries.read_inputs(filename)
-    elif extension == 'inp':
-        if verbosity>0: print('.inp file detected')
-        structured_entries.read_input_file(filename)
-    elif extension == 'geo':
-        if verbosity>0: print('.geo file detected')
-        structured_entries.read_input_file(filename)
-    elif extension == 'prn':
-        if verbosity>0: print('.prn file detected: Not supported yet')
-    else:
-        if verbosity>0: print('Unknown file format: '+extension)
-        sys.exit(-1)
-    
-    #~ print '================'
-    #~ print structured_entries
-    #~ print '================'
-    return structured_entries
+  ''' reads .in (=>.inp+.geo), .geo or .inp '''
+  if verbosity>0: print('->Processing generic file : '+filename)
+  structured_entries = BFDTDobject()
+  structured_entries.verbosity = verbosity
+  structured_entries.readBristolFDTD(filename)
+  return structured_entries
 
 def TestWriting():
     '''

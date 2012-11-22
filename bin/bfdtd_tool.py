@@ -339,19 +339,35 @@ def addModeVolumeFrequencySnapshots(arguments):
   return
 
 def calculateModeVolume(arguments):
+  # read in mesh
+  if arguments.meshfile is None:
+    print('ERROR: No meshfile specified.')
+    sys.exit(-1)
+  sim_mesh = bfdtd.readBristolFDTD(arguments.meshfile, arguments.verbosity)
+
   # TODO: Finish this
   # NOTE: Add way to specify snapshots, epsilon/frequency snapshot pairs
-  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
-
-  if arguments.fsnapfiles is None:
-    arguments.fsnapfiles = FDTDobj.getFrequencySnapshots()
-  if arguments.esnapfiles is None:
-    arguments.esnapfiles = FDTDobj.getEpsilonSnapshots()
-    
-  if len(arguments.fsnapfiles) != len(arguments.esnapfiles):
-    print('ERROR: number of frequency snapshots and epsilon snapshots do not match', file=sys.stderr)
-    sys.exit(-1)
   
+  #if arguments.infile is None:
+    #print('ERROR: No infile specified.',file=sys.stderr)
+    #sys.exit(-1)
+  
+  #FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+
+  #if arguments.fsnapfiles is None:
+    #arguments.fsnapfiles = FDTDobj.getFrequencySnapshots()
+  #if arguments.esnapfiles is None:
+    #arguments.esnapfiles = FDTDobj.getEpsilonSnapshots()
+    
+  #if len(arguments.fsnapfiles) != len(arguments.esnapfiles):
+    #print('ERROR: number of frequency snapshots and epsilon snapshots do not match', file=sys.stderr)
+    #sys.exit(-1)
+  #else:
+    #print('OK')
+
+  print(arguments.fsnapfiles)
+  print(arguments.esnapfiles)
+    
   return
 
 def addCentralXYZSnapshots(arguments):
@@ -410,6 +426,24 @@ def addCentralXYZSnapshots(arguments):
   return
   
 def clearOutputs(arguments):
+  if arguments.infile is None:
+    print('ERROR: No infile specified.')
+    sys.exit(-1)
+
+  if arguments.outdir is None:
+    print('ERROR: no outdir specified', file=sys.stderr)
+    sys.exit(-1)
+  
+  if arguments.basename is None:
+    arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
+  
+  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+  FDTDobj.clearProbes()
+  FDTDobj.clearAllSnapshots()
+
+  FDTDobj.fileList = []
+  FDTDobj.writeAll(arguments.outdir, arguments.basename)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
   
   return
 
@@ -474,6 +508,55 @@ def addEpsilonSnapshots(arguments):
     
   return
 
+def FreqToEps(arguments):
+  
+  # read in snapshot files from the various input files
+  if len(arguments.infile) <= 0 :
+    print('ERROR: No infile(s) specified.')
+    sys.exit(-1)
+  for infile in arguments.infile:
+    FDTDobj = bfdtd.readBristolFDTD(infile, arguments.verbosity)
+    FDTDobj.clearProbes()
+    FDTDobj.flag.iterations = 1
+
+  oldlist = FDTDobj.getFrequencySnapshots()
+  newlist = []
+  for idx in range(len(oldlist)):
+    snap = oldlist[idx]
+    if arguments.namefilter is None or arguments.namefilter in snap.name:
+      eps = bfdtd.EpsilonSnapshot()
+      eps.name = 'ModeVolume.eps'
+      eps.plane = snap.plane
+      eps.P1 = snap.P1
+      eps.P2 = snap.P2
+      eps.first = 1
+      eps.repetition = 1
+      newlist.append(eps)
+
+  #print(FDTDobj.snapshot_list)
+  #print(len(FDTDobj.snapshot_list))
+  #print(newlist)
+  #print(len(newlist))
+
+  FDTDobj.snapshot_list = newlist
+  
+  #print(FDTDobj.snapshot_list)
+  #print(len(FDTDobj.snapshot_list))
+  #print( FDTDobj.getEpsilonSnapshots() )
+  #print( len(FDTDobj.getEpsilonSnapshots()) )
+
+  # output stuff
+  if arguments.outdir is None:
+    print('ERROR: no outdir specified', file=sys.stderr)
+    sys.exit(-1)  
+  if arguments.basename is None:
+    arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
+  
+  FDTDobj.fileList = []  
+  FDTDobj.writeAll(arguments.outdir, arguments.basename)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  return
+
 def get_argument_parser():
   """return an ArgumentParser object p with this module's options;
   with an additional dict attribute p._geniegui to specify
@@ -483,11 +566,11 @@ def get_argument_parser():
   # TODO: split options into read-only and read-write operations?
   # operations: read & print info, copy, copy with changes, write back with changes, create shellscript, create .in file, etc
   # too many operations. Needs GUI!
-    
+  
   # command-line option handling
-  parser = argparse.ArgumentParser(description = 'get info about bfdtd related files')
-  #parser.add_argument('-i','--infile', action="append", help='input file(s) (.geo, .inp or .in) (can be more than one)')
-  parser.add_argument('-i','--infile', action="store", help='input file (.geo, .inp or .in)')
+  parser = argparse.ArgumentParser(description = 'get info about bfdtd related files', fromfile_prefix_chars='@')
+  parser.add_argument('-i','--infile', action="append", help='input file(s) (.geo, .inp or .in) (can be more than one)')
+  #parser.add_argument('-i','--infile', action="store", help='input file (.geo, .inp or .in)')
   parser.add_argument('-v','--verbose', action="count", dest="verbosity", default=0, help='verbosity level')
 
   parser.add_argument('-o','--outfile', action="store", dest="outfile", default=None, help='output file')
@@ -538,6 +621,8 @@ def get_argument_parser():
   group.add_argument('--msnapfiles', metavar='MSNAP', help='Mode filtered probes to use', nargs='+')
   group.add_argument('--probefiles', metavar='PROBE', help='Probes to use', nargs='+')
   group.add_argument('--prnfiles', metavar='PRN', help='.prn files to use', nargs='+')
+  group.add_argument('--namefilter', metavar='STRING', help='string to look for in object names', default=None)
+  group.add_argument('--meshfile', metavar='INP', help='.inp file containing the mesh to use', default=None)
 
   group = parser.add_argument_group('addCentralXYZSnapshots')
   group.add_argument('--addCentralXYZSnapshots', help='addCentralXYZSnapshots', action="store_true", dest='addCentralXYZSnapshots', default=False)
@@ -547,6 +632,12 @@ def get_argument_parser():
   
   group = parser.add_argument_group('addEpsilonSnapshots')
   group.add_argument('--addEpsilonSnapshots', help='addEpsilonSnapshots', action="store_true", dest='addEpsilonSnapshots', default=False)
+
+  group = parser.add_argument_group('clearOutputs')
+  group.add_argument('--clearOutputs', help='clearOutputs', action="store_true", dest='clearOutputs', default=False)
+
+  group = parser.add_argument_group('FreqToEps')
+  group.add_argument('--FreqToEps', help='FreqToEps', action="store_true", dest='FreqToEps', default=False)
 
   group = parser.add_argument_group('Rotate')
   group.add_argument('-r','--rotate', action="store_true", dest='rotate', default=False, help='Rotate the geometry.')
@@ -592,6 +683,8 @@ def main(args=None):
   if arguments.addCentralXYZSnapshots: addCentralXYZSnapshots(arguments)
   if arguments.clearAllOutput: clearAllOutput(arguments)
   if arguments.addEpsilonSnapshots: addEpsilonSnapshots(arguments)
+  if arguments.clearOutputs: clearOutputs(arguments)
+  if arguments.FreqToEps: FreqToEps(arguments)
   
   #for infile in sys.argv[1:]:
     #print('infile = '+infile)
