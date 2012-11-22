@@ -1508,25 +1508,25 @@ class BFDTDobject(object):
   def clearMesh():
     self.mesh = MeshObject()
 
-  def readBristolFDTD(filename, verbosity = 1):
+  def readBristolFDTD(self,filename):
     ''' reads .in (=>.inp+.geo), .geo or .inp '''
-    if verbosity>0: print('->Processing generic file : '+filename)
+    if self.verbosity>0: print('->Processing generic file : '+filename)
     
     extension = getExtension(filename)
     if extension == 'in':
-      if verbosity>0: print('.in file detected')
+      if self.verbosity>0: print('.in file detected')
       self.readFileList(filename)
     elif extension == 'inp':
-      if verbosity>0: print('.inp file detected')
+      if self.verbosity>0: print('.inp file detected')
       self.readInputFile(filename)
     elif extension == 'geo':
-      if verbosity>0: print('.geo file detected')
+      if self.verbosity>0: print('.geo file detected')
       self.readInputFile(filename)
     elif extension == 'prn':
-      if verbosity>0: print('.prn file detected: Not supported yet')
+      if self.verbosity>0: print('.prn file detected: Not supported yet')
       sys.exit(-1)
     else:
-      if verbosity>0: print('Unknown file format: '+extension)
+      if self.verbosity>0: print('Unknown file format: '+extension)
       sys.exit(-1)
     
     return
@@ -2125,7 +2125,6 @@ class MeshBox(GeometryObject):
 
 def readBristolFDTD(filename, verbosity = 1):
   ''' reads .in (=>.inp+.geo), .geo or .inp '''
-  if verbosity>0: print('->Processing generic file : '+filename)
   structured_entries = BFDTDobject()
   structured_entries.verbosity = verbosity
   structured_entries.readBristolFDTD(filename)
