@@ -10,6 +10,9 @@ set -eu
 # Check if all parameters are present
 # If no, exit
 
+# TODO: It would be nice if additional qsub options could be specified. Problem: Ho can a script/alias distinguish the script's path from the other options? (required for JOBDIR variable)
+# TODO: -> solution: python argparse qsub.py (problem: no python3 on bluecrystal...)
+
 source script_inception_common_functions.sh
 
 # echo "NARGS = $#"
