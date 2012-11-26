@@ -21,6 +21,10 @@ MODEFILTEREDPROBE_MAX = 118
 # i.e. 1 esnap + 1 tsnap will lead to x1...+x2... according to their respective order of appearance in the .inp file.
 # snap_time_number starts at 0 for ModeFilteredProbes and at 1 for Time and epsilon snapshots.
 
+# TODO: Create class/structure to store the various info related to a .prn file? (numID, alphaID, etc)
+# TODO: Separate new filename creation from alphaID_to_numID function.
+# TODO: Add format specification option for new filename.
+
 def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_id_', snap_time_number = 0):
   '''
   Converts numeric IDs to alpha IDs used by Bristol FDTD 2003

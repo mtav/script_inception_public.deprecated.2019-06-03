@@ -7,7 +7,7 @@ import fnmatch
 import os
 import string
 import argparse
-from utilities.brisFDTD_ID_info import alphaID_to_numID
+import utilities.brisFDTD_ID_info as brisFDTD_ID_info
 
 # TODO: Add option to fix only NTFS/FAT32 incompatible filenames or create/look for script to make filenames NTFS/FAT32 compatible
 # ex: recode, convmv, detox
@@ -21,23 +21,12 @@ from utilities.brisFDTD_ID_info import alphaID_to_numID
 #rename : 10 *.prn
 #rename p p0 p??id.prn
 
-def main():
-  # command-line option handling  
-  parser = argparse.ArgumentParser(description = 'rename .prn files produced by BFDTD to NTFS compatible names (as well as human readable)')
-  
-  parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", default=False, help="Verbose: print names of files successfully renamed.")
-  parser.add_argument("-n", "--no-act", action="store_true", dest="no_act", default=False, help="No Action: show what files would have been renamed.")
-  parser.add_argument("-f", "--force", action="store_true", dest="force", default=False, help="Force: overwrite existing files.")
-  parser.add_argument("-d", "--directory", action="append", dest="directory", help="rename all .prn files in this directory recursively. Multiple directories can be specified with -d DIR1 -d DIR2")
-  parser.add_argument('files', action="store", nargs='*', help='input files (.prn)')
-  parser.add_argument("--id", action="store", dest="probe_ident", default=None, help="specify a probe identifier")
-  parser.add_argument("--type", action="store", dest="expected_object_type", choices=['fsnap','tsnap','mfprobe','probe'], default=None, help="specify the type of .prn file")
+# TODO: Add conversion to .h5 format
+# TODO: Add more type specifiers for arguments
+# TODO: better error handling using try/with/etc instead of lots of if tests.
+# TODO: Add option to symlink instead of moving
 
-  arguments = parser.parse_args()
-  
-  print('---------')
-  print(arguments)
-  print('---------')
+def processFiles(arguments):
 
   src = arguments.files
 
@@ -54,7 +43,18 @@ def main():
   dst = len(src)*[0]
   
   for i in range(len(src)):
-    numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = alphaID_to_numID(src[i], arguments.expected_object_type, arguments.probe_ident)
+    numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = brisFDTD_ID_info.alphaID_to_numID(src[i], arguments.expected_object_type, arguments.probe_ident)
+    (directory, basename) = os.path.split(fixed_filename)
+
+    # temporary quick hack (TODO: generalize use of offset and implement actual format specifier)
+    if arguments.output_format:
+      basename, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_FrequencySnapshot(numID + arguments.offset, snap_plane, probe_ident, snap_time_number)
+
+    if arguments.output_directory:
+      directory = arguments.output_directory
+    
+    fixed_filename = os.path.join(directory, basename)
+
     dst[i] = fixed_filename
     if dst[i]:
       if arguments.verbose:
@@ -75,6 +75,41 @@ def main():
     #dst.append(os.path.join(root, string.replace(filename,':','10')))
   #for filename in fnmatch.filter(filenames, 'p??id.prn'):
     #dst.append(os.path.join(root, string.replace(filename,'p','p0',1)))
+  return
+
+def get_argument_parser():
+  # command-line option handling  
+  parser = argparse.ArgumentParser(description = 'rename .prn files produced by BFDTD to NTFS compatible names (as well as human readable)', fromfile_prefix_chars='@')
+  
+  parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", default=False, help="Verbose: print names of files successfully renamed.")
+  parser.add_argument("-n", "--no-act", action="store_true", dest="no_act", default=False, help="No Action: show what files would have been renamed.")
+  parser.add_argument("-f", "--force", action="store_true", dest="force", default=False, help="Force: overwrite existing files.")
+  parser.add_argument("-d", "--directory", action="append", dest="directory", help="rename all .prn files in this directory recursively. Multiple directories can be specified with -d DIR1 -d DIR2")
+  parser.add_argument('files', action="store", nargs='*', help='input files (.prn)')
+  parser.add_argument("--id", action="store", dest="probe_ident", default=None, help="specify a probe identifier")
+  parser.add_argument("--type", action="store", dest="expected_object_type", choices=['fsnap','tsnap','mfprobe','probe'], default=None, help="specify the type of .prn file")
+  parser.add_argument('--offset', type=int, default=0, help='numID offset')
+  parser.add_argument("--output-format", action="store", default=None, help="specify format of the output files")
+  parser.add_argument("--output-directory", action="store", help="Optional output directory (should exist). If not specified, output will go into the same directory as original file.")
+
+  return parser
+
+def main(args=None):
+  parser = get_argument_parser()
+  arguments = parser.parse_args() if args is None else parser.parse_args(args)
+  
+  # Only works if func has been defined (for example with subcommand and set_defaults())
+  #arguments.func(arguments)  # call the appropriate subcommand function
+
+  if not len(sys.argv) > 1:
+    parser.print_help()
+  else:
+    print('---------')
+    print(arguments)
+    print('---------')
+
+    processFiles(arguments)
+  return(0)
 
 if __name__ == "__main__":
     sys.exit(main())
