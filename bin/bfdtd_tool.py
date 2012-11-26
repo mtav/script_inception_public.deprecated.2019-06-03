@@ -13,6 +13,7 @@ import argparse
 import sys
 import re
 import os
+import utilities.brisFDTD_ID_info as brisFDTD_ID_info
 
 from bin.harminv import getFrequencies
 
@@ -338,26 +339,45 @@ def addModeVolumeFrequencySnapshots(arguments):
 
   return
 
+# TODO: nice default values for output dirs/basename
+# TODO: support use of full epsilon snapshots, i.e. all epsilon values available for the full mesh
 def calculateModeVolume(arguments):
+  # TODO: Finish this
+  # NOTE: Add way to specify snapshots, epsilon/frequency snapshot pairs
+
   # read in mesh
   if arguments.meshfile is None:
-    print('ERROR: No meshfile specified.')
+    print('ERROR: No meshfile specified.', file=sys.stderr)
     sys.exit(-1)
   sim_mesh = bfdtd.readBristolFDTD(arguments.meshfile, arguments.verbosity)
 
-  # TODO: Finish this
-  # NOTE: Add way to specify snapshots, epsilon/frequency snapshot pairs
-  
-  #if arguments.infile is None:
-    #print('ERROR: No infile specified.',file=sys.stderr)
-    #sys.exit(-1)
-  
-  #FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+  # read in snapshot files from the various input files
+  if len(arguments.infile) <= 0 :
+    print('ERROR: No infile(s) specified.', file=sys.stderr)
+    sys.exit(-1)
+  sim_in = bfdtd.BFDTDobject()
+  sim_in.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    sim_in.readBristolFDTD(infile)
 
+  # TODO: add path of file based on where it was read from
+  # TODO: read in .prn files
+  # calculate mode volume
+
+  snaplist = sim_in.getFrequencySnapshots()
+  for numID in range(len(snaplist)):
+    snapshot = snaplist[numID]
+    #print(['x','y','z'][snapshot.plane-1])
+    #print(sim_in.flag.id_string)
+    fsnap_filename, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_FrequencySnapshot(numID+1, ['x','y','z'][snapshot.plane-1], sim_in.flag.id_string.strip('"'), snap_time_number = 1)
+    print(fsnap_filename)
+    esnap_filename, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_EpsilonSnapshot(numID+1, ['x','y','z'][snapshot.plane-1], sim_in.flag.id_string.strip('"'), snap_time_number = 1)
+    print(esnap_filename)
+  
   #if arguments.fsnapfiles is None:
-    #arguments.fsnapfiles = FDTDobj.getFrequencySnapshots()
+    #arguments.fsnapfiles = sim_in.getFrequencySnapshots():
   #if arguments.esnapfiles is None:
-    #arguments.esnapfiles = FDTDobj.getEpsilonSnapshots()
+    #arguments.esnapfiles = sim_in.getEpsilonSnapshots()
     
   #if len(arguments.fsnapfiles) != len(arguments.esnapfiles):
     #print('ERROR: number of frequency snapshots and epsilon snapshots do not match', file=sys.stderr)
@@ -365,8 +385,8 @@ def calculateModeVolume(arguments):
   #else:
     #print('OK')
 
-  print(arguments.fsnapfiles)
-  print(arguments.esnapfiles)
+  #print(arguments.fsnapfiles)
+  #print(arguments.esnapfiles)
     
   return
 
@@ -512,7 +532,7 @@ def FreqToEps(arguments):
   
   # read in snapshot files from the various input files
   if len(arguments.infile) <= 0 :
-    print('ERROR: No infile(s) specified.')
+    print('ERROR: No infile(s) specified.', file=sys.stderr)
     sys.exit(-1)
   
   FDTDobj = bfdtd.BFDTDobject()
