@@ -7,6 +7,7 @@ import fnmatch
 import os
 import string
 import argparse
+import shutil
 import utilities.brisFDTD_ID_info as brisFDTD_ID_info
 
 # TODO: Add option to fix only NTFS/FAT32 incompatible filenames or create/look for script to make filenames NTFS/FAT32 compatible
@@ -24,7 +25,6 @@ import utilities.brisFDTD_ID_info as brisFDTD_ID_info
 # TODO: Add conversion to .h5 format
 # TODO: Add more type specifiers for arguments
 # TODO: better error handling using try/with/etc instead of lots of if tests.
-# TODO: Add option to symlink instead of moving
 
 def processFiles(arguments):
 
@@ -58,11 +58,22 @@ def processFiles(arguments):
     dst[i] = fixed_filename
     if dst[i]:
       if arguments.verbose:
-        print(src[i]+' -> '+dst[i])
+        print( arguments.action + ' ' + src[i] + ' -> ' + dst[i] )
       if os.path.isfile(src[i]):
         if (not os.path.isfile(dst[i])) or arguments.force:
           if (not arguments.no_act):
-            os.rename(src[i], dst[i])
+            if arguments.action == 'move':
+              os.rename(src[i], dst[i])
+            elif arguments.action == 'copy':
+              shutil.copy(src[i], dst[i])
+            elif arguments.action == 'hardlink':
+              os.link(src[i], dst[i])
+            elif arguments.action == 'symlink':
+              print('os.symlink(src[i], dst[i])')
+              os.symlink(src[i], dst[i])
+            else:
+              print('action not recognized : action = ' + arguments.action,file=sys.stderr)
+              sys.exit(-1)
         else:
           print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : destination file exists', file=sys.stderr)
       else:
@@ -91,6 +102,7 @@ def get_argument_parser():
   parser.add_argument('--offset', type=int, default=0, help='numID offset')
   parser.add_argument("--output-format", action="store", default=None, help="specify format of the output files")
   parser.add_argument("--output-directory", action="store", help="Optional output directory (should exist). If not specified, output will go into the same directory as original file.")
+  parser.add_argument("--action", action="store", choices=['move','copy','hardlink','symlink'], default='move', help="move (rename), copy, hardlink or symlink to the new destination/filename?")
 
   return parser
 
