@@ -5,11 +5,6 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snap_plane, sna
   % convert snap_plane='x','y','z' to 1,2,3
   snapDirInt = (snap_plane - double('x')) + 1;
 
-  % problem 0: this pattern also matches epsilon files, and potentially any other non-mode-volume frequency snapshots
-  %FsnapFiles = dir([folder, filesep, snap_plane, '*', sprintf('%02d',snap_time_number),'.prn']);
-
-  %size(FsnapFiles);
-
   % read the input files
   [inpEntries, structured_entries] = GEO_INP_reader({ [folder, filesep, inpfile] });
   probe_ident = structured_entries.flag.id;
@@ -27,57 +22,6 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snap_plane, sna
     Snaps{end+1} = SnapEntry;
   end
   
-  %return
-
-  %Snaps = {};
-  %for m = 1:length(inpEntries)
-    %data = inpEntries{m}.data;
-    %if strcmp(lower(inpEntries{m}.type), 'frequency_snapshot')
-      %% Findout which plane it is
-      %snapNo = length(Snaps)+1;
-      %%m
-      %%data
-      %disp(['snapDirInt = ',num2str(snapDirInt)])
-      %% check if the direction of the snapshot corresponds to snap_plane
-      %if data{7+snapDirInt} == data{10+snapDirInt}
-        %% This way of getting the filename seems a bit dangerous... Does dir() return correctly ordered files?
-        %% problem 1: this only works if the ID (flag.id) string is of length 1.
-        %disp('==================================');
-        %filename = FsnapFiles(snapNo).name; % get filename
-        %fileNumStr = filename(2:end-7); % extract part between x/y/z and ID string, i.e. the alpha_ID
-        %fileNumStr = fileNumStr - 96*ones(1,length(fileNumStr)); % convert alpha_ID of the form 'abc' to list of numbers of the form [1,2,3] (char(97)=a, double('a')=97)
-        %% problem 2: This conversion only works if the alpha_ID is of length 1 or 2 (i.e. from 'a' to 'zz')
-        %val = fileNumStr*fliplr([1:25:length(fileNumStr)*25])'; % convert list [1-26,1-26,1-26,...] into the corresponding numID
-        %disp('==================================');
-
-        %SnapEntry.fileName = [folder, filesep, filename];
-        %SnapEntry.pos = data{7+snapDirInt};
-
-        %% Note snap_time_number is usually =1 for epsilon snapshots (since no need for more and first is =1)
-        %val
-        %snap_plane
-        %probe_ident
-        %snap_time_number
-        %[ epsfilename, alphaID, pair ] = numID_to_alphaID_TimeSnapshot(val, snap_plane, probe_ident, 1)
-
-        %%[folder, filesep, snap_plane, num2str(val), 'a*.prn']
-        %%epsFile = dir([folder, filesep, snap_plane, num2str(val), 'a*.prn']);
-        %%epsFile(1)
-        %SnapEntry.epsFile = [folder, filesep, epsfilename];
-        %Snaps{snapNo} = SnapEntry;  
-      %end
-    %%elseif strcmp(lower(inpEntries{m}.type), 'xmesh')
-      %%data
-      %%m
-      %%error('bleuargh')
-      %%mesh{1} = data;
-    %%elseif strcmp(lower(inpEntries{m}.type), 'ymesh')
-      %%mesh{2} = data;
-    %%elseif strcmp(lower(inpEntries{m}.type), 'zmesh')
-      %%mesh{3} = data;
-    %end
-  %end
-
   mesh{1} = structured_entries.xmesh;
   mesh{2} = structured_entries.ymesh;
   mesh{3} = structured_entries.zmesh;
@@ -93,13 +37,13 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snap_plane, sna
     [header_fsnap, data_fsnap, ui_fsnap, uj_fsnap] = readPrnFile(Snaps{m}.fileName);
     [header_esnap, data_esnap, ui_esnap, uj_esnap] = readPrnFile(Snaps{m}.epsFile);
 
-    disp(['==> size(data_fsnap) = ',num2str(size(data_fsnap))]);
-    disp(['==> size(ui_fsnap) = ',num2str(size(ui_fsnap))]);
-    disp(['==> size(uj_fsnap) = ',num2str(size(uj_fsnap))]);
+    %disp(['==> size(data_fsnap) = ',num2str(size(data_fsnap))]);
+    %disp(['==> size(ui_fsnap) = ',num2str(size(ui_fsnap))]);
+    %disp(['==> size(uj_fsnap) = ',num2str(size(uj_fsnap))]);
 
-    disp(['==> size(data_esnap) = ',num2str(size(data_esnap))]);
-    disp(['==> size(ui_esnap) = ',num2str(size(ui_esnap))]);
-    disp(['==> size(uj_esnap) = ',num2str(size(uj_esnap))]);
+    %disp(['==> size(data_esnap) = ',num2str(size(data_esnap))]);
+    %disp(['==> size(ui_esnap) = ',num2str(size(ui_esnap))]);
+    %disp(['==> size(uj_esnap) = ',num2str(size(uj_esnap))]);
 
     % TODO: I really don't think this should be like this... Looks like a dirty hack...
     if m == length(Snaps)
@@ -142,8 +86,8 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snap_plane, sna
     %vi = mesh{ind(1)};
     %vj = mesh{ind(2)};
 
-    disp(['==> size(vi) = ',num2str(size(vi))]);
-    disp(['==> size(vj) = ',num2str(size(vj))]);
+    %disp(['==> size(vi) = ',num2str(size(vi))]);
+    %disp(['==> size(vj) = ',num2str(size(vj))]);
 
     areaM = vj*vi';
 
@@ -158,9 +102,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snap_plane, sna
       currMax = maxVal;
     end
 
-    disp(['==> size(nom) = ',num2str(size(nom))]);
-    disp(['==> size(areaM) = ',num2str(size(areaM))]);
-    disp(['==> size(thickness) = ',num2str(size(thickness))]);
+    %disp(['==> size(nom) = ',num2str(size(nom))]);
+    %disp(['==> size(areaM) = ',num2str(size(areaM))]);
+    %disp(['==> size(thickness) = ',num2str(size(thickness))]);
 
     Nom = Nom + sum(sum(nom.*areaM*thickness));
       
