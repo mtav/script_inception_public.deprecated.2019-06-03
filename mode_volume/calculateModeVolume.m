@@ -1,21 +1,26 @@
-function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
+function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection, snap_time_number)
+  % snapDirection is 'x','y' or 'z'
+  % snap_time_number is the number of the snapshot (i.e. 02 in zaaid02.prn for example)
+  
 
   % read the input files
   
   snap_plane = snapDirection %'z'
-  probe_ident = 'a' % (should be gotten from parsing input files)
-  snap_time_number = 1 % (should be gotten from parsing input files)
+  %snap_time_number = 1 % (should be gotten from parsing input files)
   
   % convert snapDirection='x','y','z' to 1,2,3
   snapDirInt = (snapDirection - double('x')) + 1;
 
-  FsnapFiles = dir([folder, filesep, snapDirection, '*00.prn']);
+  % problem 0: this pattern also matches epsilon files, and potentially any other non-mode-volume frequency snapshots
+  FsnapFiles = dir([folder, filesep, snapDirection, '*', sprintf('%02d',snap_time_number),'.prn']);
 
   size(FsnapFiles)
 
   %inpfile = dir([folder,'\*.inp']);
   %inpfile = [folder, filesep, inpfile(1).name];
   [inpEntries, structured_entries] = GEO_INP_reader({ [folder, filesep, inpfile] });
+
+  probe_ident = structured_entries.flag.id;
 
   Snaps = {};
   for m = 1:length(inpEntries)
@@ -29,17 +34,26 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snapDirection)
          % check if the direction of the snapshot corresponds to snapDirection
          if data{7+snapDirInt} == data{10+snapDirInt}
          
-              % This way of getting the filename seems a bit dangerous... Does dir() return correctly ordered files?
-             filename = FsnapFiles(snapNo).name;
-             fileNumStr = filename(2:end-7);
-             fileNumStr = fileNumStr - 96*ones(1,length(fileNumStr));
-             val = fileNumStr*fliplr([1:25:length(fileNumStr)*25])';
+             % This way of getting the filename seems a bit dangerous... Does dir() return correctly ordered files?
+             % problem 1: this only works if the ID (flag.id) string is of length 1.
+             disp('==================================')
+             filename = FsnapFiles(snapNo).name % get filename
+             fileNumStr = filename(2:end-7) % extract part between x/y/z and ID string, i.e. the alpha_ID
+             fileNumStr = fileNumStr - 96*ones(1,length(fileNumStr)) % convert alpha_ID of the form 'abc' to list of numbers of the form [1,2,3] (char(97)=a, double('a')=97)
+             % problem 2: This conversion only works if the alpha_ID is of length 1 or 2 (i.e. from 'a' to 'zz')
+             val = fileNumStr*fliplr([1:25:length(fileNumStr)*25])' % convert list [1-26,1-26,1-26,...] into the corresponding numID
+             disp('==================================')
              
              SnapEntry.fileName = [folder, filesep, filename];
              SnapEntry.pos = data{7+snapDirInt};
              
              
-             [ epsfilename, alphaID, pair ] = numID_to_alphaID_TimeSnapshot(val, snap_plane, probe_ident, snap_time_number)
+             % Note snap_time_number is usually =1 for epsilon snapshots (since no need for more and first is =1)
+             val
+             snap_plane
+             probe_ident
+             snap_time_number
+             [ epsfilename, alphaID, pair ] = numID_to_alphaID_TimeSnapshot(val, snap_plane, probe_ident, 1)
              
              %[folder, filesep, snapDirection, num2str(val), 'a*.prn']
              %epsFile = dir([folder, filesep, snapDirection, num2str(val), 'a*.prn']);
