@@ -1,12 +1,15 @@
-function mode_volume_mum3 = calculateModeVolume(folder, inpfile, snap_plane, snap_time_number, refractive_index_defect)
-  % snap_plane is 'x','y' or 'z'
-  % snap_time_number is the number of the snapshot (i.e. 02 in zaaid02.prn for example)
+function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane, snap_time_number, refractive_index_defect)
+  % folder : folder containing the .prn files
+  % inpfile_list : of the form {'file1.inp','file2.inp',...}. Note : Full paths should be used!
+  % snap_plane : direction of the snapshots ('x','y' or 'z')
+  % snap_time_number : the number of the snapshot (i.e. 02 in zaaid02.prn for example)
+  % refractive_index_defect : refractive index used to normalize the mode volume (usually refractive index of the defect/cavity)
       
   % convert snap_plane='x','y','z' to 1,2,3
   snapDirInt = (snap_plane - double('x')) + 1;
 
   % read the input files
-  [inpEntries, structured_entries] = GEO_INP_reader({ [folder, filesep, inpfile] });
+  [inpEntries, structured_entries] = GEO_INP_reader(inpfile_list);
   probe_ident = structured_entries.flag.id;
 
   Snaps = {};
