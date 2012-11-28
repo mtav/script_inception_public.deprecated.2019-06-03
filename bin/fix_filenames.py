@@ -69,7 +69,6 @@ def processFiles(arguments):
             elif arguments.action == 'hardlink':
               os.link(src[i], dst[i])
             elif arguments.action == 'symlink':
-              print('os.symlink(src[i], dst[i])')
               os.symlink(src[i], dst[i])
             else:
               print('action not recognized : action = ' + arguments.action,file=sys.stderr)
