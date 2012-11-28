@@ -565,6 +565,9 @@ def FreqToEps(arguments):
 
   FDTDobj.snapshot_list = newlist
   
+  # Just leave one excitation. Should be enough to prevent crash and reduce running time.
+  FDTDobj.excitation_list = [ FDTDobj.excitation_list[0] ]
+  
   #print(FDTDobj.snapshot_list)
   #print(len(FDTDobj.snapshot_list))
   #print( FDTDobj.getEpsilonSnapshots() )
