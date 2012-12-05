@@ -13,8 +13,11 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
   probe_ident = structured_entries.flag.id;
 
   Snaps = {};
-  for numID = 1:length(structured_entries.frequency_snapshots)
-    fsnap = structured_entries.frequency_snapshots(numID);
+  %for numID = 1:length(structured_entries.frequency_snapshots)
+    %fsnap = structured_entries.frequency_snapshots(numID);
+  % temporary hack to select only Z snapshots, since that is what we currently use for mode volume calculations. TODO: replace by name-based filter
+  for numID = 1:length(structured_entries.frequency_snapshots_Z)
+    fsnap = structured_entries.frequency_snapshots_Z(numID);
     SnapEntry.pos = fsnap.P2(fsnap.plane);
     [ fsnap_filename, fsnap_alphaID, fsnap_pair ] = numID_to_alphaID_FrequencySnapshot(numID, snap_plane, probe_ident, snap_time_number);
     [ esnap_filename, esnap_alphaID, esnap_pair ] = numID_to_alphaID_TimeSnapshot(numID, snap_plane, probe_ident, 1);
