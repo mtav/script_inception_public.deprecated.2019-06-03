@@ -70,8 +70,9 @@ def importBristolFDTD(filename):
     # create group corresponding to this file
     # deselect all
     bpy.ops.object.select_all(action='DESELECT')
-    # TODO: truncate or not? ex: "/tmp/momo/abcdefghi"[-11:] -> 11 last characters
-    group_name = filename
+    # Truncated to 63 characters because that seems to be the maximum string length Blender accepts for group names.
+    # (allows keeping part of the path for better identification if multiple files use the same basename)
+    group_name = filename[-63:]
     bpy.ops.group.create(name=group_name)
     
     if not 'meshes' in bpy.data.groups: bpy.ops.group.create(name='meshes')
