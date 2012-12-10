@@ -18,6 +18,7 @@ from mathutils import *
 import os
 import pickle
 #import cPickle
+import utilities.brisFDTD_ID_info as brisFDTD_ID_info
 
 #import layer_manager
 #from Blender import Draw, BGL, Text, Scene, Window, Object
@@ -111,23 +112,46 @@ def importBristolFDTD(filename):
     bpy.ops.object.group_link(group='meshes')
 
     # Time_snapshot (time or EPS)
+    Ntsnaps = 0
     for time_snapshot in structured_entries.time_snapshot_list:
-        if time_snapshot.eps == 0:
-          #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-          obj = FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-          bpy.context.scene.objects.active = obj
-          bpy.ops.object.group_link(group=group_name)
-          bpy.ops.object.group_link(group='timeSnapshots')
-        else:
-          #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]));
-          obj = FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2);
-          bpy.context.scene.objects.active = obj
-          bpy.ops.object.group_link(group=group_name)
-          bpy.ops.object.group_link(group='epsilonSnapshots')
+
+      Ntsnaps += 1
+      snap_plane = ['x','y','z'][time_snapshot.plane - 1]
+      probe_ident = structured_entries.flag.id_string.replace('\"','')
+      snap_time_number = 1
+      TimeSnapshotFileName, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_EpsilonSnapshot(Ntsnaps, snap_plane, probe_ident, snap_time_number)
+
+      if time_snapshot.eps == 0:
+        #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('time_snapshots_'+planeNumberName(time_snapshot.plane)[1]))
+        obj = FDTDGeometryObjects_obj.GEOtime_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2)
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='timeSnapshots')
+      else:
+        #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('eps_snapshots_'+planeNumberName(time_snapshot.plane)[1]))
+
+        obj = FDTDGeometryObjects_obj.GEOeps_snapshot(TimeSnapshotFileName, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2)
+        #obj = FDTDGeometryObjects_obj.GEOeps_snapshot(time_snapshot.name, time_snapshot.plane, time_snapshot.P1, time_snapshot.P2)
+
+        bpy.context.scene.objects.active = obj
+        bpy.ops.object.group_link(group=group_name)
+        bpy.ops.object.group_link(group='epsilonSnapshots')
+
     # Frequency_snapshot
+    # TODO: Finally get a correct system for filenames/comment names/etc implemented. getfilename() or something...
+    Nfsnaps = 0
     for frequency_snapshot in structured_entries.frequency_snapshot_list:
       #Blender.Window.SetActiveLayer(1<<layerManager.DefaultLayers.index('frequency_snapshots_'+planeNumberName(frequency_snapshot.plane)[1]));
-      obj = FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2);
+
+      Nfsnaps += 1
+      snap_plane = ['x','y','z'][frequency_snapshot.plane - 1]
+      probe_ident = structured_entries.flag.id_string.replace('\"','')
+      snap_time_number = 0
+      FrequencySnapshotFileName, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_FrequencySnapshot(Nfsnaps, snap_plane, probe_ident, snap_time_number)
+
+      obj = FDTDGeometryObjects_obj.GEOfrequency_snapshot(FrequencySnapshotFileName, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2)
+      #obj = FDTDGeometryObjects_obj.GEOfrequency_snapshot(frequency_snapshot.name, frequency_snapshot.plane, frequency_snapshot.P1, frequency_snapshot.P2)
+
       bpy.context.scene.objects.active = obj
       bpy.ops.object.group_link(group=group_name)
       bpy.ops.object.group_link(group='frequencySnapshots')
