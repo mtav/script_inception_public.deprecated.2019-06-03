@@ -17,32 +17,44 @@ import utilities.brisFDTD_ID_info as brisFDTD_ID_info
 
 from bin.harminv import getFrequencies
 
-def printNcells(infile,verbosity):
-  sim = bfdtd.readBristolFDTD(infile,verbosity)
-  print(sim.getNcells())
+def printNcells(arguments):
+  sim_in = bfdtd.BFDTDobject()
+  sim_in.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    sim_in.readBristolFDTD(infile)
+  print(sim_in.getNcells())
   return
 
-def printExcitation(infile, id_list, verbosity=0):
-  sim = bfdtd.readBristolFDTD(infile,verbosity)
-  if id_list is None:
-    id_list = range(len(sim.excitation_list))
-  for i in id_list:
+def printExcitation(arguments):
+  sim_in = bfdtd.BFDTDobject()
+  sim_in.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    sim_in.readBristolFDTD(infile)
+  if arguments.id_list is None:
+    arguments.id_list = range(len(sim_in.excitation_list))
+  for i in arguments.id_list:
     print('=== excitation '+str(i)+' ===')
-    print(sim.excitation_list[i])
+    print(sim_in.excitation_list[i])
   return
 
-def printAll(infile,verbosity):
-  sim = bfdtd.readBristolFDTD(infile,verbosity)
-  print(sim)
+def printAll(arguments):
+  sim_in = bfdtd.BFDTDobject()
+  sim_in.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    sim_in.readBristolFDTD(infile)
+  print(sim_in)
   return
 
-def printExcitationDirection(infile, id_list, verbosity=0):
-  sim = bfdtd.readBristolFDTD(infile,verbosity)
-  if id_list is None:
-    id_list = range(len(sim.excitation_list))
-  for i in id_list:
+def printExcitationDirection(arguments):
+  sim_in = bfdtd.BFDTDobject()
+  sim_in.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    sim_in.readBristolFDTD(infile)
+  if arguments.id_list is None:
+    arguments.id_list = range(len(sim_in.excitation_list))
+  for i in arguments.id_list:
     print('=== excitation '+str(i)+' ===')
-    print(sim.excitation_list[i].E)
+    print(sim_in.excitation_list[i].E)
   return
 
 def printFormattedString(FORMAT):
@@ -700,12 +712,12 @@ def main(args=None):
     print(arguments)
     print('---------')
   
-  if arguments.print_all: printAll(arguments.infile,arguments.verbosity)
-  if arguments.print_Ncells: printNcells(arguments.infile,arguments.verbosity)
-  if arguments.print_Excitation: printExcitation(arguments.infile, arguments.id_list, arguments.verbosity)
-  if arguments.print_ExcitationDirection: printExcitationDirection(arguments.infile, arguments.id_list, arguments.verbosity)
-
   # TODO: Some/most functions could be moved into the BFDTD object class
+  if arguments.print_all: printAll(arguments)
+  if arguments.print_Ncells: printNcells(arguments)
+  if arguments.print_Excitation: printExcitation(arguments)
+  if arguments.print_ExcitationDirection: printExcitationDirection(arguments)
+
   if arguments.modevolume: addModeVolumeFrequencySnapshots(arguments)
   if arguments.calc_modevolume: calculateModeVolume(arguments)
   if arguments.addCentralXYZSnapshots: addCentralXYZSnapshots(arguments)
