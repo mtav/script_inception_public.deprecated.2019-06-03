@@ -51,11 +51,18 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
     %disp(['==> size(ui_esnap) = ',num2str(size(ui_esnap))]);
     %disp(['==> size(uj_esnap) = ',num2str(size(uj_esnap))]);
 
-    % TODO: I really don't think this should be like this... Looks like a dirty hack...
-    if m == length(Snaps)
-      thickness = Snaps{m}.pos-Snaps{m-1}.pos;
+    
+    if length(Snaps) <= 1
+      disp('WARNING: You are only using one snapshot!!! setting thickness = 1');
+      thickness = 1;
     else
-      thickness = Snaps{m+1}.pos-Snaps{m}.pos;
+      % TODO: Fix this hack
+      if m == length(Snaps)
+          thickness = Snaps{m}.pos-Snaps{m-1}.pos;
+        end
+      else
+        thickness = Snaps{m+1}.pos-Snaps{m}.pos;
+      end
     end
 
     % get size of full mesh
@@ -99,9 +106,10 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
 
     nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*data_esnap(:,:);
 
-    % TODO: shouldn't this be:
-    % maxVal = max(nom(:));
-    maxVal = max(sum(sum(nom)));
+    maxVal = max(nom(:));
+    % maxVal = max(sum(sum(nom)));
+    % maxVal = max(sum(sum(nom.*areaM*thickness)));
+    
     vv = [vv,maxVal];
 
     if (maxVal>currMax)
