@@ -182,7 +182,12 @@ def rerun_with_new_excitation(src, dst, excitation_wavelength_nm, excitation_tim
   bfdtd.GEOshellscript(dst+os.sep+fileBaseName+'.sh', fileBaseName,'$HOME/bin/fdtd', '$JOBDIR', WALLTIME = 360)
 
 def addModeVolumeFrequencySnapshots(arguments):
-  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+  
+  FDTDobj = bfdtd.BFDTDobject()
+  FDTDobj.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    FDTDobj.readBristolFDTD(infile)
+  
   (size,res) = FDTDobj.mesh.getSizeAndResolution()
   
   if arguments.verbosity>0:
@@ -267,7 +272,7 @@ def addModeVolumeFrequencySnapshots(arguments):
       #f.repetition = arguments.repetition
       #f.frequency_vector = frequency_vector
       
-      F = bfdtd.Frequency_snapshot()
+      F = bfdtd.FrequencySnapshot()
       F.name = NAME + '.freq'
       F.plane = 'Z'
       F.P1 = [ FDTDobj.box.lower[0], FDTDobj.box.lower[1], pos]
@@ -288,6 +293,7 @@ def addModeVolumeFrequencySnapshots(arguments):
     print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
     sys.exit(-1)
 
+  print(full_list)
   list_1 = full_list[0:len(full_list)//2]
   list_2 = full_list[len(full_list)//2:len(full_list)]
 
@@ -491,8 +497,12 @@ def addEpsilonSnapshots(arguments):
   
   if arguments.basename is None:
     arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
-  
-  FDTDobj = bfdtd.readBristolFDTD(arguments.infile, arguments.verbosity)
+
+  FDTDobj = bfdtd.BFDTDobject()
+  FDTDobj.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    FDTDobj.readBristolFDTD(infile)
+    
   FDTDobj.clearProbes()
   FDTDobj.clearAllSnapshots()
 
