@@ -58,8 +58,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
     else
       % TODO: Fix this hack
       if m == length(Snaps)
-          thickness = Snaps{m}.pos-Snaps{m-1}.pos;
-        end
+        thickness = Snaps{m}.pos-Snaps{m-1}.pos;
       else
         thickness = Snaps{m+1}.pos-Snaps{m}.pos;
       end
@@ -105,6 +104,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
     areaM = vj*vi';
 
     nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*data_esnap(:,:);
+    %size(nom)
 
     maxVal = max(nom(:));
     % maxVal = max(sum(sum(nom)));
@@ -121,9 +121,9 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
     %disp(['==> size(thickness) = ',num2str(size(thickness))]);
 
     Nom = Nom + sum(sum(nom.*areaM*thickness));
-      
+  
   % figure(1)
-  % imagesc(ui(2:end),uj(2:end),nom);
+  % imagesc(ui_esnap(2:end),uj_esnap(2:end),nom);
   % figure(2)
   % imagesc(eps)
   end
