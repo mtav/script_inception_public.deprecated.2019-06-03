@@ -12,7 +12,8 @@
 % hang your PC with:
 % annularProfiler(getenv('TESTDIR'),1,40000,2,4,'_prefix_',0,'dome + angular ring',[],1)
 
-function annularProfiler(folder,rep,mag,prefix,direction,interRingDistancePxl)
+% function annularProfiler(folder,rep,mag,prefix,direction,interRingDistancePxl)
+function multiRingPrototype(folder,rep,mag,prefix,direction,interRingDistancePxl)
 
   if exist('folder','var')==0
     folder = uigetdir(pwd(),'folder');

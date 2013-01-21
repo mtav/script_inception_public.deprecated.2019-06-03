@@ -53,6 +53,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
   % cut beginning of time signal:
   % TODO: Select cutoff time based on actual input/output data...
   tmin = 6e-8;
+  %tmin = 0;
   if tmin<time_mus(end)
     [time_mus,data_time_domain] = zoomPlot(time_mus,data_time_domain,tmin,time_mus(end));
   else

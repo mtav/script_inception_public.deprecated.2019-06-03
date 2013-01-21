@@ -1,5 +1,12 @@
-function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_center_mum,y_center_mum,x_size_mum,y_size_mum)
-  % size of circles in nm as a function of the beamcurrent (diametro of spot)
+function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentro2D, circleRadius, rectW)
+
+
+  dwell_vector = []
+  X = []
+  Y = []
+  return
+
+  % size of circles in nm as a function of the beamcurrent
   spotSizes=[1 8;
   4 12;
   11 15;
@@ -11,14 +18,12 @@ function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_cent
   6600 270;
   11500 500;
   ];
-  
-  %projectName='trial9';
-  
+    
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
   %mag=200000;
   %dwell=20000;
-  % rep=1;
-  % beamCurrent=1; %Beam current.
+  rep=1;
+  beamCurrent=1; %Beam current.
   
   % vertical overlap of circles as a proportion of their diameter
   overlap=0.50;
@@ -34,11 +39,11 @@ function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_cent
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % size of a circle in mum
-  spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3
+  spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
   %spotSize = 0.500
     
   % vertical stepping distance
-  BeamStep_Y = max(round((spotSize-spotSize*overlap)/res),1) % => minimum beamStep = 1 (pxl?)
+  BeamStep_Y = max(round((spotSize-spotSize*overlap)/res),1);
   %'BeamStep_Y'
   %round((spotSize-spotSize*overlap)/res)
   %1
@@ -48,8 +53,8 @@ function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_cent
   %BeamStep_X = round((spotSize+trenchWidth*1e-3)/res);
   BeamStep_X = BeamStep_Y;
    
-  W_pxl = round(x_size_mum/res);
-  H_pxl = round(y_size_mum/res);
+  W_pxl = round(circleRadius/res);
+  H_pxl = round(rectW/res);
   
   %xp=[1,1+BeamStep_X,1+(1+2)*BeamStep_X,1+(1+2+3)*BeamStep_X]
   Xp = 1:BeamStep_X:W_pxl;
@@ -78,8 +83,8 @@ function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_cent
     end
   end
   
-  Sx = 2048+round(x_center_mum/res); % shift centre in pixel
-  Sy = 1980+round(y_center_mum/res); % shift centre in pixel
+  Sx = 2048+round(circleCentro2D(1)/res); % shift centre in pixel
+  Sy = 1980+round(circleCentro2D(2)/res); % shift centre in pixel
   
   X = round(X+Sx-W_pxl/2);
   Y = round(Y+Sy-H_pxl/2);
