@@ -3,6 +3,10 @@
 
 %fileBaseName='tmp';mag=30000;dwell=123;rep=18;holes_X=[1,2,3];holes_Y=[2,3,4];holes_Size_X=[0.1,0.2,0.3];holes_Size_Y=[0.2,0.3,0.4];holes_Type=[0,1,2];separate_files=true;beamCurrent=11;
 
+% ex: filename_cellarray = circleRectCombo('/tmp/test.str', 304000/4096, 123, 1, 1, [0,0], 10, 1, 5, 1)
+% readStrFile(filename_cellarray, 304000/4096)
+
+
 function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, beamCurrent, circleCentro2D, circleRadius, circleDelta, rectW, rectDelta)
   % rep Repetitions - try 1.
   % mag Magnification - set value from 20 to 200000.
