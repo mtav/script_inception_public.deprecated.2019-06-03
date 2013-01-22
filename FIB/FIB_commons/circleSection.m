@@ -1,6 +1,6 @@
-function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentro2D, circleRadius, rectW)
+function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentro2D_mum, circleRadius_mum, rectW_mum)
   % size of circles in nm as a function of the beamcurrent
-  spotSizes=[1 8;
+  spotSizes_nm=[1 8;
   4 12;
   11 15;
   70 25;
@@ -32,73 +32,82 @@ function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentr
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % size of a circle in mum
-  spotSize = spotSizes(find(spotSizes==beamCurrent),2)*1e-3;
-  %spotSize = 0.500
+  spotSize_mum = spotSizes_nm(find(spotSizes_nm==beamCurrent),2)*1e-3;
+  %spotSize_mum = 0.500
     
   % vertical stepping distance
-  BeamStep_Y = max(round((spotSize-spotSize*overlap)/res),1);
-  %'BeamStep_Y'
-  %round((spotSize-spotSize*overlap)/res)
+  BeamStep_Y_pxl = max(round( ((1-overlap)*spotSize_mum)/res ),1);
+  %'BeamStep_Y_pxl'
+  %round((spotSize_mum-spotSize_mum*overlap)/res)
   %1
-  %BeamStep_Y
+  %BeamStep_Y_pxl
   
   % horizontal stepping distance
-  %BeamStep_X = round((spotSize+trenchWidth*1e-3)/res);
-  BeamStep_X = BeamStep_Y;
+  %BeamStep_X_pxl = round((spotSize_mum+trenchWidth*1e-3)/res);
+  BeamStep_X_pxl = BeamStep_Y_pxl;
    
-  W_pxl = round(circleRadius/res);
-  H_pxl = round(rectW/res);
+  W_pxl = round(2*circleRadius_mum/res);
+  H_pxl = round(rectW_mum/res);
   
-  BeamStep_X = 0.1
-  circleDelta = BeamStep_X
+  %BeamStep_X_pxl = 0.1
   
-  Ncircles = floor((circleRadius/res)/circleDelta)
+  Ncircles = floor((circleRadius_mum/res)/BeamStep_X_pxl)
   
-  circleCentro2D
-  circleRadius
-  rectW
+  %circleCentro2D_mum
+  %circleRadius_mum
+  %rectW_mum
   
   dwell_vector = [];
   X = [];
   Y = [];
   
-  %BeamStep_X = 0.1
-  Ncircles = 10
-  res = 1
-  circleDelta = 1
-  BeamStep_X = 1
+  %BeamStep_X_pxl = 0.1
+  disp('========================')
+  Ncircles
+  res
+  BeamStep_X_pxl
+
+  %currentRadius_pxl = Ncircles*BeamStep_X_pxl
+  %alpha_start = asin(H_pxl/currentRadius_pxl)
+  %alpha_end = pi - alpha_start
+  %L_mum = currentRadius_pxl*(alpha_end-alpha_start)
+  %L_pxl = L_mum/res
+  %Npoints = L_pxl/BeamStep_X_pxl
+
+  disp('========================')
+  %return
   for m = 1:Ncircles
     %m = Ncircles
-    currentRadius = m*circleDelta
-    alpha_start = asin(rectW/currentRadius)
+    currentRadius_pxl = m*BeamStep_X_pxl
+    alpha_start = asin(H_pxl/currentRadius_pxl)
     if ( isreal(alpha_start) )
       alpha_end = pi - alpha_start
-      L_mum = currentRadius*(alpha_end-alpha_start)
-      L_pxl = L_mum/res
-      Npoints = L_pxl/BeamStep_X
-      %BeamStep_X
+      L_pxl = currentRadius_pxl*(alpha_end-alpha_start)
+      %L_pxl = L_mum/res
+      Npoints = L_pxl/BeamStep_X_pxl
+      %BeamStep_X_pxl
 
       %Npoints = 500
       %alpha_start = 0
       %alpha_end = pi
-      angles = linspace(alpha_start, alpha_end, Npoints)
+      angles = linspace(alpha_start, alpha_end, Npoints);
 
       if (mod(m,2)==0) % positive direction
-        X = [X,(currentRadius/res).*cos(angles)];
-        Y = [Y,(currentRadius/res).*sin(angles)];
+        X = [X,(currentRadius_pxl).*cos(angles)];
+        Y = [Y,(currentRadius_pxl).*sin(angles)];
       else % negative direction
-        X = [X,(currentRadius/res).*cos(fliplr(angles))];
-        Y = [Y,(currentRadius/res).*sin(fliplr(angles))];
+        X = [X,(currentRadius_pxl).*cos(fliplr(angles))];
+        Y = [Y,(currentRadius_pxl).*sin(fliplr(angles))];
       end
     end
   
   end
   
-  Sx = 2048+round(circleCentro2D(1)/res); % shift centre in pixel
-  Sy = 1980+round(circleCentro2D(2)/res); % shift centre in pixel
+  Sx = 2048+round(circleCentro2D_mum(1)/res); % shift centre in pixel
+  Sy = 1980+round(circleCentro2D_mum(2)/res); % shift centre in pixel
   
-  %X = round(X+Sx-W_pxl/2);
-  %Y = round(Y+Sy-H_pxl/2);
+  X = round(X+Sx);
+  Y = round(Y+Sy);
   dwell_vector = dwell*ones(1,length(X));
   
   length(X)
@@ -121,11 +130,11 @@ function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentr
   %hold on;
   
   %disp('Plotting circles...');
-  %spotR=spotSize/res/2;
+  %spotR=spotSize_mum/res/2;
   %for m=1:length(x)
     %subplot(2,1,1)
-    %rectangle('Position',[x(m)-spotR,y(m)-spotR,spotSize/res,spotSize/res],'Curvature',[1,1])
+    %rectangle('Position',[x(m)-spotR,y(m)-spotR,spotSize_mum/res,spotSize_mum/res],'Curvature',[1,1])
     %subplot(2,1,2)
-    %rectangle('Position',res*[x(m)-spotR,y(m)-spotR,spotSize/res,spotSize/res],'Curvature',[1,1])
+    %rectangle('Position',res*[x(m)-spotR,y(m)-spotR,spotSize_mum/res,spotSize_mum/res],'Curvature',[1,1])
   %end
 end

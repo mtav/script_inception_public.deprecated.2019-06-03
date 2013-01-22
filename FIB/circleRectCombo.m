@@ -39,7 +39,7 @@ function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, bea
   %circleCentro2D(2)
   %2*circleRadius
   %rectW
-  %[dwell_vector_rectangle,X_rectangle,Y_rectangle] = ZigZagHoleRectangular(beamCurrent, res, dwell, circleCentro2D(1), circleCentro2D(2), 2*circleRadius, rectW);
+  [dwell_vector_rectangle,X_rectangle,Y_rectangle] = ZigZagHoleRectangular(beamCurrent, res, dwell, circleCentro2D(1), circleCentro2D(2)+0.5*rectW, 2*circleRadius, rectW);
 
   total_dwell_vector = [dwell_vector_circle_section, dwell_vector_rectangle];
   total_X = [X_circle_section, X_rectangle];
