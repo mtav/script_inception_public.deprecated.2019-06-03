@@ -8,6 +8,9 @@
 
 
 function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, beamCurrent, circleCentro2D, circleRadius, circleDelta, rectW, rectDelta)
+
+  % ex: filename_cellarray = circleRectCombo('test.str', 50000, 100, 1, 70, [0,0], 2, -1, 0.25, -1); readStrFile(filename_cellarray,50000);
+
   % rep Repetitions - try 1.
   % mag Magnification - set value from 20 to 200000.
   % (x=0,y=0) = center of the screen
