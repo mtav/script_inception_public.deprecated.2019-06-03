@@ -1,11 +1,4 @@
 function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentro2D, circleRadius, rectW)
-
-
-  dwell_vector = []
-  X = []
-  Y = []
-  return
-
   % size of circles in nm as a function of the beamcurrent
   spotSizes=[1 8;
   4 12;
@@ -22,8 +15,8 @@ function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentr
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
   %mag=200000;
   %dwell=20000;
-  rep=1;
-  beamCurrent=1; %Beam current.
+  %rep=1;
+  %beamCurrent=1; %Beam current.
   
   % vertical overlap of circles as a proportion of their diameter
   overlap=0.50;
@@ -56,39 +49,59 @@ function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentr
   W_pxl = round(circleRadius/res);
   H_pxl = round(rectW/res);
   
-  %xp=[1,1+BeamStep_X,1+(1+2)*BeamStep_X,1+(1+2+3)*BeamStep_X]
-  Xp = 1:BeamStep_X:W_pxl;
-  Yp = 1:BeamStep_Y:H_pxl;
+  BeamStep_X = 0.1
+  circleDelta = BeamStep_X
   
-  %'lengths'
-  %length(xp)
-  %length(yp)
-  %return
+  Ncircles = floor((circleRadius/res)/circleDelta)
   
-  YpFlip = fliplr(Yp);
-  onesVec = ones(1,length(Yp));
+  circleCentro2D
+  circleRadius
+  rectW
   
   dwell_vector = [];
   X = [];
   Y = [];
   
-  N = length(Xp);
-  for m=1:N
-    %disp(['m = ',num2str(m/N)]);
-    X = [X,Xp(m)*onesVec];
-    if (mod(m,2)==0)
-      Y = [Y,Yp];
-    else
-      Y = [Y,YpFlip];
+  %BeamStep_X = 0.1
+  Ncircles = 10
+  res = 1
+  circleDelta = 1
+  BeamStep_X = 1
+  for m = 1:Ncircles
+    %m = Ncircles
+    currentRadius = m*circleDelta
+    alpha_start = asin(rectW/currentRadius)
+    if ( isreal(alpha_start) )
+      alpha_end = pi - alpha_start
+      L_mum = currentRadius*(alpha_end-alpha_start)
+      L_pxl = L_mum/res
+      Npoints = L_pxl/BeamStep_X
+      %BeamStep_X
+
+      %Npoints = 500
+      %alpha_start = 0
+      %alpha_end = pi
+      angles = linspace(alpha_start, alpha_end, Npoints)
+
+      if (mod(m,2)==0) % positive direction
+        X = [X,(currentRadius/res).*cos(angles)];
+        Y = [Y,(currentRadius/res).*sin(angles)];
+      else % negative direction
+        X = [X,(currentRadius/res).*cos(fliplr(angles))];
+        Y = [Y,(currentRadius/res).*sin(fliplr(angles))];
+      end
     end
+  
   end
   
   Sx = 2048+round(circleCentro2D(1)/res); % shift centre in pixel
   Sy = 1980+round(circleCentro2D(2)/res); % shift centre in pixel
   
-  X = round(X+Sx-W_pxl/2);
-  Y = round(Y+Sy-H_pxl/2);
+  %X = round(X+Sx-W_pxl/2);
+  %Y = round(Y+Sy-H_pxl/2);
   dwell_vector = dwell*ones(1,length(X));
+  
+  length(X)
   
   %filename = ['snake_',projectName,'_',num2str(mag),'X_dwell',num2str(dwell),'_rep',num2str(rep),'.str'];
   %disp(['Writing to ',filename]);

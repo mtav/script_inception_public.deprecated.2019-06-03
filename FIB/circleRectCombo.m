@@ -20,17 +20,26 @@ function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, bea
   [res, HFW] = getResolution(mag);
   disp(['Resolution = ',num2str(res),' mum/pxl']);
 
+  dwell_vector_circle_section=[]
+  X_circle_section =[]
+  Y_circle_section=[]
+  
+  dwell_vector_rectangle=[]
+  X_rectangle=[]
+  Y_rectangle=[]
+  
   % get points
+  %[dwell_vector_circle_section,X_circle_section,Y_circle_section] = spiralHoleCircular(beamCurrent,res,dwell,circleCentro2D(1),circleCentro2D(2), circleRadius, rectW);
   [dwell_vector_circle_section,X_circle_section,Y_circle_section] = circleSection(beamCurrent, res, dwell, circleCentro2D, circleRadius, rectW);
   
-  beamCurrent
-  res
-  dwell
-  circleCentro2D(1)
-  circleCentro2D(2)
-  2*circleRadius
-  rectW
-  [dwell_vector_rectangle,X_rectangle,Y_rectangle] = ZigZagHoleRectangular(beamCurrent, res, dwell, circleCentro2D(1), circleCentro2D(2), 2*circleRadius, rectW);
+  %beamCurrent
+  %res
+  %dwell
+  %circleCentro2D(1)
+  %circleCentro2D(2)
+  %2*circleRadius
+  %rectW
+  %[dwell_vector_rectangle,X_rectangle,Y_rectangle] = ZigZagHoleRectangular(beamCurrent, res, dwell, circleCentro2D(1), circleCentro2D(2), 2*circleRadius, rectW);
 
   total_dwell_vector = [dwell_vector_circle_section, dwell_vector_rectangle];
   total_X = [X_circle_section, X_rectangle];

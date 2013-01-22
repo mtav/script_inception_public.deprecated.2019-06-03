@@ -60,21 +60,21 @@ function [dwell_vector,X,Y] = ZigZagHoleRectangular(beamCurrent,res,dwell,x_cent
   %length(yp)
   %return
   
-  YpFlip = fliplr(Yp);
-  onesVec = ones(1,length(Yp));
+  XpFlip = fliplr(Xp);
+  onesVec = ones(1,length(Xp));
   
   dwell_vector = [];
   X = [];
   Y = [];
   
-  N = length(Xp);
+  N = length(Yp);
   for m=1:N
     %disp(['m = ',num2str(m/N)]);
-    X = [X,Xp(m)*onesVec];
+    Y = [Y,Yp(m)*onesVec];
     if (mod(m,2)==0)
-      Y = [Y,Yp];
+      X = [X,Xp];
     else
-      Y = [Y,YpFlip];
+      X = [X,XpFlip];
     end
   end
   
