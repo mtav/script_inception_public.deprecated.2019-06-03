@@ -5,9 +5,9 @@
 
 % ex: filename_cellarray = circleRectCombo('/tmp/test.str', 304000/4096, 123, 1, 1, [0,0], 10, 1, 5, 1)
 % readStrFile(filename_cellarray, 304000/4096)
+% dwelltime=round(800*30*scale); mag=50000; filename_cellarray = circleRectCombo('test.str', mag, dwelltime, 1, 11, [-0.1,-1.5+ 0.24160], 1.5, 0.2, [0,0], [1,1]); readStrFile(filename_cellarray,mag);
 
-
-function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, beamCurrent, circleCentro2D, circleRadius, circleDelta, rectW, rectDelta)
+function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, beamCurrent, circleCentro2D, circleRadius, circleSectionHeight, rectCentro2D, rectSize2D)
 
   % ex: filename_cellarray = circleRectCombo('test.str', 50000, 100, 1, 70, [0,0], 2, -1, 0.25, -1); readStrFile(filename_cellarray,50000);
 
@@ -33,7 +33,7 @@ function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, bea
   
   % get points
   %[dwell_vector_circle_section,X_circle_section,Y_circle_section] = spiralHoleCircular(beamCurrent,res,dwell,circleCentro2D(1),circleCentro2D(2), circleRadius, rectW);
-  [dwell_vector_circle_section,X_circle_section,Y_circle_section] = circleSection(beamCurrent, res, dwell, circleCentro2D, circleRadius, rectW);
+  [dwell_vector_circle_section,X_circle_section,Y_circle_section] = circleSection(beamCurrent, res, dwell, circleCentro2D, circleRadius, circleRadius-circleSectionHeight);
   
   %beamCurrent
   %res
@@ -42,7 +42,7 @@ function filename_cellarray = circleRectCombo(fileBaseName, mag, dwell, rep, bea
   %circleCentro2D(2)
   %2*circleRadius
   %rectW
-  [dwell_vector_rectangle,X_rectangle,Y_rectangle] = ZigZagHoleRectangular(beamCurrent, res, dwell, circleCentro2D(1), circleCentro2D(2)+0.5*rectW, 2*circleRadius, rectW);
+  %[dwell_vector_rectangle,X_rectangle,Y_rectangle] = ZigZagHoleRectangular(beamCurrent, res, dwell, rectCentro2D(1), rectCentro2D(2), rectSize2D(1), rectSize2D(2));
 
   total_dwell_vector = [dwell_vector_circle_section, dwell_vector_rectangle];
   total_X = [X_circle_section, X_rectangle];
