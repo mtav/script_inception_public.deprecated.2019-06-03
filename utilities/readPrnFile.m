@@ -10,7 +10,7 @@ function [header,data,ux,uy] = readPrnFile(filename)
   
   if (nargin==0)
     [FileName,PathName] = uigetfile({'*.prn *.dat'},'Select the prn-file',getenv('DATADIR'));
-    filename=[PathName,filesep,FileName];
+    filename = [PathName,filesep,FileName];
   end
   
   disp(['Opening: ',filename,' from ',pwd()]);
@@ -26,30 +26,31 @@ function [header,data,ux,uy] = readPrnFile(filename)
     words = regexp(dummy,'(?<word>\w+)\s*|\s*(?<word>\w+)','tokens');
     ncols = size(words,2);
     
-    for m=1:ncols
+    for m = 1:ncols
       %char(words{m})
       header{m} = char(words{m});
     end
     
-    M=fscanf(fid,'%e');
+    M = fscanf(fid,'%e');
     fclose(fid);
     
-    data=reshape(M,ncols,length(M)/ncols);
-    data=data';
+    % TODO: Add check for invalid .prn files where length(M)/ncols!=length(M)//ncols (//=integer division)
+    data = reshape(M,ncols,length(M)/ncols);
+    data = data';
     
-    ux=[];
-    uy=[];
+    ux = [];
+    uy = [];
     if nargout>3 && not(strcmp(header{1},'Time'))
-      x=data(:,1);
-      y=data(:,2);
-      ux=unique(x);
-      nx=length(ux);
-      ny=length(x)/nx;
-      uy=y(1:ny);
-      for m=3:size(data,2)
-        data_reshaped(:,:,m-2)=reshape(data(:,m),ny,nx);
+      x = data(:,1);
+      y = data(:,2);
+      ux = unique(x);
+      nx = length(ux);
+      ny = length(x)/nx;
+      uy = y(1:ny);
+      for m = 3:size(data,2)
+        data_reshaped(:,:,m-2) = reshape(data(:,m),ny,nx);
       end
-      data=data_reshaped;
+      data = data_reshaped;
       %imagesc(ux,uy,data_reshaped(:,:,1));
       %xlabel(header(1));
       %ylabel(header(2));
