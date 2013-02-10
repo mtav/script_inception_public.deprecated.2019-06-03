@@ -1,4 +1,6 @@
 function varargout = postprocessor(varargin)
+  % TODO: Add dimensions auto-detect feature (or manual dimension entering) to enable plotting of .prn files without .geo or .inp files.
+  
   disp('function varargout = postprocessor(varargin)')
   %
   % usage examples:
