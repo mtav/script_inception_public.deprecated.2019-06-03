@@ -238,6 +238,7 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
     parametersFile_local = [ harminv_basepath_local, '_harminv.selection.txt' ];
 
     if computeHarminvGlobal
+      % TODO: Add way to manually specify the range for harminv (+ save the range in the filenames!)
       lambdaLow_mum = xmin_global*1e-3;
       lambdaHigh_mum = xmax_global*1e-3;
 
