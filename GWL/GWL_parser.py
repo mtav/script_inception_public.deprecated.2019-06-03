@@ -360,6 +360,7 @@ class GWLobject(object):
 
   def addXblock(self, P1, P2, LineNumber_Horizontal = None, LineDistance_Horizontal = DEFAULT_VOXEL_WIDTH, LineNumber_Vertical = None, LineDistance_Vertical = DEFAULT_VOXEL_HEIGHT, BottomToTop = False):
 
+    # TODO: Should use calculateNvoxelsAndInterVoxelDistance()? And overlap? -> Other block functions should require overlap/linenumber args?
     if LineNumber_Horizontal is None: LineNumber_Horizontal = math.floor( (abs(P2[1]-P1[1])/LineDistance_Horizontal) + 1 )
     if LineNumber_Vertical is None: LineNumber_Vertical = math.floor( (abs(P2[2]-P1[2])/LineDistance_Vertical) + 1 )
 
