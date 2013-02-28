@@ -462,7 +462,9 @@ class GWLobject(object):
         self.addHorizontalCircle([centro[0],centro[1],z], radius, power, PointDistance_theta)
     return
 
-  def addHorizontalCircle(self, center, radius, power, PointDistance):
+  # TODO: Improve by just passing a min/max PointDistance and choosing the distance so that it gives a nice integer number of points to fit the desired circle arc?
+  # TODO: different functions for this? func options?
+  def addHorizontalCircle(self, center, radius, power, PointDistance, startAngle=0, endAngle=2*numpy.pi):
     #print radius
     write_sequence = []
     if radius < 0.5*PointDistance:
@@ -472,12 +474,14 @@ class GWLobject(object):
       #print radius
       #print PointDistance/float(2*radius)
       alphaStep = 2*numpy.arcsin(PointDistance/float(2*radius))
-      N = int(2*numpy.pi/alphaStep)
+      angleRange = abs(endAngle-startAngle)
+      N = int(angleRange/alphaStep)
       for i in range(N):
+        currentAngle = startAngle + i*angleRange/float(N)
         if 0<=power and power<=100:
-          P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2],power]
+          P = [center[0]+radius*numpy.cos(currentAngle),center[1]+radius*numpy.sin(currentAngle),center[2],power]
         else:
-          P = [center[0]+radius*numpy.cos(i*2*numpy.pi/float(N)),center[1]+radius*numpy.sin(i*2*numpy.pi/float(N)),center[2]]
+          P = [center[0]+radius*numpy.cos(currentAngle),center[1]+radius*numpy.sin(currentAngle),center[2]]
         write_sequence.append(P)
     self.GWL_voxels.append(write_sequence)
 
