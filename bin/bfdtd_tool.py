@@ -37,6 +37,18 @@ def printExcitation(arguments):
     print(sim_in.excitation_list[i])
   return
 
+def printSnapshotFrequencyList(arguments):
+  sim_in = bfdtd.BFDTDobject()
+  sim_in.verbosity = arguments.verbosity
+  for infile in arguments.infile:
+    sim_in.readBristolFDTD(infile)
+  frequency_list = set()
+  for freq_snap in sim_in.frequency_snapshot_list:
+    for freq in freq_snap.frequency_vector:
+      frequency_list.add(freq)
+  print(frequency_list)
+  return
+  
 def printAll(arguments):
   sim_in = bfdtd.BFDTDobject()
   sim_in.verbosity = arguments.verbosity
@@ -225,6 +237,7 @@ def addModeVolumeFrequencySnapshots(arguments):
       f.name = NAME + '.freq'
       f.first = arguments.first
       f.repetition = arguments.repetition
+      f.starting_sample = arguments.starting_sample
       f.frequency_vector = frequency_vector
   elif arguments.slicing_direction == 'Y':
     pos_list = FDTDobj.mesh.getYmesh()
@@ -237,6 +250,7 @@ def addModeVolumeFrequencySnapshots(arguments):
       f.name = NAME + '.freq'
       f.first = arguments.first
       f.repetition = arguments.repetition
+      f.starting_sample = arguments.starting_sample
       f.frequency_vector = frequency_vector
   elif arguments.slicing_direction == 'Z':
     pos_list = FDTDobj.mesh.getZmesh()
@@ -279,6 +293,7 @@ def addModeVolumeFrequencySnapshots(arguments):
       F.P2 = [ FDTDobj.box.upper[0], FDTDobj.box.upper[1], pos]
       F.first = arguments.first
       F.repetition = arguments.repetition
+      F.starting_sample = arguments.starting_sample
       F.frequency_vector = frequency_vector
       
       full_list.append(F)
@@ -292,10 +307,6 @@ def addModeVolumeFrequencySnapshots(arguments):
   else:
     print('ERROR: invalid slicing direction : arguments.slicing_direction = ' + str(arguments.slicing_direction), file=sys.stderr)
     sys.exit(-1)
-
-  print(full_list)
-  list_1 = full_list[0:len(full_list)//2]
-  list_2 = full_list[len(full_list)//2:len(full_list)]
 
   ## temporary hack to rectify excitation direction
   #P1 = numpy.array(FDTDobj.excitation_list[0].P1)
@@ -317,20 +328,26 @@ def addModeVolumeFrequencySnapshots(arguments):
   #FDTDobj.clearFrequencySnapshots()
   #FDTDobj.clearTimeSnapshots()
 
-  ## Add full X,Y,Z central snapshots for reference
-  #pos = FDTDobj.box.getCentro()
+  # Add full X,Y,Z central snapshots for reference
+  pos = FDTDobj.box.getCentro()
 
-  #for i in [0,1,2]:
-    #letter = ['X','Y','Z'][i]
+  for i in [0,1]:
+    letter = ['X','Y','Z'][i]
     #e = FDTDobj.addEpsilonSnapshot(letter,pos[i])
     #e.name = 'central.'+letter+'.eps'
     #e.first = 1
     #e.repetition = FDTDobj.flag.iterations + 1 # So that only one epsilon snapshot is created. We don't need more.
-    #f = FDTDobj.addFrequencySnapshot(letter,pos[i]);
-    #f.name = 'central.'+letter+'.fsnap'
-    #f.first = arguments.first
-    #f.repetition = arguments.repetition
-    #f.frequency_vector = frequency_vector
+    f = FDTDobj.addFrequencySnapshot(letter,pos[i]);
+    f.name = 'central.'+letter+'.fsnap'
+    f.first = arguments.first
+    f.repetition = arguments.repetition
+    f.starting_sample = arguments.starting_sample
+    f.frequency_vector = frequency_vector
+    full_list.append(f)
+
+  print(full_list)
+  list_1 = full_list[0:len(full_list)//2]
+  list_2 = full_list[len(full_list)//2:len(full_list)]
     
   if arguments.outdir is None:
     print('ERROR: no outdir specified', file=sys.stderr)
@@ -348,12 +365,12 @@ def addModeVolumeFrequencySnapshots(arguments):
   destdir = os.path.join(arguments.outdir,'./part_1')
   FDTDobj.snapshot_list = list_1
   FDTDobj.writeAll(destdir, arguments.basename)
-  FDTDobj.writeShellScript(destdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  FDTDobj.writeShellScript(destdir + os.path.sep + arguments.basename + '.sh', arguments.basename, arguments.executable, '$JOBDIR', WALLTIME = arguments.walltime)
 
   destdir = os.path.join(arguments.outdir,'./part_2')
   FDTDobj.snapshot_list = list_2
   FDTDobj.writeAll(destdir, arguments.basename)
-  FDTDobj.writeShellScript(destdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  FDTDobj.writeShellScript(destdir + os.path.sep + arguments.basename + '.sh', arguments.basename, arguments.executable, '$JOBDIR', WALLTIME = arguments.walltime)
 
   return
 
@@ -459,7 +476,7 @@ def addCentralXYZSnapshots(arguments):
   
   FDTDobj.fileList = []  
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, arguments.executable, '$JOBDIR', WALLTIME = arguments.walltime)
 
   return
   
@@ -481,7 +498,7 @@ def clearOutputs(arguments):
 
   FDTDobj.fileList = []
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, arguments.executable, '$JOBDIR', WALLTIME = arguments.walltime)
   
   return
 
@@ -546,7 +563,7 @@ def addEpsilonSnapshots(arguments):
 
   FDTDobj.fileList = []  
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, arguments.executable, '$JOBDIR', WALLTIME = arguments.walltime)
     
   return
 
@@ -604,7 +621,7 @@ def FreqToEps(arguments):
   
   FDTDobj.fileList = []  
   FDTDobj.writeAll(arguments.outdir, arguments.basename)
-  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, '$HOME/bin/fdtd64_2008', '$JOBDIR', WALLTIME = arguments.walltime)
+  FDTDobj.writeShellScript(arguments.outdir + os.path.sep + arguments.basename + '.sh', arguments.basename, arguments.executable, '$JOBDIR', WALLTIME = arguments.walltime)
   return
 
 def get_argument_parser():
@@ -645,6 +662,7 @@ def get_argument_parser():
   group.add_argument('-E','--excitation', action="store_true", dest='print_Excitation', default=False, help='print out excitations')
   group.add_argument('-A','--all', action="store_true", dest='print_all', default=False, help='print out all information')
   group.add_argument('-D','--printExcitationDirection', action="store_true", dest='print_ExcitationDirection', default=False, help='print out excitation directions')
+  group.add_argument('--printSnapshotFrequencyList', action="store_true", dest='printSnapshotFrequencyList', default=False, help='print out a list of frequencies used in frequency snapshots')
   group.add_argument('-f','--format', action="store_true", dest='format', default=False, help='Use FORMAT as the format string that controls the output.')
   group.add_argument('--id', action="store", metavar='ID', dest="id_list", nargs='+', type=int, help='ID(s) of the object(s) you want to print out.')
   
@@ -653,12 +671,16 @@ def get_argument_parser():
   group.add_argument('--slicing-direction', choices=['X','Y','Z'], default=None, dest='slicing_direction')
   group.add_argument('--first', type=int, default=3200, help='first iteration at which to take snapshot')
   group.add_argument('--repetition', type=int, default=32000, help='step in number of iterations at which to take snapshots')
+  group.add_argument('--starting_sample', type=int, default=6400, help='starting sample for the snapshots')
   group.add_argument('--iterations', type=int, default=67200, help='number of iterations')
   group.add_argument('--freqListFile', default=None, help='frequency list file\n\
   format:\n\
   PeakNo	Frequency(Hz)	Wavelength(nm)	QFactor\n\
   1	4.7257745e+14	634.37741293	40.4569\n\
   2	4.9540615e+14	605.14480606	90.37')
+
+  # TODO: default args should probably be gotten from the various classes
+  group.add_argument('--exe', action="store", metavar='EXE', dest="executable", help='exe to use', default='$HOME/bin/fdtd64_2008')
 
   group.add_argument('--frequency_MHz', type=float, help='frequency in MHz', action='store', metavar='f(MHz)', nargs='+')
   group.add_argument('--wavelength_mum', type=float, help='wavelength in µm', action='store', metavar='lambda(µm)', nargs='+')
@@ -709,6 +731,7 @@ def main(args=None):
   parser = get_argument_parser()
   arguments = parser.parse_args() if args is None else parser.parse_args(args)
   
+  # TODO: implement this nicer way?
   # Only works if func has been defined (for example with subcommand and set_defaults())
   #arguments.func(arguments)  # call the appropriate subcommand function
   
@@ -727,6 +750,7 @@ def main(args=None):
   if arguments.print_Ncells: printNcells(arguments)
   if arguments.print_Excitation: printExcitation(arguments)
   if arguments.print_ExcitationDirection: printExcitationDirection(arguments)
+  if arguments.printSnapshotFrequencyList: printSnapshotFrequencyList(arguments)
 
   if arguments.modevolume: addModeVolumeFrequencySnapshots(arguments)
   if arguments.calc_modevolume: calculateModeVolume(arguments)
