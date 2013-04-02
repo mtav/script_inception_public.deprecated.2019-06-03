@@ -44,41 +44,42 @@ def processFiles(arguments):
   
   for i in range(len(src)):
     numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = brisFDTD_ID_info.alphaID_to_numID(src[i], arguments.expected_object_type, arguments.probe_ident)
-    (directory, basename) = os.path.split(fixed_filename)
+    if fixed_filename is not None:
+      (directory, basename) = os.path.split(fixed_filename)
 
-    # temporary quick hack (TODO: generalize use of offset and implement actual format specifier)
-    if arguments.output_format:
-      basename, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_FrequencySnapshot(numID + arguments.offset, snap_plane, probe_ident, snap_time_number)
+      # temporary quick hack (TODO: generalize use of offset and implement actual format specifier)
+      if arguments.output_format:
+        basename, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_FrequencySnapshot(numID + arguments.offset, snap_plane, probe_ident, snap_time_number)
 
-    if arguments.output_directory:
-      directory = arguments.output_directory
-    
-    fixed_filename = os.path.join(directory, basename)
+      if arguments.output_directory:
+        directory = arguments.output_directory
+      
+      fixed_filename = os.path.join(directory, basename)
 
-    dst[i] = fixed_filename
-    if dst[i]:
-      if arguments.verbose:
-        print( arguments.action + ' ' + src[i] + ' -> ' + dst[i] )
-      if os.path.isfile(src[i]):
-        if (not os.path.isfile(dst[i])) or arguments.force:
-          if (not arguments.no_act):
-            if arguments.action == 'move':
-              os.rename(src[i], dst[i])
-            elif arguments.action == 'copy':
-              shutil.copy(src[i], dst[i])
-            elif arguments.action == 'hardlink':
-              os.link(src[i], dst[i])
-            elif arguments.action == 'symlink':
-              os.symlink(src[i], dst[i])
-            else:
-              print('action not recognized : action = ' + arguments.action,file=sys.stderr)
-              sys.exit(-1)
+      dst[i] = fixed_filename
+      if dst[i]:
+        if arguments.verbose:
+          print( arguments.action + ' ' + src[i] + ' -> ' + dst[i] )
+        if os.path.isfile(src[i]):
+          if (not os.path.isfile(dst[i])) or arguments.force:
+            if (not arguments.no_act):
+              if arguments.action == 'move':
+                os.rename(src[i], dst[i])
+              elif arguments.action == 'copy':
+                shutil.copy(src[i], dst[i])
+              elif arguments.action == 'hardlink':
+                os.link(src[i], dst[i])
+              elif arguments.action == 'symlink':
+                os.symlink(src[i], dst[i])
+              else:
+                print('action not recognized : action = ' + arguments.action,file=sys.stderr)
+                sys.exit(-1)
+          else:
+            print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : destination file exists', file=sys.stderr)
         else:
-          print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : destination file exists', file=sys.stderr)
+          print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : source file does not exist', file=sys.stderr)
       else:
-        print('WARNING: Skipping '+src[i]+' -> '+dst[i]+' : source file does not exist', file=sys.stderr)
-    else:
-      print('WARNING: ' + src[i] + ' could not be converted', file=sys.stderr)
+        print('WARNING: ' + src[i] + ' could not be converted', file=sys.stderr)
 
   # left in for reference
   #for filename in fnmatch.filter(filenames, '*:*.prn'):
