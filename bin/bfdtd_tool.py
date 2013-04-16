@@ -357,6 +357,7 @@ def addModeVolumeFrequencySnapshots(arguments):
     arguments.basename = os.path.basename(os.path.abspath(arguments.outdir))
   
   # hack: remove epsilon snapshots and probes to increase speed
+  FDTDobj.clearAllSnapshots()
   FDTDobj.clearEpsilonSnapshots()
   FDTDobj.clearProbes()
   
