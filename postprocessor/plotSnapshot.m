@@ -344,10 +344,16 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
         disp(['Nsnap = ',num2str(Nsnap)]);
         disp(['length(FDTDobj.frequency_snapshots) = ',num2str(length(FDTDobj.frequency_snapshots))]);
         
-        freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-        lambda_snap_mum = get_c0()/freq_snap_MHz;
-        lambda_snap_nm = lambda_snap_mum*1e3;
-        title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+        if Nsnap <= length(FDTDobj.frequency_snapshots)
+          freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+          lambda_snap_mum = get_c0()/freq_snap_MHz;
+          lambda_snap_nm = lambda_snap_mum*1e3;
+          title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
+        else
+          warning(['Requested snapshot number (',num2str(Nsnap),') exceeds number of snapshots in .inp file (',num2str(length(FDTDobj.frequency_snapshots)),').']);
+          title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  '???', ' nm, ', '???',' MHz'],'FontWeight','bold','Interpreter','none');
+        end
+        
       else
         title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
       end
@@ -571,11 +577,13 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     % additional stuff for frequency snapshots
     if handles.Type == 3 % frequency snapshot
       if exist('FDTDobj','var')==1
+      
         Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
         freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
         pos_mum = FDTDobj.frequency_snapshots(Nsnap).P1(handles.plane);
         lambda_snap_mum = get_c0()/freq_snap_MHz;
         lambda_snap_nm = lambda_snap_mum*1e3;
+        
         imageSaveNameFinal = strrep(imageSaveNameFinal, '%NSNAP', num2str(Nsnap));
         imageSaveNameFinal = strrep(imageSaveNameFinal, '%FREQ_SNAP_MHZ', num2str(freq_snap_MHz));
         imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_MUM', num2str(lambda_snap_mum));
