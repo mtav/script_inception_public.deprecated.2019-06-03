@@ -2,17 +2,15 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % function plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth, hide_figures, imageSaveName)
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  %Function to display results from frequency snapshots and poynting
-  %vector calculations from University of Bristol FDTD software
+  % Function to display results from frequency snapshots and poynting vector calculations from University of Bristol FDTD software
   %
-  %Written by Ian Buss 2006
+  % Written by Ian Buss 2006
   %
-  %Must be used in conjunction with companion files: readtextfile.m,
-  %hdrload.m
+  % Must be used in conjunction with companion files: readtextfile.m, hdrload.m
   %
-  %Version 4.2
+  % Version 4.2
   %
-  %For Poynting vector plots in the same format use snap_poy_int.m
+  % For Poynting vector plots in the same format use snap_poy_int.m
   % TODO: Locate snap_poy_int.m (Poynting vector snapshot?)
   % TODO: Add axis scaling (useful for thin structures)
   % Arguments:
@@ -43,12 +41,14 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   if exist('handles','var')==0 || isfield(handles,'autosave')==0; handles.autosave = 0; end
   if exist('handles','var')==0 || isfield(handles,'colour')==0; handles.colour = 1; end
   if exist('handles','var')==0 || isfield(handles,'geometry')==0; handles.geometry = 0; end
-  if exist('handles','var')==0 || isfield(handles,'interpolate')==0; handles.interpolate = 0; end
+  if exist('handles','var')==0 || isfield(handles,'interpolate')==0; handles.interpolate = true; end
   if exist('handles','var')==0 || isfield(handles,'modulus')==0; handles.modulus = 0; end
   if exist('handles','var')==0 || isfield(handles,'surface')==0; handles.surface = 1; end
   if exist('handles','var')==0 || isfield(handles,'drawTitle')==0; handles.drawTitle = true; end
   if exist('handles','var')==0 || isfield(handles,'createFigure')==0; handles.createFigure = true; end
   if exist('handles','var')==0 || isfield(handles,'colorbarPosition')==0; handles.colorbarPosition = 'East'; end
+  if exist('handles','var')==0 || isfield(handles,'UseAdaptedMaxIfIsNaN')==0; handles.UseAdaptedMaxIfIsNaN = true; end
+  if exist('handles','var')==0 || isfield(handles,'')==0; handles.symmetricRange = false; end
 
   if exist('handles','var')==0 || ...
      isfield(handles,'header')==0 || ...
@@ -81,19 +81,6 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
       disp([num2str(i), ':' ,handles.AllHeaders{i}]);
     end
     error('TODO: add column selector');
-  end
-
-  if exist('zlimits','var')==0
-    minval = NaN;
-    maxval = NaN;
-  else
-    if length(zlimits)==2
-      minval = zlimits(1);
-      maxval = zlimits(2);
-    else
-      disp(size(zlimits));
-      error('Incorrect zlimits size.');
-    end
   end
   
   % frequency snapshot specific
@@ -133,17 +120,14 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   end
   
   %% Load column of choice to data
-  modu = 1;
   rawdata = handles.data(:,column);
   if handles.modulus == 1
     data = abs(rawdata);
   else
     data = rawdata;
-    if min(data) < 0
-      modu = 0;
-    end
   end
 
+  %% check for empty data
   disp(['DATA INFO: min(rawdata) = ',num2str(min(rawdata))]);
   disp(['DATA INFO: max(rawdata) = ',num2str(max(rawdata))]);
   if min(rawdata)==0 & max(rawdata)==0
@@ -151,18 +135,37 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     return;
   end
   
+  %% set minval/maxval
+  if exist('zlimits','var')==0
+    minval = NaN;
+    maxval = NaN;
+  else
+    if length(zlimits)==2
+      minval = zlimits(1);
+      maxval = zlimits(2);
+    else
+      warning( ['Incorrect zlimits size: size(zlimits) = ',num2str(size(zlimits))] );
+      return;
+    end
+  end
+
+  disp(['DATA INFO: min(data) = ',num2str(min(data))]);
+  disp(['DATA INFO: max(data) = ',num2str(max(data))]);
+  disp(['DATA INFO: mean(data) = ',num2str(mean(data))]);
   if isnan(minval)
     minval = min(data);
-    disp(['min(data) = ',num2str(max(data))])
-    disp(['max(data) = ',num2str(max(data))])
-    disp(['mean(data) = ',num2str(mean(data))])
   end
   if isnan(maxval)
-    %maxval = max(data);
-    disp(['min(data) = ',num2str(max(data))])
-    disp(['max(data) = ',num2str(max(data))])
-    disp(['mean(data) = ',num2str(mean(data))])
-    maxval = 8./9.*max(data)+1./9.*mean(data);
+    if handles.UseAdaptedMaxIfIsNaN
+      maxval = 8./9.*max(data)+1./9.*mean(data); % this gives a pretty good color bar usually...
+    else
+      maxval = max(data);
+    end
+  end
+
+  if maxval <= minval
+    warning('maxval <= minval : Please check the min/max plot values.');
+    return;
   end
   
   %% Create plot data meshgrid
@@ -219,23 +222,22 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   colfig = handles.AllHeaders{column};
   disp(['minval = ',num2str(minval)]);
   disp(['maxval = ',num2str(maxval)]);
-  if (modu == 1) || (handles.modulus == 1)
-    if minval ~= maxval
-      caxis([minval maxval]);
+
+  if handles.symmetricRange
+    if maxval ~= 0
+      caxis([-maxval, maxval]);
     else
-      caxis([minval maxval+1]);
+      warning('Symmetric axis requested and max plot value set to 0, which causes an invalid [0,0] range. Resetting to [-1,1].');
+      caxis([-1, 1]);
     end
   else
-    if maxval ~= 0
-      caxis([-maxval maxval]);
-    else
-      caxis([-(maxval+1) maxval+1]);
-    end
+    caxis([minval, maxval]);
   end
+
   AspectRatio = get(gca,'DataAspectRatio');
   AspectRatio(1) = AspectRatio(2);
   set(gca,'DataAspectRatio',AspectRatio);
-  if handles.interpolate == 1
+  if handles.interpolate
     shading interp;
   else
     shading flat;
@@ -313,7 +315,7 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
       %if handles.drawColorBar
         %colorbar
       %end
-    %end  
+    %end
   %end
 
   % old code from unknown origin and for unknown use  
@@ -331,6 +333,24 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   title_base = [ snapfile_full_folder_basename, filesep, snapfile_full_basename, snapfile_full_ext ];
   disp(['title_base = ',title_base]);
 
+  %% Get object related information
+  if handles.Type == 3 % frequency snapshot
+    if exist('FDTDobj','var')==1
+      Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
+      disp(['Nsnap = ',num2str(Nsnap)]);
+      disp(['length(FDTDobj.frequency_snapshots) = ',num2str(length(FDTDobj.frequency_snapshots))]);
+      if Nsnap <= length(FDTDobj.frequency_snapshots)
+        freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
+        lambda_snap_mum = get_c0()/freq_snap_MHz;
+        lambda_snap_nm = lambda_snap_mum*1e3;
+        pos_mum = FDTDobj.frequency_snapshots(Nsnap).P1(handles.plane);
+      else
+        warning(['Requested snapshot number (',num2str(Nsnap),') exceeds number of snapshots in .inp file (',num2str(length(FDTDobj.frequency_snapshots)),').']);
+      end
+    end
+  end
+
+  %% Create and show title
   if handles.drawTitle
     if handles.Type == 1 % probe
       error('ERROR: Trying to plot probe with snapshot plotter');
@@ -340,20 +360,11 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
       title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
     elseif handles.Type == 3 % frequency snapshot
       if exist('FDTDobj','var')==1
-        Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
-        disp(['Nsnap = ',num2str(Nsnap)]);
-        disp(['length(FDTDobj.frequency_snapshots) = ',num2str(length(FDTDobj.frequency_snapshots))]);
-        
         if Nsnap <= length(FDTDobj.frequency_snapshots)
-          freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-          lambda_snap_mum = get_c0()/freq_snap_MHz;
-          lambda_snap_nm = lambda_snap_mum*1e3;
           title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  num2str(lambda_snap_nm), ' nm, ', num2str(freq_snap_MHz),' MHz'],'FontWeight','bold','Interpreter','none');
         else
-          warning(['Requested snapshot number (',num2str(Nsnap),') exceeds number of snapshots in .inp file (',num2str(length(FDTDobj.frequency_snapshots)),').']);
           title([title_base, ': ', char(handles.AllHeaders(column)), ' at ',  '???', ' nm, ', '???',' MHz'],'FontWeight','bold','Interpreter','none');
         end
-        
       else
         title([title_base, ': ', char(handles.AllHeaders(column))],'FontWeight','bold','Interpreter','none');
       end
@@ -551,6 +562,7 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     end
   end
   
+  %% autosave (TODO: merge both saving methods...)
   if handles.autosave == 1
     dim = length(snapshot_filename);
     if grey == 1
@@ -563,7 +575,7 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     print(fig,'-dpng',figout);
   end
   
-  % normal saving ( with format string! :D )
+  %% normal saving ( with format string! :D )
   if exist('imageSaveName','var')~=0
     % substitution variable preparation
     [ folder, basename, ext ] = fileparts(snapshot_filename);
@@ -577,13 +589,6 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     % additional stuff for frequency snapshots
     if handles.Type == 3 % frequency snapshot
       if exist('FDTDobj','var')==1
-      
-        Nsnap = alphaID_to_numID([snapfile_full_basename, snapfile_full_ext],FDTDobj.flag.id);
-        freq_snap_MHz = FDTDobj.frequency_snapshots(Nsnap).frequency;
-        pos_mum = FDTDobj.frequency_snapshots(Nsnap).P1(handles.plane);
-        lambda_snap_mum = get_c0()/freq_snap_MHz;
-        lambda_snap_nm = lambda_snap_mum*1e3;
-        
         imageSaveNameFinal = strrep(imageSaveNameFinal, '%NSNAP', num2str(Nsnap));
         imageSaveNameFinal = strrep(imageSaveNameFinal, '%FREQ_SNAP_MHZ', num2str(freq_snap_MHz));
         imageSaveNameFinal = strrep(imageSaveNameFinal, '%LAMBDA_SNAP_MUM', num2str(lambda_snap_mum));
