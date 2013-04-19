@@ -47,8 +47,8 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   if exist('handles','var')==0 || isfield(handles,'drawTitle')==0; handles.drawTitle = true; end
   if exist('handles','var')==0 || isfield(handles,'createFigure')==0; handles.createFigure = true; end
   if exist('handles','var')==0 || isfield(handles,'colorbarPosition')==0; handles.colorbarPosition = 'East'; end
-  if exist('handles','var')==0 || isfield(handles,'UseAdaptedMaxIfIsNaN')==0; handles.UseAdaptedMaxIfIsNaN = true; end
-  if exist('handles','var')==0 || isfield(handles,'')==0; handles.symmetricRange = false; end
+  if exist('handles','var')==0 || isfield(handles,'useAdaptedMaxIfIsNaN')==0; handles.useAdaptedMaxIfIsNaN = true; end
+  if exist('handles','var')==0 || isfield(handles,'symmetricRange')==0; handles.symmetricRange = false; end
 
   if exist('handles','var')==0 || ...
      isfield(handles,'header')==0 || ...
@@ -135,6 +135,7 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     return;
   end
   
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %% set minval/maxval
   if exist('zlimits','var')==0
     minval = NaN;
@@ -156,17 +157,25 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     minval = min(data);
   end
   if isnan(maxval)
-    if handles.UseAdaptedMaxIfIsNaN
+    if handles.useAdaptedMaxIfIsNaN
       maxval = 8./9.*max(data)+1./9.*mean(data); % this gives a pretty good color bar usually...
     else
       maxval = max(data);
     end
   end
 
+  if handles.symmetricRange
+    minval = -maxval;
+  end
+
+  disp(['PLOT INFO: minval = ',num2str(minval)]);
+  disp(['PLOT INFO: maxval = ',num2str(maxval)]);
+
   if maxval <= minval
     warning('maxval <= minval : Please check the min/max plot values.');
     return;
   end
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   %% Create plot data meshgrid
   count=1;
@@ -220,19 +229,9 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   
   %colave = max(fin1(:,column));
   colfig = handles.AllHeaders{column};
-  disp(['minval = ',num2str(minval)]);
-  disp(['maxval = ',num2str(maxval)]);
 
-  if handles.symmetricRange
-    if maxval ~= 0
-      caxis([-maxval, maxval]);
-    else
-      warning('Symmetric axis requested and max plot value set to 0, which causes an invalid [0,0] range. Resetting to [-1,1].');
-      caxis([-1, 1]);
-    end
-  else
-    caxis([minval, maxval]);
-  end
+  % set range
+  caxis([minval, maxval]);
 
   AspectRatio = get(gca,'DataAspectRatio');
   AspectRatio(1) = AspectRatio(2);
