@@ -196,6 +196,9 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   if get(handles.radiobutton_Snapshot,'Value');
     handles.Type = 5;
   end
+  if get(handles.radiobutton_EnergySnapshot,'Value');
+    handles.Type = 6;
+  end
   
   handles.ProbeID = get(handles.popupmenu_Probe,'Value');
   handles.TimeSnapshotID = get(handles.popupmenu_TimeSnapshot,'Value');
@@ -210,11 +213,10 @@ function pushbutton_load_data_Callback(hObject, eventdata, handles)
   
   % set to GUI
   if handles.isLoaded
-    handles.HeadersForPopupList
-
     % make sure col is within the range of the popup list
     col = get(handles.popupmenu_plotcolumn,'Value');
-    if (col<1) | (length(handles.HeadersForPopupList)<col)
+    
+    if (col<1) | (size(handles.HeadersForPopupList,1)<col)
       set(handles.popupmenu_plotcolumn,'Value',1);
     end
     

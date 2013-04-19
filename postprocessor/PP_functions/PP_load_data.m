@@ -1,5 +1,5 @@
 function [ handles ] = PP_load_data(handles)
-  disp('function pushbutton_load_data_Callback(hObject, eventdata, handles)')
+  disp('function [ handles ] = PP_load_data(handles)')
   % --- Executes on button press in pushbutton_load_data.
   % hObject    handle to pushbutton_load_data (see GCBO)
   % eventdata  reserved - to be defined in a future version of MATLAB
@@ -74,6 +74,9 @@ function [ handles ] = PP_load_data(handles)
     name = handles.SnapshotList{val};
     handles.SnapshotFile = [handles.workdir, filesep, name];
     handles.snapfile = handles.SnapshotFile;
+  elseif handles.Type == 6
+    % TODO: Implement this.
+    error('Energy snapshots not yet implemented. Use createEnergySnapshot() function in the meanwhile.');
   else
     error('Unknown data type')
     return
