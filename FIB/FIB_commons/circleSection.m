@@ -1,4 +1,6 @@
 function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentro2D_mum, circleRadius_mum, rectW_mum)
+  % function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentro2D_mum, circleRadius_mum, rectW_mum)
+  
   % size of circles in nm as a function of the beamcurrent
   spotSizes_nm=[1 8;
   4 12;
