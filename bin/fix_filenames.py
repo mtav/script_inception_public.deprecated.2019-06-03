@@ -43,17 +43,23 @@ def processFiles(arguments):
   dst = len(src)*[0]
   
   for i in range(len(src)):
+    #print(src[i])
     numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type = brisFDTD_ID_info.alphaID_to_numID(src[i], arguments.expected_object_type, arguments.probe_ident)
+    #print(numID, snap_plane, probe_ident, snap_time_number, fixed_filename, object_type)
     if fixed_filename is not None:
       (directory, basename) = os.path.split(fixed_filename)
 
       # temporary quick hack (TODO: generalize use of offset and implement actual format specifier)
-      if arguments.output_format:
+      if arguments.output_format and object_type=='fsnap':
+        #print(snap_time_number)
         basename, alphaID, pair = brisFDTD_ID_info.numID_to_alphaID_FrequencySnapshot(numID + arguments.offset, snap_plane, probe_ident, snap_time_number)
 
       if arguments.output_directory:
         directory = arguments.output_directory
       
+      if basename is None:
+        continue
+        
       fixed_filename = os.path.join(directory, basename)
 
       dst[i] = fixed_filename
@@ -67,6 +73,8 @@ def processFiles(arguments):
                 os.rename(src[i], dst[i])
               elif arguments.action == 'copy':
                 shutil.copy(src[i], dst[i])
+              elif arguments.action == 'copyfile':
+                shutil.copyfile(src[i], dst[i]) # when the filesystem does not support chmod permissions (i.e. Windows)
               elif arguments.action == 'hardlink':
                 os.link(src[i], dst[i])
               elif arguments.action == 'symlink':
@@ -102,7 +110,7 @@ def get_argument_parser():
   parser.add_argument('--offset', type=int, default=0, help='numID offset')
   parser.add_argument("--output-format", action="store", default=None, help="specify format of the output files")
   parser.add_argument("--output-directory", action="store", help="Optional output directory (should exist). If not specified, output will go into the same directory as original file.")
-  parser.add_argument("--action", action="store", choices=['move','copy','hardlink','symlink'], default='move', help="move (rename), copy, hardlink or symlink to the new destination/filename?")
+  parser.add_argument("--action", action="store", choices=['move','copy','copyfile','hardlink','symlink'], default='move', help="move (rename), copy, hardlink or symlink to the new destination/filename?")
 
   return parser
 

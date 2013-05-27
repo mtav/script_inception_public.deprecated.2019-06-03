@@ -1,4 +1,6 @@
 function createEnergySnapshot(esnap, fsnap, outfile)
+  % function createEnergySnapshot(esnap, fsnap, outfile)
+  
   % read in data
   [header_esnap, data_esnap, ui_esnap, uj_esnap] = readPrnFile(esnap);
   [header_fsnap, data_fsnap, ui_fsnap, uj_fsnap] = readPrnFile(fsnap);

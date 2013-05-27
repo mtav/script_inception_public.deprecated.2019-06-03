@@ -40,7 +40,8 @@ do
   if  [ $status == 2 ]
   then
     echo "submitting $SCRIPT"
-    qsub -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
+    qsub -q batch -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
+    #qsub -q bfdtd -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
   else
     if  [ $status == 0 ]
     then

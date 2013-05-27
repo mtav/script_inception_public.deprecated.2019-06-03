@@ -42,13 +42,19 @@ def numID_to_alphaID_FrequencySnapshot(numID, snap_plane = 'x', probe_ident = '_
   MAXIMUM NUMBER OF SNAPSHOTS BEFORE ENTERING DANGER AREA (non-printable characters): 836 = 26+(126-(ord('a')-1))*27
   '''
 
+  filename = None
+  alphaID = None
+  pair = None
+
   if numID<1 or numID>FREQUENCYSNAPSHOT_MAX:
     print('ERROR: numID must be between 1 and '+str(FREQUENCYSNAPSHOT_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
-    sys.exit(-1)
+    #sys.exit(-1)
+    return filename, alphaID, pair
   
   if snap_time_number<0 or snap_time_number>99:
     print('ERROR: snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!', file=sys.stderr)
-    sys.exit(-1)
+    #sys.exit(-1)
+    return filename, alphaID, pair
 
   #snap_time_number = mod(snap_time_number,100);
   ilo = snap_time_number%10 # gets the 10^0 digit from snap_time_number
@@ -76,13 +82,19 @@ def numID_to_alphaID_TimeSnapshot(numID, snap_plane = 'x', probe_ident = '_id_',
   100 -> :0
   '''
 
+  filename = None
+  alphaID = None
+  pair = None
+
   if numID<1 or numID>TIMESNAPSHOT_MAX:
     print('ERROR: numID must be between 1 and '+str(TIMESNAPSHOT_MAX)+' or else you will suffer death by monkeys!!!', file=sys.stderr)
-    sys.exit(-1)
+    #sys.exit(-1)
+    return filename, alphaID, pair
   
   if snap_time_number<0 or snap_time_number>99:
     print('ERROR: snap_time_number must be between 0 and 99 or else you will suffer death by monkeys!!!', file=sys.stderr)
-    sys.exit(-1)
+    #sys.exit(-1)
+    return filename, alphaID, pair
 
   ilo = snap_time_number%10
   ihi = snap_time_number//10

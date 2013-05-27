@@ -280,6 +280,8 @@ function [ wavelength_nm, Q_lorentz, Q_harminv_local, Q_harminv_global ] = plotP
           fid = fopen(parametersFile,'w+');
           fprintf(fid,'PeakNo\tFrequency(Hz)\tWavelength(nm)\tQFactor\t\r\n');
           for n=1:size(peaks,1)
+            % TODO: CRITICAL!!!: Look around for close peaks with lower error
+            disp(['YOLOLOLOLO=====>peaks(',num2str(n),',1) = ', num2str(peaks(n,1))]);
             [indS,val]=closestInd(lambdaH_nm,peaks(n,1));
             %Q
             %length(Q)
