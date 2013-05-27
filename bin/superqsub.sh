@@ -7,9 +7,14 @@ set -eu
 ## multiple mail addresses:
 #    export QSUBMAIL="foo.bar@bristol.ac.uk,big.boss@bristol.ac.uk"
 
+# Additional env vars:
+# PPN : processors per node
+# TORQUE_QUEUE : default torque queue to use (ex: batch, bfdtd, etc)
+
 # Check if all parameters are present
 # If no, exit
 
+# TODO: Intelligent qsub command alternative which also takes care of creating appropriate submission scripts, so we don't have to always generate them?...
 # TODO: It would be nice if additional qsub options could be specified. Problem: Ho can a script/alias distinguish the script's path from the other options? (required for JOBDIR variable)
 # TODO: -> solution: python argparse qsub.py (problem: no python3 on bluecrystal...)
 
@@ -40,8 +45,7 @@ do
   if  [ $status == 2 ]
   then
     echo "submitting $SCRIPT"
-    qsub -q batch -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
-    #qsub -q bfdtd -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
+    qsub -q $TORQUE_QUEUE -l nodes=1:ppn=$PPN -M $QSUBMAIL -v JOBDIR="$(readlink -f "$(dirname "$SCRIPT")")" "$SCRIPT"
   else
     if  [ $status == 0 ]
     then
