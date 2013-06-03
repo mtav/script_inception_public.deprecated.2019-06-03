@@ -35,7 +35,7 @@ function varargout = postprocessor(varargin)
   
   % Edit the above text to modify the response to help postprocessor
   
-  % Last Modified by GUIDE v2.5 19-Apr-2013 19:36:31
+  % Last Modified by GUIDE v2.5 03-Jun-2013 21:57:11
   
   % Begin initialization code - DO NOT EDIT
   gui_Singleton = 1;
@@ -94,6 +94,7 @@ function postprocessor_OpeningFcn(hObject, eventdata, handles, varargin)
 
   set(handles.checkbox_useAdaptedMaxIfIsNaN,'Value',1);
   set(handles.checkbox_symmetricRange,'Value',0);
+  set(handles.checkbox_LimitToBox,'Value',1);
 
   % CLI input arg handling
   if nargin > 3
@@ -340,6 +341,8 @@ function pushbutton_generate_plot_Callback(hObject, eventdata, handles)
 
   handles.symmetricRange = get(handles.checkbox_symmetricRange,'Value');
   handles.useAdaptedMaxIfIsNaN = get(handles.checkbox_useAdaptedMaxIfIsNaN,'Value');
+
+  handles.LimitToBox = get(handles.checkbox_LimitToBox,'Value');
 
   handles.colour = get(handles.radiobutton_colour,'Value');
   handles.surface = get(handles.radiobutton_surface,'Value');
@@ -901,4 +904,14 @@ function checkbox18_Callback(hObject, eventdata, handles)
   % handles    structure with handles and user data (see GUIDATA)
 
   % Hint: get(hObject,'Value') returns toggle state of checkbox18
+end
+
+
+function checkbox_LimitToBox_Callback(hObject, eventdata, handles)
+  % --- Executes on button press in checkbox_LimitToBox.
+  % hObject    handle to checkbox_LimitToBox (see GCBO)
+  % eventdata  reserved - to be defined in a future version of MATLAB
+  % handles    structure with handles and user data (see GUIDATA)
+
+  % Hint: get(hObject,'Value') returns toggle state of checkbox_LimitToBox
 end

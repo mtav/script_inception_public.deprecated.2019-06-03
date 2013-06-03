@@ -5,10 +5,11 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   % Function to display results from frequency snapshots and poynting vector calculations from University of Bristol FDTD software
   %
   % Written by Ian Buss 2006
+  % Modified quite a bit by Mike T.
+  % To be pythonified, Qt-ified or at least de-Matlabified. :p
   %
-  % Must be used in conjunction with companion files: readtextfile.m, hdrload.m
-  %
-  % Version 4.2
+  % Must be used in conjunction with companion files: hdrload.m
+  % TODO: Re-assess utility of readtextfile.m, inputparms.m, geometryparms.m
   %
   % For Poynting vector plots in the same format use snap_poy_int.m
   % TODO: Locate snap_poy_int.m (Poynting vector snapshot?)
@@ -49,7 +50,8 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   if exist('handles','var')==0 || isfield(handles,'colorbarPosition')==0; handles.colorbarPosition = 'East'; end
   if exist('handles','var')==0 || isfield(handles,'useAdaptedMaxIfIsNaN')==0; handles.useAdaptedMaxIfIsNaN = true; end
   if exist('handles','var')==0 || isfield(handles,'symmetricRange')==0; handles.symmetricRange = false; end
-
+  if exist('handles','var')==0 || isfield(handles,'LimitToBox')==0; handles.LimitToBox = true; end
+  
   if exist('handles','var')==0 || ...
      isfield(handles,'header')==0 || ...
      isfield(handles,'data')==0 || ...
@@ -87,9 +89,14 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
   [handles.Type, type_name] = getDataType(snapshot_filename);
 
   if handles.geometry==1
+    % load geometry data
+    % TODO: Do this in a nicer way? Arbitrary amount of .inp/.geo/.in files accepted?
     if exist('handles','var') && isfield(handles,'geofile') && isfield(handles,'inpfile')
-      % load geometry data
       [entries,FDTDobj] = GEO_INP_reader({handles.geofile,handles.inpfile});
+    elseif exist('handles','var') && isfield(handles,'geofile')
+      [entries,FDTDobj] = GEO_INP_reader({handles.geofile});
+    elseif exist('handles','var') && isfield(handles,'inpfile')
+      [entries,FDTDobj] = GEO_INP_reader({handles.inpfile});
     else
       error('ERROR: you need to specify geo and inp file in order to show the geometry.');
     end
@@ -242,7 +249,7 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     shading flat;
   end
   
-   % to avoid white patches on the image
+  % to avoid white patches on the image
   if(not(inoctave))
     lighting phong;
   end
@@ -252,35 +259,35 @@ function ret = plotSnapshot(snapshot_filename, column, zlimits, handles, azimuth
     case 1
       xlabel('z');
       ylabel('y');
-      if handles.geometry
-        foo = [FDTDobj.box.lower(3), FDTDobj.box.upper(3), FDTDobj.box.lower(2), FDTDobj.box.upper(2)];%, zmin,zmax,cmin,cmax];
+      if handles.geometry && handles.LimitToBox
+        axis_limits = [FDTDobj.box.lower(3), FDTDobj.box.upper(3), FDTDobj.box.lower(2), FDTDobj.box.upper(2)];%, zmin,zmax,cmin,cmax];
       else
-        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
+        axis_limits = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
       end
-      if ( foo(1)<foo(2) && foo(3)<foo(4) )
-        axis(foo);
+      if ( axis_limits(1)<axis_limits(2) && axis_limits(3)<axis_limits(4) )
+        axis(axis_limits);
       end
     case 2
       xlabel('z');
       ylabel('x');
-      if handles.geometry
-        foo = [FDTDobj.box.lower(3), FDTDobj.box.upper(3), FDTDobj.box.lower(1), FDTDobj.box.upper(1)];%, zmin,zmax,cmin,cmax];
+      if handles.geometry && handles.LimitToBox
+        axis_limits = [FDTDobj.box.lower(3), FDTDobj.box.upper(3), FDTDobj.box.lower(1), FDTDobj.box.upper(1)];%, zmin,zmax,cmin,cmax];
       else
-        foo = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
+        axis_limits = [ i(1,1),i(1,size(i,2)) , j(1,1),j(size(j,1),1)];%, zmin,zmax,cmin,cmax ];
       end
-      if ( foo(1)<foo(2) && foo(3)<foo(4) )
-        axis(foo);
+      if ( axis_limits(1)<axis_limits(2) && axis_limits(3)<axis_limits(4) )
+        axis(axis_limits);
       end
     case 3
       xlabel('x');
       ylabel('y');
-      if handles.geometry
-        foo = [FDTDobj.box.lower(1), FDTDobj.box.upper(1), FDTDobj.box.lower(2), FDTDobj.box.upper(2)];%, zmin,zmax,cmin,cmax];
+      if handles.geometry && handles.LimitToBox
+        axis_limits = [FDTDobj.box.lower(1), FDTDobj.box.upper(1), FDTDobj.box.lower(2), FDTDobj.box.upper(2)];%, zmin,zmax,cmin,cmax];
       else
-        foo = [ j(1,1),j(size(j,1),1), i(1,1),i(1,size(i,2))];%, zmin,zmax,cmin,cmax];
+        axis_limits = [ j(1,1),j(size(j,1),1), i(1,1),i(1,size(i,2))];%, zmin,zmax,cmin,cmax];
       end
-      if ( foo(1)<foo(2) && foo(3)<foo(4) )
-        axis(foo);
+      if ( axis_limits(1)<axis_limits(2) && axis_limits(3)<axis_limits(4) )
+        axis(axis_limits);
       end
   end
 
