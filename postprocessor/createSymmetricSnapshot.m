@@ -2,6 +2,7 @@ function createSymmetricSnapshot(snapshot, outfile)
   % function createSymmetricSnapshot(snapshot, outfile)
   % at the moment "symmetrifies" XZ snapshot along X axis
   % TODO: Validate with simpler snapshots + add arguments to specify symmetry plane?
+  % TODO: Make symmetric or anti-symmetric depending on field type... Validate with theory and half/full simulations...
   
   % read in data
   [header, data, ui, uj] = readPrnFile(snapshot);

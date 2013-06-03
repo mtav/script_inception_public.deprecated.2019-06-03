@@ -22,8 +22,17 @@ function [header,data,ux,uy] = readPrnFile(filename)
   end
   
   %try
-    dummy = fgets(fid);
-    words = regexp(dummy,'(?<word>\w+)\s*|\s*(?<word>\w+)','tokens');
+  
+    % read first line
+    first_line = fgets(fid);
+    
+    % split into words separated by space characters
+    % \s: Any white-space character; equivalent to [ \f\n\r\t\v]
+    % \S: Any non-whitespace character; equivalent to [^ \f\n\r\t\v]
+    words = regexp(first_line,'(?<word>\S+)\s*|\s*(?<word>\S+)','tokens');
+    
+    % determine number of columns from number of "words" in first line
+    % TODO: Use safer system similar to hdrload using actual data instead... Header might be wrong or incorrectly formatted.
     ncols = size(words,2);
     
     for m = 1:ncols

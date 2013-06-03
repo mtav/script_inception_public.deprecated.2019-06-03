@@ -54,7 +54,6 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
     %disp(['==> size(data_esnap) = ',num2str(size(data_esnap))]);
     %disp(['==> size(ui_esnap) = ',num2str(size(ui_esnap))]);
     %disp(['==> size(uj_esnap) = ',num2str(size(uj_esnap))]);
-
     
     if length(Snaps) <= 1
       disp('WARNING: You are only using one snapshot!!! setting thickness = 1');
