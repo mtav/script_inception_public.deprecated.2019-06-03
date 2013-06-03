@@ -36,6 +36,8 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
 
   % calculate the mode volume
   currMax = 0;
+  currMax_m = -1;
+  
   Nom = 0;
   vv = [];
 
@@ -105,7 +107,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
 
     areaM = vj*vi';
 
-    nom = (Exmod.^2+Eymod.^2+Ezmod.^2).*data_esnap(:,:);
+    nom = data_esnap(:,:).*(Exmod.^2+Eymod.^2+Ezmod.^2);
     %size(nom)
 
     maxVal = max(nom(:));
@@ -116,6 +118,7 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
 
     if (maxVal>currMax)
       currMax = maxVal;
+      currMax_m = m;
     end
 
     %disp(['==> size(nom) = ',num2str(size(nom))]);
@@ -129,8 +132,10 @@ function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane
   % figure(2)
   % imagesc(eps)
   end
-      
+  
   mode_volume_mum3 = Nom/currMax;
+  currMax
+  currMax_m
 
   if snap_plane == 'x'
     Lambda_mum = get_c0()/structured_entries.frequency_snapshots_X(1).frequency;
