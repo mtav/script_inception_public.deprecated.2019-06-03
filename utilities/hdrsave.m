@@ -1,5 +1,6 @@
 function hdrsave(filename,header,data)
   % function hdrsave(filename,header,data)
+  % TODO: merge read/writePrnFile.m + hdrsave/load.m somehow. Reduce duplication.
 
   % write header
   file = fopen(filename,'w');

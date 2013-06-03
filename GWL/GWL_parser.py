@@ -737,7 +737,12 @@ class GWLobject(object):
       print(('self.writingDistanceInMum = '+str(self.writingDistanceInMum)))
     #return GWL_voxels
 
+  # TODO: remove once all other code has been updated accordingly...
   def write_GWL(self, filename, writingOffset = [0,0,0,0]):
+    print('Deprecated function. Use writeGWL() instead.', file=sys.stderr)
+    return
+
+  def writeGWL(self, filename, writingOffset = [0,0,0,0]):
     print(('Writing GWL to '+filename))
     with open(filename, 'w') as file:
       for write_sequence in self.GWL_voxels:
