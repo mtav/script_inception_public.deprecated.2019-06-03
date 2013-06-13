@@ -13,7 +13,7 @@ function [dwell_vector,X,Y] = circleSection(beamCurrent, res, dwell, circleCentr
   6600 270;
   11500 500;
   ];
-    
+  
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
   %mag=200000;
   %dwell=20000;

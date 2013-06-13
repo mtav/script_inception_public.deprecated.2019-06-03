@@ -171,11 +171,19 @@ class Woodpile(object):
     return (GWL_obj, BFDTD_obj)
 
   def write_GWL(self, filename):
+    print('Deprecated: Use writeGWL() instead.', file=sys.stderr)
+    return
+
+  def write_BFDTD(self, filename):
+    print('Deprecated: Use writeBFDTD() instead.', file=sys.stderr)
+    return
+
+  def writeGWL(self, filename):
     (GWL_obj, BFDTD_obj) = self.getGWLandBFDTDobjects()
     (Pmin, Pmax) = GWL_obj.getLimits()
     GWL_obj.write_GWL(filename, writingOffset = [0,0,-Pmin[2],0] ) # write object so that Zmin = 0
     
-  def write_BFDTD(self, filename):
+  def writeBFDTD(self, filename):
     # TODO: finish implementing this function
     (GWL_obj, BFDTD_obj) = self.getGWLandBFDTDobjects()
     print('Writing GWL to '+filename)

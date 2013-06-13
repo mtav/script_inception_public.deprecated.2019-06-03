@@ -13,7 +13,7 @@ function spotSize_mum = getSpotSize(beamCurrent)
   6600 270;
   11500 500;
   ];
-  beamCurrent_idx = find(spotSizes_nm==beamCurrent);
+  beamCurrent_idx = find(spotSizes_nm==beamCurrent); % this is dangerous. Might find a spotsize value instead of beamcurrent value... TODO: Fix.
   if isempty(beamCurrent_idx)
     error( [ 'Invalid beamCurrent. Valid values are: ', num2str(reshape(spotSizes_nm(:,1),1,[])) ] )
   else

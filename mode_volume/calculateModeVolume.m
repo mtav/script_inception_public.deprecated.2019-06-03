@@ -1,6 +1,9 @@
 function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane, snap_time_number, refractive_index_defect)
   % function mode_volume_mum3 = calculateModeVolume(folder, inpfile_list, snap_plane, snap_time_number, refractive_index_defect)
 
+  % TODO: left/right/trapezoidal integration, interpolation? Use Matlab methods...
+  % TODO: fix block integration
+
   % folder : folder containing the .prn files
   % inpfile_list : of the form {'file1.inp','file2.inp',...}. Note : Full paths should be used!
   % snap_plane : direction of the snapshots ('x','y' or 'z')

@@ -8,6 +8,8 @@ import os
 from utilities.common import *
 from utilities import TransformationMatrix
 
+# TODO: get voxelsize in any direction based on a 3D ellipsoid...
+
 # TODO: Somehow get voxel size based on scanspeed/power/dwelltime/defocusfactor/etc
 DEFAULT_VOXEL_WIDTH = 0.100 # in mum
 DEFAULT_VOXEL_HEIGHT = 0.200 # in mum
@@ -58,6 +60,12 @@ class GWLobject(object):
     self.LastVoxel = [0,0,0,0]
     self.LastVoxelSet = False
     self.out_of_range = False
+
+
+    self.overlap_horizontal = DEFAULT_OVERLAP_HORIZONTAL
+    self.overlap_vertical = DEFAULT_OVERLAP_VERTICAL
+    self.voxel_width_mum = DEFAULT_VOXEL_WIDTH
+    self.voxel_height_mum = DEFAULT_VOXEL_HEIGHT
 
   # TODO
   def getMinDistanceBetweenVoxels():
