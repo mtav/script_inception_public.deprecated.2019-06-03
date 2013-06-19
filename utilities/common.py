@@ -71,6 +71,32 @@ def int_array(A):
         A[i]=int(float(A[i]))
     return(A)
 
+def str2list(str, numeric=True, array=True):
+  '''
+  Converts strings of the form '[1,2,3],[4,5,6],[7,8,9]' into a list of lists of the form [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']]
+  If numeric is set to True, converts all elements to float, otherwise leaves them as strings.
+  If array is set to True, converts the lists to numpy arrays.
+  '''
+  ret = []
+  
+  listElements = re.compile("([^\[,\]]+)")
+  insideBrackets = re.compile("(\[[^\[\]]+\])")
+
+  lists = [m.group(1) for m in insideBrackets.finditer(str)]
+  for i in lists:
+    elements = [m.group(1) for m in listElements.finditer(i)]
+    ret.append(elements)
+
+  if numeric:
+    for A in ret:
+      for i in range(len(A)):
+        A[i]=float(A[i])
+
+  if array:
+    for i in range(len(ret)):
+      ret[i] = numpy.array(ret[i])
+
+  return ret
 
 def is_number(s):
     ''' returns true if s can be converted to a float, otherwise false '''
