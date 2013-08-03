@@ -1,3 +1,11 @@
+IMPORTANT NOTE:
+Due to some concerns about what to release and what not to release publically, this repository is no longer always updated. :(
+The most up to date version is now on the shared internal "K: drive".
+
+I will try to "cherry-pick" some commits to push if possible (or once enough has been published or the PhD is done, just push everything (provided the big boss is happy with it as well)).
+In the meanwhile, if you are interested, just contact me directly.
+We now have some more Blender import/export/add mesh scripts for the Nanoscribe GWL language among other things.
+
 script_inception_public documentation
 =====================================
 :backend: html5
